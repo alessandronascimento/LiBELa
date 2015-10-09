@@ -1,0 +1,167 @@
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/p/libela/svn/!svn/ver/2/trunk/src/tools
+END
+MCRecursion.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/p/libela/svn/!svn/ver/2/trunk/src/tools/MCRecursion.h
+END
+mol2_rmsd.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/p/libela/svn/!svn/ver/2/trunk/src/tools/mol2_rmsd.cpp
+END
+mccolony
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/p/libela/svn/!svn/ver/2/trunk/src/tools/mccolony
+END
+mcintegrate.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/p/libela/svn/!svn/ver/2/trunk/src/tools/mcintegrate.cpp
+END
+Makefile.LigShift
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/p/libela/svn/!svn/ver/2/trunk/src/tools/Makefile.LigShift
+END
+McGrid.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/p/libela/svn/!svn/ver/2/trunk/src/tools/McGrid.cpp
+END
+McConf.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/p/libela/svn/!svn/ver/2/trunk/src/tools/McConf.cpp
+END
+Makefile.nogui.Windows
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/p/libela/svn/!svn/ver/2/trunk/src/tools/Makefile.nogui.Windows
+END
+Makefile.intel
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/p/libela/svn/!svn/ver/2/trunk/src/tools/Makefile.intel
+END
+mcintegrate.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/p/libela/svn/!svn/ver/2/trunk/src/tools/mcintegrate.h
+END
+McRecursion
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/p/libela/svn/!svn/ver/2/trunk/src/tools/McRecursion
+END
+LigShift.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/p/libela/svn/!svn/ver/2/trunk/src/tools/LigShift.cpp
+END
+MrPocket.x
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/p/libela/svn/!svn/ver/2/trunk/src/tools/MrPocket.x
+END
+recursion.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/p/libela/svn/!svn/ver/2/trunk/src/tools/recursion.cpp
+END
+McLiBELa.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/p/libela/svn/!svn/ver/2/trunk/src/tools/McLiBELa.h
+END
+McColony.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/p/libela/svn/!svn/ver/2/trunk/src/tools/McColony.cpp
+END
+Makefile.McRecursion
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/p/libela/svn/!svn/ver/2/trunk/src/tools/Makefile.McRecursion
+END
+Mcgrid
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/p/libela/svn/!svn/ver/2/trunk/src/tools/Mcgrid
+END
+MrPocket.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/p/libela/svn/!svn/ver/2/trunk/src/tools/MrPocket.cpp
+END
+binning.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/p/libela/svn/!svn/ver/2/trunk/src/tools/binning.cpp
+END
+FESummation.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/p/libela/svn/!svn/ver/2/trunk/src/tools/FESummation.cpp
+END
+MCRecursion.log
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/p/libela/svn/!svn/ver/2/trunk/src/tools/MCRecursion.log
+END
+LigShift
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/p/libela/svn/!svn/ver/2/trunk/src/tools/LigShift
+END
+recursion
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/p/libela/svn/!svn/ver/2/trunk/src/tools/recursion
+END
+Makefile.mol2_rmsd
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/p/libela/svn/!svn/ver/2/trunk/src/tools/Makefile.mol2_rmsd
+END
+MCRecursion.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/p/libela/svn/!svn/ver/2/trunk/src/tools/MCRecursion.cpp
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/p/libela/svn/!svn/ver/2/trunk/src/tools/Makefile
+END

@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>libel.png</file>
+        <file>css/stylesheet.css</file>
+        <file>checked.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/GUI
+END
+plotter.h
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/GUI/plotter.h
+END
+DockWidget.ui
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/GUI/DockWidget.ui
+END
+QtWriter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/GUI/QtWriter.cpp
+END
+MCWidget.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/GUI/MCWidget.cpp
+END
+DockWidget.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/GUI/DockWidget.cpp
+END
+GUI.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/GUI/GUI.cpp
+END
+QtWriter.h
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/GUI/QtWriter.h
+END
+GUI.qrc
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/GUI/GUI.qrc
+END
+MCWidget.h
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/GUI/MCWidget.h
+END
+checked.png
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/GUI/checked.png
+END
+DockWidget.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/GUI/DockWidget.h
+END
+GUI.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/GUI/GUI.h
+END
+libel.png
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/GUI/libel.png
+END
+plotter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/GUI/plotter.cpp
+END

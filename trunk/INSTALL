@@ -1,0 +1,11 @@
+In order to compile LiBELa, a "install" script is provided. This script is a very simple bash script
+with a list of commands necessary to compile libraries and LiBELa itself.
+
+In most scenarios, a "./install" will be enough to have LiBELa compiled. However, adjustments can be
+made to the script to fit especifical needs.
+
+
+INTEL COMPILER
+
+Libela can be compiled using intel compilers. In order to compile it using icpc, set the variable CXX in 
+the install script to "icpc".

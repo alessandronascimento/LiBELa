@@ -1,0 +1,160 @@
+#include<iostream>
+#include<zlib.h>
+#include<cstdlib>
+#include<cstdio>
+#include<cmath>
+#include<string>
+#include <vector>
+#include "../LiBELa/Mol2.cpp"
+#include "../LiBELa/COORD_MC.cpp"
+
+#define k 0.0019872041
+
+using namespace std;
+
+int main(int argc, char* argv[]){
+
+    double T=300.0;        // Temperature, in Kelvin;
+    double t=1.5;          // Parameter for rmsd smoothing, in Angstrom**3;
+    int numthreads = 1;
+    string molfile;
+    int c;
+    double rmsd;
+    long double Ec, SumBoltz;
+    long double SumBoltzCol;
+    bool GaussWeight = false;
+    bool InvGaussWeight = false;
+    bool ExpWeight = true;
+    int skipper = 1;
+
+
+    if (argc < 2){
+      printf("Usage %s -i <inputfile> -s <stride> -T <temperature> -t <smoothing_parameter> -n <num_threads> -w < gauss | exp | invgauss>[-h]\n", argv[0]);
+      exit(1);
+    }
+
+    while ((c = getopt(argc, argv, "i:t:T:n:w:s:h")) != -1)
+      switch (c){
+      case 'i':
+          molfile = string(optarg);
+          break;
+      case 'h':
+          printf("Usage %s -i <inputfile> -s <stride> -T <temperature> -t <smoothing_parameter> -n <num_threads> -w < gauss | exp | invgauss>[-h]\n", argv[0]);
+          break;
+          exit(1);
+      case '?':
+          printf("Usage %s -i <inputfile> -s <stride> -T <temperature> -t <smoothing_parameter> -n <num_threads> -w < gauss | exp | invgauss>[-h]\n", argv[0]);
+          break;
+          exit(1);
+      case 't':
+          t = double(atof(optarg));
+          break;
+      case 'T':
+          T = double(atof(optarg));
+          break;
+      case 'n':
+          numthreads = atoi(optarg);
+          break;
+      case 's':
+            skipper = atoi(optarg);
+            break;
+      case 'w':
+          string weight = string(optarg);
+          if (weight == "gauss") {
+              GaussWeight = true;
+              ExpWeight = false;
+          }
+          else if (weight == "invgauss"){
+              InvGaussWeight = true;
+              ExpWeight = false;
+          }
+          break;
+      }
+
+    printf("#*****************************************************************************************\n");
+    printf("#                                                                                        *\n");
+    printf("#          McColony - An algorithm for colony energy computation within McLiBELa         *\n");
+    printf("#        Written by Alessandro S. Nascimento and Joao Victor S. Cunha   /  2015          *\n");
+    printf("#                      University of Sao Paulo - USP - Brazil                            *\n");
+    printf("#                                                                                        *\n");
+    printf("#                             asnascimento@ifsc.usp.br                                   *\n");
+    printf("#                                                                                        *\n");
+    printf("#*****************************************************************************************\n");
+    printf("# Input file:  %-74.74s*\n", molfile.c_str());
+    printf("# Temperature: %-74.4f*\n", T);
+    printf("# t          : %-74.4f*\n", t);
+    printf("# num_threads: %-74d*\n", numthreads);
+    if (ExpWeight){
+        printf("# Weighting function:  %-66.66s*\n", "Exponential");
+    }
+    else if (GaussWeight){
+        printf("# Weighting function:  %-66.66s*\n", "Gaussian");
+    }
+    else if (InvGaussWeight){
+        printf("# Weighting function:  %-66.66s*\n", "Inverted Gaussian");
+    }
+    printf("# Input file:  %-74.74s*\n", molfile.c_str());
+    printf("#*****************************************************************************************\n");
+
+
+    Mol2* Mol = new Mol2;
+    COORD_MC* Coord = new COORD_MC;
+
+#ifdef DEBUG
+    printf("Opening file %s...\n", molfile.c_str());
+#endif
+
+    Mol->parse_gzipped_ensemble(molfile, skipper);
+
+#ifdef DEBUG
+    printf("File opened. Computing colony energies...\n");
+#endif
+
+    // checking for consistency
+
+    if (Mol->mcoords.size() != Mol->ensemble_energies.size()){
+        printf("There is a mismatch between number of parsed conformations (%d) and the number of parsed energies (%d)\n",
+               Mol->mcoords.size(), Mol->ensemble_energies.size());
+        printf("Please, check! Aborting...\n");
+        exit(1);
+    }
+
+
+    SumBoltz = 0.0;
+    SumBoltzCol = 0.0;
+
+    for (unsigned i=0; i<Mol->ensemble_energies.size(); i++){
+        SumBoltz += exp(-Mol->ensemble_energies[i]/(k*T));
+    }
+
+    printf("%-10.10s %-10.10s %10.10s\n", "#NatRMSD", "Colony_Energy", "CumBoltz");
+    unsigned i;
+#pragma omp parallel shared(Mol, Coord, t, T, SumBoltz) private (i, Ec, rmsd) num_threads(numthreads)
+    {
+#pragma omp for schedule(dynamic) nowait
+    for (i=0; i< Mol->mcoords.size(); i++){
+        Ec = 0.0;
+        for (unsigned j=0; j<Mol->mcoords.size(); j++){
+            rmsd = Coord->compute_rmsd(Mol->mcoords[i], Mol->mcoords[j], Mol->N);
+            if (ExpWeight){
+                Ec += exp(-Mol->ensemble_energies[j]/(k*T)) * exp(-pow(rmsd,3)/pow(t,3));
+            }
+            else if (GaussWeight){
+                Ec += exp(-Mol->ensemble_energies[j]/(k*T)) * exp(-pow(rmsd,2)/(2*t*t));
+            }
+            else if (InvGaussWeight){
+                Ec += exp(-Mol->ensemble_energies[j]/(k*T)) * (1.0 - exp(-pow(rmsd,2)/(2*t*t)));
+            }
+        }
+        SumBoltzCol += Ec;
+        Ec = -k*T*log(Ec/SumBoltz);
+        printf("%-10.6f %-10.6Lf %10.6LG\n", Mol->ensemble_rmsd[i], Ec, (SumBoltzCol/(i+1.0)));
+    }
+}	// end of pragma
+
+    printf("# Summation over Boltzmann Factor of Colony Energies: %10.6LE\n", SumBoltzCol);
+    SumBoltzCol = -k*T*log(SumBoltzCol/Mol->mcoords.size());
+    printf("# -kT ln(Sum/N): %10.6Lf\n", SumBoltzCol);
+
+    return 0;
+}

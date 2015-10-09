@@ -1,0 +1,13 @@
+Prior to installing LiBELa, some usual libraries and compilers must be present:
+
+zlib (in Ubuntu systems, use the command "sudo apt-get install zlib1g-dev");
+gcc and g++;
+
+The install script will automatically compile the following libraries:
+
+* gsl-1.16 (see http://www.gnu.org/software/gsl)
+* nlopt-2.4.2 (see http://ab-initio.mit.edu/wiki/index.php/NLopt)
+* openbabel-2.3.2 (see http://openbabel.org/wiki/Main_Page)
+
+Afterwards, LiBELa will be compiled.
+

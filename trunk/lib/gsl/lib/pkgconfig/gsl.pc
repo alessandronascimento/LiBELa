@@ -1,0 +1,11 @@
+prefix=/share/apps/iMcLiBELa/trunk/lib/gsl
+exec_prefix=/share/apps/iMcLiBELa/trunk/lib/gsl
+libdir=/share/apps/iMcLiBELa/trunk/lib/gsl/lib
+includedir=/share/apps/iMcLiBELa/trunk/lib/gsl/include
+GSL_CBLAS_LIB=-lgslcblas
+
+Name: GSL
+Description: GNU Scientific Library
+Version: 1.16
+Libs: -L/share/apps/iMcLiBELa/trunk/lib/gsl/lib -lgsl ${GSL_CBLAS_LIB} -lm -lm 
+Cflags: -I/share/apps/iMcLiBELa/trunk/lib/gsl/include

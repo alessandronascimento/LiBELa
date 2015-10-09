@@ -1,0 +1,19 @@
+#!/bin/bash
+
+CC=icpc
+CFLAGS=-c -O3 -ffast-math -w -I/usr/local/openbabel/include/openbabel-2.0 -I/usr/include/eigen3 -DBUILD=0.1 -DDEBUG
+LDFLAGS=-lz -L/usr/local/openbabel/lib -lopenbabel
+SOURCES=McConf.cpp
+OBJECTS=$(SOURCES:.cpp=.o)
+EXECUTABLE=McConf
+
+all: $(SOURCES) $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS)
+	$(CC) $(OBJECTS) -o $@ $(LDFLAGS)
+
+.cpp.o:
+	$(CC) $(CFLAGS) $< -o $@
+
+clean:
+	rm $(OBJECTS)

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+CC=g++
+CFLAGS=-c -O3 -ffast-math -DNLOPT -w -IC:/ASN/libs/nlopt-2.2.4/api -IC:/Dev-Cpp/include -IC:/ASN/libs/zlib-1.2.6 -IC:/ASN/libs/openbabel/include
+LDFLAGS= -lgsl -lgslcblas -lm -lnlopt_cxx -lopenbabel -lz -static -LC:/ASN/libs/zlib-1.2.6 -LC:/ASN/libs/nlopt-2.2.4/.libs -LC:/ASN/libs/openbabel/lib
+SOURCES=COORD_MC.cpp Conformer.cpp  Docker.cpp  ENERGY.cpp  Gaussian.cpp  Mol2.cpp  Optimizer.cpp  PARSER.cpp  PRMTOP.cpp  RAND.cpp  RunEngine.cpp  WRITER.cpp  main.cpp
+OBJECTS=$(SOURCES:.cpp=.o)
+EXECUTABLE=McLiBELa.nogui
+
+all: $(SOURCES) $(EXECUTABLE)
+	
+$(EXECUTABLE): $(OBJECTS) 
+	$(CC) $(OBJECTS) -o $@ $(LDFLAGS)
+
+.cpp.o:
+	$(CC) $(CFLAGS) $< -o $@
+
+clean:
+	rm $(OBJECTS) $(EXECUTABLE)

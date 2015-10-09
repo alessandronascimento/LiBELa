@@ -1,0 +1,19 @@
+#!/bin/bash
+
+CC=g++
+CFLAGS=-c -O3 -ffast-math -w
+LDFLAGS=-lm -lz -static
+SOURCES=..\COORD_MC.cpp ..\Mol2.cpp  ..\PARSER.cpp  mol2_rmsd.cpp
+OBJECTS=$(SOURCES:.cpp=.o)
+EXECUTABLE=mol2_rmsd
+
+all: $(SOURCES) $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS)
+    $(CC) $(OBJECTS) -o $@ $(LDFLAGS)
+
+.cpp.o:
+    $(CC) $(CFLAGS) $< -o $@
+
+clean:
+    rm $(OBJECTS) $(EXECUTABLE)

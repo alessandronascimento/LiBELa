@@ -1,0 +1,245 @@
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa
+END
+ENERGY.h
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/ENERGY.h
+END
+Conformer.h
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Conformer.h
+END
+RunEngine.h
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/RunEngine.h
+END
+PARSER.h
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/PARSER.h
+END
+MC.h
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/MC.h
+END
+Makefile.nogui.Windows
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Makefile.nogui.Windows
+END
+Deal.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Deal.cpp
+END
+Makefile.intel
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Makefile.intel
+END
+Docker.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Docker.cpp
+END
+SA.h
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/SA.h
+END
+McLiBELa.h
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/McLiBELa.h
+END
+Mol2.h
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Mol2.h
+END
+Gaussian.h
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Gaussian.h
+END
+Energy2.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Energy2.h
+END
+WRITER.h
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/WRITER.h
+END
+PRMTOP.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/PRMTOP.cpp
+END
+Optimizer.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Optimizer.cpp
+END
+RAND.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/RAND.cpp
+END
+main.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/main.cpp
+END
+ENERGY.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/ENERGY.cpp
+END
+Grid.h
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Grid.h
+END
+COORD_MC.h
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/COORD_MC.h
+END
+Conformer.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Conformer.cpp
+END
+RunEngine.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/RunEngine.cpp
+END
+PARSER.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/PARSER.cpp
+END
+MC.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/MC.cpp
+END
+SA.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/SA.cpp
+END
+Mol2.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Mol2.cpp
+END
+Deal.h
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Deal.h
+END
+Gaussian.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Gaussian.cpp
+END
+Energy2.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Energy2.cpp
+END
+Docker.h
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Docker.h
+END
+WRITER.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/WRITER.cpp
+END
+COORD_MC.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/COORD_MC.cpp
+END
+Grid.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Grid.cpp
+END
+PRMTOP.h
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/PRMTOP.h
+END
+iMcLiBELa.h
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/iMcLiBELa.h
+END
+Optimizer.h
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/Optimizer.h
+END
+RAND.h
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/RAND.h
+END
+main.h
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/p/libela/svn/!svn/ver/2/trunk/src/LiBELa/main.h
+END

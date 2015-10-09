@@ -1,0 +1,78 @@
+#include <iostream>
+#include <fstream>
+#include "../Mol2.cpp"
+#include "../COORD_MC.cpp"
+#include "../PARSER.cpp"
+
+using namespace std;
+
+bool check_consistency(Mol2* mol1, Mol2* mol2);
+
+double rmsd_noh(Mol2* mol1, Mol2* mol2);
+
+int main(int argc, char *argv[]){
+
+    if (argc < 3){
+        printf("Usage: %s %s %s %s\n", argv[0], "mol1.mol2", "mol2.mol2");
+        exit(1);
+    }
+
+    PARSER* Input = new PARSER;
+
+//    Input->set_parameters(argv[1]);
+
+    printf("Reading file %s...\n", argv[1]);
+    Mol2* mol1 = new Mol2(Input, string(argv[1]));
+    printf("Reading file %s...\n", argv[2]);
+    Mol2* mol2 = new Mol2(Input, string(argv[2]));
+
+
+    if (mol1->N != mol2->N){
+        printf("These molecules have different atom counts!\n");
+        exit(1);
+    }
+
+    if (! check_consistency(mol1, mol2)){
+        printf("Atomtypes seem to be out of order. Please check!\n");
+        exit(1);
+    }
+
+    COORD_MC* Coord = new COORD_MC;
+    double rmsd;
+    rmsd = Coord->compute_rmsd(mol1->xyz, mol2->xyz, mol1->N);
+    printf("RMSDH: %.4f\n", rmsd);
+    rmsd = rmsd_noh(mol1, mol2);
+    printf("RMSD: %.4f\n", rmsd);
+
+    delete Coord;
+    delete mol1;
+    delete mol2;
+    delete Input;
+
+    return 0;
+}
+
+bool check_consistency(Mol2* mol1, Mol2* mol2){
+    bool match = true;
+    for (int i=0; i< mol1->N; i++){
+        if (mol1->amberatoms[i] != mol2->amberatoms[i]){
+            match = false;
+        }
+    }
+    return (match);
+}
+
+double rmsd_noh(Mol2* mol1, Mol2* mol2){
+    int count=0;
+    double rmsd=0.00;
+    for (int i=0; i< mol1->N; i++){
+        if (mol1->atomnames[i][0] != 'H' and mol1->atomnames[i][0] != 'h'){
+            count++;
+            for (int j=0; j<3; j++){
+                rmsd += (mol1->xyz[i][j]-mol2->xyz[i][j]) * (mol1->xyz[i][j]-mol2->xyz[i][j]);
+            }
+        }
+    }
+    rmsd = (sqrt(rmsd/count));
+    return (rmsd);
+}

@@ -1,0 +1,108 @@
+#!/bin/bash
+
+
+CXX=`which g++`
+LIBELA_HOME=$PWD
+CMAKE=`which cmake`;
+QMAKE=`which qmake`;
+GSL_DIR="null";
+NLOPT_DIR="null";
+OPENBABEL_DIR="null";
+HAS_MPI=false;
+
+if [ CMAKE == "" ];
+then
+	echo "cmake was not found. Please install it before installing LiBELa";
+	exit 1;
+else
+	echo "cmake found in $CMAKE"
+fi
+
+cd src;
+cd lib;
+
+echo "Current PWD is $PWD"
+
+
+if [ $GSL_DIR == "null" ];
+then
+        echo "Compiling GSL libraries..."
+
+
+	tar -xzf gsl-1.16.tar.gz
+
+# compiling gsl
+	cd gsl-1.16
+	./configure --prefix=${LIBELA_HOME}/lib/gsl > configure_libela.log
+	make 
+	make install
+	cd ..
+fi
+
+if [ $NLOPT_DIR == "null" ];
+then
+	echo "Compiling NLOPT libraries..."
+
+	tar -xvf nlopt-2.4.2.tar.gz
+
+# compiling nlopt libraries
+	cd nlopt-2.4.2
+	./configure --prefix=${LIBELA_HOME}/lib/nlopt --with-cxx > configure_libela.log
+	make
+	make install
+	cd ..
+fi
+
+if [ $OPENBABEL_DIR == "null" ];
+then
+	echo "Compiling OpenBabel libraries..."
+	
+	tar -xzf openbabel-2.3.2.tar.gz
+	tar -xzf eigen3.tar.gz
+
+# compiling openbabel libraries
+	cd openbabel-2.3.2
+
+	if [ -d build ];
+	then
+		rm -rf build;
+	fi
+
+	mkdir build
+	cd build
+	$CMAKE ../ -DCMAKE_INSTALL_PREFIX=${LIBELA_HOME}/lib/openbabel -DEIGEN3_INCLUDE_DIR=${LIBELA_HOME}/src/lib/eigen3
+	make
+	make install
+	cd ..
+	cd ..
+fi
+
+cd ../LiBELa
+
+# compiling LiBELa without GUI
+cat > Makefile << eof
+#!/bin/bash
+CC=$CXX
+CFLAGS=-c -O3 -ffast-math -w -DBUILD=2 -fopenmp -I${LIBELA_HOME}/lib/openbabel/include/openbabel-2.0 -I${LIBELA_HOME}/src/lib/eigen3 -I${LIBELA_HOME}/lib/nlopt/include -I${LIBELA_HOME}/lib/gsl/include
+LDFLAGS= -lgsl -lgslcblas -lm -lopenbabel -lz -lnlopt_cxx -lgomp -L${LIBELA_HOME}/lib/openbabel/lib -L${LIBELA_HOME}/lib/nlopt/lib -L${LIBELA_HOME}/lib/gsl/lib
+SOURCES=Conformer.cpp COORD_MC.cpp Docker.cpp Energy2.cpp Gaussian.cpp Grid.cpp main.cpp Mol2.cpp Optimizer.cpp PARSER.cpp RAND.cpp RunEngine.cpp SA.cpp WRITER.cpp MC.cpp
+OBJECTS=\$(SOURCES:.cpp=.o)
+EXECUTABLE=../../bin/McLiBELa.openmp
+
+all: \$(SOURCES) \$(EXECUTABLE)
+
+\$(EXECUTABLE): \$(OBJECTS)
+	\$(CC) \$(OBJECTS) -o \$@ \$(LDFLAGS)
+
+.cpp.o:
+	\$(CC) \$(CFLAGS) $< -o \$@
+
+clean:
+	rm \$(OBJECTS)
+eof
+
+make
+cd ../
+
+# compiling LiBELA with GUI
+

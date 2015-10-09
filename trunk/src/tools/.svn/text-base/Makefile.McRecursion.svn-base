@@ -1,0 +1,19 @@
+#!/bin/bash
+
+CC=icpc
+CFLAGS=-c -O3 -ffast-math -w -DBUILD=0 -I/usr/local/openbabel/include/openbabel-2.0 -I/usr/include/eigen3
+LDFLAGS=-lz -lopenbabel -L/usr/local/openbabel/lib -lgsl -lgslcblas -lm
+SOURCES=../COORD_MC.cpp ../Mol2.cpp  ../PARSER.cpp  ../WRITER.cpp ../Grid.cpp ../Conformer.cpp ../Energy2.cpp recursion.cpp MCRecursion.cpp
+OBJECTS=$(SOURCES:.cpp=.o)
+EXECUTABLE=McRecursion
+
+all: $(SOURCES) $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS)
+	$(CC) $(OBJECTS) -o $@ $(LDFLAGS)
+
+.cpp.o:
+	$(CC) $(CFLAGS) $< -o $@
+
+clean:
+	rm $(OBJECTS) $(EXECUTABLE)

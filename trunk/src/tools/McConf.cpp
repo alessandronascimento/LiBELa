@@ -1,0 +1,65 @@
+#include <iostream>
+#include <cstdlib>
+#include <vector>
+#include "../LiBELa/Mol2.cpp"
+#include "../LiBELa/Conformer.cpp"
+#include "../LiBELa/PARSER.cpp"
+#include "../LiBELa/WRITER.cpp"
+#include "../LiBELa/COORD_MC.cpp"
+
+using namespace std;
+
+int main(int argc, char* argv[]) {
+
+    printf("****************************************************************************************************\n");
+    printf("****************************************************************************************************\n");
+    printf("*                            McConf - Conformer Generation for McLiBELa                            *\n");
+    printf("*                                                                                                  *\n");
+    printf("* University of Sao Paulo                                                                          *\n");
+    printf("* More Info:                                                                                       *\n");
+    printf("*      http://www.biotechmol.ifsc.usp.br/                                                          *\n");
+    printf("*                                                                                                  *\n");
+    printf("****************************************************************************************************\n");
+    printf("****************************************************************************************************\n");
+
+
+    if (argc < 2){
+            printf("Usage: %s file.mol2 [input_file]\n", argv[0]);
+            exit(1);
+    }
+
+    PARSER* Input = new PARSER;
+
+    if (argc > 2){
+        Input->set_parameters(argv[2]);
+    }
+
+    Mol2* Mol = new Mol2(Input, string(argv[1]));
+
+    Conformer* Conf = new Conformer;
+    if (Input->conformer_generator == "GA"){
+        Conf->generate_conformers_GA(Input, Mol,string(argv[1]));
+    }
+    else {
+        Conf->generate_conformers_WRS(Input, Mol, string(argv[1]));
+    }
+
+    WRITER* Writer = new WRITER("McConf", Input);
+
+    COORD_MC* Coord = new COORD_MC;
+
+    printf("%8.8s %8.8s %8.8s\n", "Conformation", "Energy", "RMSD");
+
+    for (unsigned i=0; i<Mol->mcoords.size(); i++){
+            double rmsd = Coord->compute_rmsd(Mol->xyz, Mol->mcoords[i], Mol->N);
+            printf("%8d %8.3f %8.3f\n", i, Mol->conformer_energies[i], rmsd);
+            Writer->writeMol2(Mol, Mol->mcoords[i], Mol->conformer_energies[i], 0.0);
+    }
+    delete Writer;
+    delete Conf;
+    delete Mol;
+    delete Input;
+    delete Coord;
+
+    return 0;
+}

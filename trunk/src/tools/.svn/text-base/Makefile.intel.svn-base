@@ -1,0 +1,19 @@
+#!/bin/bash
+
+CC=icpc
+CFLAGS=-c -O3 -ffast-math -DNLOPT -w -I/usr/local/intel_libs/nlopt/include/ -I/usr/local/intel_libs/zlib -I/usr/local/intel_libs/gsl_1.15/include -I/usr/local/openbabel/include/openbabel-2.0
+LDFLAGS= -lgsl -lgslcblas -lm -lopenbabel -lz -lnlopt_cxx -static -L/usr/local/intel_libs/zlib/lib -L/usr/local/intel_libs/nlopt/lib -L/usr/local/intel_libs/
+SOURCES=Conformer.cpp COORD_MC.cpp Docker.cpp  ENERGY.cpp  Gaussian.cpp  Mol2.cpp  Optimizer.cpp  PARSER.cpp  PRMTOP.cpp  RAND.cpp  RunEngine.cpp  WRITER.cpp  main.cpp
+OBJECTS=$(SOURCES:.cpp=.o)
+EXECUTABLE=McLiBELa.intel
+
+all: $(SOURCES) $(EXECUTABLE)
+	
+$(EXECUTABLE): $(OBJECTS) 
+	$(CC) $(OBJECTS) -o $@ $(LDFLAGS)
+
+.cpp.o:
+	$(CC) $(CFLAGS) $< -o $@
+
+clean:
+	rm $(OBJECTS)
