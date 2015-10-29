@@ -1,7 +1,8 @@
 #!/bin/bash
 
 
-CXX=`which g++`
+CXX=`which icpc`
+CC=`which icc`
 LIBELA_HOME=$PWD
 CMAKE=`which cmake`;
 QMAKE=`which qmake`;
@@ -9,6 +10,9 @@ GSL_DIR="null";
 NLOPT_DIR="null";
 OPENBABEL_DIR="null";
 HAS_MPI=false;
+
+export CXX=$CXX
+export CC=$CC
 
 if [ CMAKE == "" ];
 then
@@ -84,7 +88,7 @@ cat > Makefile << eof
 #!/bin/bash
 CC=$CXX
 CFLAGS=-c -O3 -ffast-math -w -DBUILD=2 -fopenmp -I${LIBELA_HOME}/lib/openbabel/include/openbabel-2.0 -I${LIBELA_HOME}/src/lib/eigen3 -I${LIBELA_HOME}/lib/nlopt/include -I${LIBELA_HOME}/lib/gsl/include
-LDFLAGS= -lgsl -lgslcblas -lm -lopenbabel -lz -lnlopt_cxx -lgomp -L${LIBELA_HOME}/lib/openbabel/lib -L${LIBELA_HOME}/lib/nlopt/lib -L${LIBELA_HOME}/lib/gsl/lib
+LDFLAGS= -lgsl -lgslcblas -lm -lopenbabel -lz -lnlopt_cxx -liomp5 -L${LIBELA_HOME}/lib/openbabel/lib -L${LIBELA_HOME}/lib/nlopt/lib -L${LIBELA_HOME}/lib/gsl/lib
 SOURCES=Conformer.cpp COORD_MC.cpp Docker.cpp Energy2.cpp Gaussian.cpp Grid.cpp main.cpp Mol2.cpp Optimizer.cpp PARSER.cpp RAND.cpp RunEngine.cpp SA.cpp WRITER.cpp MC.cpp
 OBJECTS=\$(SOURCES:.cpp=.o)
 EXECUTABLE=../../bin/McLiBELa.openmp

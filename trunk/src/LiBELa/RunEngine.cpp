@@ -958,7 +958,7 @@ void TEMP_SCHEME::mcr_run(){
             }
         }
 
-        sprintf(info, "MCR %7.7s %7.7s %7.7s %7.7s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)");
+        sprintf(info, "MCR %7.7s %7.7s %7.7s %7.7s %7.7s %7.7s %8.8s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "ln<ene>", "E(ln<e>)");
         Writer->print_info(info);
 
         double bt;                      // MC Recursion "effective" temperature (bt) fot ith evaluation;
@@ -971,12 +971,12 @@ void TEMP_SCHEME::mcr_run(){
             }
             if (Input->use_grids){
                 EqMC->run(Grids, RefLig , LIG, LIG->xyz, Input, bt);
-                sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation);
+                sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation, log(EqMC->average_energy), (1/EqMC->average_energy)*EqMC->energy_standard_deviation);
                 Writer->print_info(info);
             }
             else {
                 EqMC->run(REC, RefLig , LIG, LIG->xyz, Input, bt);
-                sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation);
+                sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation, log(EqMC->average_energy), (1/EqMC->average_energy)*EqMC->energy_standard_deviation);
                 Writer->print_info(info);
             }
         }
@@ -989,7 +989,7 @@ void TEMP_SCHEME::mcr_run(){
                     bt = bt*Input->mcr_coefficients[j];
                 }
                 EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, bt);
-                sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation);
+                sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation, log(EqMC->average_energy), (1/EqMC->average_energy)*EqMC->energy_standard_deviation);
                 Writer->print_info(info);
             }
         }

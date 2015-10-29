@@ -71,7 +71,7 @@ PARSER::PARSER(){
 	this->sort_by_energy = false;
     this->dielectric_model = "r";
     this->only_score = false;
-    this->solvation_alpha = 0.4;
+    this->solvation_alpha = 0.2;
     this->solvation_beta = -0.005;
     this->seed = (rand()/(RAND_MAX + 1.0));
     this->ligsim = false;
