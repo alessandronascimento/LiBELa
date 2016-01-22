@@ -173,6 +173,8 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             }
             else{
                 nReject++;
+                sum_x += energy;
+                sum_xsquared += (energy*energy);
             }
         }
     }
@@ -203,11 +205,11 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     Writer->print_info(info);
     Writer->print_line();
 
-    this->average_energy = double(sum_x/Input->number_steps);
-    this->energy_standard_deviation = (sum_xsquared - ((sum_x*sum_x)/Input->number_steps))/(Input->number_steps-1.0);
+    this->average_energy = double(sum_x/(Input->number_steps+nReject));
+    this->energy_standard_deviation = (sum_xsquared - ((sum_x*sum_x)/(Input->number_steps+nReject)))/(Input->number_steps+nReject-1.0);
     this->energy_standard_deviation = sqrt(this->energy_standard_deviation);
 
-    sprintf(info, "Average Monte Carlo energy: %10.3f +- (%10.3f)", this->average_energy, this->energy_standard_deviation);
+    sprintf(info, "Average Monte Carlo energy: %10.3f +- %10.3f (s/sqrt(N)=%10.3f) @ %7.2f K", this->average_energy, this->energy_standard_deviation, this->energy_standard_deviation/sqrt(Input->number_steps), T);
     Writer->print_info(info);
     Writer->print_line();
 
@@ -465,6 +467,8 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
                 }
                 else{
                     nReject++;
+                    sum_x += energy;
+                    sum_xsquared += (energy*energy);
                 }
             }
 
@@ -506,11 +510,11 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
         Writer->print_info(info);
         Writer->print_line();
 
-        this->average_energy = double(sum_x/Input->number_steps);
-        this->energy_standard_deviation = (sum_xsquared - ((sum_x*sum_x)/Input->number_steps))/(Input->number_steps-1.0);
+        this->average_energy = double(sum_x/(Input->number_steps+nReject));
+        this->energy_standard_deviation = (sum_xsquared - ((sum_x*sum_x)/(Input->number_steps+nReject)))/(Input->number_steps+nReject-1.0);
         this->energy_standard_deviation = sqrt(this->energy_standard_deviation);
 
-        sprintf(info, "Average Monte Carlo energy: %10.3f kcal/mol +- (%10.3f kcal/mol)", this->average_energy, this->energy_standard_deviation);
+        sprintf(info, "Average Monte Carlo energy: %10.3f kcal/mol +- (%10.3f kcal/mol) @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
         Writer->print_info(info);
         Writer->print_line();
     }

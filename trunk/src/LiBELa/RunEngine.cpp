@@ -24,7 +24,7 @@ TEMP_SCHEME::TEMP_SCHEME(int ac, char *av[]){
     LIG = new Mol2(Input, Input->lig_mol2);
     RefLig = new Mol2(Input, Input->reflig_mol2);
 
-    RAND Rand;
+//    RAND Rand;
 
     Ene = new Energy2(Input);
 }
@@ -722,7 +722,8 @@ void TEMP_SCHEME::dock_parallel(){
     Writer->print_info(info);
     vector<string> ligand_list;
 
-    /* Here, we read the multifile file and parse the files of the molecules
+
+/* Here, we read the multifile file and parse the files of the molecules
  * to be docked into a std::vector named ligand_list.
  */
 
@@ -743,7 +744,7 @@ void TEMP_SCHEME::dock_parallel(){
 
         multifile.close();
 
-        /*
+/*
  * Here the parallel processing begins. Firstly, a parallel section is created with a pragma
  * indicating the number of parallel threads as defined in the input file.
  * After, the molecule objects are created and conformers are calculated using OpenBabel.
@@ -958,10 +959,13 @@ void TEMP_SCHEME::mcr_run(){
             }
         }
 
-        sprintf(info, "MCR %7.7s %7.7s %7.7s %7.7s %7.7s %7.7s %8.8s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "ln<ene>", "E(ln<e>)");
+        sprintf(info, "MCR %7.7s %7.7s %7.7s %7.7s %7.7s %7.7s %8.8s %9.9s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "ln<ene>", "E(ln<e>)", "-kT*ln(W)", "Err");
         Writer->print_info(info);
 
         double bt;                      // MC Recursion "effective" temperature (bt) fot ith evaluation;
+        double k = 0.0019858775203792202;
+        double Wcum=0.0;
+        double WcumErr=0.0;
 
         for (int i=0; i<Input->mcr_size; i++){
             Input->bi = Input->mcr_coefficients[i];
@@ -971,15 +975,21 @@ void TEMP_SCHEME::mcr_run(){
             }
             if (Input->use_grids){
                 EqMC->run(Grids, RefLig , LIG, LIG->xyz, Input, bt);
-                sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation, log(EqMC->average_energy), (1/EqMC->average_energy)*EqMC->energy_standard_deviation);
+                sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation/sqrt(Input->number_steps), log(EqMC->average_energy), (1/EqMC->average_energy)*EqMC->energy_standard_deviation/sqrt(Input->number_steps), (-k*Input->temp*log(EqMC->average_energy)), -k*Input->temp*(1/EqMC->average_energy)*EqMC->energy_standard_deviation);
                 Writer->print_info(info);
             }
             else {
                 EqMC->run(REC, RefLig , LIG, LIG->xyz, Input, bt);
-                sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation, log(EqMC->average_energy), (1/EqMC->average_energy)*EqMC->energy_standard_deviation);
+                sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation/sqrt(Input->number_steps), log(EqMC->average_energy), (1/EqMC->average_energy)*(EqMC->energy_standard_deviation/sqrt(Input->number_steps)), (-k*Input->temp*log(EqMC->average_energy)), -k*Input->temp*(1/EqMC->average_energy)*EqMC->energy_standard_deviation);
                 Writer->print_info(info);
             }
+            Wcum+= (-k*Input->temp*log(EqMC->average_energy));
+            WcumErr += (-k*Input->temp*(1/EqMC->average_energy)*EqMC->energy_standard_deviation);
         }
+
+        sprintf(info, "MCR: Sum of -kT*ln(W) = %10.4f  +-  %10.4f",  Wcum, WcumErr);
+        Writer->print_info(info);
+
 
 
         if (Input->ligsim){
