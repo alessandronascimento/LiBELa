@@ -983,14 +983,21 @@ void TEMP_SCHEME::mcr_run(){
                 sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation/sqrt(Input->number_steps), log(EqMC->average_energy), (1/EqMC->average_energy)*(EqMC->energy_standard_deviation/sqrt(Input->number_steps)), (-k*Input->temp*log(EqMC->average_energy)), -k*Input->temp*(1/EqMC->average_energy)*EqMC->energy_standard_deviation);
                 Writer->print_info(info);
             }
-            Wcum+= (-k*Input->temp*log(EqMC->average_energy));
-            WcumErr += (-k*Input->temp*(1/EqMC->average_energy)*EqMC->energy_standard_deviation);
+            Wcum+= exp(-(Input->mcr_coefficients[i]-1.0)*EqMC->average_energy/(k*bt));
+//            WcumErr += (-k*Input->temp*(1/EqMC->average_energy)*EqMC->energy_standard_deviation);
         }
 
-        sprintf(info, "MCR: Sum of -kT*ln(W) = %10.4f  +-  %10.4f",  Wcum, WcumErr);
+        double average_W = Wcum/Input->mcr_size;
+
+        sprintf(info, "MCR: <e^([-b-1]*U/kT)> = %10.4f",  average_W);
+        Writer->print_info(info);
+
+        sprintf(info, "MCR: -kT ln W = %10.4f",  (-k*Input->temp*log(average_W)));
         Writer->print_info(info);
 
 
+        Wcum=0.0;
+        WcumErr=0.0;
 
         if (Input->ligsim){
             for (int i=0; i<Input->mcr_size; i++){
@@ -999,9 +1006,15 @@ void TEMP_SCHEME::mcr_run(){
                     bt = bt*Input->mcr_coefficients[j];
                 }
                 EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, bt);
-                sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation, log(EqMC->average_energy), (1/EqMC->average_energy)*EqMC->energy_standard_deviation);
+                sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation/sqrt(Input->number_steps), log(EqMC->average_energy), (1/EqMC->average_energy)*(EqMC->energy_standard_deviation/sqrt(Input->number_steps)), (-k*Input->temp*log(EqMC->average_energy)), -k*Input->temp*(1/EqMC->average_energy)*EqMC->energy_standard_deviation);
                 Writer->print_info(info);
+
+                Wcum+= (-k*Input->temp*log(EqMC->average_energy));
+                WcumErr += (-k*Input->temp*(1/EqMC->average_energy)*EqMC->energy_standard_deviation);
             }
+
+            sprintf(info, "MCR: Sum of -kT*ln(W) = %10.4f  +-  %10.4f",  Wcum, WcumErr);
+            Writer->print_info(info);
         }
 
         delete EqMC;

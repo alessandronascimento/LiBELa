@@ -6,7 +6,7 @@ QT += core \
     concurrent
 DEFINES += HAS_GUI
 DEFINES += STATIC
-DEFINES += BUILD=390
+DEFINES += BUILD=2
 HEADERS += ../LiBELa/GUI/DockWidget.h \
     ../LiBELa/GUI/GUI.h \
     ../LiBELa/GUI/QtWriter.h \
@@ -17,7 +17,7 @@ HEADERS += ../LiBELa/GUI/DockWidget.h \
     ../LiBELa/COORD_MC.h \
     ../LiBELa/Deal.h \
     ../LiBELa/Docker.h \
-    ../LiBELa/ENERGY.h \
+#    ../LiBELa/ENERGY.h \
     ../LiBELa/Gaussian.h \
     ../LiBELa/McLiBELa.h \
     ../LiBELa/Mol2.h \
@@ -41,7 +41,7 @@ SOURCES += ../LiBELa/GUI/DockWidget.cpp \
     ../LiBELa/COORD_MC.cpp \
     ../LiBELa/Deal.cpp \
     ../LiBELa/Docker.cpp \
-    ../LiBELa/ENERGY.cpp \
+#    ../LiBELa/ENERGY.cpp \
     ../LiBELa/Gaussian.cpp \
     ../LiBELa/Mol2.cpp \
     ../LiBELa/MC.cpp \
@@ -55,17 +55,21 @@ SOURCES += ../LiBELa/GUI/DockWidget.cpp \
     ../LiBELa/Energy2.cpp
 RESOURCES += ../LiBELa/GUI/GUI.qrc
 INCLUDEPATH += ../../lib/openbabel/include/openbabel-2.0 \
-    ../../eigen3 \
-    ../../nlopt/include \
-    ../../gsl/include 
+    ../lib/eigen3 \
+    ../lib/nlopt/include \
+    ../lib/gsl/include
 LIBS += -lnlopt_cxx \
-    -L ../../lib/nlopt/lib \
-    -L ../../lib/openbabel/lib \
-    -L ../../lib/gsl/lib \
+    -L../lib/nlopt/lib \
+    -L../lib/openbabel/lib \
+    -L../lib/gsl/lib \
     -lopenbabel \
     -lz \
     -lgsl \
     -lgslcblas \
     -lm \
     -lgomp
+#    -liomp5
+#QMAKE_CXX = /opt/intel/composer_xe_2015.3.187/bin/intel64/icpc
 QMAKE_CXXFLAGS += -fopenmp -w -ffast-math -O3 -static
+OTHER_FILES += ../tools/binning.cpp \
+    ../tools/FESummation.cpp
