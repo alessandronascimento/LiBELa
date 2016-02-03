@@ -964,8 +964,8 @@ void TEMP_SCHEME::mcr_run(){
 
         double bt;                      // MC Recursion "effective" temperature (bt) fot ith evaluation;
         double k = 0.0019858775203792202;
-        double Wcum=0.0;
-        double WcumErr=0.0;
+
+        double cum_W = 0.0;
 
         for (int i=0; i<Input->mcr_size; i++){
             Input->bi = Input->mcr_coefficients[i];
@@ -983,21 +983,22 @@ void TEMP_SCHEME::mcr_run(){
                 sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation/sqrt(Input->number_steps), log(EqMC->average_energy), (1/EqMC->average_energy)*(EqMC->energy_standard_deviation/sqrt(Input->number_steps)), (-k*Input->temp*log(EqMC->average_energy)), -k*Input->temp*(1/EqMC->average_energy)*EqMC->energy_standard_deviation);
                 Writer->print_info(info);
             }
-            Wcum+= exp(-(Input->mcr_coefficients[i]-1.0)*EqMC->average_energy/(k*bt));
-//            WcumErr += (-k*Input->temp*(1/EqMC->average_energy)*EqMC->energy_standard_deviation);
+            sprintf(info, "MCR: -kT ln ( <e^([-b-1]*U/kT)> ) = %10.4Lf",  -k*Input->temp*log(EqMC->Boltzmann_weighted_average_energy));
+            Writer->print_info(info);
+            cum_W += (-k*Input->temp*log(EqMC->Boltzmann_weighted_average_energy));
         }
 
-        double average_W = Wcum/Input->mcr_size;
-
-        sprintf(info, "MCR: <e^([-b-1]*U/kT)> = %10.4f",  average_W);
+        Writer->print_line();
+        sprintf(info, "MCR: SUM of { -kT ln [ <e^([-b-1]*U/kT)> ] } = %10.4f",  cum_W);
         Writer->print_info(info);
-
-        sprintf(info, "MCR: -kT ln W = %10.4f",  (-k*Input->temp*log(average_W)));
-        Writer->print_info(info);
+        Writer->print_line();
 
 
-        Wcum=0.0;
-        WcumErr=0.0;
+
+
+
+        cum_W =0.0;
+
 
         if (Input->ligsim){
             for (int i=0; i<Input->mcr_size; i++){
@@ -1009,12 +1010,15 @@ void TEMP_SCHEME::mcr_run(){
                 sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation/sqrt(Input->number_steps), log(EqMC->average_energy), (1/EqMC->average_energy)*(EqMC->energy_standard_deviation/sqrt(Input->number_steps)), (-k*Input->temp*log(EqMC->average_energy)), -k*Input->temp*(1/EqMC->average_energy)*EqMC->energy_standard_deviation);
                 Writer->print_info(info);
 
-                Wcum+= (-k*Input->temp*log(EqMC->average_energy));
-                WcumErr += (-k*Input->temp*(1/EqMC->average_energy)*EqMC->energy_standard_deviation);
-            }
+                sprintf(info, "MCR: -kT ln ( <e^([-b-1]*U/kT)> ) = %10.4Lf",  -k*Input->temp*log(EqMC->Boltzmann_weighted_average_energy));
+                Writer->print_info(info);
+                cum_W += (-k*Input->temp*log(EqMC->Boltzmann_weighted_average_energy));
 
-            sprintf(info, "MCR: Sum of -kT*ln(W) = %10.4f  +-  %10.4f",  Wcum, WcumErr);
+            }
+            Writer->print_line();
+            sprintf(info, "MCR: SUM of { -kT ln [ <e^([-b-1]*U/kT)> ] } = %10.4f",  cum_W);
             Writer->print_info(info);
+            Writer->print_line();
         }
 
         delete EqMC;

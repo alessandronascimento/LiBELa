@@ -214,12 +214,11 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     this->average_energy = double(sum_x/(Input->number_steps+nReject));
     this->energy_standard_deviation = ((sum_xsquared/(Input->number_steps+nReject)) - (this->average_energy*this->average_energy));
     this->energy_standard_deviation = sqrt(this->energy_standard_deviation/(Input->number_steps+nReject));
+    this->Boltzmann_weighted_average_energy = sum_Boltzmann_ene/(Input->number_steps+nReject);
 
     sprintf(info, "Average Monte Carlo energy: %10.3f +- %10.3f (s/sqrt(N)=%10.3f) @ %7.2f K", this->average_energy, this->energy_standard_deviation, this->energy_standard_deviation/sqrt(Input->number_steps), T);
     Writer->print_info(info);
 
-    sprintf(info, "Average Boltzmann weighted energies: %10.3f @ %7.2f K", sum_Boltzmann_ene/(Input->number_steps+nReject), T);
-    Writer->print_info(info);
     Writer->print_line();
 
 }
@@ -231,6 +230,9 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
 
         double sum_x = 0.0;
         double sum_xsquared = 0.0;
+        long double sum_Boltzmann_ene = 0.0;
+
+        double k=0.0019858775203792202;
 
         this->xyz = xyz;
         int nReject = 0;
@@ -296,6 +298,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                 count++;
                 sum_x += energy;
                 sum_xsquared += (energy*energy);
+                sum_Boltzmann_ene += exp(((-Input->bi-1.0)*energy)/(k*T));
             }
             else{
                 p = this->Boltzmman(energy, new_energy, T, Input->bi);
@@ -315,6 +318,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                     count++;
                     sum_x += energy;
                     sum_xsquared += (energy*energy);
+                    sum_Boltzmann_ene += exp(((-Input->bi-1.0)*energy)/(k*T));
                 }
                 else{
                     nReject++;
@@ -336,6 +340,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         this->average_energy = double(sum_x/Input->number_steps);
         this->energy_standard_deviation = ((sum_xsquared/(Input->number_steps+nReject)) - (this->average_energy*this->average_energy));
         this->energy_standard_deviation = sqrt(this->energy_standard_deviation/(Input->number_steps+nReject));
+        this->Boltzmann_weighted_average_energy = sum_Boltzmann_ene/(Input->number_steps+nReject);
     }
 }
 
@@ -346,6 +351,9 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
 
     double sum_x = 0.0;
     double sum_xsquared = 0.0;
+    long double sum_Boltzmann_ene = 0.0;
+
+    double k=0.0019858775203792202;
 
     this->MaxMin.push_back(0.0);
     this->MaxMin.push_back(0.0);
@@ -457,6 +465,7 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
                 count++;
                 sum_x += energy;
                 sum_xsquared += (energy*energy);
+                sum_Boltzmann_ene += exp(((-Input->bi-1.0)*energy)/(k*T));
             }
             else{
                 p = this->Boltzmman(energy, new_energy, T, Input->bi);
@@ -473,6 +482,7 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
                     count++;
                     sum_x += energy;
                     sum_xsquared += (energy*energy);
+                    sum_Boltzmann_ene += exp(((-Input->bi-1.0)*energy)/(k*T));
                 }
                 else{
                     nReject++;
@@ -522,6 +532,7 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
         this->average_energy = double(sum_x/(Input->number_steps+nReject));
         this->energy_standard_deviation = ((sum_xsquared/(Input->number_steps+nReject)) - (this->average_energy*this->average_energy));
         this->energy_standard_deviation = sqrt(this->energy_standard_deviation/(Input->number_steps+nReject));
+        this->Boltzmann_weighted_average_energy = sum_Boltzmann_ene/(Input->number_steps+nReject);
 
         sprintf(info, "Average Monte Carlo energy: %10.3f kcal/mol +- (%10.3f kcal/mol) @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
         Writer->print_info(info);

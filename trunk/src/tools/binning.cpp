@@ -117,10 +117,12 @@ int main(int argc, char* argv[]){
   int count=0;
   long double Sum_pi_ln_pi=0.0;
   long double Zcomp = 0.0;
+  long double Zbind = 0.0;
   long double dH = 0.0;
   for (int i=0; i<nbins; i++){
         for (int j=0; j<nbins; j++){
 		Zcomp += exp(-energies[i][j]/(0.001987*Temp)) * (1.0*matrix[i][j]/N);
+        Zbind += exp(-binding_energies[i][j]/(0.001987*Temp)) * (1.0*matrix[i][j]/N);
 		dH += binding_energies[i][j]*(1.0*matrix[i][j]/N);
         if (matrix[i][j] > 0){
             count++;
@@ -136,11 +138,13 @@ int main(int argc, char* argv[]){
  long double dF = -0.001987*Temp*log(Zcomp/Zlig);
 
  printf("Z_comp = %10.6LG\n", Zcomp);
+ printf("Z_bind = %10.6LG\n", Zbind);
  printf("Z_lig  = %10.6LG for %d ligand conformers found.\n", Zlig, conformer_energies.size());
- printf("F_lig  = %10.6LG kcal/mol\n", dF);
+ printf("F_bind [-kT ln(Zcomp/Zlig)] = %10.6LG kcal/mol\n", dF);
+ printf("F_bind [-kT ln(Zbind)] = %10.6LG kcal/mol\n", -0.001987*Temp*log(Zbind));
  printf("dH     = %10.6LG kcal/mol\n", dH);
- printf("TdS    = %10.6LG kcal/mol\n", -(dF-dH));
- printf("S      = %10.6LG kcal/mol\n", -0.001987*Temp*Sum_pi_ln_pi);
+ printf("TdS -(F_bind-dH) = %10.6LG kcal/mol\n", -(dF-dH));
+ printf("S [-kT pi ln(pi)] = %10.6LG kcal/mol\n", -0.001987*Temp*Sum_pi_ln_pi);
  printf("Number of states: %6d out of %6d possible states (%5.3f%%).\n", count, (nbins*nbins), (count*1.0/(nbins*nbins)));
  
  return 0;

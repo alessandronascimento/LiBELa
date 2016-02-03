@@ -19,6 +19,7 @@ public:
     vector<vector<double> > xyz;
     double average_energy;
     double energy_standard_deviation;
+    long double Boltzmann_weighted_average_energy;
 
     struct step_t{
         vector<vector<double> > xyz;
