@@ -959,13 +959,15 @@ void TEMP_SCHEME::mcr_run(){
             }
         }
 
-        sprintf(info, "MCR %7.7s %7.7s %7.7s %7.7s %7.7s %7.7s %8.8s %9.9s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "ln<ene>", "E(ln<e>)", "-kT*ln(W)", "Err");
+        sprintf(info, "MCR %7.7s %10.10s %10.10s %10.10s %10.10s %10.10s %11.11s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "-kT ln(W)", "Volume(A^3)");
         Writer->print_info(info);
 
         double bt;                      // MC Recursion "effective" temperature (bt) fot ith evaluation;
         double k = 0.0019858775203792202;
 
         double cum_W = 0.0;
+        double max_vol=0.0;
+        double volume;
 
         for (int i=0; i<Input->mcr_size; i++){
             Input->bi = Input->mcr_coefficients[i];
@@ -973,50 +975,68 @@ void TEMP_SCHEME::mcr_run(){
             for (int j=0; j < i; j++){
                 bt = bt*Input->mcr_coefficients[j];
             }
+
             if (Input->use_grids){
                 EqMC->run(Grids, RefLig , LIG, LIG->xyz, Input, bt);
-                sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation/sqrt(Input->number_steps), log(EqMC->average_energy), (1/EqMC->average_energy)*EqMC->energy_standard_deviation/sqrt(Input->number_steps), (-k*Input->temp*log(EqMC->average_energy)), -k*Input->temp*(1/EqMC->average_energy)*EqMC->energy_standard_deviation);
-                Writer->print_info(info);
             }
             else {
                 EqMC->run(REC, RefLig , LIG, LIG->xyz, Input, bt);
-                sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation/sqrt(Input->number_steps), log(EqMC->average_energy), (1/EqMC->average_energy)*(EqMC->energy_standard_deviation/sqrt(Input->number_steps)), (-k*Input->temp*log(EqMC->average_energy)), -k*Input->temp*(1/EqMC->average_energy)*EqMC->energy_standard_deviation);
-                Writer->print_info(info);
             }
-            sprintf(info, "MCR: -kT ln ( <e^([-b-1]*U/kT)> ) = %10.4Lf",  -k*Input->temp*log(EqMC->Boltzmann_weighted_average_energy));
+
+            volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
+
+            sprintf(info, "MCR %7d %10.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation,
+                    -k*Input->temp*log(EqMC->Boltzmann_weighted_average_energy), volume);
             Writer->print_info(info);
+            Writer->print_line();
+
             cum_W += (-k*Input->temp*log(EqMC->Boltzmann_weighted_average_energy));
+            if (volume > max_vol){
+                max_vol=volume;
+            }
         }
 
         Writer->print_line();
-        sprintf(info, "MCR: SUM of { -kT ln [ <e^([-b-1]*U/kT)> ] } = %10.4f",  cum_W);
+        sprintf(info, "MCR: SUM of { -kT ln [ <e^([-b-1]*U/kT)> ] } = %10.4g",  cum_W);
         Writer->print_info(info);
+
+        sprintf(info, "MCR: Volume: %10.4g.  -kT ln(volume) = %10.4g",  volume, -k*Input->temp*log(volume));
+        Writer->print_info(info);
+
         Writer->print_line();
 
 
+        double cum_W_lig = 0.0;
+        max_vol = 0.0;
+        volume = 0.0;
 
 
-
-        cum_W =0.0;
-
+        bt = Input->temp;
 
         if (Input->ligsim){
             for (int i=0; i<Input->mcr_size; i++){
                 Input->bi = Input->mcr_coefficients[i];
+                bt = Input->temp;
                 for (int j=0; j < i; j++){
                     bt = bt*Input->mcr_coefficients[j];
                 }
                 EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, bt);
-                sprintf(info, "MCR %7d %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation/sqrt(Input->number_steps), log(EqMC->average_energy), (1/EqMC->average_energy)*(EqMC->energy_standard_deviation/sqrt(Input->number_steps)), (-k*Input->temp*log(EqMC->average_energy)), -k*Input->temp*(1/EqMC->average_energy)*EqMC->energy_standard_deviation);
+                volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
+                sprintf(info, "MCR %7d %10.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation,
+                        -k*Input->temp*log(EqMC->Boltzmann_weighted_average_energy), volume);
                 Writer->print_info(info);
 
-                sprintf(info, "MCR: -kT ln ( <e^([-b-1]*U/kT)> ) = %10.4Lf",  -k*Input->temp*log(EqMC->Boltzmann_weighted_average_energy));
-                Writer->print_info(info);
-                cum_W += (-k*Input->temp*log(EqMC->Boltzmann_weighted_average_energy));
-
+                cum_W_lig += (-k*Input->temp*log(EqMC->Boltzmann_weighted_average_energy));
+                if (volume > max_vol){
+                    max_vol=volume;
+                }
             }
+
             Writer->print_line();
-            sprintf(info, "MCR: SUM of { -kT ln [ <e^([-b-1]*U/kT)> ] } = %10.4f",  cum_W);
+            sprintf(info, "MCR: SUM of { -kT ln [ <e^([-b-1]*U/kT)> ] } for the ligand = %10.4g",  cum_W_lig);
+            Writer->print_info(info);
+
+            sprintf(info, "MCR: Ligand Volume: %10.4g.  -kT ln(volume) = %10.4g",  volume, -k*Input->temp*log(volume));
             Writer->print_info(info);
             Writer->print_line();
         }

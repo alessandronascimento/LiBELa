@@ -143,7 +143,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
             }
             gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, Lig->conformer_energies[step->nconf]);
-            sprintf(info, "%10d %10.3f %10.3f", count, energy, rmsd);
+//            sprintf(info, "%10d %10.3f %10.3f", count, energy, rmsd);
             if (count % Input->mc_stride == 0){
                 sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
                 Writer->print_info(info);
@@ -170,7 +170,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                     Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
                 }
                 gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, Lig->conformer_energies[step->nconf]);
-                sprintf(info, "%10d %10.3f %10.3f", count, energy, rmsd);
+//                sprintf(info, "%10d %10.3f %10.3f", count, energy, rmsd);
                 if (count % Input->mc_stride == 0){
                     sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
                     Writer->print_info(info);
@@ -216,7 +216,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     this->energy_standard_deviation = sqrt(this->energy_standard_deviation/(Input->number_steps+nReject));
     this->Boltzmann_weighted_average_energy = sum_Boltzmann_ene/(Input->number_steps+nReject);
 
-    sprintf(info, "Average Monte Carlo energy: %10.3f +- %10.3f (s/sqrt(N)=%10.3f) @ %7.2f K", this->average_energy, this->energy_standard_deviation, this->energy_standard_deviation/sqrt(Input->number_steps), T);
+    sprintf(info, "Average Monte Carlo energy: %10.3f +- %10.3f @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
     Writer->print_info(info);
 
     Writer->print_line();
@@ -233,6 +233,10 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         long double sum_Boltzmann_ene = 0.0;
 
         double k=0.0019858775203792202;
+
+        for (int i=0; i< 6; i++){
+            this->MaxMin.push_back(0.0);
+        }
 
         this->xyz = xyz;
         int nReject = 0;
@@ -291,10 +295,20 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                 xcom = xcom + step->dx;
                 ycom = ycom + step->dy;
                 zcom = zcom + step->dz;
-                gzprintf(mc_output_lig, "%10d %10.3f %10.3f  %10d %.3lf %.3lf %.3lf \n", count, energy, rmsd, rand, xcom , ycom, zcom);
+                this->MaxMinCM(xcom,ycom,zcom,this->MaxMin);
+
+                gzprintf(mc_output_lig, "%10d %10.3f %10.3f  %10d %.3lf %.3lf %.3lf \n", count, energy, rmsd, step->nconf, xcom , ycom, zcom);
+
+                if (count % Input->mc_stride == 0){
+                    sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
+                    Writer->print_info(info);
+                }
+
+
                 if ((Input->write_mol2) and (count % Input->mc_stride == 0)){
                     Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC.ligsim");
                 }
+
                 count++;
                 sum_x += energy;
                 sum_xsquared += (energy*energy);
@@ -311,7 +325,15 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                     xcom = xcom + step->dx;
                     ycom = ycom + step->dy;
                     zcom = zcom + step->dz;
-                    gzprintf(mc_output_lig, "%10d %10.3f %10.3f  %10d %.3lf %.3lf %.3lf \n", count, energy, rmsd, rand, xcom , ycom, zcom);
+                    this->MaxMinCM(xcom,ycom,zcom,this->MaxMin);
+
+                    gzprintf(mc_output_lig, "%10d %10.3f %10.3f  %10d %.3lf %.3lf %.3lf \n", count, energy, rmsd, step->nconf, xcom , ycom, zcom);
+
+                    if (count % Input->mc_stride == 0){
+                        sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
+                        Writer->print_info(info);
+                    }
+
                     if ((Input->write_mol2) and (count % Input->mc_stride == 0)){
                         Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC.ligsim");
                     }
@@ -322,10 +344,11 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                 }
                 else{
                     nReject++;
+                    sum_x += energy;
+                    sum_xsquared += (energy*energy);
+                    sum_Boltzmann_ene += exp(((-Input->bi-1.0)*energy)/(k*T));
                 }
             }
-
-            sprintf(info, "%10d %10.3f %10.3f", count, energy, rmsd);
         }
 
         gzclose(mc_output_lig);
@@ -337,7 +360,16 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         Writer->print_info(info);
         Writer->print_line();
 
-        this->average_energy = double(sum_x/Input->number_steps);
+        this->XSize = this->MaxMin[1] - this->MaxMin[0];
+        this->YSize = this->MaxMin[3] - this->MaxMin[2];
+        this->ZSize = this->MaxMin[5] - this->MaxMin[4];
+        sprintf(info, "Max Dimensions:");
+        Writer->print_info(info);
+        sprintf(info, "%10.3f %10.3f %10.3f", this->XSize, this->YSize, this->ZSize);
+        Writer->print_info(info);
+        Writer->print_line();
+
+        this->average_energy = double(sum_x/(Input->number_steps+nReject));
         this->energy_standard_deviation = ((sum_xsquared/(Input->number_steps+nReject)) - (this->average_energy*this->average_energy));
         this->energy_standard_deviation = sqrt(this->energy_standard_deviation/(Input->number_steps+nReject));
         this->Boltzmann_weighted_average_energy = sum_Boltzmann_ene/(Input->number_steps+nReject);
@@ -610,6 +642,7 @@ void MC::take_step_flex(PARSER* Input, Mol2* Lig, step_t* step){
     step->dgamma = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
 
     Coord->rototranslate_all(Lig, step->dalpha, step->dbeta, step->dgamma, step->dx, step->dy, step->dz);
+
     ln = gsl_rng_uniform_int(r, Lig->mcoords.size());
     step->nconf = ln;
 
