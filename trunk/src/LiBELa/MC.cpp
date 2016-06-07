@@ -7,8 +7,47 @@ MC::MC(WRITER* _Writer)
     Writer = _Writer;
 }
 
+MC::MC(Mol2* Lig, PARSER* Input){
+
+/*! Here we will use OpenBabel API to generate a OBMol and use it to get and set torsion angles for all
+ * rotatable bonds.
+*/
+
+    mol = this->GetMol(Input->lig_mol2);
+    OBff = OBForceField::FindForceField("GAFF");
+
+#ifdef DEBUG
+    OBff->SetLogFile(&cout);
+    OBff->SetLogLevel(OBFF_LOGLVL_LOW);
+#endif
+
+    if (!OBff){
+        cout << "Could not find FF GAFF!" << endl;
+        exit(1);
+    }
+
+    OBff->Setup(*mol);
+    RotorList.setup(*mol);
+    Rotor = RotorList.BeginRotor(RotorIterator);
+    mol->toInertialFrame();
+
+
+    vector<double> tmp(4);
+    for (int i = 1; i < RotorList.Size() + 1; ++i, Rotor = RotorList.NextRotor(RotorIterator)) {
+        for (unsigned j=0; j < 4; j++){
+            tmp[j] = Rotor->GetDihedralAtoms()[j];
+        }
+        atoms_in_dihedrals.push_back(tmp);
+        tmp.clear();
+    }
+
+}
+
+
 MC::~MC(){
     gsl_rng_free (r);
+    delete OBff;
+    delete mol;
 }
 
 void MC::write_conformers(Mol2* Lig){
@@ -657,9 +696,70 @@ void MC::take_step_flex(PARSER* Input, Mol2* Lig, step_t* step){
     step->xyz = Lig->new_mcoords[ln];
 }
 
+void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
+
+    COORD_MC* Coord = new COORD_MC;
+    double rnumber; //transx, transy, transz, a, b, g, rnumber;
+    int ln=0;
+
+// Do rotation and translation
+
+    rnumber = gsl_rng_uniform(r);
+    step->dx = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
+    rnumber = gsl_rng_uniform(r);
+    step->dy = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
+    rnumber = gsl_rng_uniform(r);
+    step->dz = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
+
+    rnumber = gsl_rng_uniform(r);
+    step->dalpha = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
+    rnumber = gsl_rng_uniform(r);
+    step->dbeta = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
+    rnumber = gsl_rng_uniform(r);
+    step->dgamma = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
+
+    Coord->rototranslate_all(Lig, step->dalpha, step->dbeta, step->dgamma, step->dx, step->dy, step->dz);
+
+
+// Copy coordinates to OBMol
+
+    double* xyz = new double[mol->NumAtoms()*3];
+    for (unsigned i=0; i <mol->NumAtoms(); i++){
+        xyz[3*i] = Lig->new_mcoords[i][0];
+        xyz[(3*i)+1] = Lig->new_mcoords[i][1];
+        xyz[(3*i)+2] = Lig->new_mcoords[i][2];
+    }
+
+    mol->SetCoordinates(xyz);
+
+// Do torsion search
+
+    double current_angle;
+    for (int i=0; i< RotorList.Size(); i++){
+    rnumber = gsl_rng_uniform(r);
+    current_angle = mol->GetTorsion(mol->GetAtom(atoms_in_dihedrals[i][0]), mol->GetAtom(atoms_in_dihedrals[i][1]), mol->GetAtom(atoms_in_dihedrals[i][2]), mol->GetAtom(atoms_in_dihedrals[i][3]));
+    mol->SetTorsion(mol->GetAtom(atoms_in_dihedrals[i][0]), mol->GetAtom(atoms_in_dihedrals[i][1]), mol->GetAtom(atoms_in_dihedrals[i][2]), mol->GetAtom(atoms_in_dihedrals[i][3]),
+            ((current_angle + (-Input->torsion_step + (rnumber*(2*Input->torsion_step))))*PI/180));
+    }
+    step->torsion_angles.push_back(((current_angle + (-Input->torsion_step + (rnumber*(2*Input->torsion_step))))*PI/180));
+
+    xyz = mol->GetCoordinates();
+}
+
+
+
+
 
 double MC::Boltzmman(double ene, double new_ene, double t, double b){
     double de = (new_ene - ene);
     double x = (-(b-1.0)*de) / (0.0019858775203792202*t); // k=0.0019858775203792202 kcal/(mol.K)
     return(exp(x));
+}
+
+vector<vector<double> > copy_from_obmol(OBMol* mymol){
+
+}
+
+double copy_to_obmol(vector<vector<double> > xyz){
+
 }

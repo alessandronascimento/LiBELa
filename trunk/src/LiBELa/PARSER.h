@@ -71,6 +71,8 @@ public:
 	string output;
 //! Defines the rotation step during the MC sorting.
 	double rotation_step;
+//!
+    double torsion_step;
 	//! Maximum dimension in X direction to the sampling box
 	double x_dim;
 	//! Maximum dimension in Y direction to the sampling box

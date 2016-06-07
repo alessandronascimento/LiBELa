@@ -11,6 +11,16 @@
 #include "gsl/gsl_rng.h"
 #include <zlib.h>
 
+#include <openbabel/mol.h>
+#include <openbabel/obconversion.h>
+#include <openbabel/rotor.h>
+#include <openbabel/conformersearch.h>
+#include <openbabel/shared_ptr.h>
+#include <openbabel/forcefield.h>
+#include <openbabel/math/align.h>
+#include <openbabel/math/vector3.h>
+
+
 class MC
 {
 public:
@@ -26,12 +36,24 @@ public:
         double dx, dy, dz;
         double dalpha, dbeta, dgamma;
         int nconf;
+        vector<double> torsion_angles;
     };
 
     gsl_rng * r;
     WRITER* Writer;
     char info[98];
+
+
+    shared_ptr<OBMol> mol;
+    OBForceField* OBff;
+    OBRotorList RotorList;
+    OBRotorIterator RotorIterator;
+    OBRotor *Rotor;
+
+    vector<vector<int> > atoms_in_dihedrals;
+
     MC(WRITER* _Writer);
+    MC(Mol2* Lig, PARSER* Input);
     ~MC();
     void run(Mol2 *Rec, Mol2* Reflig , Mol2* Lig, vector<vector<double> > xyz, PARSER* Input, double T);
     void run(Grid* Grids, Mol2* Reflig , Mol2* Lig, vector<vector<double> > xyz, PARSER* Input, double T);
