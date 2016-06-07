@@ -10,16 +10,14 @@
 #include "WRITER.h"
 #include "gsl/gsl_rng.h"
 #include <zlib.h>
-
 #include <openbabel/mol.h>
 #include <openbabel/obconversion.h>
 #include <openbabel/rotor.h>
 #include <openbabel/conformersearch.h>
 #include <openbabel/shared_ptr.h>
 #include <openbabel/forcefield.h>
-#include <openbabel/math/align.h>
-#include <openbabel/math/vector3.h>
 
+using namespace OpenBabel;
 
 class MC
 {
@@ -37,6 +35,7 @@ public:
         double dalpha, dbeta, dgamma;
         int nconf;
         vector<double> torsion_angles;
+        double internal_energy;
     };
 
     gsl_rng * r;
@@ -60,9 +59,13 @@ public:
     double Boltzmman(double ene, double new_ene, double t, double b);
     void take_step(PARSER* Input, Mol2* Lig, step_t* step);
     void take_step_flex(PARSER* Input, Mol2* Lig, step_t* step);
+    void take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step);
     void write_conformers(Mol2* Lig);
     void MaxMinCM(double XCOM, double YCOM, double ZCOM, vector<double> Max);
     void ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER* Input, double T);
+    double* copy_to_obmol(vector<vector<double> > vec_xyz);
+    vector<vector<double> > copy_from_obmol(shared_ptr<OBMol> mymol);
+    shared_ptr<OBMol> GetMol(const std::string &molfile);
 
 };
 

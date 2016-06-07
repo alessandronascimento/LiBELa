@@ -1,5 +1,7 @@
 #include "MC.h"
 
+using namespace OpenBabel;
+
 MC::MC(WRITER* _Writer)
 {
     srand(rand());
@@ -27,12 +29,12 @@ MC::MC(Mol2* Lig, PARSER* Input){
     }
 
     OBff->Setup(*mol);
-    RotorList.setup(*mol);
+    RotorList.Setup(*mol);
     Rotor = RotorList.BeginRotor(RotorIterator);
-    mol->toInertialFrame();
+    mol->ToInertialFrame();
 
 
-    vector<double> tmp(4);
+    vector<int> tmp(4);
     for (int i = 1; i < RotorList.Size() + 1; ++i, Rotor = RotorList.NextRotor(RotorIterator)) {
         for (unsigned j=0; j < 4; j++){
             tmp[j] = Rotor->GetDihedralAtoms()[j];
@@ -47,7 +49,6 @@ MC::MC(Mol2* Lig, PARSER* Input){
 MC::~MC(){
     gsl_rng_free (r);
     delete OBff;
-    delete mol;
 }
 
 void MC::write_conformers(Mol2* Lig){
@@ -93,7 +94,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
         this->take_step(Input, Lig, step);
     }
 
-    energy = (Energy->compute_ene(Grids, Lig, step->xyz)+Lig->conformer_energies[step->nconf]);
+    energy = (Energy->compute_ene(Grids, Lig, step->xyz)+step->internal_energy);
 
 
 
@@ -120,7 +121,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             this->take_step(Input, Lig, step);
         }
 
-        new_energy = (Energy->compute_ene(Grids, Lig, step->xyz)+Lig->conformer_energies[step->nconf]);
+        new_energy = (Energy->compute_ene(Grids, Lig, step->xyz)+step->internal_energy);
 
         if (new_energy <= energy){
             Lig->mcoords = Lig->new_mcoords;
@@ -163,7 +164,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             this->take_step(Input, Lig, step);
         }
 
-        new_energy = (Energy->compute_ene(Grids, Lig, step->xyz)+Lig->conformer_energies[step->nconf]);
+        new_energy = (Energy->compute_ene(Grids, Lig, step->xyz)+step->internal_energy);
 
         if (new_energy <= energy){
             Lig->mcoords = Lig->new_mcoords;
@@ -694,13 +695,13 @@ void MC::take_step_flex(PARSER* Input, Mol2* Lig, step_t* step){
 
     delete Coord;
     step->xyz = Lig->new_mcoords[ln];
+    step->internal_energy = Lig->conformer_energies[ln];
 }
 
 void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
 
     COORD_MC* Coord = new COORD_MC;
     double rnumber; //transx, transy, transz, a, b, g, rnumber;
-    int ln=0;
 
 // Do rotation and translation
 
@@ -718,18 +719,13 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
     rnumber = gsl_rng_uniform(r);
     step->dgamma = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
 
-    Coord->rototranslate_all(Lig, step->dalpha, step->dbeta, step->dgamma, step->dx, step->dy, step->dz);
+    step->xyz = Coord->rototranslate(this->xyz, Lig, step->dalpha, step->dbeta,step->dgamma, step->dx, step->dy, step->dz);
 
 
 // Copy coordinates to OBMol
 
     double* xyz = new double[mol->NumAtoms()*3];
-    for (unsigned i=0; i <mol->NumAtoms(); i++){
-        xyz[3*i] = Lig->new_mcoords[i][0];
-        xyz[(3*i)+1] = Lig->new_mcoords[i][1];
-        xyz[(3*i)+2] = Lig->new_mcoords[i][2];
-    }
-
+    xyz = this->copy_to_obmol(step->xyz);
     mol->SetCoordinates(xyz);
 
 // Do torsion search
@@ -743,7 +739,10 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
     }
     step->torsion_angles.push_back(((current_angle + (-Input->torsion_step + (rnumber*(2*Input->torsion_step))))*PI/180));
 
-    xyz = mol->GetCoordinates();
+// copy coordinates and internal energy to type step_t
+
+    step->xyz = this->copy_from_obmol(mol);
+    step->internal_energy = OBff->Energy();
 }
 
 
@@ -756,10 +755,54 @@ double MC::Boltzmman(double ene, double new_ene, double t, double b){
     return(exp(x));
 }
 
-vector<vector<double> > copy_from_obmol(OBMol* mymol){
-
+vector<vector<double> > MC::copy_from_obmol(shared_ptr<OBMol> mymol){
+    vector<vector<double > > vec_xyz;
+    double* xyz = new double[mol->NumAtoms()*3];
+    vector<double> tmp (3);
+    xyz = mymol->GetCoordinates();
+    for (unsigned i=0; i <mymol->NumAtoms(); i++){
+        tmp[0] = xyz[3*i];
+        tmp[1] = xyz[(3*i)+1];
+        tmp[2] = xyz[(3*i)+2];
+        vec_xyz.push_back(tmp);
+        tmp.clear();
+    }
+    delete xyz;
+    return vec_xyz;
 }
 
-double copy_to_obmol(vector<vector<double> > xyz){
+double* MC::copy_to_obmol(vector<vector<double> > vec_xyz){
+    double* xyz = new double[vec_xyz.size()*3];
+    for (unsigned i=0; i<vec_xyz.size(); i++){
+        xyz[3*i] = vec_xyz[i][0];
+        xyz[(3*i)+1] = vec_xyz[i][1];
+        xyz[(3*i)+2] = vec_xyz[i][2];
+    }
+    return xyz;
+}
 
+shared_ptr<OBMol> MC::GetMol(const std::string &molfile){
+    // Create the OBMol object.
+    shared_ptr<OBMol> mol(new OBMol);
+
+    // Create the OBConversion object.
+    OBConversion conv;
+    OBFormat *format = conv.FormatFromExt(molfile.c_str());
+    if (!format || !conv.SetInFormat(format)) {
+    std::cout << "Could not find input format for file " << molfile << endl;
+    return mol;
+  }
+
+    // Open the file.
+    ifstream ifs(molfile.c_str());
+    if (!ifs) {
+        std::cout << "Could not open " << molfile << " for reading." << endl;
+        return mol;
+    }
+    // Read the molecule.
+    if (!conv.Read(mol.get(), &ifs)) {
+        std::cout << "Could not read molecule from file " << molfile << endl;
+        return mol;
+    }
+    return mol;
 }
