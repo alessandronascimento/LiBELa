@@ -906,7 +906,7 @@ void TEMP_SCHEME::dock_mpi(){
 
 void TEMP_SCHEME::eq_run(){
     if (Input->eq_mode){
-        MC* EqMC = new MC(Writer);
+        MC* EqMC = new MC(LIG, Input, Writer);
         if (Input->generate_conformers){
             if (Input->conformer_generator == "GA"){
                 Conformer* Conf = new Conformer;

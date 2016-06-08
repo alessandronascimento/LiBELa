@@ -52,7 +52,7 @@ public:
     vector<vector<int> > atoms_in_dihedrals;
 
     MC(WRITER* _Writer);
-    MC(Mol2* Lig, PARSER* Input);
+    MC(Mol2* Lig, PARSER* Input, WRITER *_Writer);
     ~MC();
     void run(Mol2 *Rec, Mol2* Reflig , Mol2* Lig, vector<vector<double> > xyz, PARSER* Input, double T);
     void run(Grid* Grids, Mol2* Reflig , Mol2* Lig, vector<vector<double> > xyz, PARSER* Input, double T);
@@ -66,6 +66,7 @@ public:
     double* copy_to_obmol(vector<vector<double> > vec_xyz);
     vector<vector<double> > copy_from_obmol(shared_ptr<OBMol> mymol);
     shared_ptr<OBMol> GetMol(const std::string &molfile);
+    double check_angle(double angle);
 
 };
 

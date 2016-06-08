@@ -71,7 +71,9 @@ public:
 	string output;
 //! Defines the rotation step during the MC sorting.
 	double rotation_step;
-//!
+//! Defines if torsion angles should be sampled in MC.
+    bool sample_torsions;
+//! Defines the step for torsion sampling in MC sorting.
     double torsion_step;
 	//! Maximum dimension in X direction to the sampling box
 	double x_dim;

@@ -78,6 +78,8 @@ PARSER::PARSER(){
     this->mc_stride = 1;
     this->mcr_size = 1;
     this->bi = 2.0;
+    this->torsion_step = 10.0;
+    this->sample_torsions = false;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -166,6 +168,15 @@ void PARSER::comparing (string param, ifstream &input) {
 	else if (param == "rotation_step"){
 				input >> PARSER::rotation_step;
 	}
+    else if (param == "sample_torsions"){
+        input >> tmp;
+        if (tmp == "yes" or tmp == "YES" or tmp == "Yes"){
+            this->sample_torsions = true;
+        }
+    }
+    else if (param == "torsion_step"){
+        input >> this->torsion_step;
+    }
 	else if (param == "timeout"){
 					input >> PARSER::timeout;
 	}
