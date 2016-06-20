@@ -11,6 +11,8 @@ MC::MC(WRITER* _Writer)
 
 MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 
+    Writer = _Writer;
+
 /*! Here we will use OpenBabel API to generate a OBMol and use it to get and set torsion angles for all
  * rotatable bonds.
 */
@@ -35,8 +37,10 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 
 
     vector<int> tmp(4);
-    printf("Found %d rotatable bonds in ligand %s.\n", RotorList.Size(), Lig->molname.c_str());
-    for (int i = 1; i < RotorList.Size() + 1; ++i, Rotor = RotorList.NextRotor(RotorIterator)) {
+    sprintf(info, "Found %d rotatable bonds in ligand %s.", RotorList.Size(), Lig->molname.c_str());
+    Writer->print_info(info);
+    Writer->print_line();
+    for (unsigned i = 1; i < RotorList.Size() + 1; ++i, Rotor = RotorList.NextRotor(RotorIterator)) {
         for (unsigned j=0; j < 4; j++){
             tmp = Rotor->GetDihedralAtoms();
         }
@@ -48,14 +52,12 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 
     srand(rand());
     r = gsl_rng_alloc (gsl_rng_ranlxs2);
-    Writer = _Writer;
 
 }
 
 
 MC::~MC(){
     gsl_rng_free (r);
-    delete OBff;
 }
 
 void MC::write_conformers(Mol2* Lig){
@@ -197,7 +199,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             if ((Input->write_mol2) and (count % Input->mc_stride == 0)){
                 Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
             }
-            gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, Lig->conformer_energies[step->nconf]);
+            gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
 //            sprintf(info, "%10d %10.3f %10.3f", count, energy, rmsd);
             if (count % Input->mc_stride == 0){
                 sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
@@ -225,7 +227,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 if ((Input->write_mol2) and (count % Input->mc_stride == 0)){
                     Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
                 }
-                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, Lig->conformer_energies[step->nconf]);
+                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
                 if (count % Input->mc_stride == 0){
                     sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
                     Writer->print_info(info);
@@ -753,21 +755,22 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
 // Do torsion search
 
     double current_angle, new_angle;
-    for (int i=0; i< RotorList.Size(); i++){
+    for (unsigned i=0; i< RotorList.Size(); i++){
         rnumber = gsl_rng_uniform(r);
         current_angle = mol->GetTorsion(mol->GetAtom(atoms_in_dihedrals[i][0]), mol->GetAtom(atoms_in_dihedrals[i][1]), mol->GetAtom(atoms_in_dihedrals[i][2]), mol->GetAtom(atoms_in_dihedrals[i][3]));
         new_angle = (current_angle + (-Input->torsion_step + (rnumber*(2*Input->torsion_step))));
         new_angle = this->check_angle(new_angle);
-        printf("Rotor[%d]: Atoms %d %d %d %d. Angle = %7.3f\n", i, atoms_in_dihedrals[i][0], atoms_in_dihedrals[i][1], atoms_in_dihedrals[i][2], atoms_in_dihedrals[i][3], new_angle);
         mol->SetTorsion(mol->GetAtom(atoms_in_dihedrals[i][0]), mol->GetAtom(atoms_in_dihedrals[i][1]), mol->GetAtom(atoms_in_dihedrals[i][2]), mol->GetAtom(atoms_in_dihedrals[i][3]), new_angle*PI/180.);
 
         step->torsion_angles.push_back(new_angle);
+        step->nconf = 0;
     }
 
 
 // copy coordinates and internal energy to type step_t
 
     step->xyz = this->copy_from_obmol(mol);
+    OBff->Setup(*mol);
     step->internal_energy = OBff->Energy();
 }
 
@@ -782,29 +785,27 @@ double MC::Boltzmman(double ene, double new_ene, double t, double b){
 }
 
 vector<vector<double> > MC::copy_from_obmol(shared_ptr<OBMol> mymol){
-    vector<vector<double > > vec_xyz;
-    double* xyz = new double[mymol->NumAtoms()*3];
-    vector<double> tmp (3);
-    xyz = mymol->GetCoordinates();
+    vector<vector<double > > vec_xyz(mymol->NumAtoms());
+    double* myxyz = new double[mymol->NumAtoms()*3];
+    vector<double> tmp(3);
+    myxyz = mymol->GetCoordinates();
     for (unsigned i=0; i < mymol->NumAtoms(); i++){
-        tmp[0] = xyz[3*i];
-        tmp[1] = xyz[(3*i)+1];
-        tmp[2] = xyz[(3*i)+2];
-        vec_xyz.push_back(tmp);
-//        tmp.clear();
+        tmp[0] = (myxyz[3*i]);
+        tmp[1] = (myxyz[(3*i)+1]);
+        tmp[2] = (myxyz[(3*i)+2]);
+        vec_xyz[i] = tmp;
     }
-    delete xyz;
     return vec_xyz;
 }
 
 double* MC::copy_to_obmol(vector<vector<double> > vec_xyz){
-    double* xyz = new double[vec_xyz.size()*3];
+    double* myxyz = new double[vec_xyz.size()*3];
     for (unsigned i=0; i<vec_xyz.size(); i++){
-        xyz[3*i] = vec_xyz[i][0];
-        xyz[(3*i)+1] = vec_xyz[i][1];
-        xyz[(3*i)+2] = vec_xyz[i][2];
+        myxyz[3*i] = vec_xyz[i][0];
+        myxyz[(3*i)+1] = vec_xyz[i][1];
+        myxyz[(3*i)+2] = vec_xyz[i][2];
     }
-    return xyz;
+    return myxyz;
 }
 
 shared_ptr<OBMol> MC::GetMol(const std::string &molfile){

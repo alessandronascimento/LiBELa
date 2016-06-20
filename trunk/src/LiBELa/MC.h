@@ -16,6 +16,7 @@
 #include <openbabel/conformersearch.h>
 #include <openbabel/shared_ptr.h>
 #include <openbabel/forcefield.h>
+#include <openbabel/math/vector3.h>
 
 using namespace OpenBabel;
 
