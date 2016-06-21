@@ -80,6 +80,7 @@ PARSER::PARSER(){
     this->bi = 2.0;
     this->torsion_step = 10.0;
     this->sample_torsions = false;
+    this->verbose = false;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -378,6 +379,12 @@ void PARSER::comparing (string param, ifstream &input) {
     }
     else if (param == "mcr_size"){
         input >> this->mcr_size;
+    }
+    else if (param == "verbose"){
+        input >> tmp;
+        if (tmp == "yes" or tmp == "Yes" or tmp == "YES"){
+            this->verbose = true;
+        }
     }
     else if (param == "mcr_coefficients"){
         double bi;

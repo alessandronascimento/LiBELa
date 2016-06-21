@@ -259,6 +259,8 @@ public:
 
     //! b coefficient for MCR in the ith iteration;
     double bi;
+    //! Defines whether extensive output should be given
+    bool verbose;
 
 #ifdef HAS_GUI
 	QStringList docking_molecules;

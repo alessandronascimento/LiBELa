@@ -20,10 +20,10 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
     mol = this->GetMol(Input->lig_mol2);
     OBff = OBForceField::FindForceField("GAFF");
 
-#ifdef DEBUG
-    OBff->SetLogFile(&cout);
-    OBff->SetLogLevel(OBFF_LOGLVL_LOW);
-#endif
+    if (Input->verbose){
+        OBff->SetLogFile(&cout);
+        OBff->SetLogLevel(OBFF_LOGLVL_LOW);
+    }
 
     if (!OBff){
         cout << "Could not find FF GAFF!" << endl;
