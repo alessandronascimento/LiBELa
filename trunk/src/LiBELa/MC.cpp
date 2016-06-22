@@ -846,28 +846,31 @@ double MC::Boltzmman(double ene, double new_ene, double t, double b){
 }
 
 vector<vector<double> > MC::copy_from_obmol(shared_ptr<OBMol> mymol){
-    vector<vector<double > > vec_xyz(mymol->NumAtoms());
+    vector<vector<double > > vec_xyz;
     vector<double> tmp(3);
-    double* myxyz = new double[mymol->NumAtoms()*3];
+    double *myxyz = new double[mymol->NumAtoms()*3];
     myxyz = mymol->GetCoordinates();
     for (unsigned i=0; i < mymol->NumAtoms(); i++){
         tmp[0] = (myxyz[3*i]);
         tmp[1] = (myxyz[(3*i)+1]);
         tmp[2] = (myxyz[(3*i)+2]);
-        vec_xyz[i] = tmp;
+        vec_xyz.push_back(tmp);
     }
+
+    tmp.clear();
+//    delete myxyz;
     return vec_xyz;
-    delete myxyz;
+
 }
 
 double* MC::copy_to_obmol(vector<vector<double> > vec_xyz){
-    double* myxyz = new double[vec_xyz.size()*3];
+    double *myxyz = new double[vec_xyz.size()*3];
     for (unsigned i=0; i<vec_xyz.size(); i++){
         myxyz[3*i] = vec_xyz[i][0];
         myxyz[(3*i)+1] = vec_xyz[i][1];
         myxyz[(3*i)+2] = vec_xyz[i][2];
     }
-    return (myxyz);
+    return myxyz;
 }
 
 shared_ptr<OBMol> MC::GetMol(const std::string &molfile){
