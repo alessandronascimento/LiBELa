@@ -52,7 +52,6 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 
     srand(rand());
     r = gsl_rng_alloc (gsl_rng_ranlxs2);
-
 }
 
 
@@ -108,10 +107,20 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
 
     sprintf(info, "#%10s %10s %10s", "Step", "Energy", "RMSD");
-    gzprintf(mc_output,"##################################################################################################################################\n");
+    gzprintf(mc_output,"###################################################################################################################################################################\n");
     gzprintf(mc_output,"#BoxsideX= %10.4f BoxsideY= %10.4f BoxsideY= %10.4f Temperature= %10.4f \n", Input->x_dim, Input->y_dim, Input->z_dim, Input->temp);
-    gzprintf(mc_output,"##################################################################################################################################\n");
-    gzprintf(mc_output, "#      Step    Energy      RMSD    DX         DY        DZ          ALPHA     BETA        GAMMA        NCONF     ConfEnergy\n");
+    gzprintf(mc_output,"###################################################################################################################################################################\n");
+    if (! Input->sample_torsions){
+        gzprintf(mc_output, "#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s\n", "Step", "Energy", "RMSD", "DX", "DY", "DZ", "ALPHA", "BETA", "GAMMA", "NCONF", "ConfEnergy");
+    }
+    else {
+        gzprintf(mc_output, "#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s ", "Step", "Energy", "RMSD", "DX", "DY", "DZ", "ALPHA", "BETA", "GAMMA", "NCONF", "ConfEnergy");
+        for (unsigned i=1; i <= RotorList.Size(); i++){
+            sprintf(info, "ROT[%3d]", i);
+            gzprintf(mc_output, "%10.10s", info);
+        }
+        gzprintf(mc_output, "\n");
+    }
 
     int count=0;
     int eqcount = 0;
@@ -199,8 +208,16 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             if ((Input->write_mol2) and (count % Input->mc_stride == 0)){
                 Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
             }
-            gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
-//            sprintf(info, "%10d %10.3f %10.3f", count, energy, rmsd);
+            if (! Input->sample_torsions){
+                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+            }
+            else {
+                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                for (unsigned i=1; i <= RotorList.Size(); i++){
+                    gzprintf(mc_output, "%10.3f", step->torsion_angles[i-1]);
+                }
+                gzprintf(mc_output, "\n");
+            }
             if (count % Input->mc_stride == 0){
                 sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
                 Writer->print_info(info);
@@ -227,7 +244,16 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 if ((Input->write_mol2) and (count % Input->mc_stride == 0)){
                     Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
                 }
-                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                if (! Input->sample_torsions){
+                    gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                }
+                else {
+                    gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                    for (unsigned i=1; i <= RotorList.Size(); i++){
+                        gzprintf(mc_output, "%10.3f", step->torsion_angles[i-1]);
+                    }
+                    gzprintf(mc_output, "\n");
+                }
                 if (count % Input->mc_stride == 0){
                     sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
                     Writer->print_info(info);
@@ -278,6 +304,10 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     Writer->print_info(info);
 
     Writer->print_line();
+
+    delete Energy;
+    delete Coord;
+    delete step;
 
 }
 
@@ -438,7 +468,12 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         this->energy_standard_deviation = ((sum_xsquared/(Input->number_steps+nReject)) - (this->average_energy*this->average_energy));
         this->energy_standard_deviation = sqrt(this->energy_standard_deviation/(Input->number_steps+nReject));
         this->Boltzmann_weighted_average_energy = sum_Boltzmann2_ene/sum_Boltzmann_ene;
+
+        delete Energy;
+        delete Coord;
+        delete step;
     }
+
 }
 
 
@@ -487,10 +522,20 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
 
 
         sprintf(info, "#%10s %10s %10s", "Step", "Energy", "RMSD");
-        gzprintf(mc_output,"##################################################################################################################################\n");
+        gzprintf(mc_output,"###################################################################################################################################################################\n");
         gzprintf(mc_output,"#BoxsideX= %10.4f BoxsideY= %10.4f BoxsideY= %10.4f Temperature= %10.4f \n", Input->x_dim, Input->y_dim, Input->z_dim, Input->temp);
-        gzprintf(mc_output,"##################################################################################################################################\n");
-        gzprintf(mc_output, "#      Step    Energy      RMSD    DX         DY        DZ          ALPHA     BETA        GAMMA        NCONF     ConfEnergy\n");
+        gzprintf(mc_output,"###################################################################################################################################################################\n");
+        if (! Input->sample_torsions){
+            gzprintf(mc_output, "#%10.10s 10.10s 10.10s 10.10s 10.10s 10.10s 10.10s 10.10s 10.10s 10.10s 10.10s\n", "Step", "Energy", "RMSD", "DX", "DY", "DZ", "ALPHA", "BETA", "GAMMA", "NCONF", "ConfEnergy");
+        }
+        else {
+            gzprintf(mc_output, "#%10.10s 10.10s 10.10s 10.10s 10.10s 10.10s 10.10s 10.10s 10.10s 10.10s 10.10s ", "Step", "Energy", "RMSD", "DX", "DY", "DZ", "ALPHA", "BETA", "GAMMA", "NCONF", "ConfEnergy");
+            for (unsigned i=1; i <= RotorList.Size(); i++){
+                sprintf(info, "Torsion[%3d]", i);
+                gzprintf(mc_output, "%10.10s", info);
+            }
+            gzprintf(mc_output, "\n");
+        }
 
         int count=0;
         int eqcount = 0;
@@ -597,7 +642,16 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
             if ((Input->write_mol2) and (count % Input->mc_stride == 0)){
                 Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
             }
-            gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, Lig->conformer_energies[step->nconf]);
+            if (! Input->sample_torsions){
+                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+            }
+            else {
+                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                for (unsigned i=1; i <= RotorList.Size(); i++){
+                    gzprintf(mc_output, "%10.3f", step->torsion_angles[i-1]);
+                }
+                gzprintf(mc_output, "\n");
+            }
             sprintf(info, "%10d %10.3f %10.3f", count, energy, rmsd);
             count++;
             if (count % Input->mc_stride == 0){
@@ -640,6 +694,10 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
         sprintf(info, "Average Monte Carlo energy: %10.3f kcal/mol +- (%10.3f kcal/mol) @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
         Writer->print_info(info);
         Writer->print_line();
+
+        delete Energy;
+        delete Coord;
+        delete step;
     }
 }
 
@@ -726,6 +784,7 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
 
     COORD_MC* Coord = new COORD_MC;
     double rnumber;
+    step->torsion_angles.clear();
 
 // Do rotation and translation
 
@@ -752,6 +811,9 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
     xyz = this->copy_to_obmol(step->xyz);
     mol->SetCoordinates(xyz);
 
+    delete xyz;
+    delete Coord;
+
 // Do torsion search
 
     double current_angle, new_angle;
@@ -761,9 +823,7 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
         new_angle = (current_angle + (-Input->torsion_step + (rnumber*(2*Input->torsion_step))));
         new_angle = this->check_angle(new_angle);
         mol->SetTorsion(mol->GetAtom(atoms_in_dihedrals[i][0]), mol->GetAtom(atoms_in_dihedrals[i][1]), mol->GetAtom(atoms_in_dihedrals[i][2]), mol->GetAtom(atoms_in_dihedrals[i][3]), new_angle*PI/180.);
-
         step->torsion_angles.push_back(new_angle);
-        step->nconf = 0;
     }
 
 
@@ -772,6 +832,7 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
     step->xyz = this->copy_from_obmol(mol);
     OBff->Setup(*mol);
     step->internal_energy = OBff->Energy();
+    step->nconf = 0;
 }
 
 
@@ -786,8 +847,8 @@ double MC::Boltzmman(double ene, double new_ene, double t, double b){
 
 vector<vector<double> > MC::copy_from_obmol(shared_ptr<OBMol> mymol){
     vector<vector<double > > vec_xyz(mymol->NumAtoms());
-    double* myxyz = new double[mymol->NumAtoms()*3];
     vector<double> tmp(3);
+    double* myxyz = new double[mymol->NumAtoms()*3];
     myxyz = mymol->GetCoordinates();
     for (unsigned i=0; i < mymol->NumAtoms(); i++){
         tmp[0] = (myxyz[3*i]);
@@ -796,6 +857,7 @@ vector<vector<double> > MC::copy_from_obmol(shared_ptr<OBMol> mymol){
         vec_xyz[i] = tmp;
     }
     return vec_xyz;
+    delete myxyz;
 }
 
 double* MC::copy_to_obmol(vector<vector<double> > vec_xyz){
@@ -805,7 +867,7 @@ double* MC::copy_to_obmol(vector<vector<double> > vec_xyz){
         myxyz[(3*i)+1] = vec_xyz[i][1];
         myxyz[(3*i)+2] = vec_xyz[i][2];
     }
-    return myxyz;
+    return (myxyz);
 }
 
 shared_ptr<OBMol> MC::GetMol(const std::string &molfile){

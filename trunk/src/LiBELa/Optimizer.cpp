@@ -553,9 +553,9 @@ void Optimizer::minimize_energy_nlopt_direct(Mol2* Lig2, opt_result_t* opt_resul
         nres = opt->optimize(x,f_minimum);
     }
     catch(...){
-#ifdef DEBUG
-        printf("DIRECT optimization of molecule %s stopped with an exception.\n", Lig2->molname.c_str());
-#endif
+        if (Parser->verbose){
+            printf("DIRECT optimization of molecule %s stopped with an exception.\n", Lig2->molname.c_str());
+        }
     }
 
     vector<vector<double> > xyz = Optimizer::update_coords(x, Lig2);
