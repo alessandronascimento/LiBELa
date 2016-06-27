@@ -52,6 +52,7 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 
     srand(rand());
     r = gsl_rng_alloc (gsl_rng_ranlxs2);
+    myxyz = new double[mol->NumAtoms()*3];
 }
 
 
@@ -92,7 +93,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
     Energy2* Energy = new Energy2(Input);
     COORD_MC* Coord = new COORD_MC;
-    double energy, new_energy, p, rnumber, rmsd;
+    double energy=0.0, new_energy=0.0, p=0.0, rnumber=0.0, rmsd=0.0;
     step_t* step = new step_t;
 
     if (Input->generate_conformers){
@@ -109,6 +110,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     sprintf(info, "#%10s %10s %10s", "Step", "Energy", "RMSD");
     gzprintf(mc_output,"###################################################################################################################################################################\n");
     gzprintf(mc_output,"#BoxsideX= %10.4f BoxsideY= %10.4f BoxsideY= %10.4f Temperature= %10.4f \n", Input->x_dim, Input->y_dim, Input->z_dim, Input->temp);
+    gzprintf(mc_output,"#NROT = %10.10d\n", int(RotorList.Size()));
     gzprintf(mc_output,"###################################################################################################################################################################\n");
     if (! Input->sample_torsions){
         gzprintf(mc_output, "#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s\n", "Step", "Energy", "RMSD", "DX", "DY", "DZ", "ALPHA", "BETA", "GAMMA", "NCONF", "ConfEnergy");
@@ -524,6 +526,7 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
         sprintf(info, "#%10s %10s %10s", "Step", "Energy", "RMSD");
         gzprintf(mc_output,"###################################################################################################################################################################\n");
         gzprintf(mc_output,"#BoxsideX= %10.4f BoxsideY= %10.4f BoxsideY= %10.4f Temperature= %10.4f \n", Input->x_dim, Input->y_dim, Input->z_dim, Input->temp);
+        gzprintf(mc_output,"#NROT = %10.10d\n", int(RotorList.Size()));
         gzprintf(mc_output,"###################################################################################################################################################################\n");
         if (! Input->sample_torsions){
             gzprintf(mc_output, "#%10.10s 10.10s 10.10s 10.10s 10.10s 10.10s 10.10s 10.10s 10.10s 10.10s 10.10s\n", "Step", "Energy", "RMSD", "DX", "DY", "DZ", "ALPHA", "BETA", "GAMMA", "NCONF", "ConfEnergy");
@@ -807,11 +810,12 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
 
 // Copy coordinates to OBMol
 
-    double* xyz = new double[mol->NumAtoms()*3];
-    xyz = this->copy_to_obmol(step->xyz);
-    mol->SetCoordinates(xyz);
+//    double* xyz = new double[mol->NumAtoms()*3];
+//    xyz = this->copy_to_obmol(step->xyz);
+    myxyz = this->copy_to_obmol(step->xyz);
+    mol->SetCoordinates(myxyz);
 
-    delete xyz;
+//    delete [] xyz;
     delete Coord;
 
 // Do torsion search
@@ -848,7 +852,7 @@ double MC::Boltzmman(double ene, double new_ene, double t, double b){
 vector<vector<double> > MC::copy_from_obmol(shared_ptr<OBMol> mymol){
     vector<vector<double > > vec_xyz;
     vector<double> tmp(3);
-    double *myxyz = new double[mymol->NumAtoms()*3];
+//    double *myxyz = new double[mymol->NumAtoms()*3];
     myxyz = mymol->GetCoordinates();
     for (unsigned i=0; i < mymol->NumAtoms(); i++){
         tmp[0] = (myxyz[3*i]);
@@ -858,13 +862,13 @@ vector<vector<double> > MC::copy_from_obmol(shared_ptr<OBMol> mymol){
     }
 
     tmp.clear();
-//    delete myxyz;
+//    delete[] myxyz;
     return vec_xyz;
 
 }
 
 double* MC::copy_to_obmol(vector<vector<double> > vec_xyz){
-    double *myxyz = new double[vec_xyz.size()*3];
+//    double *myxyz = new double[vec_xyz.size()*3];
     for (unsigned i=0; i<vec_xyz.size(); i++){
         myxyz[3*i] = vec_xyz[i][0];
         myxyz[(3*i)+1] = vec_xyz[i][1];

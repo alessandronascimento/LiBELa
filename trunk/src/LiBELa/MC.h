@@ -42,7 +42,7 @@ public:
     gsl_rng * r;
     WRITER* Writer;
     char info[98];
-//    double* myxyz;
+    double* myxyz;
 
 
     shared_ptr<OBMol> mol;

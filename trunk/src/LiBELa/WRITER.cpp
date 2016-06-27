@@ -103,7 +103,6 @@ void WRITER::print_params(){
     printf("* %-30s %-66.3f*\n", "sigma", Input->sigma);
     printf("* %-30s %-66.3f*\n", "solvation_alpha", Input->solvation_alpha);
     printf("* %-30s %-66.3f*\n", "solvation_beta", Input->solvation_beta);
-    printf("* %-30s %-66.3f*\n", "solvation_delta", Input->solvation_delta);
 
     printf("* %-30s %-66d*\n", "use grids?", Input->use_grids);
     if (Input->use_grids){
@@ -187,7 +186,6 @@ void WRITER::print_params(){
     fprintf(output, "* %-30s %-66.3f*\n", "sigma", Input->sigma);
     fprintf(output, "* %-30s %-66.3f*\n", "solvation_alpha", Input->solvation_alpha);
     fprintf(output, "* %-30s %-66.3f*\n", "solvation_beta", Input->solvation_beta);
-    fprintf(output, "* %-30s %-66.3f*\n", "solvation_delta", Input->solvation_delta);
     fprintf(output, "* %-30s %-66d*\n", "use grids?", Input->use_grids);
     if (Input->use_grids){
         fprintf(output, "* %-30s %-66.2f*\n", "grid spacing", Input->grid_spacing);
