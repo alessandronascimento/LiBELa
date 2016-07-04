@@ -306,11 +306,6 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     Writer->print_info(info);
 
     Writer->print_line();
-
-    delete Energy;
-    delete Coord;
-    delete step;
-
 }
 
 
@@ -697,10 +692,6 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
         sprintf(info, "Average Monte Carlo energy: %10.3f kcal/mol +- (%10.3f kcal/mol) @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
         Writer->print_info(info);
         Writer->print_line();
-
-        delete Energy;
-        delete Coord;
-        delete step;
     }
 }
 

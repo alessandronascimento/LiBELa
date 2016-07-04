@@ -33,10 +33,11 @@
 
 #ifdef HAS_MPI
 #include <boost/mpi.hpp>
-namespace mpi = boost::mpi;
+//namespace mpi = boost::mpi;
 #endif
 
 using namespace std;
+using namespace boost;
 
 class TEMP_SCHEME{
 

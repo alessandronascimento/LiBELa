@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     if (argc > 1){
     	// using terminal mode
     	if (argc < 2){
-            printf("Usage: McLiBELa.x input _file\n");
+            printf("Usage: %s input _file\n", argv[0]);
     		exit(1);
     	}
     	else {

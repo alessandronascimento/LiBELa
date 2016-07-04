@@ -19,6 +19,7 @@
 #include <openbabel/math/vector3.h>
 
 using namespace OpenBabel;
+using namespace boost;
 
 class MC
 {
