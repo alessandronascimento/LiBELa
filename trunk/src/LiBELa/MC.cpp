@@ -343,16 +343,30 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         if (Input->generate_conformers){
             this->take_step_flex(Input, Lig, step);
         }
+        else if (Input->sample_torsions){
+            this->take_step_torsion(Input, Lig, step);
+        }
         else {
             this->take_step(Input, Lig, step);
         }
 
-        energy = Lig->conformer_energies[step->nconf];
+        energy = step->internal_energy;
 
-        gzprintf(mc_output_lig,"##################################################################################################################################\n");
+        gzprintf(mc_output_lig,"###################################################################################################################################################################\n");
         gzprintf(mc_output_lig,"#BoxsideX= %10.4f BoxsideY= %10.4f BoxsideY= %10.4f Temperature= %10.4f \n", Input->x_dim, Input->y_dim, Input->z_dim, Input->temp);
-        gzprintf(mc_output_lig,"##################################################################################################################################\n");
-        gzprintf(mc_output_lig, "#      Step    Energy      RMSD    NCONF\n");
+        gzprintf(mc_output_lig,"#NROT = %10.10d\n", int(RotorList.Size()));
+        gzprintf(mc_output_lig,"###################################################################################################################################################################\n");
+        if (! Input->sample_torsions){
+            gzprintf(mc_output_lig, "#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s\n", "Step", "Energy", "RMSD", "DX", "DY", "DZ", "ALPHA", "BETA", "GAMMA", "NCONF", "ConfEnergy");
+        }
+        else {
+            gzprintf(mc_output_lig, "#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s ", "Step", "Energy", "RMSD", "DX", "DY", "DZ", "ALPHA", "BETA", "GAMMA", "NCONF", "ConfEnergy");
+            for (unsigned i=1; i <= RotorList.Size(); i++){
+                sprintf(info, "ROT[%3d]", i);
+                gzprintf(mc_output_lig, "%10.10s", info);
+            }
+            gzprintf(mc_output_lig, "\n");
+        }
 
         int count=0;
         double xcom = 0;
@@ -374,7 +388,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                 this->take_step(Input, Lig, step);
             }
 
-            new_energy = Lig->conformer_energies[step->nconf];
+            new_energy = step->internal_energy;
 
             if (new_energy <= energy){
                 Lig->mcoords = Lig->new_mcoords;
@@ -386,7 +400,16 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                 zcom = zcom + step->dz;
                 this->MaxMinCM(xcom,ycom,zcom,this->MaxMin);
 
-                gzprintf(mc_output_lig, "%10d %10.3f %10.3f  %10d %.3lf %.3lf %.3lf \n", count, energy, rmsd, step->nconf, xcom , ycom, zcom);
+                if (! Input->sample_torsions){
+                    gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                }
+                else {
+                    gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                    for (unsigned i=1; i <= RotorList.Size(); i++){
+                        gzprintf(mc_output_lig, "%10.3f", step->torsion_angles[i-1]);
+                    }
+                    gzprintf(mc_output_lig, "\n");
+                }
 
                 if (count % Input->mc_stride == 0){
                     sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
@@ -417,7 +440,16 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                     zcom = zcom + step->dz;
                     this->MaxMinCM(xcom,ycom,zcom,this->MaxMin);
 
-                    gzprintf(mc_output_lig, "%10d %10.3f %10.3f  %10d %.3lf %.3lf %.3lf \n", count, energy, rmsd, step->nconf, xcom , ycom, zcom);
+                    if (! Input->sample_torsions){
+                        gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                    }
+                    else {
+                        gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                        for (unsigned i=1; i <= RotorList.Size(); i++){
+                            gzprintf(mc_output_lig, "%10.3f", step->torsion_angles[i-1]);
+                        }
+                        gzprintf(mc_output_lig, "\n");
+                    }
 
                     if (count % Input->mc_stride == 0){
                         sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
@@ -448,7 +480,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         delete Energy;
         delete Coord;
         Writer->print_line();
-        sprintf(info, "Finished MC simulation for Ligand after %d accepted steps, %d total steps, acceptance rate %5.3f", Input->number_steps, (Input->number_steps+nReject),(Input->number_steps*1.0)/(Input->number_steps+nReject));
+        sprintf(info, "Finished MC simulation for ligand. Acceptance rate: %5.3f", (Input->number_steps*1.0)/(Input->number_steps+nReject));
         Writer->print_info(info);
         Writer->print_line();
 
@@ -466,11 +498,11 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         this->energy_standard_deviation = sqrt(this->energy_standard_deviation/(Input->number_steps+nReject));
         this->Boltzmann_weighted_average_energy = sum_Boltzmann2_ene/sum_Boltzmann_ene;
 
-        delete Energy;
-        delete Coord;
-        delete step;
-    }
+        sprintf(info, "Average Monte Carlo energy: %10.3f +- %10.3f @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
+        Writer->print_info(info);
 
+        Writer->print_line();
+    }
 }
 
 
