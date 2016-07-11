@@ -99,6 +99,9 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     if (Input->generate_conformers){
         this->take_step_flex(Input, Lig, step);
     }
+    else if (Input->sample_torsions){
+        this->take_step_torsion(Input, Lig, step);
+    }
     else {
         this->take_step(Input, Lig, step);
     }
@@ -297,12 +300,14 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     Writer->print_info(info);
     Writer->print_line();
 
-    this->average_energy = double(sum_x/(Input->number_steps+nReject));
+    this->average_energy = sum_x/(Input->number_steps+nReject);
     this->energy_standard_deviation = ((sum_xsquared/(Input->number_steps+nReject)) - (this->average_energy*this->average_energy));
     this->energy_standard_deviation = sqrt(this->energy_standard_deviation/(Input->number_steps+nReject));
     this->Boltzmann_weighted_average_energy = sum_Boltzmann2_ene/sum_Boltzmann_ene;
 
     sprintf(info, "Average Monte Carlo energy: %10.3f +- %10.3f @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
+    Writer->print_info(info);
+    sprintf(info, "Boltzmann-weighted average energy: %10.3f @ %7.2f K", this->Boltzmann_weighted_average_energy, T);
     Writer->print_info(info);
 
     Writer->print_line();
@@ -723,6 +728,8 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
 
         sprintf(info, "Average Monte Carlo energy: %10.3f kcal/mol +- (%10.3f kcal/mol) @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
         Writer->print_info(info);
+        sprintf(info, "Boltzmann-weighted average energy: %10.3f kcal/mol @ %7.2f K", this->Boltzmann_weighted_average_energy, T);
+        Writer->print_info(info);
         Writer->print_line();
     }
 }
@@ -833,12 +840,9 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
 
 // Copy coordinates to OBMol
 
-//    double* xyz = new double[mol->NumAtoms()*3];
-//    xyz = this->copy_to_obmol(step->xyz);
     myxyz = this->copy_to_obmol(step->xyz);
     mol->SetCoordinates(myxyz);
 
-//    delete [] xyz;
     delete Coord;
 
 // Do torsion search
@@ -861,8 +865,6 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
     step->internal_energy = OBff->Energy();
     step->nconf = 0;
 }
-
-
 
 
 
