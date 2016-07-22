@@ -945,7 +945,7 @@ void TEMP_SCHEME::mcr_run(){
             exit(1);
         }
 
-        MC* EqMC = new MC(Writer);
+        MC* EqMC = new MC(LIG, Input, Writer);
         if (Input->generate_conformers){
             if (Input->conformer_generator == "GA"){
                 Conformer* Conf = new Conformer;
