@@ -307,7 +307,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
     sprintf(info, "Average Monte Carlo energy: %10.3f +- %10.3f @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
     Writer->print_info(info);
-    sprintf(info, "Boltzmann-weighted average energy: %10.3Lf @ %7.2f K", this->Boltzmann_weighted_average_energy, T);
+    sprintf(info, "Boltzmann-weighted average energy: %10.4Lg @ %7.2f K", this->Boltzmann_weighted_average_energy, T);
     Writer->print_info(info);
 
     Writer->print_line();
@@ -505,7 +505,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
 
         sprintf(info, "Average Monte Carlo energy: %10.3f +- %10.3f @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
         Writer->print_info(info);
-        sprintf(info, "Boltzmann-weighted average energy: %10.3Lf @ %7.2f K", this->Boltzmann_weighted_average_energy, T);
+        sprintf(info, "Boltzmann-weighted average energy: %10.3Lg @ %7.2f K", this->Boltzmann_weighted_average_energy, T);
         Writer->print_info(info);
 
         Writer->print_line();
