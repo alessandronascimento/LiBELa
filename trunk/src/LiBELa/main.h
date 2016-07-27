@@ -34,4 +34,5 @@ Mol2* Optimizer::RefLig;
 PARSER* Optimizer::Parser;
 Grid* Optimizer::Grids;
 
+
 #endif /* MAIN_H_ */
