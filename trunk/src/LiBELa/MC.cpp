@@ -129,9 +129,15 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
     int count=0;
     int eqcount = 0;
-    long double xcom = 0;
-    long double ycom = 0;
-    long double zcom = 0;
+
+    vector<double> com(3);
+
+    vector<double> rot_angles(3);
+    for (unsigned i=0; i<3; i++){
+        rot_angles[i]= 0.0;
+    }
+
+    com = Coord->compute_com(Lig);
 
     //Equilibration implementation
 
@@ -154,10 +160,11 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             this->xyz = step->xyz;
             energy = new_energy;
             rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
-            xcom = xcom + step->dx;
-            ycom = ycom + step->dy;
-            zcom = zcom + step->dz;
-            this->MaxMinCM(xcom,ycom,zcom,this->MaxMin);
+            com[0] += step->dx;
+            com[1] += step->dy;
+            com[2] += step->dz;
+            this->increment_angles(&rot_angles, step);
+            this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
         }
         else{
             p = this->Boltzmman(energy, new_energy, T, Input->bi);
@@ -167,10 +174,11 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 this->xyz = step->xyz;
                 energy = new_energy;
                 rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
-                xcom = xcom + step->dx;
-                ycom = ycom + step->dy;
-                zcom = zcom + step->dz;
-                this->MaxMinCM(xcom,ycom,zcom,this->MaxMin);
+                com[0] += step->dx;
+                com[1] += step->dy;
+                com[2] += step->dz;
+                this->increment_angles(&rot_angles, step);
+                this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
             }
         }
         eqcount++;
@@ -200,10 +208,11 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             this->xyz = step->xyz;
             energy = new_energy;
             rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
-            xcom = xcom + step->dx;
-            ycom = ycom + step->dy;
-            zcom = zcom + step->dz;
-            this->MaxMinCM(xcom,ycom,zcom,this->MaxMin);
+            com[0] += step->dx;
+            com[1] += step->dy;
+            com[2] += step->dz;
+            this->increment_angles(&rot_angles, step);
+            this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
             count++;
             sum_x += energy;
             sum_xsquared += (energy*energy);
@@ -214,10 +223,10 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
             }
             if (! Input->sample_torsions){
-                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
             }
             else {
-                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
                 for (unsigned i=1; i <= RotorList.Size(); i++){
                     gzprintf(mc_output, "%10.3f", step->torsion_angles[i-1]);
                 }
@@ -236,10 +245,11 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 this->xyz = step->xyz;
                 energy = new_energy;
                 rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
-                xcom = xcom + step->dx;
-                ycom = ycom + step->dy;
-                zcom = zcom + step->dz;
-                this->MaxMinCM(xcom,ycom,zcom,this->MaxMin);
+                com[0] += step->dx;
+                com[1] += step->dy;
+                com[2] += step->dz;
+                this->increment_angles(&rot_angles, step);
+                this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
                 count++;
                 sum_x += energy;
                 sum_xsquared += (energy*energy);
@@ -250,10 +260,10 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                     Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
                 }
                 if (! Input->sample_torsions){
-                    gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                    gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
                 }
                 else {
-                    gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                    gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
                     for (unsigned i=1; i <= RotorList.Size(); i++){
                         gzprintf(mc_output, "%10.3f", step->torsion_angles[i-1]);
                     }
@@ -374,10 +384,12 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         }
 
         int count=0;
-        double xcom = 0;
-        double ycom = 0;
-        double zcom = 0;
-
+        vector<double> com(3);
+        vector<double> rot_angles(3);
+        for (unsigned i=0; i<3; i++){
+            rot_angles[i] = 0.0;
+        }
+        com = Coord->compute_com(Lig);
 
         Writer->print_line();
 
@@ -400,16 +412,17 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                 this->xyz = step->xyz;
                 energy = new_energy;
                 rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
-                xcom = xcom + step->dx;
-                ycom = ycom + step->dy;
-                zcom = zcom + step->dz;
-                this->MaxMinCM(xcom,ycom,zcom,this->MaxMin);
+                com[0] += step->dx;
+                com[1] += step->dy;
+                com[2] += step->dz;
+                this->increment_angles(&rot_angles, step);
+                this->MaxMinCM(com[0], com[1], com[2], this->MaxMin);
 
                 if (! Input->sample_torsions){
-                    gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                    gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
                 }
                 else {
-                    gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                    gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
                     for (unsigned i=1; i <= RotorList.Size(); i++){
                         gzprintf(mc_output_lig, "%10.3f", step->torsion_angles[i-1]);
                     }
@@ -440,16 +453,17 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                     this->xyz = step->xyz;
                     energy = new_energy;
                     rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
-                    xcom = xcom + step->dx;
-                    ycom = ycom + step->dy;
-                    zcom = zcom + step->dz;
-                    this->MaxMinCM(xcom,ycom,zcom,this->MaxMin);
+                    com[0] += step->dx;
+                    com[1] += step->dy;
+                    com[2] += step->dz;
+                    this->increment_angles(&rot_angles, step);
+                    this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
 
                     if (! Input->sample_torsions){
-                        gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                        gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
                     }
                     else {
-                        gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                        gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
                         for (unsigned i=1; i <= RotorList.Size(); i++){
                             gzprintf(mc_output_lig, "%10.3f", step->torsion_angles[i-1]);
                         }
@@ -576,9 +590,11 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
 
         int count=0;
         int eqcount = 0;
-        long double xcom = 0;
-        long double ycom = 0;
-        long double zcom = 0;
+        vector<double> com = Coord->compute_com(Lig);
+        vector<double> rot_angles(3);
+        for (unsigned i=0; i< rot_angles.size(); i++){
+            rot_angles[i] = 0.0;
+        }
 
         //Equilibration implementation
         while (eqcount <= Input->eq_steps){
@@ -600,10 +616,11 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
                 this->xyz = step->xyz;
                 energy = new_energy;
                 rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
-                xcom = xcom + step->dx;
-                ycom = ycom + step->dy;
-                zcom = zcom + step->dz;
-                this->MaxMinCM(xcom,ycom,zcom,this->MaxMin);
+                com[0] += step->dx;
+                com[1] += step->dy;
+                com[2] += step->dz;
+                this->increment_angles(&rot_angles, step);
+                this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
             }
             else{
                 p = this->Boltzmman(energy, new_energy, T, Input->bi);
@@ -613,10 +630,11 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
                     this->xyz = step->xyz;
                     energy = new_energy;
                     rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
-                    xcom = xcom + step->dx;
-                    ycom = ycom + step->dy;
-                    zcom = zcom + step->dz;
-                    this->MaxMinCM(xcom,ycom,zcom,this->MaxMin);
+                    com[0] += step->dx;
+                    com[1] += step->dy;
+                    com[2] += step->dz;
+                    this->increment_angles(&rot_angles, step);
+                    this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
                 }
             }
             eqcount++;
@@ -643,10 +661,11 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
                 this->xyz = step->xyz;
                 energy = new_energy;
                 rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
-                xcom = xcom + step->dx;
-                ycom = ycom + step->dy;
-                zcom = zcom + step->dz;
-                this->MaxMinCM(xcom,ycom,zcom,this->MaxMin);
+                com[0] += step->dx;
+                com[1] += step->dy;
+                com[2] += step->dz;
+                this->increment_angles(&rot_angles, step);
+                this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
                 count++;
                 sum_x += energy;
                 sum_xsquared += (energy*energy);
@@ -660,10 +679,11 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
                     this->xyz = step->xyz;
                     energy = new_energy;
                     rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
-                    xcom = xcom + step->dx;
-                    ycom = ycom + step->dy;
-                    zcom = zcom + step->dz;
-                    this->MaxMinCM(xcom,ycom,zcom,this->MaxMin);
+                    com[0] += step->dx;
+                    com[1] += step->dy;
+                    com[2] += step->dz;
+                    this->increment_angles(&rot_angles, step);
+                    this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
                     count++;
                     sum_x += energy;
                     sum_xsquared += (energy*energy);
@@ -680,10 +700,10 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
                 Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
             }
             if (! Input->sample_torsions){
-                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
             }
             else {
-                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, step->dx, step->dy, step->dz, step->dalpha, step->dbeta, step->dgamma, step->nconf, step->internal_energy);
+                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
                 for (unsigned i=1; i <= RotorList.Size(); i++){
                     gzprintf(mc_output, "%10.3f", step->torsion_angles[i-1]);
                 }
@@ -941,3 +961,21 @@ double MC::check_angle(double angle){
     return angle;
 }
 
+void MC::increment_angles(vector<double> *angles, step_t* step){
+        angles->at(0) += step->dalpha;
+        angles->at(1) += step->dbeta;
+        angles->at(2) += step->dgamma;
+
+        for (unsigned i=0; i < 3; i++){
+            if (angles->at(i) > 360.){
+                angles->at(i) -= 360.;
+            }
+            else if (angles->at(i) < -360.){
+                angles->at(i) += 360.;
+            }
+
+            if (angles->at(i) < 0.0){       //make all angles positive, in the range 0-360 degres.
+                angles->at(i) += 360.;
+            }
+        }
+}

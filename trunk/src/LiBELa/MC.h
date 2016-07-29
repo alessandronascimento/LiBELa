@@ -19,8 +19,14 @@
 #include <openbabel/forcefield.h>
 #include <openbabel/math/vector3.h>
 
+
+#ifdef HAS_GUI
+#define shared_ptr boost::shared_ptr
+#endif
+
+
 using namespace OpenBabel;
-//using namespace boost;
+
 
 class MC
 {
@@ -71,6 +77,7 @@ public:
     vector<vector<double> > copy_from_obmol(shared_ptr<OBMol> mymol);
     shared_ptr<OBMol> GetMol(const std::string &molfile);
     double check_angle(double angle);
+    void increment_angles(vector<double> *angles, step_t* step);
 
 };
 
