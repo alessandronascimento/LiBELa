@@ -18,6 +18,7 @@ int main(int argc, char* argv[]){
     int c;
     int rot_bins=360, trans_bins=60, translation_window=30;
     double Temp = 100.0;
+    double k=0.001987;
     PARSER* Input = new PARSER;
 
     if (argc < 2){
@@ -52,12 +53,13 @@ int main(int argc, char* argv[]){
     Mol2* Lig = new Mol2(Input, ligfile);
     COORD_MC* Coord = new COORD_MC;
     vector<double> com = Coord->compute_com(Lig);
+    printf("Ligand COM: %7.3f %7.3f %7.3f\n", com[0], com[1], com[2]);
 
     delete Coord;
     delete Lig;
     delete Input;
 
-    float translation_step = translation_window*1.0/translation_bins; //typically 0.5 Ang
+    float translation_step = translation_window*1.0/trans_bins;       //typically 0.5 Ang
     float rotation_step = 360.0/rot_bins;                             //typically 1.0 degree
 
     float hist_x[trans_bins];
@@ -81,40 +83,39 @@ int main(int argc, char* argv[]){
     }
 
     gzFile inpfile = gzopen(infile.c_str(), "r");
-    char str[150];
+    char str[200];
     char tstr[20];
     float tfloat;
     int tint, n_rot;
     float x, y, z, alpha, beta, gamma;
 
-    gzgets(inpfile, str, 150);
-    gzgets(inpfile, str, 150);
-    sscanf(str, "%s %f %s %f %s %f %s %f", tstr, &tfloat, tstr, &tfloat, tstr, &tfloat, tstr, &Temp);
-    gzgets(inpfile, str, 150);
+    gzgets(inpfile, str, 200);
+    gzgets(inpfile, str, 200);
+    sscanf(str, "%s %f %s %f %s %f %s %f", tstr, &tfloat, tstr, &tfloat, tstr, &tfloat, tstr, &tfloat);
+    Temp = double(tfloat);
+    gzgets(inpfile, str, 200);
     sscanf(str, "%s %s %d", tstr, tstr, &n_rot);
-    gzgets(inpfile, str, 150);
-    gzgets(inpfile, str, 150);
+    gzgets(inpfile, str, 200);
+    gzgets(inpfile, str, 200);
+
+    printf("Parsing file %s. Temp = %7.3f K. N_rot = %3d\n", infile.c_str(), Temp, n_rot);
 
     float** torsion = new float*[MAX_STEPS];
 
     int count=0;
 
-    while (! gzeof(inpfile)){
-        gzgets(inpfile, str, 150);
+    while ((! gzeof(inpfile)) and (count < MAX_STEPS)){
+        gzgets(inpfile, str, 200);
         count++;
-        if (count > MAX_STEPS){
-            printf("Maximum number of steps exceeded. Please change this parameter in the source file and recompile.\n");
-            exit(1);
-        }
 
         torsion[count-1] = new float[n_rot];
 
         sscanf(str, "%d %f %f %f %f %f %f %f %f %f %d %f %{%f%}", &tint, &tfloat, &tfloat, &x, &y, &z, &alpha,
                &beta, &gamma, &tint, &tfloat, torsion[count-1]);
 
-        hist_x[int((x-com[0]-(translation_window*1.0/2))/(translation_step))] += 1.0;
-        hist_y[int((y-com[1]-(translation_window*1.0/2))/(translation_step))] += 1.0;
-        hist_z[int((z-com[2]-(translation_window*1.0/2))/(translation_step))] += 1.0;
+        hist_x[int((x-com[0]+(translation_window*1.0/2.))/(translation_step))] += 1.0;
+        hist_y[int((y-com[1]+(translation_window*1.0/2.))/(translation_step))] += 1.0;
+        hist_z[int((z-com[2]+(translation_window*1.0/2.))/(translation_step))] += 1.0;
 
         hist_alpha[int(alpha/rotation_step)] += 1.0;
         hist_gamma[int(alpha/rotation_step)] += 1.0;
@@ -129,25 +130,52 @@ int main(int argc, char* argv[]){
     double Srot=0.0;
 
     for (unsigned i=0; i< trans_bins; i++){
-        hist_x[i] = hist_x/count;
-        Strans += hist_x[i] * log(hist_x[i]);
-        hist_y[i] = hist_y/count;
-        Strans += hist_y[i] * log(hist_y[i]);
-        hist_z[i] = hist_z/count;
-        Strans += hist_z[i] * log(hist_z[i]);
+        hist_x[i] = hist_x[i]/count;
+        if (hist_x[i] > 0.0){
+            Strans += hist_x[i] * log(hist_x[i]);
+        }
+         printf("%d %7.3f %7.3f", i, (i*1.0*translation_step)+com[0]-(translation_window*1.0/2.), hist_x[i]);
+
+
+        hist_y[i] = hist_y[i]/count;
+        if (hist_y[i] > 0.0){
+            Strans += hist_y[i] * log(hist_y[i]);
+        }
+        printf("\t %7.3f %7.3f", (i*1.0*translation_step)+com[1]-(translation_window*1.0/2.), hist_y[i]);
+
+
+        hist_z[i] = hist_z[i]/count;
+        if (hist_z[i] > 0.0){
+            Strans += hist_z[i] * log(hist_z[i]);
+        }
+        printf("\t %7.3f %7.3f \t\t %7.3f\n", (i*1.0*translation_step)+com[2]-(translation_window*1.0/2.), hist_z[i], Strans);
+
     }
 
     for (unsigned i=0; i< rot_bins; i++){
         hist_alpha[i] = hist_alpha[i]/count;
-        Srot += hist_alpha[i] * log(hist_alpha[i]);
+        if (hist_alpha[i]> 0){
+            Srot += hist_alpha[i] * log(hist_alpha[i]);
+        }
+
         hist_beta[i] = hist_beta[i]/count;
-        Srot += hist_beta[i] * log(hist_beta[i]);
+        if (hist_beta[i]> 0){
+            Srot += hist_beta[i] * log(hist_beta[i]);
+        }
+
         hist_gamma[i] = hist_gamma[i]/count;
-        Srot += hist_gamma[i] * log(hist_gamma[i]);
+        if (hist_gamma[i]> 0){
+            Srot += hist_gamma[i] * log(hist_gamma[i]);
+        }
     }
 
-    printf("Strans: *10.3f\n", Strans);
+
+    Strans = -k*Strans;
+    Srot = -k*Srot;
+    printf("Strans: %10.3f\n", Strans);
     printf("Srot: %10.3f\n", Srot);
+    double S = Strans + Srot;
+    printf("-TS = %10.3f\n", -Temp*S);
 
     return 0;
 }
