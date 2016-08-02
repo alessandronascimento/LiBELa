@@ -2,18 +2,19 @@
 #include<zlib.h>
 #include<cstdlib>
 #include<cstdio>
+#include<stdio.h>
 #include<cmath>
 #include<string>
 #include <vector>
-#include "../LiBELa/PARSER.h"
-#include "../LiBELa/Mol2.h"
-#include "../LiBELa/COORD_MC.h"
+#include "../LiBELa/PARSER.cpp"
+#include "../LiBELa/Mol2.cpp"
+#include "../LiBELa/COORD_MC.cpp"
 
 using namespace std;
 
 int main(int argc, char* argv[]){
 
-    int MAX_STEPS = 10000000; // 10^6
+    int MAX_STEPS = 10000000;
     string infile, ligfile;
     int c;
     int rot_bins=360, trans_bins=60, translation_window=30;
@@ -83,35 +84,39 @@ int main(int argc, char* argv[]){
     }
 
     gzFile inpfile = gzopen(infile.c_str(), "r");
-    char str[200];
+    char str[250];
     char tstr[20];
     float tfloat;
     int tint, n_rot;
     float x, y, z, alpha, beta, gamma;
 
-    gzgets(inpfile, str, 200);
-    gzgets(inpfile, str, 200);
+    gzgets(inpfile, str, 250);
+    gzgets(inpfile, str, 250);
     sscanf(str, "%s %f %s %f %s %f %s %f", tstr, &tfloat, tstr, &tfloat, tstr, &tfloat, tstr, &tfloat);
     Temp = double(tfloat);
-    gzgets(inpfile, str, 200);
+    gzgets(inpfile, str, 250);
     sscanf(str, "%s %s %d", tstr, tstr, &n_rot);
-    gzgets(inpfile, str, 200);
-    gzgets(inpfile, str, 200);
+    gzgets(inpfile, str, 250);
+    gzgets(inpfile, str, 250);
 
     printf("Parsing file %s. Temp = %7.3f K. N_rot = %3d\n", infile.c_str(), Temp, n_rot);
 
-    float** torsion = new float*[MAX_STEPS];
+//    float** torsion = new float*[MAX_STEPS];
 
     int count=0;
 
     while ((! gzeof(inpfile)) and (count < MAX_STEPS)){
-        gzgets(inpfile, str, 200);
+        gzgets(inpfile, str, 250);
         count++;
 
-        torsion[count-1] = new float[n_rot];
+        float* torsion = new float[n_rot];
 
-        sscanf(str, "%d %f %f %f %f %f %f %f %f %f %d %f %{%f%}", &tint, &tfloat, &tfloat, &x, &y, &z, &alpha,
-               &beta, &gamma, &tint, &tfloat, torsion[count-1]);
+//        sscanf(str, "%d %f %f %f %f %f %f %f %f %d %f %{%f%}", &tint, &tfloat, &tfloat, &x, &y, &z, &alpha,
+//               &beta, &gamma, &tint, &tfloat, &torsion);
+        sscanf(str, "%d %f %f %f %f %f %f %f %f %d %f %f %f}", &tint, &tfloat, &tfloat, &x, &y, &z, &alpha,
+               &beta, &gamma, &tint, &tfloat, &torsion[0], &torsion[1]);
+
+//        printf("%7.3f %7.3f\n", torsion[0], torsion[1]);
 
         hist_x[int((x-com[0]+(translation_window*1.0/2.))/(translation_step))] += 1.0;
         hist_y[int((y-com[1]+(translation_window*1.0/2.))/(translation_step))] += 1.0;
@@ -120,6 +125,8 @@ int main(int argc, char* argv[]){
         hist_alpha[int(alpha/rotation_step)] += 1.0;
         hist_gamma[int(alpha/rotation_step)] += 1.0;
         hist_beta[int(alpha/rotation_step)] += 1.0;
+
+        delete [] torsion;
 
         /*
          * process torsions here

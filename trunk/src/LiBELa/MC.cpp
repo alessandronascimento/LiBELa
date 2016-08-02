@@ -93,6 +93,8 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
     Energy2* Energy = new Energy2(Input);
     COORD_MC* Coord = new COORD_MC;
+    vector<double> original_com = Coord->compute_com(Lig->xyz);
+
     double energy=0.0, new_energy=0.0, p=0.0, rnumber=0.0, rmsd=0.0;
     step_t* step = new step_t;
 
@@ -155,7 +157,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
         new_energy = (Energy->compute_ene(Grids, Lig, step->xyz)+step->internal_energy);
 
-        if (new_energy <= energy){
+        if (new_energy <= energy and this->ligand_is_inside_box(Input, step, original_com, com)){
             Lig->mcoords = Lig->new_mcoords;
             this->xyz = step->xyz;
             energy = new_energy;
@@ -169,7 +171,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
         else{
             p = this->Boltzmman(energy, new_energy, T, Input->bi);
             rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
-            if (p > rnumber){
+            if (p > rnumber and this->ligand_is_inside_box(Input, step, original_com, com)){
                 Lig->mcoords = Lig->new_mcoords;
                 this->xyz = step->xyz;
                 energy = new_energy;
@@ -203,7 +205,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
         new_energy = (Energy->compute_ene(Grids, Lig, step->xyz)+step->internal_energy);
 
-        if (new_energy <= energy){
+        if (new_energy <= energy and this->ligand_is_inside_box(Input, step, original_com, com)){
             Lig->mcoords = Lig->new_mcoords;
             this->xyz = step->xyz;
             energy = new_energy;
@@ -240,7 +242,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
         else{
             p = this->Boltzmman(energy, new_energy, T, Input->bi);
             rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
-            if (p > rnumber){
+            if (p > rnumber and this->ligand_is_inside_box(Input, step, original_com, com)){
                 Lig->mcoords = Lig->new_mcoords;
                 this->xyz = step->xyz;
                 energy = new_energy;
@@ -352,6 +354,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
 
         Energy2* Energy = new Energy2(Input);
         COORD_MC* Coord = new COORD_MC;
+        vector<double> original_com = Coord->compute_com(Lig);
         double energy, new_energy, p, rnumber, rmsd;
         step_t* step = new step_t;
 
@@ -407,7 +410,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
 
             new_energy = step->internal_energy;
 
-            if (new_energy <= energy){
+            if (new_energy <= energy and this->ligand_is_inside_box(Input, step, original_com, com)){
                 Lig->mcoords = Lig->new_mcoords;
                 this->xyz = step->xyz;
                 energy = new_energy;
@@ -448,7 +451,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
             else{
                 p = this->Boltzmman(energy, new_energy, T, Input->bi);
                 rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
-                if (p > rnumber){
+                if (p > rnumber and this->ligand_is_inside_box(Input, step, original_com, com)){
                     Lig->mcoords = Lig->new_mcoords;
                     this->xyz = step->xyz;
                     energy = new_energy;
@@ -978,4 +981,17 @@ void MC::increment_angles(vector<double> *angles, step_t* step){
                 angles->at(i) += 360.;
             }
         }
+}
+
+bool MC::ligand_is_inside_box(PARSER* Input, step_t* step, vector<double> original_com, vector<double> current_com){
+    bool ret = false;
+    if (((current_com[0] + step->dx) > (original_com[0] - Input->search_box_x/2.0)) and ((current_com[0] + step->dx) < (original_com[0] + Input->search_box_x/2.0))){
+        if (((current_com[1] + step->dy) > (original_com[1] - Input->search_box_y/2.0)) and ((current_com[1] + step->dy) < (original_com[1] + Input->search_box_y/2.0))){
+            if (((current_com[2] + step->dz) > (original_com[2] - Input->search_box_z/2.0)) and ((current_com[2] + step->dz) < (original_com[2] + Input->search_box_z/2.0))){
+                ret = true;
+
+            }
+        }
+    }
+    return ret;
 }

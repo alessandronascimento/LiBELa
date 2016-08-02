@@ -78,6 +78,7 @@ public:
     shared_ptr<OBMol> GetMol(const std::string &molfile);
     double check_angle(double angle);
     void increment_angles(vector<double> *angles, step_t* step);
+    bool ligand_is_inside_box(PARSER* Input, step_t* step, vector<double> original_com, vector<double> current_com);
 
 };
 
