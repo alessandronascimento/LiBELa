@@ -93,7 +93,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
     Energy2* Energy = new Energy2(Input);
     COORD_MC* Coord = new COORD_MC;
-    vector<double> original_com = Coord->compute_com(Lig->xyz);
+    vector<double> original_com = Coord->compute_com(Lig);
 
     double energy=0.0, new_energy=0.0, p=0.0, rnumber=0.0, rmsd=0.0;
     step_t* step = new step_t;
