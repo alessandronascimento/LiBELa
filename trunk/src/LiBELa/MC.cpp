@@ -956,8 +956,8 @@ double MC::check_angle(double angle){
             angle -= 360.0;
         }
     }
-    else if (angle < -360.){
-        while (angle < -360.){
+    else if (angle < 0.0){
+        while (angle < 0.0){
             angle += 360.0;
         }
     }

@@ -111,19 +111,32 @@ int main(int argc, char* argv[]){
     sscanf(str, "%s %s %d", tstr, tstr, &n_rot);
     gzgets(inpfile, str, 250);
     gzgets(inpfile, str, 250);
-
+/*
     vector<vector<double> > hist_torsions;
-    vector<double> dtemp(rot_bins);
+*/
+    float** hist_torsions = new float*[n_rot];
+    for (int i=0; i< n_rot; i++){
+        hist_torsions[i] = new float[rot_bins];
+    }
+
+    for (int i=0; i<n_rot; i++){
+        for (int j=0; j< rot_bins; j++){
+            hist_torsions[i][j] = 0.0;
+        }
+    }
+
+
+//    vector<double> dtemp(rot_bins);
     for (int i=0; i< rot_bins; i++){
-        dtemp.push_back(0.0);
+//        dtemp.push_back(0.0);
         hist_alpha.push_back(0.0);
         hist_beta.push_back(0.0);
         hist_gamma.push_back(0.0);
     }
 
-    for (int i=0; i<n_rot; i++){
-        hist_torsions.push_back(dtemp);
-    }
+//    for (int i=0; i<n_rot; i++){
+//        hist_torsions.push_back(dtemp);
+//    }
 
     printf("* Parsing file %s. Temp = %7.3f K. N_rot = %3d                      *\n", infile.c_str(), Temp, n_rot);
 
@@ -138,6 +151,9 @@ int main(int argc, char* argv[]){
  */
 
 
+//    vector<float> torsion(n_rot);
+
+
     while (!gzeof(inpfile)){
         gzgets(inpfile, str, 250);
         count++;
@@ -149,6 +165,9 @@ int main(int argc, char* argv[]){
         ss >> tint >> tfloat >> tfloat >> x >> y >> z >> alpha >> beta >> gamma >> tint >> tfloat;
         for (int i=0; i< n_rot; i++){
             ss >> torsion[i];
+            if (torsion[i] < 0){
+                torsion[i] = torsion[i]+360.;
+            }
         }
 
         hist_x[int(round((x-com[0]+(translation_window*1.0/2.))/(translation_step)))] += 1.0;
@@ -160,7 +179,14 @@ int main(int argc, char* argv[]){
         hist_beta[int(round(gamma/rotation_step))] += 1.0;
 
         for (int i=0; i< n_rot; i++){
-            hist_torsions[i][int(round(torsion[i]/rotation_step))] += 1.0;
+            int angle = round(torsion[i]/rotation_step);
+            if (angle < 0 or angle > rot_bins){
+                printf("ANGLE OFFSET: %d!\n", angle);
+                exit(1);
+            }
+            else{
+                hist_torsions[i][angle] += 1.0;
+            }
         }
         delete [] torsion;
     }
@@ -258,7 +284,12 @@ int main(int argc, char* argv[]){
     hist_alpha.clear();
     hist_beta.clear();
     hist_gamma.clear();
-    hist_torsions.clear();
+
+    for (int i=0; i< n_rot; i++){
+        delete [] hist_torsions[i];
+    }
+
+    delete [] hist_torsions;
 
 /*
  * Computing Shannon Entropies
