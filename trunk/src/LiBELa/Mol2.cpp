@@ -422,8 +422,8 @@ string Mol2::convert2gaff(string atom){
 	else if (atom =="C.1"){
 		gaff_atom = "c1";
 		this->radii.push_back(1.9080);
-		this->epsilons.push_back(0.0860);
-		this->epsilons_sqrt.push_back(sqrt(0.0860));
+        this->epsilons.push_back(0.2100);
+        this->epsilons_sqrt.push_back(sqrt(0.2100));
 
 	}
 
@@ -569,7 +569,7 @@ string Mol2::convert2gaff(string atom){
 
 	else if (atom =="H"){
 		gaff_atom = "hc";
-		this->radii.push_back(0.6000);
+        this->radii.push_back(0.6000); //should it be 1.4870 Ang?
 		this->epsilons.push_back(0.0157);
 		this->epsilons_sqrt.push_back(sqrt(0.0157));
 	}
@@ -577,7 +577,7 @@ string Mol2::convert2gaff(string atom){
 	else if (atom =="H.spc" or atom=="H.t3p"){
 		gaff_atom = "hw";
 		this->radii.push_back(0.0000);
-		this->epsilons.push_back(0.0000);
+        this->epsilons.push_back(0.0000);
 		this->epsilons_sqrt.push_back(0.0000);
 	}
 
@@ -973,9 +973,9 @@ void Mol2::get_gaff_parameters(){
 
 
 // Reading GAFF radii. Same order as above
-	this->radius.push_back(1.3870);
-	this->radius.push_back(1.2870);
-	this->radius.push_back(1.1870);
+    this->radius.push_back(1.3870);     // 0
+    this->radius.push_back(1.2870);     // 1
+    this->radius.push_back(1.1870);     // 2
 	this->radius.push_back(1.4090);
 	this->radius.push_back(1.3590);
 	this->radius.push_back(1.4590);
@@ -1112,23 +1112,23 @@ void Mol2::get_gaff_parameters(){
 
 
 // Reading GAFF welldepth. Same order as above
-	this->welldepth.push_back(0.0157);
-	this->welldepth.push_back(0.0157);
-	this->welldepth.push_back(0.0157);
-	this->welldepth.push_back(0.0150);
-	this->welldepth.push_back(0.0150);
-	this->welldepth.push_back(0.0150);
-	this->welldepth.push_back(0.0157);
-	this->welldepth.push_back(0.0157);
-	this->welldepth.push_back(0.0000);
-	this->welldepth.push_back(0.0157);
-	this->welldepth.push_back(0.0157);
-	this->welldepth.push_back(0.0000);
-	this->welldepth.push_back(0.0157);
-	this->welldepth.push_back(0.2100);
-	this->welldepth.push_back(0.2104);
-	this->welldepth.push_back(0.1700);
-	this->welldepth.push_back(0.1520);
+    this->welldepth.push_back(0.0157);      // 0
+    this->welldepth.push_back(0.0157);      // 1
+    this->welldepth.push_back(0.0157);      // 2
+    this->welldepth.push_back(0.0150);      // 3
+    this->welldepth.push_back(0.0150);      // 4
+    this->welldepth.push_back(0.0150);      // 5
+    this->welldepth.push_back(0.0157);      // 6
+    this->welldepth.push_back(0.0157);      // 7
+    this->welldepth.push_back(0.0000);      // 8
+    this->welldepth.push_back(0.0157);      // 9
+    this->welldepth.push_back(0.0157);      // 10
+    this->welldepth.push_back(0.0000);      // 11
+    this->welldepth.push_back(0.0157);      // 12
+    this->welldepth.push_back(0.2100);      // 13
+    this->welldepth.push_back(0.2104);      // 14
+    this->welldepth.push_back(0.1700);      // 15
+    this->welldepth.push_back(0.1520);      // 16
 	this->welldepth.push_back(0.0860);
 	this->welldepth.push_back(0.0860);
 	this->welldepth.push_back(0.0860);
