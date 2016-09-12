@@ -81,6 +81,8 @@ PARSER::PARSER(){
     this->torsion_step = 10.0;
     this->sample_torsions = false;
     this->verbose = false;
+    this->entropy_rotation_bins = 360;
+    this->entropy_translation_bins = this->x_dim*2;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -393,6 +395,14 @@ void PARSER::comparing (string param, ifstream &input) {
             mcr_coefficients.push_back(bi);
         }
     }
+    else if (param == "entropy_rotation_bins"){
+        input >> this->entropy_rotation_bins;
+    }
+
+    else if (param == "entropy_translation_bins"){
+        input >> this->entropy_translation_bins;
+    }
+
 	else {
 		cout << "Unknown parameter: " << param << endl;
 		exit(1);

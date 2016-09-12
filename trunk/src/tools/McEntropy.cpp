@@ -15,7 +15,7 @@ using namespace std;
 
 int main(int argc, char* argv[]){
 
-    string infile, ligfile;
+    string infile, ligfile, prefix="McEntropy";
     int c;
     int rot_bins=360, trans_bins=60, translation_window=30;
     double Temp = 100.0;
@@ -36,11 +36,11 @@ int main(int argc, char* argv[]){
 
 
     if (argc < 2){
-        printf("Usage %s -i <inputfile> -t <number of bins for translation> -r <number of bins for rotation> -l <ligand mol2 file> [-h]\n", argv[0]);
+        printf("Usage %s -i <inputfile> -t <number of bins for translation> -r <number of bins for rotation> -l <ligand mol2 file> -o <output_prefix>[-h]\n", argv[0]);
         exit(1);
     }
 
-    while ((c = getopt(argc, argv, "i:t:r:l:h")) != -1)
+    while ((c = getopt(argc, argv, "i:t:r:l:o:h")) != -1)
         switch (c){
         case 'i':
             infile = string(optarg);
@@ -61,6 +61,9 @@ int main(int argc, char* argv[]){
             break;
         case 'l':
             ligfile = string(optarg);
+            break;
+        case 'o':
+            prefix = string(optarg);
             break;
         }
 
@@ -111,9 +114,7 @@ int main(int argc, char* argv[]){
     sscanf(str, "%s %s %d", tstr, tstr, &n_rot);
     gzgets(inpfile, str, 250);
     gzgets(inpfile, str, 250);
-/*
-    vector<vector<double> > hist_torsions;
-*/
+
     float** hist_torsions = new float*[n_rot];
     for (int i=0; i< n_rot; i++){
         hist_torsions[i] = new float[rot_bins];
@@ -125,18 +126,11 @@ int main(int argc, char* argv[]){
         }
     }
 
-
-//    vector<double> dtemp(rot_bins);
     for (int i=0; i< rot_bins; i++){
-//        dtemp.push_back(0.0);
         hist_alpha.push_back(0.0);
         hist_beta.push_back(0.0);
         hist_gamma.push_back(0.0);
     }
-
-//    for (int i=0; i<n_rot; i++){
-//        hist_torsions.push_back(dtemp);
-//    }
 
     printf("* Parsing file %s. Temp = %7.3f K. N_rot = %3d                      *\n", infile.c_str(), Temp, n_rot);
 
@@ -150,11 +144,7 @@ int main(int argc, char* argv[]){
  *
  */
 
-
-//    vector<float> torsion(n_rot);
-
-
-    while (!gzeof(inpfile)){
+   while (!gzeof(inpfile)){
         gzgets(inpfile, str, 250);
         count++;
 
@@ -182,6 +172,7 @@ int main(int argc, char* argv[]){
             int angle = round(torsion[i]/rotation_step);
             if (angle < 0 or angle > rot_bins){
                 printf("ANGLE OFFSET: %d!\n", angle);
+                printf("Check McEntropy.cpp file and recompile.\n");
                 exit(1);
             }
             else{
@@ -194,17 +185,17 @@ int main(int argc, char* argv[]){
 
     gzclose(inpfile);
 
-    hist_output_trans = fopen("histogram_translation.dat","w");
-    hist_output_rot = fopen("histogram_rotation.dat","w");
+    hist_output_trans = fopen((prefix + "_histogram_translation.dat").c_str(),"w");
+    hist_output_rot = fopen((prefix + "_histogram_rotation.dat").c_str(),"w");
 
     fprintf(hist_output_trans, "#%7.7s %7.7s %7.7s %7.7s %7.7s %7.7s\n", "x", "h_x", "y", "h_y", "z", "h_z");
     fprintf(hist_output_rot,   "#%7.7s %7.7s %7.7s %7.7s %7.7s %7.7s ","alpha", "h_alpha", "beta", "h_beta", "gamma", "h_gamma");
+
     for (int i=0; i<n_rot; i++){
         sprintf(str, "tor[%2d]", i+1);
         fprintf(hist_output_rot, " %7.7s ", str);
     }
     fprintf(hist_output_rot, "\n");
-
 
     double Strans=0.0;
     double Srot=0.0;
@@ -245,8 +236,6 @@ int main(int argc, char* argv[]){
         }
         fprintf(hist_output_rot, "%7.1f %7.4f " , i*rotation_step, hist_alpha[i]);
 
-
-
         hist_beta[i] = hist_beta[i]/count;
         if (hist_beta[i]> 0.0){
             Srot += hist_beta[i] * log(hist_beta[i]);
@@ -268,8 +257,6 @@ int main(int argc, char* argv[]){
         }
         fprintf(hist_output_rot, "\n");
     }
-
-
 
 /*
  * Cleaning up....

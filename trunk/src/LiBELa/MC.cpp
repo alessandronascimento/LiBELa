@@ -31,6 +31,10 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
     }
 
     OBff->Setup(*mol);
+    OBff->GetCoordinates(*mol);
+    OBff->SteepestDescent(Input->conformer_min_steps, 1.0e-10);
+    OBff->GetCoordinates(*mol);
+    Lig->xyz = this->copy_from_obmol(mol);
     RotorList.Setup(*mol);
     Rotor = RotorList.BeginRotor(RotorIterator);
     mol->ToInertialFrame();
@@ -94,6 +98,8 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     Energy2* Energy = new Energy2(Input);
     COORD_MC* Coord = new COORD_MC;
     vector<double> original_com = Coord->compute_com(Lig);
+
+    McEntropy* Entropy = new McEntropy(Input, Coord, original_com, int(RotorList.Size()));
 
     double energy=0.0, new_energy=0.0, p=0.0, rnumber=0.0, rmsd=0.0;
     step_t* step = new step_t;
@@ -221,22 +227,28 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             sum_Boltzmann_ene += exp(((-Input->bi-1.0)*energy)/(k*T));
             sum_Boltzmann2_ene += exp((-2.0*energy*(Input->bi-1.0))/(k*T));
 
-            if ((Input->write_mol2) and (count % Input->mc_stride == 0)){
-                Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
-            }
-            if (! Input->sample_torsions){
-                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
-            }
-            else {
-                gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
-                for (unsigned i=1; i <= RotorList.Size(); i++){
-                    gzprintf(mc_output, "%10.3f", step->torsion_angles[i-1]);
-                }
-                gzprintf(mc_output, "\n");
-            }
+            Entropy->update(com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->torsion_angles);
+
             if (count % Input->mc_stride == 0){
+
                 sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
                 Writer->print_info(info);
+
+                if (Input->write_mol2){
+                    Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
+                }
+
+                if (! Input->sample_torsions){
+                    gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
+                }
+
+                else {
+                    gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
+                    for (unsigned i=1; i <= RotorList.Size(); i++){
+                        gzprintf(mc_output, "%10.3f", step->torsion_angles[i-1]);
+                    }
+                    gzprintf(mc_output, "\n");
+                }
             }
         }
         else{
@@ -258,22 +270,27 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 sum_Boltzmann_ene += exp(((-Input->bi-1.0)*energy)/(k*T));
                 sum_Boltzmann2_ene += exp((-2.0*energy*(Input->bi-1.0))/(k*T));
 
-                if ((Input->write_mol2) and (count % Input->mc_stride == 0)){
-                    Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
-                }
-                if (! Input->sample_torsions){
-                    gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
-                }
-                else {
-                    gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
-                    for (unsigned i=1; i <= RotorList.Size(); i++){
-                        gzprintf(mc_output, "%10.3f", step->torsion_angles[i-1]);
-                    }
-                    gzprintf(mc_output, "\n");
-                }
+
+                Entropy->update(com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->torsion_angles);
+
                 if (count % Input->mc_stride == 0){
+
                     sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
                     Writer->print_info(info);
+
+                    if (Input->write_mol2){
+                        Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
+                    }
+                    if (! Input->sample_torsions){
+                        gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
+                    }
+                    else {
+                        gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
+                        for (unsigned i=1; i <= RotorList.Size(); i++){
+                            gzprintf(mc_output, "%10.3f", step->torsion_angles[i-1]);
+                        }
+                        gzprintf(mc_output, "\n");
+                    }
                 }
             }
             else{
@@ -323,6 +340,27 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     Writer->print_info(info);
 
     Writer->print_line();
+
+    McEntropy::entropy_t* McEnt = new McEntropy::entropy_t;
+    McEnt->Srot = 0.0; McEnt->Storsion = 0.0; McEnt->Strans = 0.0;
+    Entropy->get_results(McEnt, Input->number_steps);
+
+    sprintf(info, "First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K", McEnt->Strans*T, T);
+    Writer->print_info(info);
+    sprintf(info, "First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K", McEnt->Srot*T, T);
+    Writer->print_info(info);
+    sprintf(info, "First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K", McEnt->Storsion*T, T);
+    Writer->print_info(info);
+    sprintf(info, "First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K", McEnt->S, T);
+    Writer->print_info(info);
+    sprintf(info, "First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K", -McEnt->TS, T);
+    Writer->print_info(info);
+
+    Writer->print_line();
+
+    delete McEnt;
+    delete Entropy;
+
 }
 
 
@@ -355,6 +393,9 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         Energy2* Energy = new Energy2(Input);
         COORD_MC* Coord = new COORD_MC;
         vector<double> original_com = Coord->compute_com(Lig);
+
+        McEntropy* Entropy = new McEntropy(Input, Coord, original_com, int(RotorList.Size()));
+
         double energy, new_energy, p, rnumber, rmsd;
         step_t* step = new step_t;
 
@@ -421,32 +462,32 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                 this->increment_angles(&rot_angles, step);
                 this->MaxMinCM(com[0], com[1], com[2], this->MaxMin);
 
-                if (! Input->sample_torsions){
-                    gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
-                }
-                else {
-                    gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
-                    for (unsigned i=1; i <= RotorList.Size(); i++){
-                        gzprintf(mc_output_lig, "%10.3f", step->torsion_angles[i-1]);
-                    }
-                    gzprintf(mc_output_lig, "\n");
-                }
-
-                if (count % Input->mc_stride == 0){
-                    sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
-                    Writer->print_info(info);
-                }
-
-
-                if ((Input->write_mol2) and (count % Input->mc_stride == 0)){
-                    Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC.ligsim");
-                }
-
                 count++;
                 sum_x += energy;
                 sum_xsquared += (energy*energy);
                 sum_Boltzmann_ene += exp(((-Input->bi-1.0)*energy)/(k*T));
                 sum_Boltzmann2_ene += exp((-2.0*energy*(Input->bi-1.0))/(k*T));
+
+                Entropy->update(com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->torsion_angles);
+
+                if (count % Input->mc_stride == 0){
+                    sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
+                    Writer->print_info(info);
+
+                    if (Input->write_mol2){
+                        Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC.ligsim");
+                    }
+                    if (! Input->sample_torsions){
+                        gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
+                    }
+                    else {
+                        gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
+                        for (unsigned i=1; i <= RotorList.Size(); i++){
+                            gzprintf(mc_output_lig, "%10.3f", step->torsion_angles[i-1]);
+                        }
+                        gzprintf(mc_output_lig, "\n");
+                    }
+                }
             }
             else{
                 p = this->Boltzmman(energy, new_energy, T, Input->bi);
@@ -462,30 +503,32 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                     this->increment_angles(&rot_angles, step);
                     this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
 
-                    if (! Input->sample_torsions){
-                        gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
-                    }
-                    else {
-                        gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
-                        for (unsigned i=1; i <= RotorList.Size(); i++){
-                            gzprintf(mc_output_lig, "%10.3f", step->torsion_angles[i-1]);
-                        }
-                        gzprintf(mc_output_lig, "\n");
-                    }
-
-                    if (count % Input->mc_stride == 0){
-                        sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
-                        Writer->print_info(info);
-                    }
-
-                    if ((Input->write_mol2) and (count % Input->mc_stride == 0)){
-                        Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC.ligsim");
-                    }
                     count++;
                     sum_x += energy;
                     sum_xsquared += (energy*energy);
                     sum_Boltzmann_ene += exp(((-Input->bi-1.0)*energy)/(k*T));
                     sum_Boltzmann2_ene += exp((-2.0*energy*(Input->bi-1.0))/(k*T));
+
+                    if (count % Input->mc_stride == 0){
+
+                        sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
+                        Writer->print_info(info);
+
+                        if (Input->write_mol2){
+                            Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC.ligsim");
+                        }
+
+                        if (! Input->sample_torsions){
+                            gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
+                        }
+                        else {
+                            gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
+                            for (unsigned i=1; i <= RotorList.Size(); i++){
+                                gzprintf(mc_output_lig, "%10.3f", step->torsion_angles[i-1]);
+                            }
+                            gzprintf(mc_output_lig, "\n");
+                        }
+                    }
                 }
                 else{
                     nReject++;
@@ -526,6 +569,26 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         Writer->print_info(info);
 
         Writer->print_line();
+
+        McEntropy::entropy_t* McEnt = new McEntropy::entropy_t;
+        McEnt->Srot = 0.0; McEnt->Storsion = 0.0; McEnt->Strans = 0.0;
+        Entropy->get_results(McEnt, Input->number_steps);
+
+        sprintf(info, "First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K", McEnt->Strans*T, T);
+        Writer->print_info(info);
+        sprintf(info, "First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K", McEnt->Srot*T, T);
+        Writer->print_info(info);
+        sprintf(info, "First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K", McEnt->Storsion*T, T);
+        Writer->print_info(info);
+        sprintf(info, "First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K", McEnt->S, T);
+        Writer->print_info(info);
+        sprintf(info, "First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K", -McEnt->TS, T);
+        Writer->print_info(info);
+
+        Writer->print_line();
+
+        delete McEnt;
+        delete Entropy;
     }
 }
 

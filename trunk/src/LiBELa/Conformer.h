@@ -20,11 +20,11 @@
 #include <cstdlib>
 #include <cstdio>
 
-#ifdef HAS_GUI
+//#ifdef HAS_GUI
 
-#define shared_ptr boost::shared_ptr
+//#define shared_ptr boost::shared_ptr
 
-#endif
+//#endif
 
 
 using namespace OpenBabel;

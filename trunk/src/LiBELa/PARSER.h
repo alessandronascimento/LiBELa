@@ -262,6 +262,9 @@ public:
     //! Defines whether extensive output should be given
     bool verbose;
 
+    int entropy_rotation_bins;
+    int entropy_translation_bins;
+
 #ifdef HAS_GUI
 	QStringList docking_molecules;
 #endif

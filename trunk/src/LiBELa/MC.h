@@ -8,6 +8,7 @@
 #include "Energy2.h"
 #include "Optimizer.h"
 #include "WRITER.h"
+#include "McEntropy.h"
 #include "gsl/gsl_rng.h"
 #include <zlib.h>
 #include <openbabel/mol.h>
