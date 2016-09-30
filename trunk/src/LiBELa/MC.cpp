@@ -355,6 +355,8 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     Writer->print_info(info);
     sprintf(info, "First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K", -McEnt->TS, T);
     Writer->print_info(info);
+    sprintf(info, "First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K", -McEnt->S*300., T);
+    Writer->print_info(info);
 
     Writer->print_line();
 
@@ -509,6 +511,8 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                     sum_Boltzmann_ene += exp(((-Input->bi-1.0)*energy)/(k*T));
                     sum_Boltzmann2_ene += exp((-2.0*energy*(Input->bi-1.0))/(k*T));
 
+                    Entropy->update(com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->torsion_angles);
+
                     if (count % Input->mc_stride == 0){
 
                         sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
@@ -583,6 +587,8 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         sprintf(info, "First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K", McEnt->S, T);
         Writer->print_info(info);
         sprintf(info, "First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K", -McEnt->TS, T);
+        Writer->print_info(info);
+        sprintf(info, "First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K", -McEnt->S*300., T);
         Writer->print_info(info);
 
         Writer->print_line();
