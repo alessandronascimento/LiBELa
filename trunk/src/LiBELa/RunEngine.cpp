@@ -1007,8 +1007,8 @@ void TEMP_SCHEME::mcr_run(){
 
 
         double cum_W_lig = 0.0;
-        max_vol = 0.0;
-        volume = 0.0;
+        double lig_max_vol = 0.0;
+        double lig_volume = 0.0;
 
 
         bt = Input->temp;
@@ -1021,14 +1021,14 @@ void TEMP_SCHEME::mcr_run(){
                     bt = bt*Input->mcr_coefficients[j];
                 }
                 EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, bt);
-                volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
+                lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
                 sprintf(info, "MCR %7d %10.4f %10.4g %10.4g %10.4g %10.4g %10.4g", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation,
-                        log(EqMC->average_energy), volume);
+                        log(EqMC->average_energy), lig_volume);
                 Writer->print_info(info);
 
                 cum_W_lig += (log(EqMC->average_energy));
                 if (volume > max_vol){
-                    max_vol=volume;
+                    lig_max_vol=lig_volume;
                 }
             }
 
@@ -1036,7 +1036,19 @@ void TEMP_SCHEME::mcr_run(){
             sprintf(info, "MCR: SUM of { ln [ <e^([-b-1]*U/kT)> ] } for the ligand = %10.4g",  cum_W_lig);
             Writer->print_info(info);
 
-            sprintf(info, "MCR: Ligand Volume: %10.4g.  ln(volume) = %10.4g",  volume, log(volume));
+            sprintf(info, "MCR: Ligand Volume: %10.4g.  ln(volume) = %10.4g",  lig_volume, log(lig_volume));
+            Writer->print_info(info);
+            Writer->print_line();
+
+            double complex_A = (-k*Input->temp*log(volume))-(k*Input->temp*cum_W);
+            double ligand_A = (-k*Input->temp*log(lig_volume))-(k*Input->temp*cum_W_lig);
+            double Delta_A = complex_A - ligand_A;
+
+            sprintf(info, "MCR: Complex Free Energy = %10.4g ", complex_A);
+            Writer->print_info(info);
+            sprintf(info, "MCR: Ligand Free Energy = %10.4g ", ligand_A);
+            Writer->print_info(info);
+            sprintf(info, "MCR: Complex Free Energy = %10.4g ", Delta_A);
             Writer->print_info(info);
             Writer->print_line();
         }
