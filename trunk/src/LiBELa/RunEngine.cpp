@@ -997,7 +997,7 @@ void TEMP_SCHEME::mcr_run(){
         }
 
         Writer->print_line();
-        sprintf(info, "MCR: SUM of { ln [ <e^([-b-1]*U/kT)> ] } = %10.4g",  cum_W);
+        sprintf(info, "MCR: SUM of { ln [ <e^([-(b-1)]*U/kT)> ] } = %10.4g",  cum_W);
         Writer->print_info(info);
 
         sprintf(info, "MCR: Volume: %10.4g.  ln(volume) = %10.4g",  volume, log(volume));
@@ -1033,7 +1033,7 @@ void TEMP_SCHEME::mcr_run(){
             }
 
             Writer->print_line();
-            sprintf(info, "MCR: SUM of { ln [ <e^([-b-1]*U/kT)> ] } for the ligand = %10.4g",  cum_W_lig);
+            sprintf(info, "MCR: SUM of { ln [ <e^([-(b-1)]*U/kT)> ] } for the ligand = %10.4g",  cum_W_lig);
             Writer->print_info(info);
 
             sprintf(info, "MCR: Ligand Volume: %10.4g.  ln(volume) = %10.4g",  lig_volume, log(lig_volume));
@@ -1048,7 +1048,7 @@ void TEMP_SCHEME::mcr_run(){
             Writer->print_info(info);
             sprintf(info, "MCR: Ligand Free Energy = %10.4g ", ligand_A);
             Writer->print_info(info);
-            sprintf(info, "MCR: Complex Free Energy = %10.4g ", Delta_A);
+            sprintf(info, "MCR: Binding Free Energy = %10.4g ", Delta_A);
             Writer->print_info(info);
             Writer->print_line();
         }
