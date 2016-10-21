@@ -38,6 +38,7 @@ public:
     double average_energy;
     double energy_standard_deviation;
     long double Boltzmann_weighted_average_energy;
+    long double MCR_Boltzmann_weighted_average;
 
     struct step_t{
         vector<vector<double> > xyz;
