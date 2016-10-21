@@ -467,7 +467,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                 count++;
                 sum_x += energy;
                 sum_xsquared += (energy*energy);
-                sum_Boltzmann_ene += exp(((-Input->bi-1.0)*energy)/(k*T));
+                sum_Boltzmann_ene += exp(((-(Input->bi-1.0))*energy)/(k*T));
                 sum_Boltzmann2_ene += exp((-2.0*energy*(Input->bi-1.0))/(k*T));
 
                 Entropy->update(com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->torsion_angles);
@@ -508,7 +508,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                     count++;
                     sum_x += energy;
                     sum_xsquared += (energy*energy);
-                    sum_Boltzmann_ene += exp(((-Input->bi-1.0)*energy)/(k*T));
+                    sum_Boltzmann_ene += exp(((-(Input->bi-1.0))*energy)/(k*T));
                     sum_Boltzmann2_ene += exp((-2.0*energy*(Input->bi-1.0))/(k*T));
 
                     Entropy->update(com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->torsion_angles);
@@ -538,7 +538,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                     nReject++;
                     sum_x += energy;
                     sum_xsquared += (energy*energy);
-                    sum_Boltzmann_ene += exp(((-Input->bi-1.0)*energy)/(k*T));
+                    sum_Boltzmann_ene += exp(((-(Input->bi-1.0))*energy)/(k*T));
                     sum_Boltzmann2_ene += exp((-2.0*energy*(Input->bi-1.0))/(k*T));
                 }
             }
