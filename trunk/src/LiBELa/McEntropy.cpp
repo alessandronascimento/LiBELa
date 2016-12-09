@@ -20,8 +20,12 @@ McEntropy::McEntropy(PARSER* _Input, COORD_MC* _Coord, vector<double> _com, int 
 
     for (int i=0; i< rot_bins; i++){
         hist_alpha.push_back(0.0);
-        hist_beta.push_back(0.0);
+//        hist_beta.push_back(0.0);
         hist_gamma.push_back(0.0);
+    }
+
+    for (int i=0; i<(rot_bins/2); i++){
+        hist_beta.push_back(0.0);
     }
 
     hist_torsions = new float*[n_rot];
@@ -44,8 +48,10 @@ void McEntropy::update(double x, double y, double z, double alpha, double beta, 
 
 
     hist_alpha[int(round(alpha/rotation_step))] += 1.0;
-    hist_gamma[int(round(beta/rotation_step))] += 1.0;
-    hist_beta[int(round(gamma/rotation_step))] += 1.0;
+//    hist_beta[int(round(beta/rotation_step))] += 1.0;
+    hist_gamma[int(round(gamma/rotation_step))] += 1.0;
+
+    hist_beta[int(round(beta/(rotation_step/2.0)))] += 1.0;
 
     for (int i=0; i< n_rot; i++){
         int angle = round(torsion[i]/rotation_step);

@@ -1052,6 +1052,17 @@ void MC::increment_angles(vector<double> *angles, step_t* step){
                 angles->at(i) += 360.;
             }
         }
+
+        if (angles->at(1) > 180.){
+            angles->at(1) -= 180.;
+        }
+        else if (angles->at(1) < -180.){
+            angles->at(1) += 180.;
+        }
+
+        if (angles->at(1) < 0.0){       //beta is within the range of 0-180 degres.
+            angles->at(1) += 180.;
+        }
 }
 
 bool MC::ligand_is_inside_box(PARSER* Input, step_t* step, vector<double> original_com, vector<double> current_com){
