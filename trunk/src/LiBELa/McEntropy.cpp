@@ -2,6 +2,7 @@
 
 McEntropy::McEntropy(PARSER* _Input, COORD_MC* _Coord, vector<double> _com, int _n_rot)
 {
+    this->k=0.001987;
     this->Input = _Input;
     this->Coord = _Coord;
     this->n_rot = _n_rot;

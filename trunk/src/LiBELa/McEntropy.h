@@ -35,7 +35,7 @@ public:
 
     PARSER* Input;
     COORD_MC* Coord;
-    const double k = 0.001987;
+    double k;
 
     struct entropy_t{
         double Strans;
