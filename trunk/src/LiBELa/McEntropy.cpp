@@ -2,7 +2,7 @@
 
 McEntropy::McEntropy(PARSER* _Input, COORD_MC* _Coord, vector<double> _com, int _n_rot)
 {
-    this->k=0.001987;
+    this->k=0.0019858775203792202;          // Boltzmann constant in kcal/(mol.K)
     this->Input = _Input;
     this->Coord = _Coord;
     this->n_rot = _n_rot;
@@ -49,10 +49,10 @@ void McEntropy::update(double x, double y, double z, double alpha, double beta, 
 
 
     hist_alpha[int(round(alpha/rotation_step))] += 1.0;
-//    hist_beta[int(round(beta/rotation_step))] += 1.0;
+    hist_beta[int(round(beta/rotation_step))] += 1.0;
     hist_gamma[int(round(gamma/rotation_step))] += 1.0;
 
-    hist_beta[int(round(beta/(rotation_step/2.0)))] += 1.0;
+//    hist_beta[int(round(beta/(rotation_step/2.0)))] += 1.0;
 
     for (int i=0; i< n_rot; i++){
         int angle = round(torsion[i]/rotation_step);
@@ -92,11 +92,6 @@ void McEntropy::get_results(entropy_t* entropy, int count){
             entropy->Srot += hist_alpha[i] * log(hist_alpha[i]);
         }
 
-        hist_beta[i] = hist_beta[i]/count;
-        if (hist_beta[i]> 0.0){
-            entropy->Srot += hist_beta[i] * log(hist_beta[i]);
-        }
-
         hist_gamma[i] = hist_gamma[i]/count;
         if (hist_gamma[i]> 0.0){
             entropy->Srot += hist_gamma[i] * log(hist_gamma[i]);
@@ -107,6 +102,13 @@ void McEntropy::get_results(entropy_t* entropy, int count){
             if (hist_torsions[j][i] > 0.0){
                 entropy->Storsion += hist_torsions[j][i] * log(hist_torsions[j][i]);
             }
+        }
+    }
+
+    for (unsigned i=0; i< rot_bins/2; i++){
+        hist_beta[i] = hist_beta[i]/count;
+        if (hist_beta[i]> 0.0){
+            entropy->Srot += hist_beta[i] * log(hist_beta[i]);
         }
     }
 
