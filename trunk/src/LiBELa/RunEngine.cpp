@@ -987,7 +987,7 @@ void TEMP_SCHEME::mcr_run(){
             volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
 
             sprintf(info, "MCR %7d %7.4f %7.4g %7.4g %7.4g %7.4Lg %7.4Lg %7.4g %7.4Lg %7.4g", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
-                    EqMC->MCR_Boltzmann_weighted_stdev, log(double(EqMC->MCR_Boltzmann_weighted_average)), ((1.0/double(EqMC->MCR_Boltzmann_weighted_average))*EqMC->MCR_Boltzmann_weighted_stdev, volume);
+                    EqMC->MCR_Boltzmann_weighted_stdev, log(double(EqMC->MCR_Boltzmann_weighted_average)), ((1.0/double(EqMC->MCR_Boltzmann_weighted_average))*EqMC->MCR_Boltzmann_weighted_stdev), volume);
             Writer->print_info(info);
             Writer->print_line();
 
