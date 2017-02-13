@@ -334,11 +334,11 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     Writer->print_line();
 
     this->average_energy = sum_x/(Input->number_steps+nReject);
-    this->energy_standard_deviation = (sum_xsquared - (sum_x*sum_x))/(Input->number_steps+nReject-1); //variance
+    this->energy_standard_deviation = (sum_xsquared - (sum_x*sum_x/Input->number_steps+nReject))/(Input->number_steps+nReject-1); //variance
     this->energy_standard_deviation = sqrt(this->energy_standard_deviation);                          //std deviation
     this->Boltzmann_weighted_average_energy = sum_Boltzmann_ene/sum_Boltzmann2_ene;
     this->MCR_Boltzmann_weighted_average = sum_Boltzmann2_ene/(Input->number_steps+nReject);
-    this->MCR_Boltzmann_weighted_stdev = (sum_Boltzmann2_ene_squared - (sum_Boltzmann2_ene * sum_Boltzmann2_ene))/(Input->number_steps+nReject-1);
+    this->MCR_Boltzmann_weighted_stdev = (sum_Boltzmann2_ene_squared - (sum_Boltzmann2_ene * sum_Boltzmann2_ene / Input->number_steps+nReject))/(Input->number_steps+nReject-1);
     this->MCR_Boltzmann_weighted_stdev  = sqrt(this->MCR_Boltzmann_weighted_stdev);
 
 
@@ -575,11 +575,11 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         Writer->print_line();
 
         this->average_energy = double(sum_x/(Input->number_steps+nReject));
-        this->energy_standard_deviation = (sum_xsquared - (sum_x*sum_x))/(Input->number_steps+nReject-1);
+        this->energy_standard_deviation = (sum_xsquared - (sum_x*sum_x/Input->number_steps+nReject))/(Input->number_steps+nReject-1);
         this->energy_standard_deviation = sqrt(this->energy_standard_deviation);
         this->Boltzmann_weighted_average_energy = sum_Boltzmann_ene/sum_Boltzmann2_ene;
         this->MCR_Boltzmann_weighted_average = sum_Boltzmann2_ene/(Input->number_steps+nReject);
-        this->MCR_Boltzmann_weighted_stdev = (sum_Boltzmann2_ene_squared - (sum_Boltzmann2_ene*sum_Boltzmann2_ene))/(Input->number_steps+nReject-1);
+        this->MCR_Boltzmann_weighted_stdev = (sum_Boltzmann2_ene_squared - (sum_Boltzmann2_ene*sum_Boltzmann2_ene/Input->number_steps+nReject))/(Input->number_steps+nReject-1);
         this->MCR_Boltzmann_weighted_stdev  = sqrt(this->MCR_Boltzmann_weighted_stdev);
 
         sprintf(info, "Average Monte Carlo energy: %10.3f +- %10.3f @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
