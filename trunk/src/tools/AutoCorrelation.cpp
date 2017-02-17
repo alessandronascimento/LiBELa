@@ -59,24 +59,44 @@ int main (int argc, char *argv[]){
     int count=0;
     string line;
     int tint;
-    double ene;
-    double data[ncycles];
+    double ene, dtmp, x, y, z, alpha, beta, gamma;
+    double data_ene[ncycles], data_x[ncycles], data_y[ncycles], data_z[ncycles], data_alpha[ncycles], data_beta[ncycles], data_gamma[ncycles];
 
 
     while (count < ncycles && !gzeof(datain)){
         gzgets(datain, str, 250);
         line = string(str);
         istringstream ss(line);
-        ss >> tint >> ene;
-        data[count] = ene;
+        ss >> tint >> ene >> dtmp >> x >> y >> z >> alpha >> beta >> gamma;
+        data_ene[count] = ene;
+        data_x[count] = x;
+        data_y[count] = y;
+        data_z[count] = z;
+        data_alpha[count] = alpha;
+        data_beta[count] = beta;
+        data_gamma[count] = gamma;
         count++;
     }
 
     gzclose(datain);
 
-    double autocorr = gsl_stats_lag1_autocorrelation(data, stride, count);
+    double autocorr_ene = gsl_stats_lag1_autocorrelation(data_ene, stride, count);
 
-    printf("Autocorrelation for data: %f\n", autocorr);
+    double autocorr_x = gsl_stats_lag1_autocorrelation(data_x, stride, count);
+    double autocorr_y = gsl_stats_lag1_autocorrelation(data_y, stride, count);
+    double autocorr_z = gsl_stats_lag1_autocorrelation(data_z, stride, count);
+
+    double autocorr_alpha = gsl_stats_lag1_autocorrelation(data_alpha, stride, count);
+    double autocorr_beta = gsl_stats_lag1_autocorrelation(data_beta, stride, count);
+    double autocorr_gamma = gsl_stats_lag1_autocorrelation(data_gamma, stride, count);
+
+    printf("Autocorrelation for Energy: %7.4f\n", autocorr_ene);
+    printf("Autocorrelation for X Translation: %7.4f\n", autocorr_x);
+    printf("Autocorrelation for Y Translation: %7.4f\n", autocorr_y);
+    printf("Autocorrelation for Z Translation: %7.4f\n", autocorr_z);
+    printf("Autocorrelation for Rotation in alpha: %7.4f\n", autocorr_alpha);
+    printf("Autocorrelation for Rotation in beta : %7.4f\n", autocorr_beta);
+    printf("Autocorrelation for Rotation in gamma: %7.4f\n", autocorr_gamma);
 
     return 0;
 
