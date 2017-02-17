@@ -15,34 +15,38 @@ int main (int argc, char *argv[]){
 
     int c;
     int ncycles=1E6;
+    int stride=1;
     string infile;
 
 
     if (argc < 2){
-      printf("Usage %s -i <inputfile> -n <data_size> [-h]\n", argv[0]);
-      exit(1);
+        printf("Usage %s -i <inputfile> -n <data_size> -s <stride> [-h]\n", argv[0]);
+        exit(1);
     }
 
-    while ((c = getopt(argc, argv, "n:i:h")) != -1)
-      switch (c){
-      case 'n':
-          ncycles= atoi(optarg);
-          break;
-      case 'i':
-          infile = string(optarg);
-          break;
-      case 'h':
-          printf("Usage %s -i <inputfile> -n <data_size> [-h]\n", argv[0]);
-          break;
-          exit(1);
-      case '?':
-          printf("Usage %s -i <inputfile> -n <data_size> [-h]\n", argv[0]);
-          break;
-          exit(1);
-      }
+    while ((c = getopt(argc, argv, "n:i:s:h")) != -1)
+        switch (c){
+        case 'n':
+            ncycles= atoi(optarg);
+            break;
+        case 'i':
+            infile = string(optarg);
+            break;
+        case 'h':
+            printf("Usage %s -i <inputfile> -n <data_size> -s <stride> [-h]\n", argv[0]);
+            break;
+            exit(1);
+        case '?':
+            printf("Usage %s -i <inputfile> -n <data_size> -s <stride> [-h]\n", argv[0]);
+            break;
+            exit(1);
+        case 's':
+            stride = atoi(optarg);
+            break;
+        }
 
 
-// Reading data
+    // Reading data
 
 
     gzFile datain = gzopen(infile.c_str(), "r");
@@ -70,7 +74,7 @@ int main (int argc, char *argv[]){
 
     gzclose(datain);
 
-    double autocorr = gsl_stats_lag1_autocorrelation(data, 1, count);
+    double autocorr = gsl_stats_lag1_autocorrelation(data, stride, count);
 
     printf("Autocorrelation for data: %f\n", autocorr);
 
