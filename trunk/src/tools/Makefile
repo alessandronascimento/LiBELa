@@ -34,7 +34,7 @@ McCharge: McCharge.o
 	$(CC) McCharge.o -o McCharge $(LDFLAGS)
 
 AutoCorr: AutoCorrelation.o
-	$(CC) Autocorrelation.o -o AutoCorr $(LDFLAGS)
+	$(CC) AutoCorrelation.o -o AutoCorr $(LDFLAGS)
 
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@
