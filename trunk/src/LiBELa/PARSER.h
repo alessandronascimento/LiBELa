@@ -232,8 +232,6 @@ public:
     int seed;
     //! ligand simulation
     bool ligsim;
-    //! delta for solvation effective distance.
-    double solvation_delta;
     //! An "stride" parameter for writing trajectory file. Coordinates are written at mc_stride intervals.
     int mc_stride;
 

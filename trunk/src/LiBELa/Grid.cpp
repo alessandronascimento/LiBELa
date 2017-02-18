@@ -280,7 +280,7 @@ void Grid::compute_grid_hardcore(Mol2* Rec){
 					vdwA += sqrt(Rec->epsilons[i]*(pow((2.0*Rec->radii[i]), 12.0))) / (d6*d6) ;
                     vdwB += sqrt(2.0 * Rec->epsilons[i]*(pow((2.0*Rec->radii[i]), 6.0))) / (d6) ;
 
-                    deff = (d2+(Input->solvation_delta*Input->solvation_delta));
+                    deff = (d2);
 
                     solv += ((Input->solvation_alpha * Rec->charges[i] * Rec->charges[i])+ Input->solvation_beta) *  exp((-(deff)/(2*Input->sigma*Input->sigma))) / pow(Input->sigma, 3.0);
                     rec_solv += (4.0/3.0) * PI * pow(Rec->radii[i], 3) * exp((-(deff)/(2*Input->sigma*Input->sigma))) / pow(Input->sigma, 3.0);
