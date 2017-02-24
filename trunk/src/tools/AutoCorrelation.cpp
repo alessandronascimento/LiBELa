@@ -8,6 +8,17 @@
 
 using namespace std;
 
+double compute_autocorr(double* data, int n, int lag){
+    double num=0.0, denom=0.0;
+    double mean = gsl_stats_mean(data, 1, n);
+    for (int i=0; i<(n-lag); i++){
+        num += (data[i]-mean)*(data[i+lag]-mean);
+        denom += (data[i]-mean)*(data[i]-mean);
+    }
+    return(num/denom);
+}
+
+
 int main (int argc, char *argv[]){
 
     int c;
@@ -106,14 +117,4 @@ int main (int argc, char *argv[]){
 
     return 0;
 
-}
-
-double compute_autocorr(double* data, int n, int lag){
-    double num=0.0, denom=0.0;
-    double mean = gsl_stats_mean(data, 1, n);
-    for (int i=0; i<(n-lag); i++){
-        num += (data[i]-mean)*(data[i+lag]-mean);
-        denom += (data[i]-mean)*(data[i]-mean);
-    }
-    return(num/denom);
 }
