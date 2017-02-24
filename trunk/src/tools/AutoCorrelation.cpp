@@ -4,9 +4,6 @@
 #include<string>
 #include<sstream>
 #include<zlib.h>
-//#include<vector>
-//#include<cmath>
-//#include<time.h>
 #include <gsl/gsl_statistics.h>
 
 using namespace std;
@@ -15,16 +12,17 @@ int main (int argc, char *argv[]){
 
     int c;
     int ncycles=1E6;
+    int lag = 1;
     int stride=1;
     string infile;
 
 
     if (argc < 2){
-        printf("Usage %s -i <inputfile> -n <data_size> -s <stride> [-h]\n", argv[0]);
+        printf("Usage %s -i <inputfile> -n <data_size> -s <stride> [-h] -k <lag>\n", argv[0]);
         exit(1);
     }
 
-    while ((c = getopt(argc, argv, "n:i:s:h")) != -1)
+    while ((c = getopt(argc, argv, "n:i:s:k:h")) != -1)
         switch (c){
         case 'n':
             ncycles= atoi(optarg);
@@ -33,21 +31,22 @@ int main (int argc, char *argv[]){
             infile = string(optarg);
             break;
         case 'h':
-            printf("Usage %s -i <inputfile> -n <data_size> -s <stride> [-h]\n", argv[0]);
+            printf("Usage %s -i <inputfile> -n <data_size> -s <stride> [-h] -k <lag>\n", argv[0]);
             break;
             exit(1);
         case '?':
-            printf("Usage %s -i <inputfile> -n <data_size> -s <stride> [-h]\n", argv[0]);
+            printf("Usage %s -i <inputfile> -n <data_size> -s <stride> [-h] -k <lag>\n", argv[0]);
             break;
             exit(1);
         case 's':
             stride = atoi(optarg);
             break;
+        case 'k':
+            lag = atoi(optarg);
+            break;
         }
 
-
     // Reading data
-
 
     gzFile datain = gzopen(infile.c_str(), "r");
     char str[250];
@@ -60,7 +59,13 @@ int main (int argc, char *argv[]){
     string line;
     int tint;
     double ene, dtmp, x, y, z, alpha, beta, gamma;
-    double data_ene[ncycles], data_x[ncycles], data_y[ncycles], data_z[ncycles], data_alpha[ncycles], data_beta[ncycles], data_gamma[ncycles];
+    double* data_ene = new double[ncycles];
+    double* data_x = new double[ncycles];
+    double* data_y = new double[ncycles];
+    double* data_z = new double[ncycles];
+    double* data_alpha = new double[ncycles];
+    double* data_beta = new double[ncycles];
+    double* data_gamma = new double[ncycles];
 
 
     while (count < ncycles && !gzeof(datain)){
@@ -80,15 +85,16 @@ int main (int argc, char *argv[]){
 
     gzclose(datain);
 
-    double autocorr_ene = gsl_stats_lag1_autocorrelation(data_ene, stride, count);
 
-    double autocorr_x = gsl_stats_lag1_autocorrelation(data_x, stride, count);
-    double autocorr_y = gsl_stats_lag1_autocorrelation(data_y, stride, count);
-    double autocorr_z = gsl_stats_lag1_autocorrelation(data_z, stride, count);
+    double autocorr_ene = compute_autocorr(data_ene, count, lag);
 
-    double autocorr_alpha = gsl_stats_lag1_autocorrelation(data_alpha, stride, count);
-    double autocorr_beta = gsl_stats_lag1_autocorrelation(data_beta, stride, count);
-    double autocorr_gamma = gsl_stats_lag1_autocorrelation(data_gamma, stride, count);
+    double autocorr_x = compute_autocorr(data_x, count, lag);
+    double autocorr_y = compute_autocorr(data_y, count, lag);
+    double autocorr_z = compute_autocorr(data_z, count, lag);
+
+    double autocorr_alpha = compute_autocorr(data_alpha, count, lag);
+    double autocorr_beta = compute_autocorr(data_beta, count, lag);
+    double autocorr_gamma = compute_autocorr(data_gamma, count, lag);
 
     printf("Autocorrelation for Energy: %7.4f\n", autocorr_ene);
     printf("Autocorrelation for X Translation: %7.4f\n", autocorr_x);
@@ -100,4 +106,14 @@ int main (int argc, char *argv[]){
 
     return 0;
 
+}
+
+double compute_autocorr(double* data, int n, int lag){
+    double num=0.0, denom=0.0;
+    double mean = gsl_stats_mean(data, 1, n);
+    for (int i=0; i<(n-lag); i++){
+        num += (data[i]-mean)*(data[i+lag]-mean);
+        denom += (data[i]-mean)*(data[i]-mean);
+    }
+    return(num/denom);
 }
