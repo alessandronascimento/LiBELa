@@ -9,6 +9,7 @@
 #include "Optimizer.h"
 #include "WRITER.h"
 #include "McEntropy.h"
+#include "iMcLiBELa.h"
 #include "gsl/gsl_rng.h"
 #include <zlib.h>
 #include <openbabel/mol.h>

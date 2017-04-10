@@ -102,6 +102,8 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
     McEntropy* Entropy = new McEntropy(Input, Coord, original_com, int(RotorList.Size()));
 
+    energy_result_t* energy_t = new energy_result_t;
+
     double energy=0.0, new_energy=0.0, p=0.0, rnumber=0.0, rmsd=0.0;
     step_t* step = new step_t;
 
@@ -115,7 +117,9 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
         this->take_step(Input, Lig, step);
     }
 
-    energy = (Energy->compute_ene(Grids, Lig, step->xyz)+step->internal_energy);
+    Energy->compute_ene(Grids, Lig, step->xyz, energy_t);
+
+    energy = energy_t->total+step->internal_energy;
 
 
 
@@ -125,10 +129,10 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     gzprintf(mc_output,"#NROT = %10.10d\n", int(RotorList.Size()));
     gzprintf(mc_output,"###################################################################################################################################################################\n");
     if (! Input->sample_torsions){
-        gzprintf(mc_output, "#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s\n", "Step", "Energy", "RMSD", "DX", "DY", "DZ", "ALPHA", "BETA", "GAMMA", "NCONF", "ConfEnergy");
+        gzprintf(mc_output, "#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s\n", "Step", "Energy", "RMSD", "DX", "DY", "DZ", "ALPHA", "BETA", "GAMMA", "NCONF", "ConfEnergy", "Elec", "VDW");
     }
     else {
-        gzprintf(mc_output, "#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s ", "Step", "Energy", "RMSD", "DX", "DY", "DZ", "ALPHA", "BETA", "GAMMA", "NCONF", "ConfEnergy");
+        gzprintf(mc_output, "#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s ", "Step", "Energy", "RMSD", "DX", "DY", "DZ", "ALPHA", "BETA", "GAMMA", "NCONF", "ConfEnergy", "Elec", "VDW");
         for (unsigned i=1; i <= RotorList.Size(); i++){
             sprintf(info, "ROT[%3d]", i);
             gzprintf(mc_output, "%10.10s", info);
@@ -162,7 +166,8 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             this->take_step(Input, Lig, step);
         }
 
-        new_energy = (Energy->compute_ene(Grids, Lig, step->xyz)+step->internal_energy);
+        Energy->compute_ene(Grids, Lig, step->xyz, energy_t);
+        new_energy = energy_t->total+step->internal_energy;
 
         if (new_energy <= energy and this->ligand_is_inside_box(Input, step, original_com, com)){
             Lig->mcoords = Lig->new_mcoords;
@@ -210,7 +215,8 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             this->take_step(Input, Lig, step);
         }
 
-        new_energy = (Energy->compute_ene(Grids, Lig, step->xyz)+step->internal_energy);
+        Energy->compute_ene(Grids, Lig, step->xyz, energy_t);
+        new_energy = energy_t->total+step->internal_energy;
 
         if (new_energy <= energy and this->ligand_is_inside_box(Input, step, original_com, com)){
             Lig->mcoords = Lig->new_mcoords;
@@ -241,11 +247,11 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 }
 
                 if (! Input->sample_torsions){
-                    gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
+                    gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f %10.6f %10.6f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy, energy_t->elec, energy_t->vdw);
                 }
 
                 else {
-                    gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
+                    gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f %10.6f %10.6f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy, energy_t->elec, energy_t->vdw);
                     for (unsigned i=1; i <= RotorList.Size(); i++){
                         gzprintf(mc_output, "%10.3f", step->torsion_angles[i-1]);
                     }
@@ -285,10 +291,10 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                         Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
                     }
                     if (! Input->sample_torsions){
-                        gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
+                        gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f %10.6f %10.6f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy, energy_t->elec, energy_t->vdw);
                     }
                     else {
-                        gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
+                        gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f %10.6f %10.6f ", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy, energy_t->elec, energy_t->vdw);
                         for (unsigned i=1; i <= RotorList.Size(); i++){
                             gzprintf(mc_output, "%10.3f", step->torsion_angles[i-1]);
                         }
@@ -311,6 +317,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     delete step;
     delete Energy;
     delete Coord;
+    delete energy_t;
     Writer->print_line();
     sprintf(info, "Finished MC simulation after %d accepted steps, %d total steps, acceptance rate %5.3f", Input->number_steps, (Input->number_steps+nReject),double((Input->number_steps*1.0)/(Input->number_steps+nReject)));
     Writer->print_info(info);
