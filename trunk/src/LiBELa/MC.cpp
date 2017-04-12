@@ -127,9 +127,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
         else {
             this->take_step(Input, Lig, step);
         }
-        com[0] += step->dx;
-        com[1] += step->dy;
-        com[2] += step->dz;
+        com = Coord->compute_com(step->xyz, Lig);
         ligand_is_in = this->ligand_is_inside_box(Input, step, original_com, com);
     }
     ligand_is_in = false;
@@ -175,9 +173,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             else {
                 this->take_step(Input, Lig, step);
             }
-            com[0] += step->dx;
-            com[1] += step->dy;
-            com[2] += step->dz;
+            com = Coord->compute_com(step->xyz, Lig);
             ligand_is_in = this->ligand_is_inside_box(Input, step, original_com, com);
         }
         ligand_is_in = false;
@@ -231,9 +227,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             else {
                 this->take_step(Input, Lig, step);
             }
-            com[0] += step->dx;
-            com[1] += step->dy;
-            com[2] += step->dz;
+            com = Coord->compute_com(step->xyz, Lig);
             ligand_is_in = this->ligand_is_inside_box(Input, step, original_com, com);
         }
         ligand_is_in = false;
@@ -460,9 +454,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
             else {
                 this->take_step(Input, Lig, step);
             }
-            com[0] += step->dx;
-            com[1] += step->dy;
-            com[2] += step->dz;
+            com = Coord->compute_com(step->xyz, Lig);
             ligand_is_in = this->ligand_is_inside_box(Input, step, original_com, com);
         }
 
@@ -500,9 +492,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                 else {
                     this->take_step(Input, Lig, step);
                 }
-                com[0] += step->dx;
-                com[1] += step->dy;
-                com[2] += step->dz;
+                com = Coord->compute_com(step->xyz, Lig);
                 ligand_is_in = this->ligand_is_inside_box(Input, step, original_com, com);
             }
             ligand_is_in = false;
