@@ -79,6 +79,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     long double sum_Boltzmann_ene = 0.0;
     long double sum_Boltzmann2_ene = 0.0;
     long double sum_Boltzmann2_ene_squared = 0.0;
+    bool ligand_is_in = false;
 
     double k=0.0019858775203792202;
 
@@ -100,6 +101,15 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     COORD_MC* Coord = new COORD_MC;
     vector<double> original_com = Coord->compute_com(Lig);
 
+    vector<double> com(3);
+
+    vector<double> rot_angles(3);
+    for (unsigned i=0; i<3; i++){
+        rot_angles[i]= 0.0;
+    }
+
+    com = Coord->compute_com(Lig);
+
     McEntropy* Entropy = new McEntropy(Input, Coord, original_com, int(RotorList.Size()));
 
     energy_result_t* energy_t = new energy_result_t;
@@ -107,15 +117,22 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     double energy=0.0, new_energy=0.0, p=0.0, rnumber=0.0, rmsd=0.0;
     step_t* step = new step_t;
 
-    if (Input->generate_conformers){
-        this->take_step_flex(Input, Lig, step);
+    while (!ligand_is_in){
+        if (Input->generate_conformers){
+            this->take_step_flex(Input, Lig, step);
+        }
+        else if (Input->sample_torsions){
+            this->take_step_torsion(Input, Lig, step);
+        }
+        else {
+            this->take_step(Input, Lig, step);
+        }
+        com[0] += step->dx;
+        com[1] += step->dy;
+        com[2] += step->dz;
+        ligand_is_in = this->ligand_is_inside_box(Input, step, original_com, com);
     }
-    else if (Input->sample_torsions){
-        this->take_step_torsion(Input, Lig, step);
-    }
-    else {
-        this->take_step(Input, Lig, step);
-    }
+    ligand_is_in = false;
 
     Energy->compute_ene(Grids, Lig, step->xyz, energy_t);
 
@@ -143,33 +160,32 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     int count=0;
     int eqcount = 0;
 
-    vector<double> com(3);
-
-    vector<double> rot_angles(3);
-    for (unsigned i=0; i<3; i++){
-        rot_angles[i]= 0.0;
-    }
-
-    com = Coord->compute_com(Lig);
 
     //Equilibration implementation
 
     while (eqcount <= Input->eq_steps){
 
-        if (Input->generate_conformers){
-            this->take_step_flex(Input, Lig, step);
+        while (!ligand_is_in){
+            if (Input->generate_conformers){
+                this->take_step_flex(Input, Lig, step);
+            }
+            else if (Input->sample_torsions){
+                this->take_step_torsion(Input, Lig, step);
+            }
+            else {
+                this->take_step(Input, Lig, step);
+            }
+            com[0] += step->dx;
+            com[1] += step->dy;
+            com[2] += step->dz;
+            ligand_is_in = this->ligand_is_inside_box(Input, step, original_com, com);
         }
-        else if (Input->sample_torsions){
-            this->take_step_torsion(Input, Lig, step);
-        }
-        else {
-            this->take_step(Input, Lig, step);
-        }
+        ligand_is_in = false;
 
         Energy->compute_ene(Grids, Lig, step->xyz, energy_t);
         new_energy = energy_t->total+step->internal_energy;
 
-        if (new_energy <= energy and this->ligand_is_inside_box(Input, step, original_com, com)){
+        if (new_energy <= energy){
             Lig->mcoords = Lig->new_mcoords;
             this->xyz = step->xyz;
             energy = new_energy;
@@ -205,20 +221,27 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
     while (count <= Input->number_steps){
 
-        if (Input->generate_conformers){
-            this->take_step_flex(Input, Lig, step);
+        while (!ligand_is_in){
+            if (Input->generate_conformers){
+                this->take_step_flex(Input, Lig, step);
+            }
+            else if (Input->sample_torsions){
+                this->take_step_torsion(Input, Lig, step);
+            }
+            else {
+                this->take_step(Input, Lig, step);
+            }
+            com[0] += step->dx;
+            com[1] += step->dy;
+            com[2] += step->dz;
+            ligand_is_in = this->ligand_is_inside_box(Input, step, original_com, com);
         }
-        else if (Input->sample_torsions){
-            this->take_step_torsion(Input, Lig, step);
-        }
-        else {
-            this->take_step(Input, Lig, step);
-        }
+        ligand_is_in = false;
 
         Energy->compute_ene(Grids, Lig, step->xyz, energy_t);
         new_energy = energy_t->total+step->internal_energy;
 
-        if (new_energy <= energy and this->ligand_is_inside_box(Input, step, original_com, com)){
+        if (new_energy <= energy){
             Lig->mcoords = Lig->new_mcoords;
             this->xyz = step->xyz;
             energy = new_energy;
@@ -391,6 +414,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         long double sum_Boltzmann_ene = 0.0;
         long double sum_Boltzmann2_ene = 0.0;
         long double sum_Boltzmann2_ene_squared = 0.0;
+        bool ligand_is_in = false;
 
         double k=0.0019858775203792202;
 
@@ -413,20 +437,36 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         COORD_MC* Coord = new COORD_MC;
         vector<double> original_com = Coord->compute_com(Lig);
 
+        int count=0;
+        vector<double> com(3);
+        vector<double> rot_angles(3);
+        for (unsigned i=0; i<3; i++){
+            rot_angles[i] = 0.0;
+        }
+        com = Coord->compute_com(Lig);
+
         McEntropy* Entropy = new McEntropy(Input, Coord, original_com, int(RotorList.Size()));
 
         double energy, new_energy, p, rnumber, rmsd;
         step_t* step = new step_t;
 
-        if (Input->generate_conformers){
-            this->take_step_flex(Input, Lig, step);
+        while (!ligand_is_in){
+            if (Input->generate_conformers){
+                this->take_step_flex(Input, Lig, step);
+            }
+            else if (Input->sample_torsions){
+                this->take_step_torsion(Input, Lig, step);
+            }
+            else {
+                this->take_step(Input, Lig, step);
+            }
+            com[0] += step->dx;
+            com[1] += step->dy;
+            com[2] += step->dz;
+            ligand_is_in = this->ligand_is_inside_box(Input, step, original_com, com);
         }
-        else if (Input->sample_torsions){
-            this->take_step_torsion(Input, Lig, step);
-        }
-        else {
-            this->take_step(Input, Lig, step);
-        }
+
+        ligand_is_in = false;
 
         energy = step->internal_energy;
 
@@ -446,31 +486,30 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
             gzprintf(mc_output_lig, "\n");
         }
 
-        int count=0;
-        vector<double> com(3);
-        vector<double> rot_angles(3);
-        for (unsigned i=0; i<3; i++){
-            rot_angles[i] = 0.0;
-        }
-        com = Coord->compute_com(Lig);
-
         Writer->print_line();
 
         while (count <= Input->number_steps){
 
-            if (Input->generate_conformers){
-                this->take_step_flex(Input, Lig, step);
+            while (!ligand_is_in){
+                if (Input->generate_conformers){
+                    this->take_step_flex(Input, Lig, step);
+                }
+                else if (Input->sample_torsions){
+                    this->take_step_torsion(Input, Lig, step);
+                }
+                else {
+                    this->take_step(Input, Lig, step);
+                }
+                com[0] += step->dx;
+                com[1] += step->dy;
+                com[2] += step->dz;
+                ligand_is_in = this->ligand_is_inside_box(Input, step, original_com, com);
             }
-            else if (Input->sample_torsions){
-                this->take_step_torsion(Input, Lig, step);
-            }
-            else {
-                this->take_step(Input, Lig, step);
-            }
+            ligand_is_in = false;
 
             new_energy = step->internal_energy;
 
-            if (new_energy <= energy and this->ligand_is_inside_box(Input, step, original_com, com)){
+            if (new_energy <= energy){
                 Lig->mcoords = Lig->new_mcoords;
                 this->xyz = step->xyz;
                 energy = new_energy;
