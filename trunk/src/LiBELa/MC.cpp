@@ -429,7 +429,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
 
         Energy2* Energy = new Energy2(Input);
         COORD_MC* Coord = new COORD_MC;
-        vector<double> original_com = Coord->compute_com(Lig);
+        vector<double> original_com = Coord->compute_com(Lig->xyz, Lig);
 
         int count=0;
         vector<double> com(3);
@@ -457,9 +457,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
             com = Coord->compute_com(step->xyz, Lig);
             ligand_is_in = this->ligand_is_inside_box(Input, step, original_com, com);
         }
-
         ligand_is_in = false;
-
         energy = step->internal_energy;
 
         gzprintf(mc_output_lig,"###################################################################################################################################################################\n");
@@ -1123,11 +1121,10 @@ void MC::increment_angles(vector<double> *angles, step_t* step){
 
 bool MC::ligand_is_inside_box(PARSER* Input, step_t* step, vector<double> original_com, vector<double> current_com){
     bool ret = false;
-    if (((current_com[0] + step->dx) > (original_com[0] - Input->search_box_x/2.0)) and ((current_com[0] + step->dx) < (original_com[0] + Input->search_box_x/2.0))){
-        if (((current_com[1] + step->dy) > (original_com[1] - Input->search_box_y/2.0)) and ((current_com[1] + step->dy) < (original_com[1] + Input->search_box_y/2.0))){
-            if (((current_com[2] + step->dz) > (original_com[2] - Input->search_box_z/2.0)) and ((current_com[2] + step->dz) < (original_com[2] + Input->search_box_z/2.0))){
-                ret = true;
-
+    if (abs(current_com[0]-original_com[0]) <= (Input->search_box_x/2.0)){
+        if (abs(current_com[1]-original_com[1]) <= (Input->search_box_y/2.0)){
+            if (abs(current_com[2]-original_com[2]) <= (Input->search_box_z/2.0)){
+                ret=true;
             }
         }
     }
