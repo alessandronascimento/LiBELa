@@ -569,7 +569,7 @@ string Mol2::convert2gaff(string atom){
 
 	else if (atom =="H"){
 		gaff_atom = "hc";
-        this->radii.push_back(0.6000); //should it be 1.4870 Ang?
+        this->radii.push_back(1.4870);
 		this->epsilons.push_back(0.0157);
 		this->epsilons_sqrt.push_back(sqrt(0.0157));
 	}
