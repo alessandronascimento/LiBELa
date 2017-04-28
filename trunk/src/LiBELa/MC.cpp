@@ -101,14 +101,12 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     COORD_MC* Coord = new COORD_MC;
     vector<double> original_com = Coord->compute_com(Lig);
 
-    vector<double> com(3);
+    vector<double> com = Coord->compute_com(Lig);
 
     vector<double> rot_angles(3);
     for (unsigned i=0; i<3; i++){
         rot_angles[i]= 0.0;
     }
-
-    com = Coord->compute_com(Lig);
 
     McEntropy* Entropy = new McEntropy(Input, Coord, original_com, int(RotorList.Size()));
 
@@ -133,10 +131,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     ligand_is_in = false;
 
     Energy->compute_ene(Grids, Lig, step->xyz, energy_t);
-
     energy = energy_t->total+step->internal_energy;
-
-
 
     sprintf(info, "#%10s %10s %10s", "Step", "Energy", "RMSD");
     gzprintf(mc_output,"###################################################################################################################################################################\n");
@@ -186,23 +181,27 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             this->xyz = step->xyz;
             energy = new_energy;
             rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
+/*
             com[0] += step->dx;
             com[1] += step->dy;
             com[2] += step->dz;
+*/
             this->increment_angles(&rot_angles, step);
             this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
         }
         else{
             p = this->Boltzmman(energy, new_energy, T, Input->bi);
             rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
-            if (p > rnumber and this->ligand_is_inside_box(Input, step, original_com, com)){
+            if (p > rnumber){
                 Lig->mcoords = Lig->new_mcoords;
                 this->xyz = step->xyz;
                 energy = new_energy;
                 rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
+/*
                 com[0] += step->dx;
                 com[1] += step->dy;
                 com[2] += step->dz;
+*/
                 this->increment_angles(&rot_angles, step);
                 this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
             }
@@ -240,9 +239,11 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             this->xyz = step->xyz;
             energy = new_energy;
             rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
+/*
             com[0] += step->dx;
             com[1] += step->dy;
             com[2] += step->dz;
+*/
             this->increment_angles(&rot_angles, step);
             this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
             count++;
@@ -279,14 +280,16 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
         else{
             p = this->Boltzmman(energy, new_energy, T, Input->bi);
             rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
-            if (p > rnumber and this->ligand_is_inside_box(Input, step, original_com, com)){
+            if (p > rnumber){
                 Lig->mcoords = Lig->new_mcoords;
                 this->xyz = step->xyz;
                 energy = new_energy;
                 rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
+/*
                 com[0] += step->dx;
                 com[1] += step->dy;
                 com[2] += step->dz;
+*/
                 this->increment_angles(&rot_angles, step);
                 this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
                 count++;
@@ -295,7 +298,6 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 sum_Boltzmann_ene += energy*exp(((-(Input->bi-1.0))*energy)/(k*T));
                 sum_Boltzmann2_ene += exp(((-(Input->bi-1.0))*energy)/(k*T));
                 sum_Boltzmann2_ene_squared += exp(((-(Input->bi-1.0))*energy)/(k*T)) * exp(((-(Input->bi-1.0))*energy)/(k*T));
-
 
                 Entropy->update(com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->torsion_angles);
 
@@ -502,9 +504,11 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                 this->xyz = step->xyz;
                 energy = new_energy;
                 rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
+/*
                 com[0] += step->dx;
                 com[1] += step->dy;
                 com[2] += step->dz;
+*/
                 this->increment_angles(&rot_angles, step);
                 this->MaxMinCM(com[0], com[1], com[2], this->MaxMin);
 
@@ -539,14 +543,16 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
             else{
                 p = this->Boltzmman(energy, new_energy, T, Input->bi);
                 rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
-                if (p > rnumber and this->ligand_is_inside_box(Input, step, original_com, com)){
+                if (p > rnumber){
                     Lig->mcoords = Lig->new_mcoords;
                     this->xyz = step->xyz;
                     energy = new_energy;
                     rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
+/*
                     com[0] += step->dx;
                     com[1] += step->dy;
                     com[2] += step->dz;
+*/
                     this->increment_angles(&rot_angles, step);
                     this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
 

@@ -583,23 +583,23 @@ string Mol2::convert2gaff(string atom){
 
 	else if (atom =="Cl"){
 		gaff_atom = "cl";
-		this->radii.push_back(1.948);
-		this->epsilons.push_back(0.2650);
-		this->epsilons_sqrt.push_back(sqrt(0.2650));
+        this->radii.push_back(1.9452);
+        this->epsilons.push_back(0.2638);
+        this->epsilons_sqrt.push_back(sqrt(0.2638));
 	}
 
 	else if (atom =="Br"){
 		gaff_atom = "br";
-		this->radii.push_back(2.22);
-		this->epsilons.push_back(0.3200);
-		this->epsilons_sqrt.push_back(sqrt(0.3200));
+        this->radii.push_back(2.0275);
+        this->epsilons.push_back(0.3932);
+        this->epsilons_sqrt.push_back(sqrt(0.3932));
 	}
 
 	else if (atom =="I"){
 		gaff_atom = "i";
-		this->radii.push_back(2.35);
-		this->epsilons.push_back(0.4000);
-		this->epsilons_sqrt.push_back(sqrt(0.4000));
+        this->radii.push_back(2.1558);
+        this->epsilons.push_back(0.4955);
+        this->epsilons_sqrt.push_back(sqrt(0.4955));
 	}
 
 	else if (atom =="Mg"){

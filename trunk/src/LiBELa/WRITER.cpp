@@ -11,7 +11,9 @@ WRITER::WRITER(string prefix){
 	WRITER::output_prefix = prefix;
 	outputfile=WRITER::output_prefix+".log";
 	output = fopen(outputfile.c_str(), "w");
-    outmol2 = gzopen((prefix+"_dock.mol2.gz").c_str(), "w");
+    if ((Input->write_mol2) and (Input->dock_mode)){
+        outmol2 = gzopen((prefix+"_dock.mol2.gz").c_str(), "w");
+    }
 }
 
 
@@ -20,7 +22,7 @@ WRITER::WRITER(string prefix, PARSER* _Input){
     WRITER::output_prefix = prefix;
     outputfile=WRITER::output_prefix+".log";
     output = fopen(outputfile.c_str(), "w");
-    if (Input->write_mol2){
+    if ((Input->write_mol2) and (Input->dock_mode)){
         outmol2 = gzopen((prefix+"_dock.mol2.gz").c_str(), "w");
     }
 }
@@ -30,7 +32,7 @@ WRITER::WRITER(PARSER* _Input){
 	WRITER::output_prefix = Input->output;
 	outputfile=WRITER::output_prefix+".log";
 	output = fopen(outputfile.c_str(), "w");
-	if (Input->write_mol2){
+    if ((Input->write_mol2) and Input->dock_mode){
 		outmol2 = gzopen((Input->output+"_dock.mol2.gz").c_str(), "w");
 	}
 	this->print_welcome();
