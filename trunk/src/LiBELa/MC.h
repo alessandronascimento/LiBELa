@@ -16,14 +16,18 @@
 #include <openbabel/obconversion.h>
 #include <openbabel/rotor.h>
 #include <openbabel/conformersearch.h>
-//#include <openbabel/shared_ptr.h>
-#include <boost/shared_ptr.hpp>
+#include <openbabel/shared_ptr.h>
 #include <openbabel/forcefield.h>
 #include <openbabel/math/vector3.h>
 
-using namespace boost;
-using namespace OpenBabel;
+/*
+#if __GNUC__ > 4
+    #define shared_ptr boost::shared_ptr
+#endif
 
+using namespace boost;
+*/
+using namespace OpenBabel;
 
 class MC
 {

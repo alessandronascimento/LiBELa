@@ -33,11 +33,18 @@
 
 #ifdef HAS_MPI
 #include <boost/mpi.hpp>
-//namespace mpi = boost::mpi;
+using namespace boost;
 #endif
 
 using namespace std;
+
+/*
+#if __GNUC__ > 4
+    #define shared_ptr boost::shared_ptr
+#endif
+
 using namespace boost;
+*/
 
 class TEMP_SCHEME{
 

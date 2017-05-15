@@ -11,7 +11,7 @@
 #include <openbabel/mol.h>
 #include <openbabel/obconversion.h>
 #include <openbabel/conformersearch.h>
-//#include <openbabel/shared_ptr.h>
+#include <openbabel/shared_ptr.h>
 #include <openbabel/forcefield.h>
 #include <openbabel/math/align.h>
 #include <vector>
@@ -19,11 +19,17 @@
 #include "Mol2.h"
 #include <cstdlib>
 #include <cstdio>
-#include <boost/shared_ptr.hpp>
 
+/*
 using namespace boost;
+
+#if __GNUC__ > 4
+    #define shared_ptr boost::shared_ptr
+#endif
+*/
+
 using namespace OpenBabel;
-namespace std {
+using namespace std;
 
 class Conformer {
 public:
@@ -35,5 +41,4 @@ public:
 
 };
 
-} /* namespace std */
 #endif /* CONFORMER_H_ */
