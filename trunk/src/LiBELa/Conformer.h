@@ -20,14 +20,6 @@
 #include <cstdlib>
 #include <cstdio>
 
-/*
-using namespace boost;
-
-#if __GNUC__ > 4
-    #define shared_ptr boost::shared_ptr
-#endif
-*/
-
 using namespace OpenBabel;
 using namespace std;
 
