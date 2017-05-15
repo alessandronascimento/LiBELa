@@ -21,12 +21,7 @@
 #include <openbabel/forcefield.h>
 #include <openbabel/math/vector3.h>
 
-
-#ifdef HAS_GUI
-#define shared_ptr boost::shared_ptr
-#endif
-
-
+using namespace boost;
 using namespace OpenBabel;
 
 

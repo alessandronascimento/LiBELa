@@ -19,14 +19,9 @@
 #include "Mol2.h"
 #include <cstdlib>
 #include <cstdio>
+#include <boost/shared_ptr.hpp>
 
-//#ifdef HAS_GUI
-
-//#define shared_ptr boost::shared_ptr
-
-//#endif
-
-
+using namespace boost;
 using namespace OpenBabel;
 namespace std {
 
