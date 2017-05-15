@@ -11,7 +11,7 @@
 #include <openbabel/mol.h>
 #include <openbabel/obconversion.h>
 #include <openbabel/conformersearch.h>
-#include <openbabel/shared_ptr.h>
+//#include <openbabel/shared_ptr.h>
 #include <openbabel/forcefield.h>
 #include <openbabel/math/align.h>
 #include <vector>

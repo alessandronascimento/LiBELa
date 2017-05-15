@@ -16,7 +16,7 @@
 #include <openbabel/obconversion.h>
 #include <openbabel/rotor.h>
 #include <openbabel/conformersearch.h>
-#include <openbabel/shared_ptr.h>
+//#include <openbabel/shared_ptr.h>
 #include <boost/shared_ptr.hpp>
 #include <openbabel/forcefield.h>
 #include <openbabel/math/vector3.h>
