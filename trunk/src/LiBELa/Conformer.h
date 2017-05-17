@@ -19,6 +19,7 @@
 #include "Mol2.h"
 #include <cstdlib>
 #include <cstdio>
+#include <memory>
 
 using namespace OpenBabel;
 using namespace std;
@@ -27,7 +28,7 @@ class Conformer {
 public:
 	Conformer();
 	~Conformer();
-    shared_ptr<OBMol> GetMol(const std::string &molfile);
+    shared_ptr<OBMol> GetMol(const string &molfile);
 	bool generate_conformers_GA(PARSER* Input, Mol2* Lig, string molfile);
 	bool generate_conformers_WRS(PARSER* Input, Mol2* Lig, string molfile);
 
