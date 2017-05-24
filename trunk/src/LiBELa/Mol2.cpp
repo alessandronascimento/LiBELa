@@ -68,7 +68,7 @@ Mol2::Mol2(PARSER *Input, ifstream &mol2file) {
 				this->get_radius(this->atomtypes_prm, this->amberatoms[i], this->radius);
 			}
 			else {
-				this->amberatoms.push_back(this->convert2gaff(line));
+                this->amberatoms.push_back(this->convert2gaff2(line));
 			}
 
 			this->get_masses(amberatoms[i]);
@@ -171,7 +171,7 @@ Mol2::Mol2(PARSER *Input, string molfile) {
                     this->get_radius(this->atomtypes_prm, this->amberatoms[i], this->radius);
                 }
                 else{
-                    this->amberatoms.push_back(this->convert2gaff(string(tatomtype)));
+                    this->amberatoms.push_back(this->convert2gaff2(string(tatomtype)));
                     this->sybyl_atoms.push_back(string(tatomtype));
                 }
 
@@ -266,7 +266,7 @@ bool Mol2::parse_mol2file(PARSER *Input, string molfile) {
 				this->get_radius(this->atomtypes_prm, this->amberatoms[i], this->radius);
 			}
 			else{
-				this->amberatoms.push_back(this->convert2gaff(string(tatomtype)));
+                this->amberatoms.push_back(this->convert2gaff2(string(tatomtype)));
 				this->sybyl_atoms.push_back(string(tatomtype));
 			}
 
@@ -363,7 +363,7 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
                 this->get_radius(this->atomtypes_prm, this->amberatoms[i], this->radius);
             }
             else{
-                this->amberatoms.push_back(this->convert2gaff(string(tatomtype)));
+                this->amberatoms.push_back(this->convert2gaff2(string(tatomtype)));
                 this->sybyl_atoms.push_back(string(tatomtype));
             }
 
@@ -647,6 +647,256 @@ string Mol2::convert2gaff(string atom){
 	}
 
 	return(gaff_atom);
+}
+
+
+string Mol2::convert2gaff2(string atom){
+    string gaff_atom;
+    if (atom == "C.3"){
+        gaff_atom = "c3";
+        this->radii.push_back(1.9069);
+        this->epsilons.push_back(0.1078);
+        this->epsilons_sqrt.push_back(sqrt(0.1078));
+    }
+    else if (atom =="C.2"){
+        gaff_atom = "c2";
+        this->radii.push_back(1.8606);
+        this->epsilons.push_back(0.0988);
+        this->epsilons_sqrt.push_back(sqrt(0.0988));
+    }
+
+    else if (atom =="C.1"){
+        gaff_atom = "c1";
+        this->radii.push_back(1.9525);
+        this->epsilons.push_back(0.1596);
+        this->epsilons_sqrt.push_back(sqrt(0.1596));
+
+    }
+
+    else if (atom =="C.ar"){
+        gaff_atom = "ca";
+        this->radii.push_back(1.8606);
+        this->epsilons.push_back(0.0988);
+        this->epsilons_sqrt.push_back(sqrt(0.0988));
+    }
+
+    else if (atom =="C.cat"){
+        gaff_atom = "c";
+        this->radii.push_back(1.8606);
+        this->epsilons.push_back(0.0988);
+        this->epsilons_sqrt.push_back(sqrt(0.0988));
+    }
+
+    else if (atom =="N.3"){
+        gaff_atom = "n3";
+        this->radii.push_back(1.8886);
+        this->epsilons.push_back(0.0858);
+        this->epsilons_sqrt.push_back(sqrt(0.0858));
+    }
+
+    else if (atom =="N.2"){
+        gaff_atom = "n2";
+        this->radii.push_back(1.8993);
+        this->epsilons.push_back(0.0941);
+        this->epsilons_sqrt.push_back(sqrt(0.0941));
+    }
+
+    else if (atom =="N.1"){
+        gaff_atom = "n1";
+        this->radii.push_back(1.8372);
+        this->epsilons.push_back(0.1098);
+        this->epsilons_sqrt.push_back(sqrt(0.1098));
+    }
+
+    else if (atom =="N.ar"){
+        gaff_atom = "nh";
+        this->radii.push_back(1.7903);
+        this->epsilons.push_back(0.2150);
+        this->epsilons_sqrt.push_back(sqrt(0.2150));
+    }
+
+    else if (atom =="N.am"){
+        gaff_atom = "n";
+        this->radii.push_back(1.7852);
+        this->epsilons.push_back(0.1636);
+        this->epsilons_sqrt.push_back(sqrt(0.1636));
+    }
+
+    else if (atom =="N.4"){
+        gaff_atom = "n4";
+        this->radii.push_back(1.4028);
+        this->epsilons.push_back(3.8748);
+        this->epsilons_sqrt.push_back(sqrt(3.8748));
+    }
+
+    else if (atom =="N.pl3"){
+        gaff_atom = "na";
+        this->radii.push_back(1.7992);
+        this->epsilons.push_back(0.2042);
+        this->epsilons_sqrt.push_back(sqrt(0.2042));
+    }
+
+    else if (atom =="N.p"){
+        gaff_atom = "na";
+        this->radii.push_back(7992);
+        this->epsilons.push_back(0.2042);
+        this->epsilons_sqrt.push_back(sqrt(0.2042));
+    }
+
+    else if (atom =="O.3"){
+        gaff_atom = "oh";
+        this->radii.push_back(1.8200);
+        this->epsilons.push_back(0.0930);
+        this->epsilons_sqrt.push_back(sqrt(0.0930));
+    }
+
+    else if (atom =="O.2"){
+        gaff_atom = "o";
+        this->radii.push_back(1.7107);
+        this->epsilons.push_back(0.1463);
+        this->epsilons_sqrt.push_back(sqrt(0.1463));
+    }
+
+    else if (atom =="O.co2"){
+        gaff_atom = "o";
+        this->radii.push_back(1.7107);
+        this->epsilons.push_back(0.1463);
+        this->epsilons_sqrt.push_back(sqrt(0.1463));
+    }
+
+    else if (atom =="O.spc" or atom == "O.t3p"){ //GAFF 1
+        gaff_atom = "ow";
+        this->radii.push_back(1.7683);
+        this->epsilons.push_back(0.1520);
+        this->epsilons_sqrt.push_back(sqrt(0.1520));
+    }
+
+    else if (atom =="S.3"){
+        gaff_atom = "sh"; //not sure... sh or ss
+        this->radii.push_back(1.9825);
+        this->epsilons.push_back(0.2824);
+        this->epsilons_sqrt.push_back(sqrt(0.2824));
+    }
+
+    else if (atom =="S.2"){
+        gaff_atom = "s2";
+        this->radii.push_back(1.9825);
+        this->epsilons.push_back(0.2824);
+        this->epsilons_sqrt.push_back(sqrt(0.2824));
+    }
+
+    else if (atom =="S.O" or atom == "S.o"){
+        gaff_atom = "s4";
+        this->radii.push_back(1.9825);
+        this->epsilons.push_back(0.2824);
+        this->epsilons_sqrt.push_back(sqrt(0.2824));
+    }
+
+    else if (atom =="S.O2" or atom == "S.o2"){
+        gaff_atom = "s6";
+        this->radii.push_back(1.9825);
+        this->epsilons.push_back(0.2824);
+        this->epsilons_sqrt.push_back(sqrt(0.2824));
+    }
+
+    else if (atom =="P.3"){
+        gaff_atom = "p3";
+        this->radii.push_back(2.0732);
+        this->epsilons.push_back(0.2295);
+        this->epsilons_sqrt.push_back(sqrt(0.2295));
+    }
+
+    else if (atom =="F"){
+        gaff_atom = "f";
+        this->radii.push_back(1.7029);
+        this->epsilons.push_back(0.0832);
+        this->epsilons_sqrt.push_back(sqrt(0.0832));
+    }
+
+    else if (atom =="H"){
+        gaff_atom = "hc";
+        this->radii.push_back(1.4593);      //        this->radii.push_back(1.4870);
+        this->epsilons.push_back(0.0208);
+        this->epsilons_sqrt.push_back(sqrt(0.0208));
+    }
+
+    else if (atom =="H.spc" or atom=="H.t3p"){
+        gaff_atom = "hw";
+        this->radii.push_back(0.0000);
+        this->epsilons.push_back(0.0000);
+        this->epsilons_sqrt.push_back(0.0000);
+    }
+
+    else if (atom =="Cl"){
+        gaff_atom = "cl";
+        this->radii.push_back(1.9452);
+        this->epsilons.push_back(0.2638);
+        this->epsilons_sqrt.push_back(sqrt(0.2638));
+    }
+
+    else if (atom =="Br"){
+        gaff_atom = "br";
+        this->radii.push_back(2.0275);
+        this->epsilons.push_back(0.3932);
+        this->epsilons_sqrt.push_back(sqrt(0.3932));
+    }
+
+    else if (atom =="I"){
+        gaff_atom = "i";
+        this->radii.push_back(2.1558);
+        this->epsilons.push_back(0.4955);
+        this->epsilons_sqrt.push_back(sqrt(0.4955));
+    }
+
+/*
+ * From now on, parameters are not taken from GAFF.
+ */
+
+    else if (atom =="Mg"){
+        gaff_atom = "MG";
+        this->radii.push_back(1.5545);
+        this->epsilons.push_back(0.00295);
+        this->epsilons_sqrt.push_back(sqrt(0.00295));
+    }
+
+    else if (atom =="LP" or atom == "Lp"){
+        gaff_atom = "DU";
+        this->radii.push_back(0.00);
+        this->epsilons.push_back(0.00);
+        this->epsilons_sqrt.push_back(0.00);
+    }
+
+    else if (atom == "Fe"){
+        gaff_atom = "FE";
+        this->radii.push_back(1.200);
+        this->epsilons.push_back(0.05000);
+        this->epsilons_sqrt.push_back(0.05000);
+    }
+    else if (atom == "Zn"){
+        gaff_atom = "Zn";
+        this->radii.push_back(1.10);
+        this->epsilons.push_back(0.0125);
+        this->epsilons_sqrt.push_back(sqrt(0.0125));
+    }
+    else if (atom == "Cu"){
+        gaff_atom = "Cu";
+        this->radii.push_back(2.20);
+        this->epsilons.push_back(0.200);
+        this->epsilons_sqrt.push_back(sqrt(0.200));
+    }
+    else if (atom == "Ca"){
+        gaff_atom = "Ca";
+        this->radii.push_back(1.790);
+        this->epsilons.push_back(0.0140);
+        this->epsilons_sqrt.push_back(sqrt(0.0140));
+    }
+
+    else{
+        printf("Atom type %s not found among GAFF parameters.\nPlease check Mol2.h source file.\n", atom.c_str());
+        exit(1);
+    }
+
+    return(gaff_atom);
 }
 
 
@@ -1323,7 +1573,7 @@ bool Mol2::parse_gzipped_ensemble(string molfile, int skipper=1){
             this->charges.push_back(tcharge);
             this->atomnames.push_back(str);
 
-            this->amberatoms.push_back(this->convert2gaff(string(tatomtype)));
+            this->amberatoms.push_back(this->convert2gaff2(string(tatomtype)));
             this->sybyl_atoms.push_back(string(tatomtype));
             this->get_masses(amberatoms[i]);
 

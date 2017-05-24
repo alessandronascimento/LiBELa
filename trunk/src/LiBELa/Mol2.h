@@ -110,6 +110,7 @@ public:
 	 * are the only parameters used here and only for alignment purposes.
 	 */
 	string convert2gaff(string atom);
+    string convert2gaff2(string atom);
 
 	/*!
 	 * This method parses the file "vdw.param" to get GAFF atomic VDW parameters
