@@ -1010,7 +1010,7 @@ void Mol2::get_masses(string atomname){
 	else if (atomname == "FE"){
 		this->masses.push_back(55.0);
 	}
-	else if (atomname == "C" or atomname == "CA" or atomname == "CB" or atomname == "CC" or atomname == "CD" or atomname == "CK" or atomname == "CM" or atomname == "CN" or atomname == "CQ" or atomname == "CR" or atomname == "CT" or atomname == "CV" or atomname == "CW" or atomname == "CY" or atomname == "CZ" or atomname == "C*"){
+    else if (atomname == "C" or atomname == "CA" or atomname == "CB" or atomname == "CC" or atomname == "CD" or atomname == "CK" or atomname == "CM" or atomname == "CN" or atomname == "CQ" or atomname == "CR" or atomname == "CT" or atomname == "CV" or atomname == "CW" or atomname == "CY" or atomname == "CZ" or atomname == "C*" or atomname == "CX"){
 		this->masses.push_back(12.01);
 	}
 	else if (atomname == "N" or atomname == "NA" or atomname == "NB" or atomname == "NC" or atomname == "N2" or atomname == "N3" or atomname == "NT" or atomname == "NY"){
