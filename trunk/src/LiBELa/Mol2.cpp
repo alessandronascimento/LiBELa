@@ -1703,6 +1703,10 @@ void Mol2::initialize_gaff(){
             }
         }
     }
+    else{
+        printf("Error reading file %s\n", filename);
+        exit(1);
+    }
 
     fclose(gaff_file);
 }
