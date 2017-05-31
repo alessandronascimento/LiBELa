@@ -365,14 +365,14 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
                 this->radii.push_back(at->radius);
                 this->epsilons.push_back(at->epsilon);
                 this->epsilons_sqrt.push_back(sqrt(at->epsilon));
+                this->masses.push_back(at->mass);
                 delete at;
             }
             else{
                 this->amberatoms.push_back(this->convert2gaff2(string(tatomtype)));
                 this->sybyl_atoms.push_back(string(tatomtype));
+                this->get_masses(amberatoms[i]);
             }
-
-            this->get_masses(amberatoms[i]);
 
             if (tres > count){
                 this->residue_pointer.push_back(i+1);
@@ -1675,7 +1675,7 @@ void Mol2::initialize_gaff(){
     FILE *gaff_file;
     char str[80];
     char at[3];
-    float r, e;
+    float r, e, m;
     char filename[80];
 
     char* dir_path = getenv("LIBELA");
@@ -1693,12 +1693,12 @@ void Mol2::initialize_gaff(){
         while (!feof(gaff_file)){
             fgets(str, 80, gaff_file);
             if (str[0] != '#'){
-                sscanf(str, "%s %f %f", at, &r, &e);
+                sscanf(str, "%s %f %f %f", at, &r, &e, &m);
                 atom_param v;
                 v.type = string(at);
                 v.radius = double(r);
                 v.epsilon = double(e);
-
+                v.mass = double (m);
                 this->gaff_force_field.push_back(v);
             }
         }

@@ -28,6 +28,7 @@ public:
         string type;
         double radius;
         double epsilon;
+        double mass;
     };
 
 
