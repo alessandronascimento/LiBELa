@@ -319,7 +319,8 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
     string cpstr;
 
     if (Input->mol2_aa){
-        this->get_gaff_parameters();
+//        this->get_gaff_parameters();
+        this->initialize_gaff();
     }
 
     gzFile mol2file = gzopen(molfile.c_str(), "r");
@@ -359,8 +360,12 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
 
             if (Input->mol2_aa){
                 this->amberatoms.push_back(tatomtype);
-                this->get_epsilon(this->atomtypes_prm,this->amberatoms[i],this->welldepth);
-                this->get_radius(this->atomtypes_prm, this->amberatoms[i], this->radius);
+                atom_param* at = new atom_param;
+                this->get_gaff_atomic_parameters(string(tatomtype), at);
+                this->radii.push_back(at->radius);
+                this->epsilons.push_back(at->epsilon);
+                this->epsilons_sqrt.push_back(sqrt(at->epsilon));
+                delete at;
             }
             else{
                 this->amberatoms.push_back(this->convert2gaff2(string(tatomtype)));
@@ -1663,4 +1668,50 @@ bool Mol2::parse_gzipped_ensemble(string molfile, int skipper=1){
     }
     gzclose(mol2file);
     return (bret);
+}
+
+
+void Mol2::initialize_gaff(){
+    FILE *gaff_file;
+    char str[80];
+    char at[3];
+    float r, e;
+    char filename[80];
+
+    char* dir_path = getenv("LIBELA");
+    if (dir_path== NULL){
+        printf("Environment variable LIBELA is not set.\n");
+        exit(1);
+    }
+    else {
+        strcpy(filename, dir_path);
+        strcat(filename, "/src/tools/gaff2_vdw.dat");
+    }
+
+    gaff_file = fopen(filename, "r");
+    if (gaff_file!= NULL){
+        while (!feof(gaff_file)){
+            fgets(str, 80, gaff_file);
+            if (str[0] != '#'){
+                sscanf(str, "%s %f %f", at, &r, &e);
+                atom_param v;
+                v.type = string(at);
+                v.radius = double(r);
+                v.epsilon = double(e);
+
+                this->gaff_force_field.push_back(v);
+            }
+        }
+    }
+
+    fclose(gaff_file);
+}
+
+
+void Mol2::get_gaff_atomic_parameters(string gaff_atom, atom_param* ap){
+    for (unsigned i=0; i<this->gaff_force_field.size(); i++){
+        if (gaff_force_field[i].type == gaff_atom){
+            ap = &(gaff_force_field[i]);
+        }
+    }
 }

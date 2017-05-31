@@ -24,6 +24,11 @@ using namespace std;
 
 class Mol2 {
 public:
+    struct atom_param{
+        string type;
+        double radius;
+        double epsilon;
+    };
 
 
 // variaveis
@@ -148,8 +153,11 @@ public:
 	~Mol2();
 
     bool parse_gzipped_ensemble(string molfile, int skipper);
+    void initialize_gaff();
     vector<double> ensemble_energies;
     vector<double> ensemble_rmsd;
+    vector<atom_param> gaff_force_field;
+    void get_gaff_atomic_parameters(string gaff_atom, atom_param* ap);
 };
 
 #endif /* MOL2_H_ */
