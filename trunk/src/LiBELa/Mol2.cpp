@@ -219,7 +219,12 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
             this->bonds.push_back(bond);
             bond.clear();
         }
-        bret = true;
+
+// Checking for internal consistency ....
+
+        if ((int(this->radii.size()) == this->N) and (int(this->epsilons.size()) == this->N)){
+            bret = true;
+        }
     }
     else {
         printf("Skipping file %s...\n", molfile.c_str());
@@ -275,7 +280,7 @@ void Mol2::initialize_gaff(){
                 v.type = string(at);
                 v.radius = double(r);
                 v.epsilon = double(e);
-                v.mass = double (m);
+                v.mass = double(m);
                 this->gaff_force_field.push_back(v);
             }
         }
@@ -292,8 +297,11 @@ void Mol2::initialize_gaff(){
 void Mol2::get_gaff_atomic_parameters(string gaff_atom, atom_param* ap){
     bool found=false;
     for (unsigned i=0; i<this->gaff_force_field.size(); i++){
-        if (gaff_force_field[i].type == gaff_atom){
-            ap = &(gaff_force_field[i]);
+        if (this->gaff_force_field[i].type == gaff_atom){
+            ap->type = this->gaff_force_field[i].type;
+            ap->epsilon= this->gaff_force_field[i].epsilon;
+            ap->radius = this->gaff_force_field[i].radius;
+            ap->mass= this->gaff_force_field[i].mass;
             found = true;
         }
     }
@@ -435,7 +443,6 @@ string Mol2::sybyl_2_gaff(string atom){
     else if (atom == "Ca"){
         gaff_atom = "Ca";
     }
-
     else{
         printf("Atom type %s not found among GAFF parameters.\nPlease check Mol2.h source file.\n", atom.c_str());
         exit(1);
