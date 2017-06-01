@@ -20,7 +20,6 @@
 #include <zlib.h>
 
 using namespace std;
-//using namespace OpenBabel;
 
 class Mol2 {
 public:
@@ -54,10 +53,6 @@ public:
 	vector<string>atomtypes_prm;
 	//! Atomic names
 	vector<string> atomnames;
-	//! Atomic radii
-	vector<double>radius;
-	//! Welldepth parameters to each atom according to AMBER FF
-	vector<double>welldepth;
 	//! Atomic coordinates
 	vector<vector<double> > xyz;
 	//! Atomic coordinates after rotation/translation
@@ -84,8 +79,6 @@ public:
 	string line;
 	//!
 	char str[80];
-	//!
-	char* elsa_dir_path;
 	//! Keeps Vaa for RefMol/CompMol
 	double self_obj_function;
 	//!
@@ -105,60 +98,21 @@ public:
 	 * comparing molecules.
 	 */
 	Mol2();
-	Mol2(PARSER *Input, ifstream &mol2file);
 	Mol2(PARSER *Input, string molfile);
     bool parse_gzipped_file(PARSER* Input, string molfile);
     bool parse_mol2file(PARSER* Input, string molfile);
-
-	/*!
-	 * This method is used to manually convert SYBYL atom types to AMBER (GAFF) atom
-	 * types. The conversion does not need to be very accurate since the VDW parameters
-	 * are the only parameters used here and only for alignment purposes.
-	 */
-	string convert2gaff(string atom);
-    string convert2gaff2(string atom);
-
-	/*!
-	 * This method parses the file "vdw.param" to get GAFF atomic VDW parameters
-	 */
-	void read_atomtypes_prm();
-
-	/*!
-	 *
-	 */
-	void get_epsilon(vector<string>atomtypes_prm, string amberatom, vector<double>welldepth);
-
-	/*
-	 *
-	 */
-	void get_radius(vector<string>atomtypes_prm, string amberatom, vector<double>radius);
-
-	/*!
-	 *
-	 */
-	void get_masses(string atomname);
-
-	/*!
-	 *
-	 */
-	void get_trajectory(ifstream &mdcrd);
-
-	/*!
-	 *
-	 */
-	void get_gaff_parameters();
 
 	/*!
 	 *
 	 */
 	~Mol2();
 
-    bool parse_gzipped_ensemble(string molfile, int skipper);
     void initialize_gaff();
     vector<double> ensemble_energies;
     vector<double> ensemble_rmsd;
     vector<atom_param> gaff_force_field;
     void get_gaff_atomic_parameters(string gaff_atom, atom_param* ap);
+    string sybyl_2_gaff(string atom);
 };
 
 #endif /* MOL2_H_ */
