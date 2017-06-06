@@ -44,10 +44,8 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
     sprintf(info, "Found %d rotatable bonds in ligand %s.", RotorList.Size(), Lig->molname.c_str());
     Writer->print_info(info);
     Writer->print_line();
-    for (unsigned i = 1; i < RotorList.Size() + 1; ++i, Rotor = RotorList.NextRotor(RotorIterator)) {
-        for (unsigned j=0; j < 4; j++){
-            tmp = Rotor->GetDihedralAtoms();
-        }
+    for (unsigned i = 0; i < RotorList.Size(); ++i, Rotor = RotorList.NextRotor(RotorIterator)) {
+        tmp = Rotor->GetDihedralAtoms();
         atoms_in_dihedrals.push_back(tmp);
         tmp.clear();
     }
