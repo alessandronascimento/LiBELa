@@ -13,6 +13,20 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 
     Writer = _Writer;
 
+    if (Input->write_mol2){
+        gzFile outmol2;
+        string outname = Input->output + "_MC";
+        outmol2 = gzopen((outname+".mol2.gz").c_str(), "w");
+        gzclose(outmol2);
+        if (Input->ligsim){
+            gzFile outmol2_lig;
+            outname = Input->output + "_MC.ligsim";
+            outmol2_lig = gzopen((outname+".mol2.gz").c_str(), "w");
+            gzclose(outmol2_lig);
+        }
+    }
+
+
 /*! Here we will use OpenBabel API to generate a OBMol and use it to get and set torsion angles for all
  * rotatable bonds.
 */
