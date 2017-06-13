@@ -32,7 +32,13 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 */
 
     mol = this->GetMol(Input->lig_mol2);
-    OBff = OBForceField::FindForceField("GAFF");
+
+    if (Input->ligand_energy_model == "GAFF"){
+        OBff = OBForceField::FindForceField("GAFF");
+    }
+    else {
+        OBff = OBForceField::FindForceField("MMFF94");
+    }
 
     if (Input->verbose){
         OBff->SetLogFile(&cout);
@@ -40,7 +46,7 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
     }
 
     if (!OBff){
-        cout << "Could not find FF GAFF!" << endl;
+        cout << "Could not find OpenBabel FF parameters!" << endl;
         exit(1);
     }
 
@@ -193,11 +199,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             this->xyz = step->xyz;
             energy = new_energy;
             rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
-/*
-            com[0] += step->dx;
-            com[1] += step->dy;
-            com[2] += step->dz;
-*/
+
             this->increment_angles(&rot_angles, step);
             this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
         }
@@ -209,11 +211,6 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 this->xyz = step->xyz;
                 energy = new_energy;
                 rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
-/*
-                com[0] += step->dx;
-                com[1] += step->dy;
-                com[2] += step->dz;
-*/
                 this->increment_angles(&rot_angles, step);
                 this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
             }
@@ -251,11 +248,6 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             this->xyz = step->xyz;
             energy = new_energy;
             rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
-/*
-            com[0] += step->dx;
-            com[1] += step->dy;
-            com[2] += step->dz;
-*/
             this->increment_angles(&rot_angles, step);
             this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
             count++;
@@ -297,11 +289,6 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 this->xyz = step->xyz;
                 energy = new_energy;
                 rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
-/*
-                com[0] += step->dx;
-                com[1] += step->dy;
-                com[2] += step->dz;
-*/
                 this->increment_angles(&rot_angles, step);
                 this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
                 count++;
@@ -353,7 +340,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     sprintf(info, "Finished MC simulation after %d accepted steps, %d total steps, acceptance rate %5.3f", Input->number_steps, (Input->number_steps+nReject),double((Input->number_steps*1.0)/(Input->number_steps+nReject)));
     Writer->print_info(info);
     Writer->print_line();
-    sprintf(info, "Conformer energies (GAFF):");
+    sprintf(info, "Conformer energies:");
     Writer->print_info(info);
 
     for (unsigned i=0; i< Lig->conformer_energies.size(); i++){
@@ -516,11 +503,6 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                 this->xyz = step->xyz;
                 energy = new_energy;
                 rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
-/*
-                com[0] += step->dx;
-                com[1] += step->dy;
-                com[2] += step->dz;
-*/
                 this->increment_angles(&rot_angles, step);
                 this->MaxMinCM(com[0], com[1], com[2], this->MaxMin);
 
@@ -560,11 +542,6 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                     this->xyz = step->xyz;
                     energy = new_energy;
                     rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
-/*
-                    com[0] += step->dx;
-                    com[1] += step->dy;
-                    com[2] += step->dz;
-*/
                     this->increment_angles(&rot_angles, step);
                     this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
 
@@ -869,7 +846,7 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
         sprintf(info, "Finished MC simulation after %d accepted steps, %d total steps, acceptance rate %5.3f", Input->number_steps, (Input->number_steps+nReject),double((Input->number_steps*1.0)/(Input->number_steps+nReject)));
         Writer->print_info(info);
         Writer->print_line();
-        sprintf(info, "Conformer energies (GAFF):");
+        sprintf(info, "Conformer energies:");
         Writer->print_info(info);
 
         for (unsigned i=0; i< Lig->conformer_energies.size(); i++){
@@ -1061,7 +1038,6 @@ vector<vector<double> > MC::copy_from_obmol(shared_ptr<OBMol> mymol){
 }
 
 double* MC::copy_to_obmol(vector<vector<double> > vec_xyz){
-//    double *myxyz = new double[vec_xyz.size()*3];
     for (unsigned i=0; i<vec_xyz.size(); i++){
         myxyz[3*i] = vec_xyz[i][0];
         myxyz[(3*i)+1] = vec_xyz[i][1];

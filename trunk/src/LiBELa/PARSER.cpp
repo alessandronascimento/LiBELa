@@ -83,6 +83,7 @@ PARSER::PARSER(){
     this->verbose = false;
     this->entropy_rotation_bins = 360;
     this->entropy_translation_bins = this->x_dim*2;
+    this->ligand_energy_model = "GAFF";
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -401,6 +402,9 @@ void PARSER::comparing (string param, ifstream &input) {
 
     else if (param == "entropy_translation_bins"){
         input >> this->entropy_translation_bins;
+    }
+    else if (param == "ligand_energy_model"){
+        input >> this->ligand_energy_model;
     }
 
 	else {

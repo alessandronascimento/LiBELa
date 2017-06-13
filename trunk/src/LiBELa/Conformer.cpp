@@ -58,8 +58,14 @@ bool Conformer::generate_conformers_GA(PARSER* Input, Mol2* Lig, string molfile)
     shared_ptr<OBMol> mol = this->GetMol(molfile);
     shared_ptr<OBMol> ref_mol = mol;
     OBConformerSearch cs;
+    OBForceField* OBff;
     OBEnergyConformerScore* EneScore = new OBEnergyConformerScore;
-    OBForceField* OBff = OBForceField::FindForceField("GAFF");
+    if (Input->ligand_energy_model == "GAFF"){
+        OBff = OBForceField::FindForceField("GAFF");
+    }
+    else {
+        OBff = OBForceField::FindForceField("MMFF94");
+    }
 
 #ifdef DEBUG
     OBff->SetLogFile(&cout);
@@ -67,7 +73,7 @@ bool Conformer::generate_conformers_GA(PARSER* Input, Mol2* Lig, string molfile)
 #endif
 
     if (!OBff){
-        cout << "Could not find FF GAFF!" << endl;
+        cout << "Could not find OpenBabel FF parameters!" << endl;
         exit(1);
     }
 
@@ -133,9 +139,14 @@ bool Conformer::generate_conformers_WRS(PARSER* Input, Mol2* Lig, string molfile
     OBForceField* OBff;
     OBFormat* format;
 
-    OBff = OBForceField::FindForceField("GAFF");
+    if (Input->ligand_energy_model == "GAFF"){
+        OBff = OBForceField::FindForceField("GAFF");
+    }
+    else {
+        OBff = OBForceField::FindForceField("MMFF94");
+    }
     if (!OBff){
-        cout << "Could not find FF GAFF!" << endl;
+        cout << "Could not find OpenBabel FF parameters!" << endl;
         exit(1);
     }
 

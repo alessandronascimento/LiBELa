@@ -262,6 +262,7 @@ public:
 
     int entropy_rotation_bins;
     int entropy_translation_bins;
+    string ligand_energy_model;
 
 #ifdef HAS_GUI
 	QStringList docking_molecules;
