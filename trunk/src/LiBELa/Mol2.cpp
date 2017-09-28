@@ -78,7 +78,12 @@ bool Mol2::parse_mol2file(PARSER *Input, string molfile) {
                 delete at;
 			}
             else{
-                this->amberatoms.push_back(this->sybyl_2_gaff(string(tatomtype)));
+                if (Input->atomic_model_ff == "AMBER" or Input->atomic_model_ff == "amber"){
+                    this->amberatoms.push_back(this->sybyl_2_amber(string(tatomtype)));
+                }
+                else {
+                    this->amberatoms.push_back(this->sybyl_2_gaff(string(tatomtype)));
+                }
                 atom_param* at = new atom_param;
                 this->get_gaff_atomic_parameters(this->amberatoms[i], at);
                 this->radii.push_back(at->radius);
@@ -183,7 +188,12 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
                 delete at;
             }
             else{
-                this->amberatoms.push_back(this->sybyl_2_gaff(string(tatomtype)));
+                if (Input->atomic_model_ff == "AMBER" or Input->atomic_model_ff == "amber"){
+                    this->amberatoms.push_back(this->sybyl_2_amber(string(tatomtype)));
+                }
+                else {
+                    this->amberatoms.push_back(this->sybyl_2_gaff(string(tatomtype)));
+                }
                 atom_param* at = new atom_param;
                 this->get_gaff_atomic_parameters(this->amberatoms[i], at);
                 this->radii.push_back(at->radius);
@@ -449,4 +459,144 @@ string Mol2::sybyl_2_gaff(string atom){
     }
 
     return(gaff_atom);
+}
+
+string Mol2::sybyl_2_amber(string atom){
+    string amber_atom;
+    if (atom == "C.3"){
+        amber_atom = "CT";
+    }
+    else if (atom =="C.2"){
+        amber_atom = "C*";
+    }
+    else if (atom =="C.1"){
+        amber_atom = "C*";
+    }
+
+    else if (atom =="C.ar"){
+        amber_atom = "C*";
+    }
+
+    else if (atom =="C.cat"){
+        amber_atom = "C*";
+    }
+
+    else if (atom =="N.3"){
+        amber_atom = "N3";
+    }
+
+    else if (atom =="N.2"){
+        amber_atom = "N";
+    }
+
+    else if (atom =="N.1"){
+        amber_atom = "N";
+    }
+
+    else if (atom =="N.ar"){
+        amber_atom = "N";
+    }
+
+    else if (atom =="N.am"){
+        amber_atom = "N";
+    }
+
+    else if (atom =="N.4"){
+        amber_atom = "n4";
+    }
+
+    else if (atom =="N.pl3"){
+        amber_atom = "N";
+    }
+
+    else if (atom =="N.p"){
+        amber_atom = "N";
+    }
+
+    else if (atom =="O.3"){
+        amber_atom = "OH";
+    }
+
+    else if (atom =="O.2"){
+        amber_atom = "O2";
+    }
+
+    else if (atom =="O.co2"){
+        amber_atom = "O";
+    }
+
+    else if (atom =="O.spc" or atom == "O.t3p"){
+        amber_atom = "OW";
+    }
+
+    else if (atom =="S.3"){
+        amber_atom = "S"; //not sure... sh or ss
+    }
+
+    else if (atom =="S.2"){
+        amber_atom = "S";
+    }
+
+    else if (atom =="S.O" or atom == "S.o"){
+        amber_atom = "S";
+    }
+
+    else if (atom =="S.O2" or atom == "S.o2"){
+        amber_atom = "S";
+    }
+
+    else if (atom =="P.3"){
+        amber_atom = "P";
+    }
+
+    else if (atom =="F"){
+        amber_atom = "F";
+    }
+
+    else if (atom =="H"){
+        amber_atom = "H";
+    }
+
+    else if (atom =="H.spc" or atom=="H.t3p"){
+        amber_atom = "HW";
+    }
+
+    else if (atom =="Cl"){
+        amber_atom = "Cl";
+    }
+
+    else if (atom =="Br"){
+        amber_atom = "Br";
+    }
+
+    else if (atom =="I"){
+        amber_atom = "I";
+    }
+
+    else if (atom =="Mg"){
+        amber_atom = "MG";
+    }
+
+    else if (atom =="LP" or atom == "Lp"){
+        amber_atom = "EP";
+    }
+
+    else if (atom == "Fe"){
+        amber_atom = "Fe";
+    }
+    else if (atom == "Zn"){
+        amber_atom = "Zn";
+    }
+    else if (atom == "Cu"){
+        amber_atom = "Cu";
+    }
+    else if (atom == "Ca"){
+        amber_atom = "Ca";
+    }
+    else{
+        printf("Atom type %s not found among GAFF parameters.\nPlease check Mol2.h source file.\n", atom.c_str());
+        exit(1);
+    }
+
+    return(amber_atom);
 }

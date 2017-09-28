@@ -263,6 +263,8 @@ public:
     int entropy_rotation_bins;
     int entropy_translation_bins;
     string ligand_energy_model;
+    //! Defines whether atoms should be defined as GAFF types or AMBER types
+    string atomic_model_ff;
 
 #ifdef HAS_GUI
 	QStringList docking_molecules;

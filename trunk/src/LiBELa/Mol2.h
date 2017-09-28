@@ -113,6 +113,7 @@ public:
     vector<atom_param> gaff_force_field;
     void get_gaff_atomic_parameters(string gaff_atom, atom_param* ap);
     string sybyl_2_gaff(string atom);
+    string sybyl_2_amber(string atom);
 };
 
 #endif /* MOL2_H_ */
