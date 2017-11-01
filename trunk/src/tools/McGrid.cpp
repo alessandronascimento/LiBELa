@@ -46,9 +46,12 @@ int main(int argc, char* argv[]){
         delete Coord;
 
         Grid* Grids = new Grid(Input, Rec, com);
-        printf("Computed energy grids with %d points spaced by %5.3f Angstroms in each directon.", Grids->npointsx*Grids->npointsy*Grids->npointsz, Grids->grid_spacing);
+        printf("Computed energy grids with %d points spaced by %5.3f Angstroms in each directon.\n", Grids->npointsx*Grids->npointsy*Grids->npointsz, Grids->grid_spacing);
+        printf("Grid X limits: %10.4f %10.4f.\n", Grids->xbegin, Grids->xend);
+        printf("Grid Y limits: %10.4f %10.4f.\n", Grids->ybegin, Grids->yend);
+        printf("Grid Z limits: %10.4f %10.4f.\n", Grids->zbegin, Grids->zend);
         end = clock();
-        printf("Grid computation took %d seconds.", int((end-start)/CLOCKS_PER_SEC));
+        printf("Grid computation took %d seconds.\n", int((end-start)/CLOCKS_PER_SEC));
 
         delete Rec;
         delete Input;
