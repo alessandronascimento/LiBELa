@@ -85,6 +85,9 @@ PARSER::PARSER(){
     this->entropy_translation_bins = this->x_dim*2;
     this->ligand_energy_model = "GAFF";
     this->atomic_model_ff = "GAFF";
+    this->elec_weight = 1.0;
+    this->vdw_weight = 1.0;
+    this->solvation_weight = 1.0;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -409,6 +412,15 @@ void PARSER::comparing (string param, ifstream &input) {
     }
     else if (param == "atomic_model_ff"){
         input >> this->atomic_model_ff;
+    }
+    else if (param == "elec_weight"){
+        input >> this->elec_weight;
+    }
+    else if (param == "vdw_weight"){
+        input >> this->vdw_weight;
+    }
+    else if (param == "solvation_weight"){
+        input >> this->solvation_weight;
     }
 
 	else {

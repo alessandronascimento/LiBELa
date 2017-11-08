@@ -101,6 +101,7 @@ public:
 	Mol2(PARSER *Input, string molfile);
     bool parse_gzipped_file(PARSER* Input, string molfile);
     bool parse_mol2file(PARSER* Input, string molfile);
+    bool parse_gzipped_ensemble(PARSER *Input, string molfile, int skipper);
 
 	/*!
 	 *

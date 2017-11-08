@@ -7,6 +7,7 @@
 #include <vector>
 #include "../LiBELa/Mol2.cpp"
 #include "../LiBELa/COORD_MC.cpp"
+#include "../LiBELa/PARSER.cpp"
 
 #define k 0.0019872041
 
@@ -99,12 +100,13 @@ int main(int argc, char* argv[]){
 
     Mol2* Mol = new Mol2;
     COORD_MC* Coord = new COORD_MC;
+    PARSER* Input = new PARSER;
 
 #ifdef DEBUG
     printf("Opening file %s...\n", molfile.c_str());
 #endif
 
-    Mol->parse_gzipped_ensemble(molfile, skipper);
+    Mol->parse_gzipped_ensemble(Input, molfile, skipper);
 
 #ifdef DEBUG
     printf("File opened. Computing colony energies...\n");

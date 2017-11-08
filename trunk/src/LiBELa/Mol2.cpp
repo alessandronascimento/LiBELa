@@ -600,3 +600,183 @@ string Mol2::sybyl_2_amber(string atom){
 
     return(amber_atom);
 }
+
+bool Mol2::parse_gzipped_ensemble(PARSER* Input, string molfile, int skipper=1){
+    char tstr[80];
+    bool bret = false;
+    int tint;
+    float tx, ty, tz;
+    vector<double> txyz;
+    int tres;
+    float tcharge;
+    int count=0;
+    char tatomtype[10];
+    char resname[10];
+    string cpstr;
+    vector<vector<double> > tcoord;
+    int trajsize=0;
+
+    this->initialize_gaff();
+
+    gzFile mol2file = gzopen(molfile.c_str(), "r");
+    if (mol2file != NULL){
+        str[0]='#';
+        while(str[0] !='@'){
+            gzgets(mol2file, str, 80);
+
+        }
+        gzgets(mol2file, str, 80);
+        this->molname = str;
+        this->molname = this->molname.substr(0,this->molname.size()-1);
+        gzgets(mol2file, str, 80);
+        sscanf(str, "%d %d %d %d %d", &this->N, &this->Nbonds, &this->Nres, &tint, &tint);
+
+
+        cpstr = string(str);
+        while (cpstr.substr(0,6) != "Energy"){
+            gzgets(mol2file, str, 80);
+            cpstr = string(str);
+        }
+        sscanf(str, "%s %f\n", tstr, &tx);              //parsing ensemble energy
+        this->ensemble_energies.push_back(double(tx));
+        trajsize++;
+
+        while (cpstr.substr(0,13) != "RMSD/OVERLAY:"){
+            gzgets(mol2file, str, 80);
+            cpstr = string(str);
+        }
+        sscanf(str, "%s %f\n", tstr, &tx);              //parsing ensemble rmsd
+        this->ensemble_rmsd.push_back(double(tx));
+
+        cpstr = string(str);
+        while (cpstr.substr(0,13) != "@<TRIPOS>ATOM"){
+            gzgets(mol2file, str, 80);
+            cpstr = string(str);
+        }
+
+        for (int i=0; i<this->N; i++){
+            gzgets(mol2file, str, 80);
+            sscanf(str, "%d %s %f %f %f %s %d %s %f\n", &tint, str, &tx, &ty, &tz, tatomtype, &tres, resname, &tcharge);
+            txyz.push_back(tx);
+            txyz.push_back(ty);
+            txyz.push_back(tz);
+            this->xyz.push_back(txyz);
+            txyz.clear();
+
+            this->charges.push_back(tcharge);
+            this->atomnames.push_back(str);
+
+            if (Input->mol2_aa){
+                this->amberatoms.push_back(tatomtype);
+                atom_param* at = new atom_param;
+                this->get_gaff_atomic_parameters(string(tatomtype), at);
+                this->radii.push_back(at->radius);
+                this->epsilons.push_back(at->epsilon);
+                this->epsilons_sqrt.push_back(sqrt(at->epsilon));
+                this->masses.push_back(at->mass);
+                delete at;
+            }
+            else{
+                if (Input->atomic_model_ff == "AMBER" or Input->atomic_model_ff == "amber"){
+                    this->amberatoms.push_back(this->sybyl_2_amber(string(tatomtype)));
+                }
+                else {
+                    this->amberatoms.push_back(this->sybyl_2_gaff(string(tatomtype)));
+                }
+                atom_param* at = new atom_param;
+                this->get_gaff_atomic_parameters(this->amberatoms[i], at);
+                this->radii.push_back(at->radius);
+                this->epsilons.push_back(at->epsilon);
+                this->epsilons_sqrt.push_back(sqrt(at->epsilon));
+                this->masses.push_back(at->mass);
+                delete at;
+                this->sybyl_atoms.push_back(string(tatomtype));
+            }
+
+            if (tres > count){
+                this->residue_pointer.push_back(i+1);
+                count = tres;
+                this->resnames.push_back(string(resname));
+            }
+        }
+
+        gzgets(mol2file, str, 80);
+        if (str[0] != '@'){
+            while (str[0] != '@'){
+                gzgets(mol2file, str, 80);
+            }
+        }
+
+        vector<string> bond;
+        char s1[6], s2[6], s3[5];
+        for (int i=0; i<this->Nbonds; i++){
+            gzgets(mol2file, str, 80);
+            sscanf(str, "%d%s%s%s\n", &tint, s1, s2, s3);
+            bond.push_back(string(s1));
+            bond.push_back(string(s2));
+            bond.push_back(string(s3));
+            this->bonds.push_back(bond);
+            bond.clear();
+        }
+
+        int n=0;
+
+        this->mcoords.push_back(this->xyz);
+
+        while (! gzeof(mol2file)){
+            gzgets(mol2file, str, 80);
+            while ((str[0] != 'E' or str[6] != ':') and (!gzeof(mol2file))){
+                gzgets(mol2file, str, 80);
+            }
+
+            if (!gzeof(mol2file)){
+                sscanf(str, "%s %f\n", tstr, &tx);
+                trajsize++;
+                if (trajsize % skipper == 0){
+                    this->ensemble_energies.push_back(double(tx));
+                }
+            }
+
+            while ((str[0] != 'R' or str[12] != ':') and (!gzeof(mol2file))){
+                gzgets(mol2file, str, 80);
+            }
+
+            if (!gzeof(mol2file)){
+                sscanf(str, "%s %f\n", tstr, &tx);
+                if (trajsize % skipper == 0){
+                    this->ensemble_rmsd.push_back(double(tx));
+                }
+            }
+
+            while ((str[0] != '@' or str[9] != 'A') and (!gzeof(mol2file))){
+                gzgets(mol2file, str, 80);
+            }
+            if (!gzeof(mol2file) and (trajsize % skipper == 0)){
+                txyz.clear();
+                for (int i=0; i<this->N; i++){
+                    gzgets(mol2file, str, 80);
+                    sscanf(str, "%d %s %f %f %f %s %d %s %f\n", &tint, tstr, &tx, &ty, &tz, tatomtype, &tres, resname, &tcharge);
+                    txyz.push_back(tx);
+                    txyz.push_back(ty);
+                    txyz.push_back(tz);
+                    tcoord.push_back(txyz);
+                    txyz.clear();
+                }
+                this->mcoords.push_back(tcoord);
+                n++;
+                tcoord.clear();
+            }
+        }
+#ifdef DEBUG
+        printf("Found %d conformations in file %s\n", n, molfile.c_str());
+#endif
+        bret = true;
+    }
+
+    else {
+        printf("Skipping file %s...\n", molfile.c_str());
+        bret = false;
+    }
+    gzclose(mol2file);
+    return (bret);
+}

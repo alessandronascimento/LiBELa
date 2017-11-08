@@ -266,6 +266,10 @@ public:
     //! Defines whether atoms should be defined as GAFF types or AMBER types
     string atomic_model_ff;
 
+    double elec_weight;
+    double vdw_weight;
+    double solvation_weight;
+
 #ifdef HAS_GUI
 	QStringList docking_molecules;
 #endif
