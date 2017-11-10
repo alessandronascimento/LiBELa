@@ -41,10 +41,11 @@ int main(int argc, char* argv[]){
         vector<double> com;
         COORD_MC* Coord = new COORD_MC();
         com = Coord->compute_com(Lig);
-
+        printf("Ligand and Receptor files read!\n");
+        printf("Computing grids centered at %10.5f %10.5f %10.5f.\n", com[0], com[1], com[2]);
+        printf("This may take a while...\n");
         delete Lig;
         delete Coord;
-
         Grid* Grids = new Grid(Input, Rec, com);
         printf("Computed energy grids with %d points spaced by %5.3f Angstroms in each directon.\n", Grids->npointsx*Grids->npointsy*Grids->npointsz, Grids->grid_spacing);
         printf("Grid X limits: %10.4f %10.4f.\n", Grids->xbegin, Grids->xend);
