@@ -314,3 +314,56 @@ void Grid::compute_grid_hardcore(Mol2* Rec){
         this->rec_si += (Input->solvation_alpha*Rec->charges[i]*Rec->charges[i]) + Input->solvation_beta;
 	}
 }
+
+void Grid::load_Ambergrids_from_file(){
+    FILE* ingrid;
+    char line [256];
+
+    double grid_spacing, xbegin, ybegin, zbegin;
+    int npointsx, npointsy, npointsz;
+    vector <double > values;
+    double tempor;
+
+
+    ingrid=fopen(Input->pbsa_grid.c_str(),"r");
+
+    if (ingrid == NULL){
+        printf("Could not open PBSA Grid file. Please check");
+        exit(1);
+    }
+
+    int row = 0;
+
+    while(fgets(line,sizeof(line),ingrid)){
+        ++row;
+
+        if (row==9){
+            sscanf(line,"%lf %lf %lf %lf",&grid_spacing, &xbegin, &ybegin, &zbegin);
+        }
+
+        else if (row==10){
+            sscanf(line,"%i %i %i",&npointsx,&npointsy,&npointsz);
+        }
+
+        else if (row>10){
+            istringstream iss(line);
+            while (iss>>tempor){
+                values.push_back(tempor);
+            }
+        }
+    }
+
+    vector<vector<vector<double> > > elec_pbsa(npointsx, vector<vector<double> >(npointsy,vector<double>(npointsz)));
+
+    int counter=0;
+
+    for(int c=0; c<npointsz; c++){
+        for (int b=0; b<npointsy; b++){
+            for (int a=0; a<npointsx; a++){
+                elec_pbsa[a][b][c] = values[counter];
+                counter++;
+            }
+        }
+    }
+    fclose(ingrid);
+}

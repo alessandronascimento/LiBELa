@@ -75,6 +75,9 @@ void TEMP_SCHEME::evaluation(){
             Grids->load_grids_from_file();
             sprintf(info, "Loaded energy grids with %d points spaced by %5.3f Angstroms in each directon.", Grids->npointsx*Grids->npointsy*Grids->npointsz, Grids->grid_spacing);
             Writer->print_info(info);
+            if (Input->pbsa_grid != ""){
+                Grids->load_Ambergrids_from_file();
+            }
         }
         else{
             sprintf(info,"Generating energy grids. It can take a couple of minutes. Coffee time maybe ?");
@@ -140,6 +143,9 @@ void TEMP_SCHEME::evaluation(PARSER* Input, QProgressBar* progressbar){
             Grids->load_grids_from_file();
             sprintf(info, "Loaded energy grids with %d points spaced by %5.3f Angstroms in each directon.", Grids->npointsx*Grids->npointsy*Grids->npointsz, Grids->grid_spacing);
             QWriter->print_info(info);
+            if (Input->pbsa_grid != ""){
+                Grids->load_Ambergrids_from_file();
+            }
         }
         else{
             sprintf(info,"Generating energy grids. It can take a couple of minutes. Coffee time maybe ?");

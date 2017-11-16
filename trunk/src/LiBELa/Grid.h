@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <cmath>
+#include <sstream>
 #include "Mol2.h"
 #include "PARSER.h"
 
@@ -50,6 +51,7 @@ public:
 	void compute_grid_hardcore(Mol2* Lig);
 	void write_grids_to_file(void);
 	void load_grids_from_file(void);
+    void load_Ambergrids_from_file(void);
 	virtual ~Grid();
 };
 

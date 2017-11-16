@@ -422,6 +422,9 @@ void PARSER::comparing (string param, ifstream &input) {
     else if (param == "solvation_weight"){
         input >> this->solvation_weight;
     }
+    else if (param == "pbsa_grid"){
+        input >> this->pbsa_grid;
+    }
 
 	else {
 		cout << "Unknown parameter: " << param << endl;
