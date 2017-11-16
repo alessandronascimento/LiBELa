@@ -319,8 +319,8 @@ void Grid::load_Ambergrids_from_file(){
     FILE* ingrid;
     char line [256];
 
-    double grid_spacing, xbegin, ybegin, zbegin;
-    int npointsx, npointsy, npointsz;
+//    double grid_spacing, xbegin, ybegin, zbegin;
+//    int npointsx, npointsy, npointsz;
     vector <double > values;
     double tempor;
 
@@ -338,13 +338,14 @@ void Grid::load_Ambergrids_from_file(){
         ++row;
 
         if (row==9){
-            sscanf(line,"%lf %lf %lf %lf",&grid_spacing, &xbegin, &ybegin, &zbegin);
+            sscanf(line,"%lf %lf %lf %lf",&this->grid_spacing, &this->xbegin, &this->ybegin, &this->zbegin);
         }
-
         else if (row==10){
-            sscanf(line,"%i %i %i",&npointsx,&npointsy,&npointsz);
+            sscanf(line,"%i %i %i",&this->npointsx,&this->npointsy,&this->npointsz);
+            this->xend = (npointsx*grid_spacing)+xbegin;
+            this->yend = (npointsy*grid_spacing)+ybegin;
+            this->zend = (npointsz*grid_spacing)+zbegin;
         }
-
         else if (row>10){
             istringstream iss(line);
             while (iss>>tempor){
@@ -352,18 +353,16 @@ void Grid::load_Ambergrids_from_file(){
             }
         }
     }
-
-    vector<vector<vector<double> > > elec_pbsa(npointsx, vector<vector<double> >(npointsy,vector<double>(npointsz)));
-
     int counter=0;
 
     for(int c=0; c<npointsz; c++){
         for (int b=0; b<npointsy; b++){
             for (int a=0; a<npointsx; a++){
-                elec_pbsa[a][b][c] = values[counter];
+                this->pbsa_grid[a][b][c] = values[counter];
                 counter++;
             }
         }
     }
     fclose(ingrid);
 }
+

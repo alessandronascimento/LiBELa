@@ -20,6 +20,7 @@ public:
 	int npointsx, npointsy, npointsz;
 	double xbegin, ybegin, zbegin, xend, yend, zend;
 	vector<vector<vector<double> > > elec_grid;
+    vector<vector<vector<double> > > pbsa_grid;
 	vector<vector<vector<double> > > vdwA_grid;
 	vector<vector<vector<double> > > vdwB_grid;
 	vector<vector<vector<double> > > solv_gauss;
