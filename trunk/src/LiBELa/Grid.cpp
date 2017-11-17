@@ -26,8 +26,14 @@ Grid::Grid(PARSER* _Input) {
 
 Grid::Grid(PARSER* _Input, Mol2* Rec, vector<double> com){
 	this->Input = _Input;
-	this->grid_spacing = Input->grid_spacing;
-	this->generate_points(com);
+    if (Input->pbsa_grid != ""){
+        this->load_Ambergrids_from_file();
+    }
+    else {
+        this->grid_spacing = Input->grid_spacing;
+        this->generate_points(com);
+    }
+
     if (Input->scoring_function < 2){
         this->compute_grid_softcore(Rec);
     }
@@ -248,6 +254,7 @@ void Grid::compute_grid_hardcore(Mol2* Rec){
 	vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2;
 
     double elec, d, d2, d6, x, y, z, vdwA, vdwB, solv, rec_solv, deff;
+    double sqrt2 = sqrt(2);
 
 	for(int a=0; a< this->npointsx; a++){
 		x = (a*grid_spacing) + this->xbegin;
@@ -277,13 +284,15 @@ void Grid::compute_grid_hardcore(Mol2* Rec){
                         elec += 332.0 * (Rec->charges[i]/d2);
                     }
 
-					vdwA += sqrt(Rec->epsilons[i]*(pow((2.0*Rec->radii[i]), 12.0))) / (d6*d6) ;
-                    vdwB += sqrt(2.0 * Rec->epsilons[i]*(pow((2.0*Rec->radii[i]), 6.0))) / (d6) ;
+                    vdwA += Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6);
+                    vdwB += sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6;
+//					vdwA += sqrt(Rec->epsilons[i]*(pow((2.0*Rec->radii[i]), 12.0))) / (d6*d6) ;
+//                  vdwB += sqrt(2.0 * Rec->epsilons[i]*(pow((2.0*Rec->radii[i]), 6.0))) / (d6) ;
 
                     deff = (d2);
 
-                    solv += ((Input->solvation_alpha * Rec->charges[i] * Rec->charges[i])+ Input->solvation_beta) *  exp((-(deff)/(2*Input->sigma*Input->sigma))) / pow(Input->sigma, 3.0);
-                    rec_solv += (4.0/3.0) * PI * pow(Rec->radii[i], 3) * exp((-(deff)/(2*Input->sigma*Input->sigma))) / pow(Input->sigma, 3.0);
+                    solv += ((Input->solvation_alpha * Rec->charges[i] * Rec->charges[i])+ Input->solvation_beta) *  exp((-(deff)/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
+                    rec_solv += (4.0/3.0) * PI * pow(Rec->radii[i], 3) * exp((-(deff)/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
 				}
                 elec_t1[c] = (elec);
 				vdwA_t1[c] = (vdwA);

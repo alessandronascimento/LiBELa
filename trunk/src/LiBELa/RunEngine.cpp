@@ -68,16 +68,13 @@ void TEMP_SCHEME::evaluation(){
     Writer->print_info(info);
 
     if (Input->use_grids){
-        if (Input->load_grid_from_file){
+        if (Input->load_grid_from_file && Input->pbsa_grid == ""){
             sprintf(info,"Loading grids from file %s.grid...", Input->grid_prefix.c_str());
             Writer->print_info(info);
             Grids = new Grid(Input);
             Grids->load_grids_from_file();
             sprintf(info, "Loaded energy grids with %d points spaced by %5.3f Angstroms in each directon.", Grids->npointsx*Grids->npointsy*Grids->npointsz, Grids->grid_spacing);
             Writer->print_info(info);
-            if (Input->pbsa_grid != ""){
-                Grids->load_Ambergrids_from_file();
-            }
         }
         else{
             sprintf(info,"Generating energy grids. It can take a couple of minutes. Coffee time maybe ?");
@@ -85,7 +82,7 @@ void TEMP_SCHEME::evaluation(){
             start = clock();
             Grids = new Grid(Input, REC, center);
             end = clock();
-            sprintf(info, "Computed energy grids with %d points spaced by %5.3f Angstroms in each directon.", Grids->npointsx*Grids->npointsy*Grids->npointsz, Grids->grid_spacing);
+            sprintf(info, "Computed energy grids with %d x %d x %d points spaced by %5.3f Angstroms in each directon.", Grids->npointsx, Grids->npointsy, Grids->npointsz, Grids->grid_spacing);
             Writer->print_info(info);
             sprintf(info, "Grid computation took %d seconds.", int((end-start)/CLOCKS_PER_SEC));
             Writer->print_info(info);
