@@ -277,7 +277,12 @@ double Energy2::compute_ene_from_grids_softcore_solvation(Grid* Grids, Mol2* Lig
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
 
-            elec += Lig->charges[i]* GI->elec;
+            if (Input->pbsa_grid == ""){
+                elec += Lig->charges[i]* GI->elec;
+            }
+            else {
+                elec += Lig->charges[i]* GI->pbsa;
+            }
             vdwA += Lig->epsilons_sqrt[i] * pow(Lig->radii[i], 6) * GI->vdwA;
             vdwB += Lig->epsilons_sqrt[i] * pow(Lig->radii[i], 3) * GI->vdwB;
 
@@ -319,7 +324,12 @@ double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<v
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
 
-            elec += Lig->charges[i]* GI->elec;
+            if (Input->pbsa_grid == ""){
+                elec += Lig->charges[i]* GI->elec;
+            }
+            else {
+                elec += Lig->charges[i]* GI->pbsa;
+            }
             vdwA += Lig->epsilons_sqrt[i] * pow(Lig->radii[i], 6) * GI->vdwA;
             vdwB += Lig->epsilons_sqrt[i] * pow(Lig->radii[i], 3) * GI->vdwB;
 
@@ -358,7 +368,12 @@ double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
 
-            elec += Lig->charges[i]*GI->elec;
+            if (Input->pbsa_grid == ""){
+                elec += Lig->charges[i]* GI->elec;
+            }
+            else {
+                elec += Lig->charges[i]* GI->pbsa;
+            }
             vdwA += sqrt(Lig->epsilons[i]*pow((2*Lig->radii[i]), 12))* GI->vdwA;
             vdwB += sqrt(2.0 * Lig->epsilons[i]*pow((2*Lig->radii[i]), 6)) * GI->vdwB;
 
