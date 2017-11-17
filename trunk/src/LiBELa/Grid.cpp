@@ -342,6 +342,8 @@ void Grid::load_Ambergrids_from_file(){
     }
 
     int row = 0;
+    vector<double> vtmp;
+    vector<vector<double> > vvtmp;
 
     while(fgets(line,sizeof(line),ingrid)){
         ++row;
@@ -354,6 +356,15 @@ void Grid::load_Ambergrids_from_file(){
             this->xend = (npointsx*grid_spacing)+xbegin;
             this->yend = (npointsy*grid_spacing)+ybegin;
             this->zend = (npointsz*grid_spacing)+zbegin;
+            for (int a=0; a<this->npointsz; a++){
+                vtmp.push_back(0.0);
+            }
+            for (int a=0; a<this->npointsy; a++){
+                vvtmp.push_back(vtmp);
+            }
+            for (int a=0; a<this->npointsz; a++){
+                this->pbsa_grid.push_back(vvtmp);
+            }
         }
         else if (row>10){
             istringstream iss(line);
