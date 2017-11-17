@@ -842,6 +842,8 @@ void Energy2::trilinear_interpolation(Grid* Grids, double x, double y, double z,
 
     // PBSA Grid
 
+    if (Input->pbsa_grid != ""){
+
     c00=(Grids->pbsa_grid[x0][y0][z0]*(1-xd)) + (Grids->pbsa_grid[x1][y0][z0]*xd);
     c10=(Grids->pbsa_grid[x0][y1][z0]*(1-xd)) + (Grids->pbsa_grid[x1][y1][z0]*xd);
     c01=(Grids->pbsa_grid[x0][y0][z1]*(1-xd)) + (Grids->pbsa_grid[x1][y0][z1]*xd);
@@ -851,6 +853,8 @@ void Energy2::trilinear_interpolation(Grid* Grids, double x, double y, double z,
     c1=(c01*(1-yd))+(c11*yd);
 
     GI->pbsa=(c0*(1-zd))+(c1*zd);
+
+    }
 
 
     // VDW attractive part
