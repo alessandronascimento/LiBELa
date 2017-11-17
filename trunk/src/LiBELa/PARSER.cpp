@@ -88,6 +88,7 @@ PARSER::PARSER(){
     this->elec_weight = 1.0;
     this->vdw_weight = 1.0;
     this->solvation_weight = 1.0;
+    this->pbsa_grid = "";
 }
 
 void PARSER::comparing (string param, ifstream &input) {
