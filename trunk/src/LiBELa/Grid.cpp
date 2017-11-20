@@ -325,6 +325,7 @@ void Grid::compute_grid_hardcore(Mol2* Rec){
 }
 
 void Grid::load_Ambergrids_from_file(){
+/*
     FILE* ingrid;
     char line [256];
 
@@ -384,5 +385,62 @@ void Grid::load_Ambergrids_from_file(){
         }
     }
     fclose(ingrid);
+*/
+
+
+//    double grid_spacing, xbegin, ybegin, zbegin;
+//    int npointsx, npointsy, npointsz;
+
+    FILE *pbsa_map;
+    char str[80];
+
+    pbsa_map=fopen(Input->pbsa_grid.c_str(),"r");
+
+    if (pbsa_map == NULL){
+        printf("Could not open PBSA Grid file. Please check");
+        exit(1);
+    }
+
+    str[0] = '#';
+    while(str[0] =='#'){
+        fgets(str, 80, pbsa_map);
+    }
+
+    fscanf(pbsa_map, "%f %f %f %f", &this->grid_spacing, &this->xbegin, &this->ybegin, &this->zbegin);
+    fscanf(pbsa_map, "%d %d %d", &this->npointsx, &this->npointsy, &this->npointsz);
+
+    this->xend = (npointsx*grid_spacing)+xbegin;
+    this->yend = (npointsy*grid_spacing)+ybegin;
+    this->zend = (npointsz*grid_spacing)+zbegin;
+
+//    vector initialization
+
+    vector<double> vz(npointsz);
+    vector<vector<double> > vtmp;
+    for (int i=0; i< npointsy; i++){
+        vtmp.push_back(vz);
+    }
+
+    for (int i=0; i< npointsx; i++){
+        this->pbsa_grid.push_back(vtmp);
+    }
+
+    printf("Reading grids for %d x %d x %d points spaced by %.4f Angstroms.\n", this->npointsx, this->npointsy, this->npointsz, this->grid_spacing);
+    printf("Grid origin: %10.5f %10.5f %10.5f\n", this->xbegin, this->ybegin, this->zbegin);
+
+    double phi;
+
+    for (int z=0; z<npointsz; z++){
+        for (int y=0; y<npointsy; y++){
+            for (int x=0; x< npointsx; x++){
+               fscanf(pbsa_map, "%f", &phi);
+               this->pbsa_grid[x][y][z] = phi;
+            }
+        }
+    }
+
+    fclose(pbsa_map);
+
+    return 0;
 }
 
