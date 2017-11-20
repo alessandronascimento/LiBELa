@@ -254,10 +254,10 @@ void Grid::compute_grid_hardcore(Mol2* Rec){
 	vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2;
 
     double elec, d, d2, d6, x, y, z, vdwA, vdwB, solv, rec_solv, deff;
-    double sqrt2 = sqrt(2);
+    double sqrt2 = sqrt(2.0);
 
 	for(int a=0; a< this->npointsx; a++){
-		x = (a*grid_spacing) + this->xbegin;
+        x = (a*this->grid_spacing) + this->xbegin;
 
 		for (int b=0; b< this->npointsy; b++){
 			y = (b*this->grid_spacing) + this->ybegin;
@@ -430,8 +430,10 @@ void Grid::load_Ambergrids_from_file(){
         this->pbsa_grid.push_back(vtmp);
     }
 
+#ifdef DEBUG
     printf("Reading grids for %d x %d x %d points spaced by %.4f Angstroms.\n", this->npointsx, this->npointsy, this->npointsz, this->grid_spacing);
     printf("Grid origin: %10.5f %10.5f %10.5f\n", this->xbegin, this->ybegin, this->zbegin);
+#endif
 
     double phi;
 

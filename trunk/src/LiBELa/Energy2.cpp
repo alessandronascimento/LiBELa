@@ -550,7 +550,7 @@ double Energy2::compute_ene_from_grids_softcore_solvation(Grid* Grids, Mol2* Lig
         b2 = ceil(bf);
         c2 = ceil(cf);
 
-        if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < int(Grids->elec_grid.size()) and b2 < int(Grids->elec_grid[0].size()) and c2 < int(Grids->elec_grid[0][0].size())){
+        if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
 
@@ -558,7 +558,10 @@ double Energy2::compute_ene_from_grids_softcore_solvation(Grid* Grids, Mol2* Lig
                 elec += Lig->charges[i]* GI->elec;
             }
             else {
+                printf("PBSA grid  potential for point %10.5f %10.5f %10.5f: %10.5f\n", xyz[i][0], xyz[i][1], xyz[i][2],
+                        GI->pbsa);
                 elec += Lig->charges[i]* GI->pbsa;
+
             }
             vdwA += Lig->epsilons_sqrt[i] * pow(Lig->radii[i], 6) * GI->vdwA;
             vdwB += Lig->epsilons_sqrt[i] * pow(Lig->radii[i], 3) * GI->vdwB;

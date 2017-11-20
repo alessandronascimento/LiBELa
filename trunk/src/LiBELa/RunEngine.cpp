@@ -73,7 +73,9 @@ void TEMP_SCHEME::evaluation(){
             Writer->print_info(info);
             Grids = new Grid(Input);
             Grids->load_grids_from_file();
-            sprintf(info, "Loaded energy grids with %d points spaced by %5.3f Angstroms in each directon.", Grids->npointsx*Grids->npointsy*Grids->npointsz, Grids->grid_spacing);
+            sprintf(info, "Loaded energy grids with %d x %d x %d points spaced by %5.3f Angstroms in each directon.", Grids->npointsx, Grids->npointsy, Grids->npointsz, Grids->grid_spacing);
+            Writer->print_info(info);
+            sprintf(info, "Grid Origin: %10.5f %10.5f %10.5f.", Grids->xbegin, Grids->ybegin, Grids->zbegin);
             Writer->print_info(info);
         }
         else{
@@ -83,6 +85,8 @@ void TEMP_SCHEME::evaluation(){
             Grids = new Grid(Input, REC, center);
             end = clock();
             sprintf(info, "Computed energy grids with %d x %d x %d points spaced by %5.3f Angstroms in each directon.", Grids->npointsx, Grids->npointsy, Grids->npointsz, Grids->grid_spacing);
+            Writer->print_info(info);
+            sprintf(info, "Grid Origin: %10.5f %10.5f %10.5f.", Grids->xbegin, Grids->ybegin, Grids->zbegin);
             Writer->print_info(info);
             sprintf(info, "Grid computation took %d seconds.", int((end-start)/CLOCKS_PER_SEC));
             Writer->print_info(info);
