@@ -406,9 +406,14 @@ void Grid::load_Ambergrids_from_file(){
         fgets(str, 80, pbsa_map);
     }
 
-    sscanf(str, "%f %f %f %f", &this->grid_spacing, &this->xbegin, &this->ybegin, &this->zbegin);
+    float space, x0, y0, z0;
+    sscanf(str, "%f %f %f %f", &space, &x0, &y0, &z0);
     fscanf(pbsa_map, "%d %d %d", &this->npointsx, &this->npointsy, &this->npointsz);
 
+    this->grid_spacing = double(space);
+    this->xbegin = double(x0);
+    this->ybegin = double(y0);
+    this->zbegin = double(z0);
     this->xend = (npointsx*grid_spacing)+xbegin;
     this->yend = (npointsy*grid_spacing)+ybegin;
     this->zend = (npointsz*grid_spacing)+zbegin;
