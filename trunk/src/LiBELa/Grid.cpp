@@ -441,6 +441,6 @@ void Grid::load_Ambergrids_from_file(){
 
     fclose(pbsa_map);
 
-    return 0;
+//    return 0;
 }
 
