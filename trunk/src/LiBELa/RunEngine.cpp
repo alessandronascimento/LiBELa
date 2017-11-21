@@ -62,7 +62,7 @@ void TEMP_SCHEME::evaluation(){
     else {
         center = COORD.compute_com(RefLig);
     }
-    Writer->write_box(center, center[0]-Input->x_dim/2, center[1]-Input->y_dim/2, center[2]-Input->z_dim/2, center[0]+Input->x_dim/2, center[1]+Input->y_dim/2, center[2]+Input->z_dim/2);
+//    Writer->write_box(center, center[0]-Input->x_dim/2, center[1]-Input->y_dim/2, center[2]-Input->z_dim/2, center[0]+Input->x_dim/2, center[1]+Input->y_dim/2, center[2]+Input->z_dim/2);
 
     sprintf(info, "Center of computation box: %.2f %.2f %.2f", center[0], center[1], center[2]);
     Writer->print_info(info);
@@ -90,6 +90,8 @@ void TEMP_SCHEME::evaluation(){
             Writer->print_info(info);
             sprintf(info, "Grid computation took %d seconds.", int((end-start)/CLOCKS_PER_SEC));
             Writer->print_info(info);
+
+            Writer->write_box(center, Grids->xbegin, Grids->ybegin, Grids->zbegin, Grids->xend, Grids->yend, Grids->zend);
         }
         double grid_energy = Ene->compute_ene(Grids, LIG, LIG->xyz);
         sprintf(info,"Original Grid energy: %.4f kcal/mol.", grid_energy);
