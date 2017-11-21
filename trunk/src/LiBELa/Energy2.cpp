@@ -269,10 +269,13 @@ double Energy2::compute_ene_from_grids_softcore_solvation(Grid* Grids, Mol2* Lig
         b1 = floor(bf);
         c1 = floor(cf);
         a2 = ceil(af);
+        (a2 > a1) ? : a2++;
         b2 = ceil(bf);
+        (b2 > b1)? : b2++;
         c2 = ceil(cf);
+        (c2 > c1) ? : c2++;
 
-        if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < int(Grids->elec_grid.size()) and b2 < int(Grids->elec_grid[0].size()) and c2 < int(Grids->elec_grid[0][0].size())){
+        if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
 
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
@@ -316,10 +319,13 @@ double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<v
         b1 = floor(bf);
         c1 = floor(cf);
         a2 = ceil(af);
+        (a2 > a1) ? : a2++;
         b2 = ceil(bf);
+        (b2 > b1)? : b2++;
         c2 = ceil(cf);
+        (c2 > c1) ? : c2++;
 
-        if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < int(Grids->elec_grid.size()) and b2 < int(Grids->elec_grid[0].size()) and c2 < int(Grids->elec_grid[0][0].size())){
+        if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
 
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
@@ -359,11 +365,14 @@ double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig
         b1 = floor(bf);
         c1 = floor(cf);
         a2 = ceil(af);
+        (a2 > a1) ? : a2++;
         b2 = ceil(bf);
+        (b2 > b1)? : b2++;
         c2 = ceil(cf);
+        (c2 > c1) ? : c2++;
 
 
-        if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < int(Grids->elec_grid.size()) and b2 < int(Grids->elec_grid[0].size()) and c2 < int(Grids->elec_grid[0][0].size())){
+        if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
 
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
@@ -407,10 +416,13 @@ double Energy2::compute_ene_from_grids_hardcore(Grid* Grids, Mol2* Lig, vector<v
         b1 = floor(bf);
         c1 = floor(cf);
         a2 = ceil(af);
+        (a2 > a1) ? : a2++;
         b2 = ceil(bf);
+        (b2 > b1)? : b2++;
         c2 = ceil(cf);
+        (c2 > c1) ? : c2++;
 
-        if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < int(Grids->elec_grid.size()) and b2 < int(Grids->elec_grid[0].size()) and c2 < int(Grids->elec_grid[0][0].size())){
+        if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
 
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
@@ -451,10 +463,13 @@ double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig
         b1 = floor(bf);
         c1 = floor(cf);
         a2 = ceil(af);
+        (a2 > a1) ? : a2++;
         b2 = ceil(bf);
+        (b2 > b1)? : b2++;
         c2 = ceil(cf);
+        (c2 > c1) ? : c2++;
 
-        if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < int(Grids->elec_grid.size()) and b2 < int(Grids->elec_grid[0].size()) and c2 < int(Grids->elec_grid[0][0].size())){
+        if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
 
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
@@ -502,10 +517,13 @@ double Energy2::compute_ene_from_grids_hardcore(Grid* Grids, Mol2* Lig, vector<v
         b1 = floor(bf);
         c1 = floor(cf);
         a2 = ceil(af);
+        (a2 > a1) ? : a2++;
         b2 = ceil(bf);
+        (b2 > b1)? : b2++;
         c2 = ceil(cf);
+        (c2 > c1) ? : c2++;
 
-        if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < int(Grids->elec_grid.size()) and b2 < int(Grids->elec_grid[0].size()) and c2 < int(Grids->elec_grid[0][0].size())){
+        if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
 
@@ -547,8 +565,11 @@ double Energy2::compute_ene_from_grids_softcore_solvation(Grid* Grids, Mol2* Lig
         b1 = floor(bf);
         c1 = floor(cf);
         a2 = ceil(af);
+        (a2 > a1) ? : a2++;
         b2 = ceil(bf);
+        (b2 > b1)? : b2++;
         c2 = ceil(cf);
+        (c2 > c1) ? : c2++;
 
         if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
             GridInterpol* GI = new GridInterpol;
@@ -558,8 +579,6 @@ double Energy2::compute_ene_from_grids_softcore_solvation(Grid* Grids, Mol2* Lig
                 elec += Lig->charges[i]* GI->elec;
             }
             else {
-                printf("PBSA grid  potential for point %10.5f %10.5f %10.5f: %10.5f\n", xyz[i][0], xyz[i][1], xyz[i][2],
-                        GI->pbsa);
                 elec += Lig->charges[i]* GI->pbsa;
 
             }
@@ -599,10 +618,13 @@ double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<v
         b1 = floor(bf);
         c1 = floor(cf);
         a2 = ceil(af);
+        (a2 > a1) ? : a2++;
         b2 = ceil(bf);
+        (b2 > b1)? : b2++;
         c2 = ceil(cf);
+        (c2 > c1) ? : c2++;
 
-        if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < int(Grids->elec_grid.size()) and b2 < int(Grids->elec_grid[0].size()) and c2 < int(Grids->elec_grid[0][0].size())){
+        if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
 
