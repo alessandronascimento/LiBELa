@@ -62,7 +62,6 @@ void TEMP_SCHEME::evaluation(){
     else {
         center = COORD.compute_com(RefLig);
     }
-//    Writer->write_box(center, center[0]-Input->x_dim/2, center[1]-Input->y_dim/2, center[2]-Input->z_dim/2, center[0]+Input->x_dim/2, center[1]+Input->y_dim/2, center[2]+Input->z_dim/2);
 
     sprintf(info, "Center of computation box: %.2f %.2f %.2f", center[0], center[1], center[2]);
     Writer->print_info(info);

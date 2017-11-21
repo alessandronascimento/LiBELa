@@ -381,8 +381,6 @@ double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig
                 elec += Lig->charges[i]* GI->elec;
             }
             else {
-                printf("PBSA grid  potential for point %10.5f %10.5f %10.5f: %10.5f\n", xyz[i][0], xyz[i][1], xyz[i][2],
-                        GI->pbsa);
                 elec += Lig->charges[i]* GI->pbsa;
             }
             vdwA += sqrt(Lig->epsilons[i]*pow((2*Lig->radii[i]), 12))* GI->vdwA;
@@ -433,8 +431,6 @@ double Energy2::compute_ene_from_grids_hardcore(Grid* Grids, Mol2* Lig, vector<v
                 elec += Lig->charges[i]* GI->elec;
             }
             else {
-                printf("PBSA grid  potential for point %10.5f %10.5f %10.5f: %10.5f\n", xyz[i][0], xyz[i][1], xyz[i][2],
-                        GI->pbsa);
                 elec += Lig->charges[i]* GI->pbsa;
             }
 
@@ -482,8 +478,6 @@ double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig
                 elec += Lig->charges[i]* GI->elec;
             }
             else {
-                printf("PBSA grid  potential for point %10.5f %10.5f %10.5f: %10.5f\n", xyz[i][0], xyz[i][1], xyz[i][2],
-                        GI->pbsa);
                 elec += Lig->charges[i]* GI->pbsa;
             }
 
@@ -537,8 +531,6 @@ double Energy2::compute_ene_from_grids_hardcore(Grid* Grids, Mol2* Lig, vector<v
                 elec += Lig->charges[i]* GI->elec;
             }
             else {
-                printf("PBSA grid  potential for point %10.5f %10.5f %10.5f: %10.5f\n", xyz[i][0], xyz[i][1], xyz[i][2],
-                        GI->pbsa);
                 elec += Lig->charges[i]* GI->pbsa;
             }
             vdwA += sqrt(Lig->epsilons[i]*pow((2*Lig->radii[i]), 12))* GI->vdwA;
