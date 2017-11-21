@@ -369,19 +369,17 @@ void Grid::load_Ambergrids_from_file(){
     printf("Grid origin: %10.5f %10.5f %10.5f\n", this->xbegin, this->ybegin, this->zbegin);
 #endif
 
-    double phi;
+    float phi;
 
     for (int z=0; z<npointsz; z++){
         for (int y=0; y<npointsy; y++){
             for (int x=0; x< npointsx; x++){
                fscanf(pbsa_map, "%f", &phi);
-               this->pbsa_grid[x][y][z] = phi;
+               this->pbsa_grid[x][y][z] = double(phi);
             }
         }
     }
 
     fclose(pbsa_map);
-
-//    return 0;
 }
 
