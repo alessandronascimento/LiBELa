@@ -272,6 +272,8 @@ public:
     double vdw_weight;
     double solvation_weight;
 
+    bool use_pbsa;
+
 #ifdef HAS_GUI
 	QStringList docking_molecules;
 #endif

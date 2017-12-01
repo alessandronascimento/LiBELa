@@ -89,6 +89,7 @@ PARSER::PARSER(){
     this->vdw_weight = 1.0;
     this->solvation_weight = 1.0;
     this->pbsa_grid = "";
+    this->use_pbsa = false;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -425,6 +426,12 @@ void PARSER::comparing (string param, ifstream &input) {
     }
     else if (param == "pbsa_grid"){
         input >> this->pbsa_grid;
+    }
+    else if (param == "use_pbsa"){
+        input >> tmp;
+        if (tmp == "yes" or tmp == "Yes" or tmp == "YES"){
+            this->use_pbsa = true;
+        }
     }
 
 	else {

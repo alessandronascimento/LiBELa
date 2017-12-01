@@ -67,7 +67,7 @@ void TEMP_SCHEME::evaluation(){
     Writer->print_info(info);
 
     if (Input->use_grids){
-        if (Input->load_grid_from_file && Input->pbsa_grid == ""){
+        if (Input->load_grid_from_file){
             sprintf(info,"Loading grids from file %s.grid...", Input->grid_prefix.c_str());
             Writer->print_info(info);
             Grids = new Grid(Input);
@@ -76,6 +76,14 @@ void TEMP_SCHEME::evaluation(){
             Writer->print_info(info);
             sprintf(info, "Grid Origin: %10.5f %10.5f %10.5f.", Grids->xbegin, Grids->ybegin, Grids->zbegin);
             Writer->print_info(info);
+            if (Grids->pbsa_loaded){
+                sprintf(info, "Electrostatic Potencial computed with PBSA.");
+                Writer->print_info(info);
+            }
+            else {
+                sprintf(info, "Electrostatic Potencial computed with Coulomb model.");
+                Writer->print_info(info);
+            }
         }
         else{
             sprintf(info,"Generating energy grids. It can take a couple of minutes. Coffee time maybe ?");
@@ -91,6 +99,7 @@ void TEMP_SCHEME::evaluation(){
             Writer->print_info(info);
 
             Writer->write_box(center, Grids->xbegin, Grids->ybegin, Grids->zbegin, Grids->xend, Grids->yend, Grids->zend);
+
         }
         double grid_energy = Ene->compute_ene(Grids, LIG, LIG->xyz);
         sprintf(info,"Original Grid energy: %.4f kcal/mol.", grid_energy);

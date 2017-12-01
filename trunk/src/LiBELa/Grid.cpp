@@ -20,7 +20,7 @@ double Grid::distance_squared(double x1, double x2, double y1, double y2, double
 
 
 Grid::Grid(PARSER* _Input) {
-	this->Input = _Input;
+    this->Input = _Input;
 	grid_spacing = Input->grid_spacing;
 }
 
@@ -147,7 +147,9 @@ void Grid::compute_grid_softcore(Mol2* Rec){
 
 void Grid::write_grids_to_file(){
 	FILE* outgrid;
-	double elec, vdwA, vdwB, solv, rec_solv;
+    double elec, vdwA, vdwB, solv, rec_solv, pbsa;
+    int pbsa_flag;
+    (this->pbsa_loaded) ? pbsa_flag=1: pbsa_flag = 0;
 	outgrid = fopen((Input->grid_prefix + ".grid").c_str(), "wb");
 	if (outgrid == NULL){
 		printf("Could not open McGrid file. Please check");
@@ -163,6 +165,8 @@ void Grid::write_grids_to_file(){
 	fwrite(&this->ybegin, sizeof(double), 1, outgrid);
 	fwrite(&this->zbegin, sizeof(double), 1, outgrid);
 
+    fwrite(&pbsa_flag, sizeof(int), 1, outgrid);
+
 	for (int a=0; a<npointsx; a++){
 		for (int b=0; b<npointsy; b++){
 			for (int c=0; c<npointsz; c++){
@@ -171,11 +175,13 @@ void Grid::write_grids_to_file(){
 				vdwB = this->vdwB_grid[a][b][c];
 				solv = this->solv_gauss[a][b][c];
 				rec_solv = this->rec_solv_gauss[a][b][c];
+                (Input->pbsa_grid == "") ? pbsa=0.0 : pbsa = this->pbsa_grid[a][b][c];
 				fwrite(&elec, sizeof(double), 1, outgrid);
 				fwrite(&vdwA, sizeof(double), 1, outgrid);
 				fwrite(&vdwB, sizeof(double), 1, outgrid);
 				fwrite(&rec_solv, sizeof(double), 1, outgrid);
 				fwrite(&solv, sizeof(double), 1, outgrid);
+                fwrite(&pbsa, sizeof(double), 1, outgrid);
 			}
 		}
 	}
@@ -184,8 +190,9 @@ void Grid::write_grids_to_file(){
 
 void Grid::load_grids_from_file(){
 	FILE* ingrid;
-	double elec, vdwA, vdwB, solv, rec_solv;
+    double elec, vdwA, vdwB, solv, rec_solv, pbsa;
     size_t garbage;
+    int pbsa_flag;
 	ingrid = fopen((Input->grid_prefix + ".grid").c_str(), "rb");
 	if (ingrid == NULL){
 		printf("Could not open McGrid file. Please check");
@@ -202,8 +209,12 @@ void Grid::load_grids_from_file(){
 	garbage = fread(&this->ybegin, sizeof(double), 1, ingrid);
 	garbage = fread(&this->zbegin, sizeof(double), 1, ingrid);
 
-	vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz);
-	vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2;
+    garbage = fread(&pbsa_flag, sizeof(int), 1, ingrid);
+
+    (pbsa_flag > 0)? this->pbsa_loaded = true : this->pbsa_loaded = false;
+
+    vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz), pbsa_t1(npointsz);
+    vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2, pbsa_t2;
 
 		for(int a=0; a< this->npointsx; a++){
 			for (int b=0; b< this->npointsy; b++){
@@ -213,18 +224,21 @@ void Grid::load_grids_from_file(){
 					garbage = fread(&vdwB, sizeof(double), 1, ingrid);
 					garbage = fread(&rec_solv, sizeof(double), 1, ingrid);
 					garbage = fread(&solv, sizeof(double), 1, ingrid);
+                    garbage = fread(&pbsa, sizeof(double), 1, ingrid);
 
 					elec_t1[c] = (elec);
 					vdwA_t1[c] = (vdwA);
 					vdwB_t1[c] = (vdwB);
 					solv_t1[c] = (solv);
 					rec_solv_t1[c] = (rec_solv);
+                    pbsa_t1[c] = (pbsa);
 				}
 				elec_t2.push_back(elec_t1);
 				vdwA_t2.push_back(vdwA_t1);
 				vdwB_t2.push_back(vdwB_t1);
 				solv_t2.push_back(solv_t1);
 				rec_solv_t2.push_back(rec_solv_t1);
+                pbsa_t2.push_back(pbsa_t1);
 
 			}
 			this->elec_grid.push_back(elec_t2);
@@ -232,11 +246,13 @@ void Grid::load_grids_from_file(){
 			this->vdwB_grid.push_back(vdwB_t2);
 			this->solv_gauss.push_back(solv_t2);
 			this->rec_solv_gauss.push_back(rec_solv_t2);
+            this->pbsa_grid.push_back(pbsa_t2);
 			elec_t2.clear();
 			vdwA_t2.clear();
 			vdwB_t2.clear();
 			solv_t2.clear();
 			rec_solv_t2.clear();
+            pbsa_t2.clear();
 		}
 	fclose(ingrid);
 }
@@ -364,11 +380,6 @@ void Grid::load_Ambergrids_from_file(){
         this->pbsa_grid.push_back(vtmp);
     }
 
-#ifdef DEBUG
-    printf("Reading grids for %d x %d x %d points spaced by %.4f Angstroms.\n", this->npointsx, this->npointsy, this->npointsz, this->grid_spacing);
-    printf("Grid origin: %10.5f %10.5f %10.5f\n", this->xbegin, this->ybegin, this->zbegin);
-#endif
-
     float phi;
 
     for (int z=0; z<npointsz; z++){
@@ -381,5 +392,7 @@ void Grid::load_Ambergrids_from_file(){
     }
 
     fclose(pbsa_map);
+
+    this->pbsa_loaded = true;
 }
 

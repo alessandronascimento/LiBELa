@@ -280,7 +280,7 @@ double Energy2::compute_ene_from_grids_softcore_solvation(Grid* Grids, Mol2* Lig
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
 
-            if (Input->pbsa_grid == ""){
+            if (! Input->use_pbsa){
                 elec += Lig->charges[i]* GI->elec;
             }
             else {
@@ -330,7 +330,7 @@ double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<v
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
 
-            if (Input->pbsa_grid == ""){
+            if (! Input->use_pbsa){
                 elec += Lig->charges[i]* GI->elec;
             }
             else {
@@ -377,7 +377,7 @@ double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
 
-            if (Input->pbsa_grid == ""){
+            if (! Input->use_pbsa){
                 elec += Lig->charges[i]* GI->elec;
             }
             else {
@@ -427,7 +427,7 @@ double Energy2::compute_ene_from_grids_hardcore(Grid* Grids, Mol2* Lig, vector<v
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
 
-            if (Input->pbsa_grid == ""){
+            if (! Input->use_pbsa){
                 elec += Lig->charges[i]* GI->elec;
             }
             else {
@@ -474,7 +474,7 @@ double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
 
-            if (Input->pbsa_grid == ""){
+            if (! Input->use_pbsa){
                 elec += Lig->charges[i]* GI->elec;
             }
             else {
@@ -527,7 +527,7 @@ double Energy2::compute_ene_from_grids_hardcore(Grid* Grids, Mol2* Lig, vector<v
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
 
-            if (Input->pbsa_grid == ""){
+            if (! Input->use_pbsa){
                 elec += Lig->charges[i]* GI->elec;
             }
             else {
@@ -575,7 +575,7 @@ double Energy2::compute_ene_from_grids_softcore_solvation(Grid* Grids, Mol2* Lig
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
 
-            if (Input->pbsa_grid == ""){
+            if (! Input->use_pbsa){
                 elec += Lig->charges[i]* GI->elec;
             }
             else {
@@ -628,7 +628,7 @@ double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<v
             GridInterpol* GI = new GridInterpol;
             this->trilinear_interpolation(Grids, af, bf, cf, a1, b1, c1, a2, b2, c2, GI);
 
-            if (Input->pbsa_grid == ""){
+            if (! Input->use_pbsa){
                 elec += Lig->charges[i]* GI->elec;
             }
             else {
@@ -882,7 +882,7 @@ void Energy2::trilinear_interpolation(Grid* Grids, double x, double y, double z,
 
     // PBSA Grid
 
-    if (Input->pbsa_grid != ""){
+    if (Input->use_pbsa){
 
     c00=(Grids->pbsa_grid[x0][y0][z0]*(1-xd)) + (Grids->pbsa_grid[x1][y0][z0]*xd);
     c10=(Grids->pbsa_grid[x0][y1][z0]*(1-xd)) + (Grids->pbsa_grid[x1][y1][z0]*xd);
