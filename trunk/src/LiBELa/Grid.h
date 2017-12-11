@@ -27,7 +27,7 @@ public:
 	vector<vector<vector<double> > > rec_solv_gauss;
 	double rec_si;
 	PARSER* Input;
-    bool pbsa_loaded = false;
+    bool pbsa_loaded; // = false;
 
     /*!
      * \brief Grid This function initializes the class. It passes a copy of the PARSER
