@@ -177,7 +177,7 @@ void Grid::write_grids_to_file(){
 				vdwB = this->vdwB_grid[a][b][c];
 				solv = this->solv_gauss[a][b][c];
 				rec_solv = this->rec_solv_gauss[a][b][c];
-                (Input->pbsa_grid == "") ? pbsa=0.0 : pbsa = this->pbsa_grid[a][b][c];
+                (! this->pbsa_loaded) ? pbsa=0.0 : pbsa = this->pbsa_grid[a][b][c];
 				fwrite(&elec, sizeof(double), 1, outgrid);
 				fwrite(&vdwA, sizeof(double), 1, outgrid);
 				fwrite(&vdwB, sizeof(double), 1, outgrid);
