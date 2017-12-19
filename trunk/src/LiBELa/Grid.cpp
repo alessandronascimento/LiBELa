@@ -406,7 +406,7 @@ void Grid::compute_grid_hardcore_omp(Mol2* Rec){
     vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz);
     vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2;
 
-    double elec, d, d2, d6, x, y, z, vdwA, vdwB, solv, rec_solv, deff;
+//    double elec, d, d2, d6, x, y, z, vdwA, vdwB, solv, rec_solv, deff;
     double sqrt2 = sqrt(2.0);
 
 // initializing the vectors;
@@ -433,24 +433,25 @@ void Grid::compute_grid_hardcore_omp(Mol2* Rec){
 {
 #pragma omp for schedule(static, 1)
     for(int a=0; a< this->npointsx; a++){
-        x = (a*this->grid_spacing) + this->xbegin;
+
+        double x = (a*this->grid_spacing) + this->xbegin;
 
         for (int b=0; b< this->npointsy; b++){
-            y = (b*this->grid_spacing) + this->ybegin;
+            double y = (b*this->grid_spacing) + this->ybegin;
 
             for (int c=0; c<this->npointsz; c++){
-                z = (c*this->grid_spacing) + this->zbegin;
-                elec = 0.0;
-                vdwA = 0.0;
-                vdwB = 0.0;
-                solv=0.0;
-                rec_solv=0.0;
+                double z = (c*this->grid_spacing) + this->zbegin;
+                double elec = 0.0;
+                double vdwA = 0.0;
+                double vdwB = 0.0;
+                double solv=0.0;
+                double rec_solv=0.0;
 
                 for (int i=0; i< Rec->N; i++){
-                    d2 = this->distance_squared(x, Rec->xyz[i][0], y,Rec->xyz[i][1], z, Rec->xyz[i][2]);
-                    d6 = d2 * d2 * d2;
+                    double d2 = this->distance_squared(x, Rec->xyz[i][0], y,Rec->xyz[i][1], z, Rec->xyz[i][2]);
+                    double d6 = d2 * d2 * d2;
                     if (Input->dielectric_model == "constant"){
-                        d = sqrt(d2);
+                        double d = sqrt(d2);
                         elec += 332.0*((Rec->charges[i])/(d*Input->diel));
                     }
                     else if (Input->dielectric_model == "4r") {     // epsilon = 4r
@@ -463,7 +464,7 @@ void Grid::compute_grid_hardcore_omp(Mol2* Rec){
                     vdwA += Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6);
                     vdwB += sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6;
 
-                    deff = (d2);
+                    double deff = (d2);
 
                     solv += ((Input->solvation_alpha * Rec->charges[i] * Rec->charges[i])+ Input->solvation_beta) *  exp((-(deff)/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
                     rec_solv += (4.0/3.0) * PI * pow(Rec->radii[i], 3) * exp((-(deff)/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
