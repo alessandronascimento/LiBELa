@@ -40,7 +40,12 @@ Grid::Grid(PARSER* _Input, Mol2* Rec, vector<double> com){
         this->compute_grid_softcore(Rec);
     }
     else {
-            this->compute_grid_hardcore(Rec);
+            if (Input->parallel_jobs > 1){
+                this->compute_grid_hardcore_omp(Rec);
+            }
+            else{
+                this->compute_grid_hardcore(Rec);
+            }
     }
 	if (Input->write_grids){
 		this->write_grids_to_file();
@@ -304,8 +309,6 @@ void Grid::compute_grid_hardcore(Mol2* Rec){
 
                     vdwA += Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6);
                     vdwB += sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6;
-//					vdwA += sqrt(Rec->epsilons[i]*(pow((2.0*Rec->radii[i]), 12.0))) / (d6*d6) ;
-//                  vdwB += sqrt(2.0 * Rec->epsilons[i]*(pow((2.0*Rec->radii[i]), 6.0))) / (d6) ;
 
                     deff = (d2);
 
@@ -398,3 +401,84 @@ void Grid::load_Ambergrids_from_file(){
     this->pbsa_loaded = true;
 }
 
+
+void Grid::compute_grid_hardcore_omp(Mol2* Rec){
+    vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz);
+    vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2;
+
+    double elec, d, d2, d6, x, y, z, vdwA, vdwB, solv, rec_solv, deff;
+    double sqrt2 = sqrt(2.0);
+
+// initializing the vectors;
+
+    for (unsigned i=0; i<this->npointsy; i++){
+        elec_t2.push_back(elec_t1);
+        vdwA_t2.push_back(vdwA_t1);
+        vdwB_t2.push_back(vdwB_t1);
+        solv_t2.push_back(solv_t1);
+        rec_solv_t2.push_back(rec_solv_t1);
+    }
+
+    for (unsigned i=0; i<this->npointsx; i++){
+        this->elec_grid.push_back(elec_t2);
+        this->vdwA_grid.push_back(vdwA_t2);
+        this->vdwB_grid.push_back(vdwB_t2);
+        this->solv_gauss.push_back(solv_t2);
+        this->rec_solv_gauss.push_back(rec_solv_t2);
+    }
+
+// Now, starting OMP...
+
+#pragma omp parallel num_threads(Input->parallel_jobs)
+{
+#pragma omp for schedule(static, 1)
+    for(int a=0; a< this->npointsx; a++){
+        x = (a*this->grid_spacing) + this->xbegin;
+
+        for (int b=0; b< this->npointsy; b++){
+            y = (b*this->grid_spacing) + this->ybegin;
+
+            for (int c=0; c<this->npointsz; c++){
+                z = (c*this->grid_spacing) + this->zbegin;
+                elec = 0.0;
+                vdwA = 0.0;
+                vdwB = 0.0;
+                solv=0.0;
+                rec_solv=0.0;
+
+                for (int i=0; i< Rec->N; i++){
+                    d2 = this->distance_squared(x, Rec->xyz[i][0], y,Rec->xyz[i][1], z, Rec->xyz[i][2]);
+                    d6 = d2 * d2 * d2;
+                    if (Input->dielectric_model == "constant"){
+                        d = sqrt(d2);
+                        elec += 332.0*((Rec->charges[i])/(d*Input->diel));
+                    }
+                    else if (Input->dielectric_model == "4r") {     // epsilon = 4r
+                        elec += 332.0 * (Rec->charges[i]/(4*d2));
+                    }
+                    else {                                          // Input->dielectric_model = "r"
+                        elec += 332.0 * (Rec->charges[i]/d2);
+                    }
+
+                    vdwA += Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6);
+                    vdwB += sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6;
+
+                    deff = (d2);
+
+                    solv += ((Input->solvation_alpha * Rec->charges[i] * Rec->charges[i])+ Input->solvation_beta) *  exp((-(deff)/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
+                    rec_solv += (4.0/3.0) * PI * pow(Rec->radii[i], 3) * exp((-(deff)/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
+                }
+                this->elec_grid[a][b][c] = elec;
+                this->vdwA_grid[a][b][c] = vdwA;
+                this->vdwB_grid[a][b][c] = vdwB;
+                this->solv_gauss[a][b][c] = solv;
+                this->rec_solv_gauss[a][b][c] = rec_solv;
+            }
+        }
+    }
+}                       // end of pragma
+    this->rec_si = 0.00;
+    for(int i=0; i<Rec->N; i++){
+        this->rec_si += (Input->solvation_alpha*Rec->charges[i]*Rec->charges[i]) + Input->solvation_beta;
+    }
+}

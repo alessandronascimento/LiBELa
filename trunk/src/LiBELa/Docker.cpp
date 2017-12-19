@@ -326,9 +326,9 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 	}
     Gaussian* Gauss = new Gaussian;
     double t1, t2, t3;
-    t1 = Gauss->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, new_mcoords[best_conf]);
+    t1 = Gauss->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, new_xyz);
     t2 = Gauss->compute_shape_and_charge_density(Input, RefLig, RefLig, RefLig->xyz, RefLig->xyz);
-    t3 = Gauss->compute_shape_and_charge_density(Input, Lig, Lig, new_mcoords[best_conf],new_mcoords[best_conf]);
+    t3 = Gauss->compute_shape_and_charge_density(Input, Lig, Lig, new_xyz, new_xyz);
 
     si = (2*t1) / (t2+t3);
     delete Gauss;
@@ -437,9 +437,9 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 	}
     Gaussian* Gauss = new Gaussian;
     double t1, t2, t3;
-    t1 = Gauss->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, new_mcoords[best_conf]);
+    t1 = Gauss->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, new_xyz);
     t2 = Gauss->compute_shape_and_charge_density(Input, RefLig, RefLig, RefLig->xyz, RefLig->xyz);
-    t3 = Gauss->compute_shape_and_charge_density(Input, Lig, Lig, new_mcoords[best_conf],new_mcoords[best_conf]);
+    t3 = Gauss->compute_shape_and_charge_density(Input, Lig, Lig, new_xyz,new_xyz);
 
     si = (2*t1) / (t2+t3);
     delete Gauss;
@@ -897,9 +897,9 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
     }
     Gaussian* Gauss = new Gaussian;
     double t1, t2, t3;
-    t1 = Gauss->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, new_mcoords[best_conf]);
+    t1 = Gauss->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, new_xyz);
     t2 = Gauss->compute_shape_and_charge_density(Input, RefLig, RefLig, RefLig->xyz, RefLig->xyz);
-    t3 = Gauss->compute_shape_and_charge_density(Input, Lig, Lig, new_mcoords[best_conf],new_mcoords[best_conf]);
+    t3 = Gauss->compute_shape_and_charge_density(Input, Lig, Lig, new_xyz, new_xyz);
 
     si = (2*t1) / (t2+t3);
     delete Gauss;
@@ -1008,9 +1008,9 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
     }
     Gaussian* Gauss = new Gaussian;
     double t1, t2, t3;
-    t1 = Gauss->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, new_mcoords[best_conf]);
+    t1 = Gauss->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, new_xyz);
     t2 = Gauss->compute_shape_and_charge_density(Input, RefLig, RefLig, RefLig->xyz, RefLig->xyz);
-    t3 = Gauss->compute_shape_and_charge_density(Input, Lig, Lig, new_mcoords[best_conf],new_mcoords[best_conf]);
+    t3 = Gauss->compute_shape_and_charge_density(Input, Lig, Lig, new_xyz, new_xyz);
 
     si = (2*t1) / (t2+t3);
     delete Gauss;

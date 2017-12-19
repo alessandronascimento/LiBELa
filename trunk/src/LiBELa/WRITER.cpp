@@ -117,6 +117,10 @@ void WRITER::print_params(){
             printf("* %-30s %-66.66s*\n", "load grids", Input->grid_prefix.c_str());
         }
     }
+    printf("* %-30s %-66d*\n", "use PBSA grids?", Input->use_pbsa);
+    if (Input->pbsa_grid != ""){
+        printf("* %-30s %-66.66s*\n", "load PBSA grid", Input->pbsa_grid.c_str());
+    }
     printf("*                                                                                                  *\n");
     printf("* %-30s %-66d*\n", "only_score", Input->only_score);
     printf("* %-30s %-22.2f%-22.2f%-22.2f*\n", "search_box", Input->search_box_x, Input->search_box_y, Input->search_box_z);
@@ -145,6 +149,9 @@ void WRITER::print_params(){
     printf("* %-30s %-66.66s*\n", "output_prefix", Input->output.c_str());
     printf("* %-30s %-66d*\n", "write_mol2", Input->write_mol2);
 	printf("*                                                                                                  *\n");
+    printf("* %-30s %-66.66s*\n", "Ligand energy model", Input->ligand_energy_model.c_str());
+    printf("* %-30s %-66.66s*\n", "Atomic FF model", Input->atomic_model_ff.c_str());
+
 	printf("****************************************************************************************************\n");
 	printf("****************************************************************************************************\n");
 

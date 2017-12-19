@@ -54,6 +54,7 @@ public:
 	void write_grids_to_file(void);
 	void load_grids_from_file(void);
     void load_Ambergrids_from_file(void);
+    void compute_grid_hardcore_omp(Mol2* Rec);
 	virtual ~Grid();
 };
 
