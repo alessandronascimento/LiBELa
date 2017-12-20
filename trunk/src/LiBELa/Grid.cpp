@@ -398,6 +398,8 @@ void Grid::load_Ambergrids_from_file(){
 
     fclose(pbsa_map);
 
+    printf("PBSA Grid file %s read!\n", Input->pbsa_grid.c_str());
+
     this->pbsa_loaded = true;
 }
 
