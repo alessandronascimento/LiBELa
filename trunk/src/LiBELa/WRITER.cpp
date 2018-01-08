@@ -513,3 +513,17 @@ void WRITER::write_pqr(Mol2 *Cmol, string outname){
     gzprintf(outpdb, "END\n");
     gzclose(outpdb);
 }
+
+void WRITER::write_pqr_2(Mol2 *Cmol, string outname){
+    gzFile outpdb;
+    outpdb = gzopen((outname+".pqr.gz").c_str(), "w");
+    int i=0;
+    int resn=0;
+
+    for (int i=0; i< Cmol->N; i++){
+        gzprintf(outpdb, "ATOM %6d%3.3s %5.5s%2.2s%4d    % 8.3f% 8.3f% 8.3f% 8.4f% 7.4f\n", i+1, Cmol->amberatoms[i].c_str(), Cmol->resnames[resn].c_str(), "A" ,resn+1, Cmol->xyz[i][0], Cmol->xyz[i][1], Cmol->xyz[i][2], Cmol->charges[i], Cmol->radii[i]);
+    }
+    gzprintf(outpdb, "TER\n");
+    gzprintf(outpdb, "END\n");
+    gzclose(outpdb);
+}
