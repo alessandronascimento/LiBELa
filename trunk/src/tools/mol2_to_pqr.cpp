@@ -6,6 +6,7 @@
 #include <vector>
 #include "../LiBELa/Mol2.cpp"
 #include "../LiBELa/WRITER.cpp"
+#include "../LiBELa/PARSER.cpp"
 
 using namespace std;
 
