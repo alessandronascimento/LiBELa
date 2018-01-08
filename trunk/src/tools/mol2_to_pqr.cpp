@@ -16,6 +16,7 @@ int main(int argc, char* argv[]){
         exit(1);
     }
     PARSER* Input = new PARSER;
+    Input->atomic_model_ff = "AMBER";
     Input->output = "mol2_to_pqr";
     Mol2* Lig = new Mol2(Input, string(argv[1]));
     WRITER* Writer = new WRITER(Input);
