@@ -489,3 +489,27 @@ void WRITER::print_dock_params(){
     printf("* %-30.30s %-66.6f*\n", "Delta_ij^6", Input->deltaij6);
 
 }
+
+
+void WRITER::write_pqr(Mol2 *Cmol, string outname){
+    gzFile outpdb;
+    outpdb = gzopen((outname+".pqr.gz").c_str(), "w");
+    int i=0;
+    int resn=0;
+
+    while (resn < int(Cmol->residue_pointer.size()-1)){
+        while(i < Cmol->residue_pointer[resn+1]){
+            gzprintf(outpdb, "ATOM %6d%3.3s %5.5s%2.2s%4d    % 8.3f% 8.3f% 8.3f% 8.4f% 7.4f\n", i+1, Cmol->sybyl_atoms[i].c_str(), Cmol->resnames[resn].c_str(), "A" ,resn+1, Cmol->xyz[i][0], Cmol->xyz[i][1], Cmol->xyz[i][2], Cmol->charges[i], Cmol->radii[i]);
+            i++;
+        }
+        resn++;
+    }
+
+    while (i < Cmol->N){
+        gzprintf(outpdb, "ATOM %6d%3.3s %5.5s%2.2s%4d    % 8.3f% 8.3f% 8.3f% 8.4f% 7.4f\n", i+1, Cmol->sybyl_atoms[i].c_str(), Cmol->resnames[resn].c_str(), "A" ,resn+1, Cmol->xyz[i][0], Cmol->xyz[i][1], Cmol->xyz[i][2], Cmol->charges[i], Cmol->radii[i]);
+        i++;
+    }
+    gzprintf(outpdb, "TER\n");
+    gzprintf(outpdb, "END\n");
+    gzclose(outpdb);
+}

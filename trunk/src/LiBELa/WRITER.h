@@ -72,6 +72,7 @@ public:
 	void writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, double rmsd, string outname);
 	void writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, double rmsd);
 	void writeMol2_Mol_new_xyz(Mol2* Cmol, double energy, double rmsd);
+    void write_pqr(Mol2 *Cmol, string outname);
 
 /*!
  * The print_info method is used to, at the same time, print some useful(?)
