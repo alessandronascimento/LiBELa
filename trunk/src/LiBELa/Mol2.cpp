@@ -453,10 +453,23 @@ string Mol2::sybyl_2_gaff(string atom){
     else if (atom == "Ca"){
         gaff_atom = "Ca";
     }
-    else{
-        printf("Atom type %s not found among GAFF parameters.\nPlease check Mol2.h source file.\n", atom.c_str());
-        exit(1);
+    else if (atom == "Si"){
+        gaff_atom = "Si";
     }
+    else{
+        bool found = false;
+        for (unsigned i=0; i< this->gaff_force_field.size(); i++){
+            if (this->gaff_force_field[i].type == atom){
+                gaff_atom = atom;
+                found = true;
+            }
+        }
+        if (! found){
+            printf("Atom type %s not found among GAFF parameters.\nPlease check Mol2.h source file.\n", atom.c_str());
+            exit(1);
+        }
+    }
+
 
     return(gaff_atom);
 }
@@ -593,9 +606,21 @@ string Mol2::sybyl_2_amber(string atom){
     else if (atom == "Ca"){
         amber_atom = "Ca";
     }
+    else if (atom == "Si"){
+        amber_atom = "Si";
+    }
     else{
-        printf("Atom type %s not found among GAFF parameters.\nPlease check Mol2.h source file.\n", atom.c_str());
-        exit(1);
+        bool found = false;
+        for (unsigned i=0; i< this->gaff_force_field.size(); i++){
+            if (this->gaff_force_field[i].type == atom){
+                amber_atom = atom;
+                found = true;
+            }
+        }
+        if (! found){
+            printf("Atom type %s not found among GAFF parameters.\nPlease check Mol2.h source file.\n", atom.c_str());
+            exit(1);
+        }
     }
 
     return(amber_atom);
