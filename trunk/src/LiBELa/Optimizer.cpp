@@ -242,6 +242,11 @@ void  Optimizer::minimize_energy_nlopt_lbfgs(Mol2* Lig2, opt_result_t* opt_resul
 
 void  Optimizer::minimize_energy_nlopt_ln_auglag(Mol2* Lig2, opt_result_t* opt_result){
 	nlopt::opt *opt = new nlopt::opt(nlopt::LN_AUGLAG,6);
+    nlopt::opt local_opt(nlopt::LD_MMA,6);
+
+    local_opt.set_xtol_rel(Parser->dock_min_tol);
+    local_opt.set_maxtime(Parser->min_timeout);
+    opt->set_local_optimizer(local_opt);
 
 	vector<double> lb(6);
 	lb[0] = -180.0;
