@@ -41,12 +41,6 @@ using namespace std;
 class TEMP_SCHEME{
 
 public:
-
-    struct datamol{
-        vector<string> mol_list;
-        int n0;
-    };
-
 	//! Atomic coordinate
 	double crd;
 	//! Electrostatic potential energy

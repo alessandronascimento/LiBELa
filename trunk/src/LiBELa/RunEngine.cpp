@@ -665,8 +665,8 @@ int TEMP_SCHEME::dock_serial(vector<string> ligand_list, int count, int chunck_s
     stringstream buffer;
     buffer << (count+1);
     WRITER* Write_lig = new WRITER(Input->output + "_" + buffer.str(), Input);
-
-    for (unsigned i=0; i< ligand_list.size(); i++){
+    count = atoi(ligand_list[ligand_list.size()-1].c_str());
+    for (unsigned i=0; i< ligand_list.size()-1; i++){
         Mol2* Lig2 = new Mol2;
         bool lig_is_opened = false;
 
@@ -854,7 +854,7 @@ void TEMP_SCHEME::dock_mpi(){
 
 
 
-    datamol data0;
+    vector<string> tmp;
 
     if (world.rank() == 0 ){                       // Running only on the *master* job;
         sprintf(info, "Running Dock mode over MPI with up to %d parallel jobs...", world.size());
@@ -890,32 +890,34 @@ void TEMP_SCHEME::dock_mpi(){
 
         chunck_size = int(ligand_list.size()/world.size());
 
-        vector<datamol> chuncks;
-        int counter=0;
+        vector<vector<string> > chuncks;
         for (int i=0; i<world.size(); i++){
-            datamol data;
-            data.n0=counter;
+            tmp.clear();
             for (int j=0; j<chunck_size; j++){
                 ligand = ligand_list.front();
-                data.mol_list.push_back(ligand);
+                tmp.push_back(ligand);
                 ligand_list.erase(ligand_list.begin());
-                counter++;
             }
-            chuncks.push_back(data);
+            chuncks.push_back(tmp);
         }
         if (ligand_list.size() != 0){
             for (unsigned i=0; i<ligand_list.size(); i++){
-                chuncks[i].mol_list.push_back(ligand_list[i]);
-                chuncks[i+1].n0 = chuncks[i+1].n0 + 1;
+                chuncks[i].push_back(ligand_list[i]);
             }
             ligand_list.clear();
         }
 
-        scatter(world,chuncks, data0,  0);
+        int counter=0;
+        for (unsigned i=0; i< chuncks.size(); i++){
+            chuncks[i].push_back(string(itoa(counter)));
+            counter += chuncks[i].size();
+        }
+
+        scatter(world,chuncks, tmp,  0);
         this->dock_serial(data0.mol_list, data0.n0, 1);
     }                                                           // End of rank 0;
     else {
-        scatter(world, data0, 0);
+        scatter(world, tmp, 0);
         this->dock_serial(data0.mol_list, data0.n0, 1);
     }
 }
