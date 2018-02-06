@@ -890,39 +890,33 @@ void TEMP_SCHEME::dock_mpi(){
 
         chunck_size = int(ligand_list.size()/world.size());
 
-        vector<vector<string> > chuncks;
-
-        vector<unsigned> mol_per_chunck;
-
+        vector<datamol> chuncks;
+        int counter=0;
         for (int i=0; i<world.size(); i++){
-            tmp.clear();
+            datamol data;
+            data.n0=counter;
             for (int j=0; j<chunck_size; j++){
                 ligand = ligand_list.front();
-                tmp.push_back(ligand);
+                data.mol_list.push_back(ligand);
                 ligand_list.erase(ligand_list.begin());
+                counter++;
             }
-            chuncks.push_back(tmp);
+            chuncks.push_back(data);
         }
         if (ligand_list.size() != 0){
             for (unsigned i=0; i<ligand_list.size(); i++){
-                chuncks[i].push_back(ligand_list[i]);
+                chuncks[i].mol_list.push_back(ligand_list[i]);
+                chunks[i+1].n0 = chunks[i+1].n0 + 1;
             }
             ligand_list.clear();
         }
 
-        tmp.clear();
-
-        unsigned countmol=0;
-        for (unsigned i=0; i< chuncks.size(); i++){
-            mol_per_chunck.push_back(countmol);
-            countmol += chuncks[i].size();
-        }
-
-        scatter(world,chuncks, tmp, mol_per_chunck, 0);
+        datamol data;
+        scatter(world,chuncks, data,  0);
         this->dock_serial(tmp, mol_per_chunck[world.rank()], 1);
     }                                                           // End of rank 0;
     else {
-        scatter(world, tmp, mol_per_chunck, 0);
+        scatter(world, data, 0);
         this->dock_serial(tmp, mol_per_chunck[world.rank()], 1);
     }
 }
