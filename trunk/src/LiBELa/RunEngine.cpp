@@ -854,7 +854,7 @@ void TEMP_SCHEME::dock_mpi(){
 
 
 
-    vector<string> tmp;
+    datamol data0;
 
     if (world.rank() == 0 ){                       // Running only on the *master* job;
         sprintf(info, "Running Dock mode over MPI with up to %d parallel jobs...", world.size());
@@ -911,12 +911,11 @@ void TEMP_SCHEME::dock_mpi(){
             ligand_list.clear();
         }
 
-        datamol data;
-        scatter(world,chuncks, data,  0);
+        scatter(world,chuncks, data0,  0);
         this->dock_serial(data.mol_list, data.n0, 1);
     }                                                           // End of rank 0;
     else {
-        scatter(world, data, 0);
+        scatter(world, data0, 0);
         this->dock_serial(data.mol_list, data.n0, 1);
     }
 }
