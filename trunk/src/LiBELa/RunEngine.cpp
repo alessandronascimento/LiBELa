@@ -892,6 +892,8 @@ void TEMP_SCHEME::dock_mpi(){
 
         vector<vector<string> > chuncks;
 
+        vector<unsigned> mol_per_chunck;
+
         for (int i=0; i<world.size(); i++){
             tmp.clear();
             for (int j=0; j<chunck_size; j++){
@@ -910,12 +912,18 @@ void TEMP_SCHEME::dock_mpi(){
 
         tmp.clear();
 
-        scatter(world,chuncks, tmp, 0);
-        this->dock_serial(tmp, world.rank(), chunck_size);
+        unsigned countmol=0;
+        for (unsigned i=0; i< chuncks.size(); i++){
+            mol_per_chunck.push_back(countmol);
+            countmol += chuncks[i].size();
+        }
+
+        scatter(world,chuncks, tmp, mol_per_chunck, 0);
+        this->dock_serial(tmp, mol_per_chunck[world.rank()], 1);
     }                                                           // End of rank 0;
     else {
-        scatter(world, tmp, 0);
-        this->dock_serial(tmp, world.rank(), tmp.size());
+        scatter(world, tmp, mol_per_chunck, 0);
+        this->dock_serial(tmp, mol_per_chunck[world.rank()], 1);
     }
 }
 
