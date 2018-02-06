@@ -914,11 +914,11 @@ void TEMP_SCHEME::dock_mpi(){
         }
 
         scatter(world,chuncks, tmp,  0);
-        this->dock_serial(data0.mol_list, data0.n0, 1);
+        this->dock_serial(tmp, world.rank(), 1);
     }                                                           // End of rank 0;
     else {
         scatter(world, tmp, 0);
-        this->dock_serial(data0.mol_list, data0.n0, 1);
+        this->dock_serial(tmp, world.rank(), 1);
     }
 }
 

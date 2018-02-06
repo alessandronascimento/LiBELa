@@ -19,6 +19,8 @@
 #include<time.h>
 #include<cstdio>
 #include<ctime>
+#include <stdio.h>
+#include <stdlib.h>
 #include<gsl/gsl_rng.h>
 
 #ifdef HAS_GUI
