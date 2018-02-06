@@ -906,18 +906,18 @@ void TEMP_SCHEME::dock_mpi(){
         if (ligand_list.size() != 0){
             for (unsigned i=0; i<ligand_list.size(); i++){
                 chuncks[i].mol_list.push_back(ligand_list[i]);
-                chunks[i+1].n0 = chunks[i+1].n0 + 1;
+                chuncks[i+1].n0 = chuncks[i+1].n0 + 1;
             }
             ligand_list.clear();
         }
 
         datamol data;
         scatter(world,chuncks, data,  0);
-        this->dock_serial(tmp, mol_per_chunck[world.rank()], 1);
+        this->dock_serial(data.mol_list, data.n0, 1);
     }                                                           // End of rank 0;
     else {
         scatter(world, data, 0);
-        this->dock_serial(tmp, mol_per_chunck[world.rank()], 1);
+        this->dock_serial(data.mol_list, data.n0, 1);
     }
 }
 
