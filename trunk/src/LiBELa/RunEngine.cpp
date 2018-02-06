@@ -909,7 +909,9 @@ void TEMP_SCHEME::dock_mpi(){
 
         int counter=0;
         for (unsigned i=0; i< chuncks.size(); i++){
-            chuncks[i].push_back(string(itoa(counter)));
+            char buffer[10];
+            sprintf(buffer, "%d", counter);
+            chuncks[i].push_back(string(buffer);
             counter += chuncks[i].size();
         }
 
