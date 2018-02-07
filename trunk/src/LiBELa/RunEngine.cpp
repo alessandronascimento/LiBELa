@@ -902,13 +902,13 @@ void TEMP_SCHEME::dock_mpi(){
         }
         if (ligand_list.size() != 0){
             for (unsigned i=0; i<ligand_list.size(); i++){
-                chuncks[i].push_back(ligand_list[i]);
+                chuncks[chuncks.size()-1-i].push_back(ligand_list[i]);
             }
             ligand_list.clear();
         }
 
         int counter=0;
-        for (unsigned i=0; i< chuncks.size(); i++){
+        for (unsigned i=0; i< chuncks.size()-1; i++){
             char buffer[10];
             sprintf(buffer, "%d", counter);
             chuncks[i].push_back(string(buffer));
