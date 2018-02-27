@@ -52,18 +52,20 @@ void McEntropy::update(double x, double y, double z, double alpha, double beta, 
     hist_beta[int(round(beta/rotation_step))] += 1.0;
     hist_gamma[int(round(gamma/rotation_step))] += 1.0;
 
-//    hist_beta[int(round(beta/(rotation_step/2.0)))] += 1.0;
+    //    hist_beta[int(round(beta/(rotation_step/2.0)))] += 1.0;
 
-    for (int i=0; i< n_rot; i++){
-        int angle = round(torsion[i]/rotation_step);
+    if (Input->sample_torsions){
+        for (int i=0; i< n_rot; i++){
+            int angle = round(torsion[i]/rotation_step);
 
-        if (angle < 0 or angle > rot_bins){
-            printf("ANGLE OFFSET: %d!\n", angle);
-            printf("Check McEntropy.cpp file.\n");
-            exit(1);
-        }
-        else{
-            hist_torsions[i][angle] += 1.0;
+            if (angle < 0 or angle > rot_bins){
+                printf("ANGLE OFFSET: %d!\n", angle);
+                printf("Check McEntropy.cpp file.\n");
+                exit(1);
+            }
+            else{
+                hist_torsions[i][angle] += 1.0;
+            }
         }
     }
 }
@@ -179,10 +181,13 @@ oid McEntropy::get_results(entropy_t* entropy, int count){
             entropy->Srot += hist_gamma[i] * log(hist_gamma[i]);
         }
 
-        for (int j=0; j< n_rot; j++){
-            hist_torsions[j][i] = hist_torsions[j][i]/count;
-            if (hist_torsions[j][i] > 0.0){
-                entropy->Storsion += hist_torsions[j][i] * log(hist_torsions[j][i]);
+
+        if (Input->sample_torsions){
+            for (int j=0; j< n_rot; j++){
+                hist_torsions[j][i] = hist_torsions[j][i]/count;
+                if (hist_torsions[j][i] > 0.0){
+                    entropy->Storsion += hist_torsions[j][i] * log(hist_torsions[j][i]);
+                }
             }
         }
     }

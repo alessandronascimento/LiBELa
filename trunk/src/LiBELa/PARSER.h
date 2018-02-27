@@ -166,7 +166,7 @@ public:
      * SA
      * none
      */
-	string energy_optimizer;
+    string energy_optimizer;
     //! Ignore hydrogen atoms during overlay matching
 	bool dock_no_h;
 	//! Size of population for density estimation algorithm

@@ -665,8 +665,8 @@ int TEMP_SCHEME::dock_serial(vector<string> ligand_list, int count, int chunck_s
     stringstream buffer;
     buffer << (count+1);
     WRITER* Write_lig = new WRITER(Input->output + "_" + buffer.str(), Input);
-
-    for (unsigned i=0; i< ligand_list.size(); i++){
+    count = atoi(ligand_list[ligand_list.size()-1].c_str());
+    for (unsigned i=0; i< ligand_list.size()-1; i++){
         Mol2* Lig2 = new Mol2;
         bool lig_is_opened = false;
 
@@ -891,7 +891,6 @@ void TEMP_SCHEME::dock_mpi(){
         chunck_size = int(ligand_list.size()/world.size());
 
         vector<vector<string> > chuncks;
-
         for (int i=0; i<world.size(); i++){
             tmp.clear();
             for (int j=0; j<chunck_size; j++){
@@ -903,19 +902,25 @@ void TEMP_SCHEME::dock_mpi(){
         }
         if (ligand_list.size() != 0){
             for (unsigned i=0; i<ligand_list.size(); i++){
-                chuncks[i].push_back(ligand_list[i]);
+                chuncks[chuncks.size()-1-i].push_back(ligand_list[i]);
             }
             ligand_list.clear();
         }
 
-        tmp.clear();
+        int counter=0;
+        for (unsigned i=0; i< chuncks.size(); i++){
+            char buffer[10];
+            sprintf(buffer, "%d", counter);
+            chuncks[i].push_back(string(buffer));
+            counter += chuncks[i].size()-1;
+        }
 
-        scatter(world,chuncks, tmp, 0);
-        this->dock_serial(tmp, world.rank(), chunck_size);
+        scatter(world,chuncks, tmp,  0);
+        this->dock_serial(tmp, world.rank(), 1);
     }                                                           // End of rank 0;
     else {
         scatter(world, tmp, 0);
-        this->dock_serial(tmp, world.rank(), tmp.size());
+        this->dock_serial(tmp, world.rank(), 1);
     }
 }
 
