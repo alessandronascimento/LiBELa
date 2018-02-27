@@ -641,7 +641,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
 
         McEntropy::entropy_t* McEnt = new McEntropy::entropy_t;
 
-        McEntropy::entropy_t Max_Ent = new McEntropy::entropy_t;
+        McEntropy::entropy_t* Max_Ent = new McEntropy::entropy_t;
 
         McEnt->Srot = 0.0; McEnt->Storsion = 0.0; McEnt->Strans = 0.0;
         Entropy->get_results(McEnt, Max_Ent, Input->number_steps);
