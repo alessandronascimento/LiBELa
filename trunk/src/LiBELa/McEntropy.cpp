@@ -152,7 +152,7 @@ void McEntropy::get_results(entropy_t* entropy, entropy_t* max_entropy, int coun
     max_entropy->TS = Input->temp*max_entropy->S;
 }
 
-oid McEntropy::get_results(entropy_t* entropy, int count){
+void McEntropy::get_results(entropy_t* entropy, int count){
     for (unsigned i=0; i< trans_bins; i++){
         hist_x[i] = hist_x[i]/count;
         if (hist_x[i] > 0.0){
