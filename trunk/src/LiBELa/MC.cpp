@@ -377,7 +377,10 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
     McEntropy::entropy_t* McEnt = new McEntropy::entropy_t;
     McEnt->Srot = 0.0; McEnt->Storsion = 0.0; McEnt->Strans = 0.0;
-    Entropy->get_results(McEnt, Input->number_steps);
+
+    McEntropy::entropy_t* Max_Ent = new McEntropy::entropy_t;
+
+    Entropy->get_results(McEnt, Max_Ent, Input->number_steps);
 
     sprintf(info, "First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K", McEnt->Strans*T, T);
     Writer->print_info(info);
@@ -394,8 +397,24 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
     Writer->print_line();
 
-    delete McEnt;
+    sprintf(info, "Maximal Entropies Computed for this System:");
+    Writer->print_info(info);
+    printf(info, "First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K", Max_Ent->Strans*T, T);
+    Writer->print_info(info);
+    sprintf(info, "First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K", Max_Ent->Srot*T, T);
+    Writer->print_info(info);
+    sprintf(info, "First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K", Max_Ent->Storsion*T, T);
+    Writer->print_info(info);
+    sprintf(info, "First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K", Max_Ent->S, T);
+    Writer->print_info(info);
+    sprintf(info, "First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K", -Max_Ent->TS, T);
+    Writer->print_info(info);
+    sprintf(info, "First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K", -Max_Ent->S*300., T);
+    Writer->print_info(info);
 
+    Writer->print_line();
+
+    delete McEnt, Max_Ent;
     delete Entropy;
 }
 
