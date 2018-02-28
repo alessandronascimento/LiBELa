@@ -414,7 +414,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
     Writer->print_line();
 
-    sprintf(info, "Entropy loss (-TdS): %10.4g kcal/mol (%10.4f %s) @ %7.2f K", (-McEnt->TS - (-Max_Ent->TS)), (-McEnt->TS/-Max_Ent->TS), "%", T);
+    sprintf(info, "Entropy loss (-TdS): %10.4g kcal/mol (%10.4f %s) @ %7.2f K", (-McEnt->TS - (-Max_Ent->TS)), ((-McEnt->TS/-Max_Ent->TS)*100), "%", T);
     Writer->print_info(info);
 
     Writer->print_line();
@@ -683,7 +683,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
 
         Writer->print_line();
 
-        sprintf(info, "Entropy loss (-TdS): %10.4g kcal/mol (%10.4f %s) @ %7.2f K", (-McEnt->TS - (-Max_Ent->TS)), (-McEnt->TS/-Max_Ent->TS), "%", T);
+        sprintf(info, "Entropy loss (-TdS): %10.4g kcal/mol (%10.4f %s) @ %7.2f K", (-McEnt->TS - (-Max_Ent->TS)), ((-McEnt->TS/-Max_Ent->TS)*100.), "%", T);
         Writer->print_info(info);
 
         Writer->print_line();
