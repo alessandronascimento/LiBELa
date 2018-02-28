@@ -121,6 +121,7 @@ void McEntropy::get_results(entropy_t* entropy, entropy_t* max_entropy, int coun
     entropy->TS = Input->temp*entropy->S;
 
 // Computing results for maximal entropy
+
     max_entropy->Srot = 0.0;
     double rot_bin_prob = 1.0/rot_bins;
     for (unsigned i=0; i< this->rot_bins; i++){
@@ -128,7 +129,7 @@ void McEntropy::get_results(entropy_t* entropy, entropy_t* max_entropy, int coun
         max_entropy->Srot += rot_bin_prob * log (rot_bin_prob); // for gamma;
     }
     for (unsigned i=0; i< this->rot_bins/2; i++){
-        max_entropy->Srot += rot_bin_prob * log (rot_bin_prob); // for beta;
+        max_entropy->Srot += (2*rot_bin_prob) * log (2*rot_bin_prob); // for beta;
     }
 
     max_entropy->Strans = 0.0;
@@ -144,7 +145,6 @@ void McEntropy::get_results(entropy_t* entropy, entropy_t* max_entropy, int coun
             max_entropy->Storsion += rot_bin_prob * log(rot_bin_prob);
         }
     }
-
     max_entropy->Strans = -k*max_entropy->Strans;
     max_entropy->Srot = -k*max_entropy->Srot;
     max_entropy->Storsion = -k*max_entropy->Storsion;
