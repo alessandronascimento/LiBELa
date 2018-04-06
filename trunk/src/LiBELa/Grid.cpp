@@ -33,6 +33,9 @@ Grid::Grid(PARSER* _Input, Mol2* Rec, vector<double> com){
     if (Input->pbsa_grid != ""){
         this->load_Ambergrids_from_file();
     }
+    else if (Input->delphi_grid != ""){
+        this->load_Delphi_Grid_from_file();
+    }
     else {
         this->grid_spacing = Input->grid_spacing;
         this->generate_points(com);
@@ -533,6 +536,21 @@ void Grid::load_Delphi_Grid_from_file(){
     fread(&intx, sizeof(int), 1, phimap);
     fread(&inty, sizeof(int), 1, phimap);
     fread(&intz, sizeof(int), 1, phimap);
+
+    this->npointsx = intx+1;
+    this->npointsy = inty+1;
+    this->npointsz = intz+1;
+
+    this->xbegin = extent*xstart;
+    this->xend = extent*xend;
+
+    this->ybegin = extent*ystart;
+    this->yend = extent*yend;
+
+    this->zbegin = extent*ystart;
+    this->zend = extent*yend;
+
+    this->grid_spacing = 0.25;
 
 #ifdef DEBUG
     printf("%s\n", title);
