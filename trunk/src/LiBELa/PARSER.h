@@ -267,12 +267,15 @@ public:
     string atomic_model_ff;
     //! Defines an electrostatic potential grid as computed by PBSA (AMBERTools)
     string pbsa_grid;
+    //! Defines an electrostatic potential grid as computed by DelPhi
+    string delphi_grid;
 
     double elec_weight;
     double vdw_weight;
     double solvation_weight;
 
     bool use_pbsa;
+    bool use_delphi;
 
 #ifdef HAS_GUI
 	QStringList docking_molecules;

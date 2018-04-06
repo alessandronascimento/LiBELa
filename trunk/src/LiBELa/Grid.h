@@ -25,9 +25,11 @@ public:
 	vector<vector<vector<double> > > vdwB_grid;
 	vector<vector<vector<double> > > solv_gauss;
 	vector<vector<vector<double> > > rec_solv_gauss;
+    vector<vector<vector<double> > > delphi_grid;
 	double rec_si;
 	PARSER* Input;
     bool pbsa_loaded; // = false;
+    bool delphi_loaded; // = false;
 
     /*!
      * \brief Grid This function initializes the class. It passes a copy of the PARSER
@@ -54,6 +56,7 @@ public:
 	void write_grids_to_file(void);
 	void load_grids_from_file(void);
     void load_Ambergrids_from_file(void);
+    void load_Delphi_Grid_from_file(void);
     void compute_grid_hardcore_omp(Mol2* Rec);
 	virtual ~Grid();
 };

@@ -15,6 +15,7 @@ public:
         double vdwB;
         double elec;
         double pbsa;
+        double delphi;
         double solv_gauss;
         double rec_solv_gauss;
     };

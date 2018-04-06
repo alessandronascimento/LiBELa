@@ -23,11 +23,13 @@ Grid::Grid(PARSER* _Input) {
     this->Input = _Input;
 	grid_spacing = Input->grid_spacing;
     this->pbsa_loaded = false;
+    this->delphi_loaded = false;
 }
 
 Grid::Grid(PARSER* _Input, Mol2* Rec, vector<double> com){
 	this->Input = _Input;
     this->pbsa_loaded = false;
+    this->delphi_loaded = false;
     if (Input->pbsa_grid != ""){
         this->load_Ambergrids_from_file();
     }
@@ -484,4 +486,88 @@ void Grid::compute_grid_hardcore_omp(Mol2* Rec){
     for(int i=0; i<Rec->N; i++){
         this->rec_si += (Input->solvation_alpha*Rec->charges[i]*Rec->charges[i]) + Input->solvation_beta;
     }
+}
+
+void Grid::load_Delphi_Grid_from_file(){
+    FILE *phimap;
+    char *title;
+    int ivary, nbyte, inddat, intx, inty, intz, tmpi;
+    double xang, yang, zang, xstart, xend, ystart, yend, zstart, zend;
+    double extent;
+
+    phimap = fopen(Input->delphi_grid.c_str(), "rb");
+
+    fread(&tmpi, sizeof(int), 1, phimap);
+
+    title = (char *) malloc(sizeof(char) * 62);
+    for (int i=0; i<60; i++) {
+        title[i] = fgetc(phimap);
+    }
+    title[60] = '\n';
+    title[61] = (char) 0;
+
+    fread(&tmpi, sizeof(int), 1, phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
+
+    fread(&ivary, sizeof(int), 1, phimap);
+    fread(&nbyte, sizeof(int), 1, phimap);
+    fread(&inddat, sizeof(int), 1, phimap);
+
+    fread(&extent, sizeof(double), 1, phimap);
+    fread(&extent, sizeof(double), 1, phimap);
+    fread(&extent, sizeof(double), 1, phimap);
+
+    fread(&xang, sizeof(double), 1, phimap);
+    fread(&yang, sizeof(double), 1, phimap);
+    fread(&zang, sizeof(double), 1, phimap);
+
+    fread(&xstart, sizeof(double), 1, phimap);
+    fread(&xend, sizeof(double), 1, phimap);
+
+    fread(&ystart, sizeof(double), 1, phimap);
+    fread(&yend, sizeof(double), 1, phimap);
+
+    fread(&zstart, sizeof(double), 1, phimap);
+    fread(&zend, sizeof(double), 1, phimap);
+
+    fread(&intx, sizeof(int), 1, phimap);
+    fread(&inty, sizeof(int), 1, phimap);
+    fread(&intz, sizeof(int), 1, phimap);
+
+#ifdef DEBUG
+    printf("%s\n", title);
+    printf("ivary: %d\n", ivary);
+    printf("nbyte: %d\n", nbyte);
+    printf("inddat: %d\n", inddat);
+    printf("Box angles: %f %f %f\n", xang, yang, zang);
+    printf("Box limits: %f -  %f   %f - %f   %f - %f\n", xstart, xend, ystart, yend, zstart, zend);
+    printf("%d %d %d\n", intx, inty, intz);
+#endif
+
+    double phi;
+
+    vector<double> vz(intz+1);
+    vector<vector<double> > vtmp;
+    for (int i=0; i< inty+1; i++){
+        vtmp.push_back(vz);
+    }
+
+    for (int i=0; i< intx+1; i++){
+        this->delphi_grid.push_back(vtmp);
+    }
+
+    for (int z=0; z<intz+1; z++){
+        for(int y=0; y<inty+1; y++){
+            for (int x=0; x< intx+1; x++){
+                fread(&phi, sizeof(double), 1, phimap);
+                this->delphi_grid[x][y][z] = phi;
+            }
+        }
+    }
+
+    fclose(phimap);
+
+    printf("DelPhi Grid file %s read!\n", Input->delphi_grid.c_str());
+
+    this->delphi_loaded = true;
 }

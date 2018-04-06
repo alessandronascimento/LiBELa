@@ -90,6 +90,7 @@ PARSER::PARSER(){
     this->solvation_weight = 1.0;
     this->pbsa_grid = "";
     this->use_pbsa = false;
+    this->use_delphi = false;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -432,6 +433,15 @@ void PARSER::comparing (string param, ifstream &input) {
         if (tmp == "yes" or tmp == "Yes" or tmp == "YES"){
             this->use_pbsa = true;
         }
+    }
+    else if (param == "use_delphi"){
+        input >> tmp;
+        if (tmp == "yes" or tmp == "Yes" or tmp == "YES"){
+            this->use_delphi = true;
+        }
+    }
+    else if (param == "delphi_grid"){
+        input >> this->delphi_grid;
     }
 
 	else {
