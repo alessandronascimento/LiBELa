@@ -560,7 +560,7 @@ void Grid::load_Delphi_Grid_from_file(){
         for(int y=0; y<inty+1; y++){
             for (int x=0; x< intx+1; x++){
                 fread(&phi, sizeof(double), 1, phimap);
-                this->delphi_grid[x][y][z] = phi;
+                this->delphi_grid[x][y][z] = (0.593*phi); // potential is given in KT/e
             }
         }
     }
