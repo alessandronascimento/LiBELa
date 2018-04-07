@@ -80,6 +80,10 @@ void TEMP_SCHEME::evaluation(){
                 sprintf(info, "Electrostatic Potencial computed with PBSA.");
                 Writer->print_info(info);
             }
+            else if (Grids->delphi_loaded){
+                sprintf(info, "Electrostatic Potencial computed with DelPhi.");
+                Writer->print_info(info);
+            }
             else {
                 sprintf(info, "Electrostatic Potencial computed with Coulomb model.");
                 Writer->print_info(info);
