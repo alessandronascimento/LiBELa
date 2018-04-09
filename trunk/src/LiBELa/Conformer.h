@@ -24,12 +24,19 @@
 using namespace OpenBabel;
 using namespace std;
 
+/**
+ * @brief The Conformer class is dedicated to the conformer generation during the docking
+ * procedure. It heavily relies on the OpenBabel API to such task.
+ */
+
 class Conformer {
 public:
 	Conformer();
 	~Conformer();
     shared_ptr<OBMol> GetMol(const string &molfile);
+    //! Generates molecule conformers using Genetic Algorithm, as implemented in OpenBabel
 	bool generate_conformers_GA(PARSER* Input, Mol2* Lig, string molfile);
+    //! Generates molecule conformers using the weighted rotor search, as implemented in OpenBabel
 	bool generate_conformers_WRS(PARSER* Input, Mol2* Lig, string molfile);
 
 };

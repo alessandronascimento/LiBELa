@@ -23,6 +23,11 @@
 
 using namespace std;
 
+/**
+ * @brief The PARSER class is used to get the input parameters from the input file. These
+ * parameters are used in almost every class of the program.
+ */
+
 class PARSER {
 
 public:
@@ -259,9 +264,14 @@ public:
     double bi;
     //! Defines whether extensive output should be given
     bool verbose;
-
+    //! Number of bins for histograming the MC data for ligand rotation
     int entropy_rotation_bins;
+    //! Number of bins for histograming the MC data for ligand translation
     int entropy_translation_bins;
+    //! There are two currently implemented functions for evaluating the ligand internal energy.
+    //! The possible choices are:
+    //! \"gaff\" or
+    //! \"MMFF94\"
     string ligand_energy_model;
     //! Defines whether atoms should be defined as GAFF types or AMBER types
     string atomic_model_ff;
@@ -269,12 +279,9 @@ public:
     string pbsa_grid;
     //! Defines an electrostatic potential grid as computed by DelPhi
     string delphi_grid;
-
-    double elec_weight;
-    double vdw_weight;
-    double solvation_weight;
-
+    //! Defines whether PBSA potential from AmberTools is to be used
     bool use_pbsa;
+    //! Defines whether potential from Delphi (binary file) is to be used
     bool use_delphi;
 
 #ifdef HAS_GUI

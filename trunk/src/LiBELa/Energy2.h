@@ -7,6 +7,11 @@
 #include "iMcLiBELa.h"
 #include "Grid.h"
 
+/**
+ * @brief The Energy2 class is used for energy calculations during docking and MC simulations.
+ *
+ */
+
 class Energy2
 {
 public:
@@ -20,11 +25,42 @@ public:
         double rec_solv_gauss;
     };
 
+    //! @class PARSER provided to this class;
     PARSER* Input;
+
     Energy2(PARSER* _Input);
+    //!
+    //! \brief distance Computes the distance between two atoms
+    //! \param x1 X coordinate for atom 1
+    //! \param x2 X coordinate for atom 2
+    //! \param y1 Y coordinate for atom 1
+    //! \param y2 Y coordinate for atom 2
+    //! \param z1 Z coordinate for atom 1
+    //! \param z2 Z coordinate for atom 2
+    //! \return the distance between the two atoms
+    //!
     double distance(double x1, double x2, double y1, double y2, double z1, double z2);
+
+    //!
+    //! \brief distance_squared Computes the square of the distance between two atoms
+    //! \param x1 X coordinate for atom 1
+    //! \param x2 X coordinate for atom 2
+    //! \param y1 Y coordinate for atom 1
+    //! \param y2 Y coordinate for atom 2
+    //! \param z1 Z coordinate for atom 1
+    //! \param z2 Z coordinate for atom 2
+    //! \return the square o the distance between two atoms
+    //!
     double distance_squared(double x1, double x2, double y1, double y2, double z1, double z2);
 
+    //!
+    //! \brief compute_energy_softcore_solvation Computes the interaction energy between ligand and
+    //! receptor using a softcore model with solvation (SV model)
+    //! \param Rec Object from @class MOL2 with receptor description
+    //! \param Lig Object from @class MOL2 with ligand description
+    //! \param lig_xyz C++ vector of vector with ligand coordinates
+    //! \return Rhe interaction energy in kcal/mol.
+    //!
     double compute_energy_softcore_solvation(Mol2 *Rec, Mol2 *Lig, vector<vector<double> > lig_xyz);
     double compute_energy_softcore(Mol2 *Rec, Mol2 *Lig, vector<vector<double> > lig_xyz);
     double compute_energy_hardcore_solvation(Mol2 *Rec, Mol2 *Lig, vector<vector<double> > lig_xyz);
