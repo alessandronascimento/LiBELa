@@ -39,18 +39,23 @@ public:
 	//! Optimizer class
 	//! Class constructor. Automatically starts the docking procedure.
 	Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, unsigned counter);
-	Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, Grid* Grids, unsigned counter);
+    //! Class constructor. Automatically starts the docking procedure.
+    Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, Grid* Grids, unsigned counter);
 
 	//! Method for docking a set of conformers of a molecule. All the conformers are docked and a selected number are optimized in the active site.
 	void Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, unsigned counter);
-	void Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, Grid* Grids, unsigned counter);
+    //! Method for docking a set of conformers of a molecule. All the conformers are docked and a selected number are optimized in the active site.
+    void Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, Grid* Grids, unsigned counter);
 
 #ifdef HAS_GUI
 	//! Constructor for docking. Automatically starts the docking procedure. Used in the Qt GUI.
     Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, QtWriter* Writer, unsigned counter);
 //    Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, QtWriter* Writer);
+    //! Constructor for docking. Automatically starts the docking procedure. Used in the Qt GUI.
     Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, QtWriter* Writer, Grid* Grids, unsigned counter);
+    //! Constructor class for ligand docking with automatic conformer generation
     void Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, QtWriter* Writer, Grid* Grids, unsigned counter);
+    //! Constructor class for ligand docking with automatic conformer generation
     void Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, QtWriter* Writer, unsigned counter);
 #endif
 

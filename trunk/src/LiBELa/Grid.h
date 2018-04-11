@@ -16,9 +16,13 @@
 
 class Grid {
 public:
+    //! Spacing between grid points
 	double grid_spacing;
+    //! Number of points in each grid direction.
 	int npointsx, npointsy, npointsz;
+    //! Coordinates for the edges of the grid cube
 	double xbegin, ybegin, zbegin, xend, yend, zend;
+    //! Coordinates
 	vector<vector<vector<double> > > elec_grid;
     vector<vector<vector<double> > > pbsa_grid;
 	vector<vector<vector<double> > > vdwA_grid;
