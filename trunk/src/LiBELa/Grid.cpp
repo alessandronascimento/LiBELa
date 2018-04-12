@@ -30,10 +30,10 @@ Grid::Grid(PARSER* _Input, Mol2* Rec, vector<double> com){
 	this->Input = _Input;
     this->pbsa_loaded = false;
     this->delphi_loaded = false;
-    if (Input->pbsa_grid != ""){
+    if (Input->pbsa_grid != "" and Input->use_pbsa){
         this->load_Ambergrids_from_file();
     }
-    else if (Input->delphi_grid != ""){
+    else if (Input->delphi_grid != "" and Input->use_delphi){
         this->load_Delphi_Grid_from_file();
     }
     else {
