@@ -678,6 +678,11 @@ void Grid::load_phimap_from_file(int gsize){
     fread(&oldmid_z, sizeof(double), 1, phimap);
 
     this->grid_spacing = 1/scale;
+
+    this->npointsx = gsize;
+    this->npointsy = gsize;
+    this->npointsz = gsize;
+
     this->xbegin = (((1)-((gsize+1)/2))/scale)+oldmid_x;
     this->xend = (((gsize+1)-((gsize+1)/2))/scale)+oldmid_x;
 
