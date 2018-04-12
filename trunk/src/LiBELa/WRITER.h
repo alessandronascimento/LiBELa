@@ -29,11 +29,11 @@ public:
 	string outputfile;
 //! String used to parse the prefix for all output files.
 	string output_prefix;
-	//!
+    //! Mol2 molecule used to get coordinates, atom names, etc.
 	Mol2 *Cmol;
-	//!
+    //! Gzipped file used to write MC trajectory or docked molecules
     gzFile outmol2;
-    //!
+    //! Input parameters from @class PARSER
     PARSER* Input;
 
 /*!
@@ -72,6 +72,13 @@ public:
 	void writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, double rmsd, string outname);
 	void writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, double rmsd);
 	void writeMol2_Mol_new_xyz(Mol2* Cmol, double energy, double rmsd);
+
+    /**
+     * @brief write_pqr Function to write a PQR file from a MOL2 file. Atomic radii and charges are taken ]
+     * LIBELA conversion (AMBER/GAFF) and from mol2 files, respectively.
+     * @param Cmol MOL2 object
+     * @param outname prefix for file writting.
+     */
     void write_pqr(Mol2 *Cmol, string outname);
 
 /*!

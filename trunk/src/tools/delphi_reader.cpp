@@ -10,7 +10,6 @@ void parse_chunck(int i, FILE* file){
 int main(int argc, char* argv[]){
 
     FILE *phimap;
-    char header[132];
     char *title;
     int ivary, nbyte, inddat, intx, inty, intz, tmpi;
     double xang, yang, zang, xstart, xend, ystart, yend, zstart, zend;
@@ -85,15 +84,21 @@ int main(int argc, char* argv[]){
         for(int y=0; y<inty+1; y++){
             for (int x=0; x< intx+1; x++){
                 fread(&phi, sizeof(double), 1, phimap);
-                delphi_grid[x][y][z] = phi;
+                delphi_grid[x][y][z] = phi*0.593;   // Phimap units are KT/e. Here we convert it to kcal/(mol.e) at 298K
             }
         }
     }
 
-    for (int a=0; a< intx+1; a++){
+
+    double spacing = 0.25;
+
+    for (int a=0; a< intz+1; a++){
         for (int b=0; b< inty+1; b++){
-            for (int c=0; c<intz+1; c++){
-                printf("%10.6f ", delphi_grid[a][b][c]);
+            for (int c=0; c<intx+1; c++){
+                double x = (extent*xstart)+(c*spacing);
+                double y = (extent*ystart)+(b*spacing);
+                double z = (extent*zstart)+(a*spacing);
+                printf("Delphi potential at %10.4f %10.4f %10.4f = %10.6f\n", x, y, z, delphi_grid[c][b][a]);
             }
         }
         printf("\n");
