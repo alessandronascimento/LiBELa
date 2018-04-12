@@ -88,6 +88,7 @@ PARSER::PARSER(){
     this->pbsa_grid = "";
     this->use_pbsa = false;
     this->use_delphi = false;
+    this->delphi_gsize = 121;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -431,7 +432,9 @@ void PARSER::comparing (string param, ifstream &input) {
     else if (param == "delphi_grid"){
         input >> this->delphi_grid;
     }
-
+    else if (param == "delphi_gsize"){
+        intpu >> this->delphi_gsize;
+    }
 	else {
 		cout << "Unknown parameter: " << param << endl;
 		exit(1);

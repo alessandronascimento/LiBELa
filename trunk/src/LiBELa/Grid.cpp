@@ -34,8 +34,7 @@ Grid::Grid(PARSER* _Input, Mol2* Rec, vector<double> com){
         this->load_Ambergrids_from_file();
     }
     else if (Input->delphi_grid != "" and Input->use_delphi){
-        this->load_phimap_from_file(121);
-//        this->load_Delphi_Grid_from_file();
+        this->load_phimap_from_file(Input->delphi_gsize);
     }
     else {
         this->grid_spacing = Input->grid_spacing;

@@ -283,6 +283,8 @@ public:
     bool use_pbsa;
     //! Defines whether potential from Delphi (binary file) is to be used
     bool use_delphi;
+    //! Number of points in delphi grid in each direction. Must be an odd number.
+    int delphi_gsize;
 
 #ifdef HAS_GUI
 	QStringList docking_molecules;
