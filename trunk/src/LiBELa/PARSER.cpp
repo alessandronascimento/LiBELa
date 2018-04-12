@@ -433,7 +433,7 @@ void PARSER::comparing (string param, ifstream &input) {
         input >> this->delphi_grid;
     }
     else if (param == "delphi_gsize"){
-        intpu >> this->delphi_gsize;
+        input >> this->delphi_gsize;
     }
 	else {
 		cout << "Unknown parameter: " << param << endl;
