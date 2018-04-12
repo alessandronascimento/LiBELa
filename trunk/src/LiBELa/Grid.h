@@ -51,16 +51,47 @@ public:
      * \param com C++ vector with the coordinates of the center of mass of the reference
      * ligand. It is used to define the center of the computation box.
      */
-	Grid(PARSER* _Input, Mol2* Rec, vector<double> com);
+    Grid(PARSER* _Input, Mol2* Rec, vector<double> com);
+
 	double distance(double x1, double x2, double y1, double y2, double z1, double z2) ;
-	double distance_squared(double x1, double x2, double y1, double y2, double z1, double z2) ;
-	void generate_points(vector<double> ref_com);
+
+    double distance_squared(double x1, double x2, double y1, double y2, double z1, double z2) ;
+
+    void generate_points(vector<double> ref_com);
+
     void compute_grid_softcore(Mol2* Lig);
+
 	void compute_grid_hardcore(Mol2* Lig);
+    /**
+     * @brief write_grids_to_file This function writes a computed potential grid to a file
+     */
 	void write_grids_to_file(void);
+    /**
+     * @brief load_grids_from_file This function loads a pre-computed Grid file, computed with
+     * LiBELa or McGrid
+     */
 	void load_grids_from_file(void);
+    /**
+     * @brief load_Ambergrids_from_file This function loads a PBSA potential file as computed
+     * by pbsa program in AmberTools
+     */
     void load_Ambergrids_from_file(void);
+    /**
+     * @brief load_Delphi_Grid_from_file This fuction loads a Delphi potential file in
+     * binary BIOSYM format file
+     */
     void load_Delphi_Grid_from_file(void);
+    /**
+     * @brief load_phimap_from_file This function loads a Delphi potential file in
+     * binary (unformatted) Delphi file
+     * @param gsize number of points in the grid for each direction
+     */
+    void load_phimap_from_file(int gsize);
+    /**
+     * @brief compute_grid_hardcore_omp This function computes hardcore (Amber FF) potential using multicore
+     * implementation with OpenMP.
+     * @param Rec @class Mol2 object with receptor description
+     */
     void compute_grid_hardcore_omp(Mol2* Rec);
 	virtual ~Grid();
 };

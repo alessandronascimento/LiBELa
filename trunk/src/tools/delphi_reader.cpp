@@ -4,104 +4,107 @@
 using namespace std;
 
 void parse_chunck(int i, FILE* file){
-    fread(&i, sizeof(int), 1, file);
+    fread(&tmpi, sizeof(int), 1, phimap);
 }
 
 int main(int argc, char* argv[]){
 
+    int tmpi;
     FILE *phimap;
-    char *title;
-    int ivary, nbyte, inddat, intx, inty, intz, tmpi;
-    double xang, yang, zang, xstart, xend, ystart, yend, zstart, zend;
-    double extent;
-
+    char *uplbl, *nxtlbl, *toplbl, *botlbl;
+    double scale, oldmid_x, oldmid_y, oldmid_z;
 
     phimap = fopen(argv[1], "rb");
 
-    parse_chunck(tmpi, phimap);
+    int gsize = atoi(argv[2]);
+    printf("Expecting a %d size grid\n", gsize);
 
-    title = (char *) malloc(sizeof(char) * 62);
-    for (int i=0; i<60; i++) {
-        title[i] = fgetc(phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
+
+    uplbl = (char *) malloc(sizeof(char) * 22);
+    for (int i=0; i<20; i++) {
+        uplbl[i] = fgetc(phimap);
     }
-    title[60] = '\n';
-    title[61] = (char) 0;
-    printf("%s\n", title);
+    uplbl[20] = '\n';
+    uplbl[21] = (char) 0;
+    printf("%s\n", uplbl);
 
-    parse_chunck(tmpi, phimap);
-    parse_chunck(tmpi, phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
 
-    fread(&ivary, sizeof(int), 1, phimap);
-    fread(&nbyte, sizeof(int), 1, phimap);
-    fread(&inddat, sizeof(int), 1, phimap);
-
-    fread(&extent, sizeof(double), 1, phimap);
-    fread(&extent, sizeof(double), 1, phimap);
-    fread(&extent, sizeof(double), 1, phimap);
-
-    fread(&xang, sizeof(double), 1, phimap);
-    fread(&yang, sizeof(double), 1, phimap);
-    fread(&zang, sizeof(double), 1, phimap);
-
-    fread(&xstart, sizeof(double), 1, phimap);
-    fread(&xend, sizeof(double), 1, phimap);
-
-    fread(&ystart, sizeof(double), 1, phimap);
-    fread(&yend, sizeof(double), 1, phimap);
-
-    fread(&zstart, sizeof(double), 1, phimap);
-    fread(&zend, sizeof(double), 1, phimap);
-
-    fread(&intx, sizeof(int), 1, phimap);
-    fread(&inty, sizeof(int), 1, phimap);
-    fread(&intz, sizeof(int), 1, phimap);
-
-    printf("ivary: %d\n", ivary);
-    printf("nbyte: %d\n", nbyte);
-    printf("inddat: %d\n", inddat);
-
-    printf("Box angles: %f %f %f\n", xang, yang, zang);
-    printf("Box limits: %f -  %f   %f - %f   %f - %f\n", xstart, xend, ystart, yend, zstart, zend);
-
-    printf("%d %d %d\n", intx, inty, intz);
+    nxtlbl = (char *) malloc(sizeof(char) * 12);
+    for (int i=0; i<10; i++) {
+        nxtlbl[i] = fgetc(phimap);
+    }
+    nxtlbl[10] = '\n';
+    nxtlbl[11] = (char) 0;
+    printf("%s\n", nxtlbl);
 
 
+    toplbl = (char *) malloc(sizeof(char) * 62);
+    for (int i=0; i<60; i++) {
+        toplbl[i] = fgetc(phimap);
+    }
+    toplbl[60] = '\n';
+    toplbl[61] = (char) 0;
+    printf("%s\n", toplbl);
 
-    vector<vector<vector<double> > > delphi_grid;
-    double phi;
-
-    vector<double> vz(intz+1);
+    vector<double> vz(gsize);
     vector<vector<double> > vtmp;
-    for (int i=0; i< inty+1; i++){
+    for (int i=0; i<gsize; i++){
         vtmp.push_back(vz);
     }
 
-    for (int i=0; i< intx+1; i++){
-        delphi_grid.push_back(vtmp);
+
+    vector<vector<vector<double> > > phi;
+    for (int i=0; i<gsize; i++){
+        phi.push_back(vtmp);
     }
 
-    for (int z=0; z<intz+1; z++){
-        for(int y=0; y<inty+1; y++){
-            for (int x=0; x< intx+1; x++){
-                fread(&phi, sizeof(double), 1, phimap);
-                delphi_grid[x][y][z] = phi*0.593;   // Phimap units are KT/e. Here we convert it to kcal/(mol.e) at 298K
+    fread(&tmpi, sizeof(int), 1, phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
+
+    double kt_phi;
+    for (int nx=0; nx < gsize; nx++){
+        for (int ny=0; ny < gsize; ny++){
+            for (int nz=0; nz < gsize; nz++){
+                fread(&kt_phi, sizeof(double), 1, phimap);
+                phi[nx][ny][nz] = 0.593*kt_phi;
             }
         }
     }
 
+    fread(&tmpi, sizeof(int), 1, phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
 
-    double spacing = 0.25;
+    botlbl = (char *) malloc(sizeof(char) * 18);
+    for (int i=0; i<16; i++) {
+        botlbl[i] = fgetc(phimap);
+    }
+    botlbl[16] = '\n';
+    botlbl[17] = (char) 0;
+    printf("%s\n", botlbl);
 
-    for (int a=0; a< intz+1; a++){
-        for (int b=0; b< inty+1; b++){
-            for (int c=0; c<intx+1; c++){
-                double x = (extent*xstart)+(c*spacing);
-                double y = (extent*ystart)+(b*spacing);
-                double z = (extent*zstart)+(a*spacing);
-                printf("Delphi potential at %10.4f %10.4f %10.4f = %10.6f\n", x, y, z, delphi_grid[c][b][a]);
+    fread(&tmpi, sizeof(int), 1, phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
+
+    fread(&scale, sizeof(double), 1, phimap);
+    fread(&oldmid_x, sizeof(double), 1, phimap);
+    fread(&oldmid_y, sizeof(double), 1, phimap);
+    fread(&oldmid_z, sizeof(double), 1, phimap);
+
+    printf("Scale: %10.4f\n", 1./scale);
+    printf("oldmid: %10.4f %10.4f %10.4f\n", oldmid_x, oldmid_y, oldmid_z);
+
+    for (int nx=0; nx < gsize; nx++){
+        for (int ny=0; ny < gsize; ny++){
+            for (int nz=0; nz < gsize; nz++){
+                double x = (((nx+1)-((gsize+1)/2))/scale)+oldmid_x;
+                double y = (((ny+1)-((gsize+1)/2))/scale)+oldmid_y;
+                double z = (((nz+1)-((gsize+1)/2))/scale)+oldmid_z;
+                printf("Potential at %10.4f %10.4f %10.4f: %10.4f\n", x, y, z, phi[nx][ny][nz]);
             }
         }
-        printf("\n");
     }
 
     return 0;

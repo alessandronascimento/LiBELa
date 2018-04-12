@@ -34,7 +34,8 @@ Grid::Grid(PARSER* _Input, Mol2* Rec, vector<double> com){
         this->load_Ambergrids_from_file();
     }
     else if (Input->delphi_grid != "" and Input->use_delphi){
-        this->load_Delphi_Grid_from_file();
+        this->load_phimap_from_file(121);
+//        this->load_Delphi_Grid_from_file();
     }
     else {
         this->grid_spacing = Input->grid_spacing;
@@ -586,6 +587,105 @@ void Grid::load_Delphi_Grid_from_file(){
     fclose(phimap);
 
     printf("DelPhi Grid file %s read!\n", Input->delphi_grid.c_str());
+
+    this->delphi_loaded = true;
+}
+
+void Grid::load_phimap_from_file(int gsize){
+    int tmpi;
+    FILE *phimap;
+    char *uplbl, *nxtlbl, *toplbl, *botlbl;
+    double scale, oldmid_x, oldmid_y, oldmid_z;
+
+    phimap = fopen(Input->delphi_grid.c_str(), "rb");
+
+    fread(&tmpi, sizeof(int), 1, phimap);
+
+    uplbl = (char *) malloc(sizeof(char) * 22);
+    for (int i=0; i<20; i++) {
+        uplbl[i] = fgetc(phimap);
+    }
+    uplbl[20] = '\n';
+    uplbl[21] = (char) 0;
+
+    fread(&tmpi, sizeof(int), 1, phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
+
+    nxtlbl = (char *) malloc(sizeof(char) * 12);
+    for (int i=0; i<10; i++) {
+        nxtlbl[i] = fgetc(phimap);
+    }
+    nxtlbl[10] = '\n';
+    nxtlbl[11] = (char) 0;
+
+    toplbl = (char *) malloc(sizeof(char) * 62);
+    for (int i=0; i<60; i++) {
+        toplbl[i] = fgetc(phimap);
+    }
+    toplbl[60] = '\n';
+    toplbl[61] = (char) 0;
+
+
+#ifdef DEBUG
+    printf("%s\n", uplbl);
+    printf("%s\n", nxtlbl);
+    printf("%s\n", toplbl);
+#endif
+
+    vector<double> vz(gsize);
+    vector<vector<double> > vtmp;
+    for (int i=0; i<gsize; i++){
+        vtmp.push_back(vz);
+    }
+
+    for (int i=0; i<gsize; i++){
+        this->delphi_grid.push_back(vtmp);
+    }
+
+    fread(&tmpi, sizeof(int), 1, phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
+
+    double kt_phi;
+    for (int nx=0; nx < gsize; nx++){
+        for (int ny=0; ny < gsize; ny++){
+            for (int nz=0; nz < gsize; nz++){
+                fread(&kt_phi, sizeof(double), 1, phimap);
+                this->delphi_grid[nx][ny][nz] = 0.593*kt_phi;
+            }
+        }
+    }
+
+    fread(&tmpi, sizeof(int), 1, phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
+
+    botlbl = (char *) malloc(sizeof(char) * 18);
+    for (int i=0; i<16; i++) {
+        botlbl[i] = fgetc(phimap);
+    }
+    botlbl[16] = '\n';
+    botlbl[17] = (char) 0;
+
+#ifdef DEBUG
+    printf("%s\n", botlbl);
+#endif
+
+    fread(&tmpi, sizeof(int), 1, phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
+
+    fread(&scale, sizeof(double), 1, phimap);
+    fread(&oldmid_x, sizeof(double), 1, phimap);
+    fread(&oldmid_y, sizeof(double), 1, phimap);
+    fread(&oldmid_z, sizeof(double), 1, phimap);
+
+    this->grid_spacing = 1/scale;
+    this->xbegin = (((1)-((gsize+1)/2))/scale)+oldmid_x;
+    this->xend = (((gsize+1)-((gsize+1)/2))/scale)+oldmid_x;
+
+    this->ybegin = (((1)-((gsize+1)/2))/scale)+oldmid_y;
+    this->yend = (((gsize+1)-((gsize+1)/2))/scale)+oldmid_y;
+
+    this->zbegin = (((1)-((gsize+1)/2))/scale)+oldmid_z;
+    this->zend = (((gsize+1)-((gsize+1)/2))/scale)+oldmid_z;
 
     this->delphi_loaded = true;
 }
