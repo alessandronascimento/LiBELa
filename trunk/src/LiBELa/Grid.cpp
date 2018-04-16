@@ -159,9 +159,14 @@ void Grid::compute_grid_softcore(Mol2* Rec){
 
 void Grid::write_grids_to_file(){
 	FILE* outgrid;
-    double elec, vdwA, vdwB, solv, rec_solv, pbsa;
-    int pbsa_flag;
-    (this->pbsa_loaded) ? pbsa_flag=1: pbsa_flag = 0;
+    double elec, vdwA, vdwB, solv, rec_solv, pbsa, delphi;
+    int pbsa_flag = 0;
+    if (this->pbsa_loaded){
+        pbsa_flag = 1;
+    }
+    else if (this->delphi_loaded){
+        pbsa_flag = 2;
+    }
 	outgrid = fopen((Input->grid_prefix + ".grid").c_str(), "wb");
 	if (outgrid == NULL){
 		printf("Could not open McGrid file. Please check");
@@ -187,13 +192,23 @@ void Grid::write_grids_to_file(){
 				vdwB = this->vdwB_grid[a][b][c];
 				solv = this->solv_gauss[a][b][c];
 				rec_solv = this->rec_solv_gauss[a][b][c];
-                (! this->pbsa_loaded) ? pbsa=0.0 : pbsa = this->pbsa_grid[a][b][c];
+                if (this->pbsa_loaded){
+                    pbsa = this->pbsa_grid[a][b][c];
+                }
+                else if (this->delphi_loaded){
+                    delphi = this->delphi_grid[a][b][c];
+                }
+                else {
+                    pbsa=0.0;
+                    delphi=0.0;
+                }
 				fwrite(&elec, sizeof(double), 1, outgrid);
 				fwrite(&vdwA, sizeof(double), 1, outgrid);
 				fwrite(&vdwB, sizeof(double), 1, outgrid);
 				fwrite(&rec_solv, sizeof(double), 1, outgrid);
 				fwrite(&solv, sizeof(double), 1, outgrid);
                 fwrite(&pbsa, sizeof(double), 1, outgrid);
+                fwrite(&delphi, sizeof(double), 1, outgrid);
 			}
 		}
 	}
@@ -202,7 +217,7 @@ void Grid::write_grids_to_file(){
 
 void Grid::load_grids_from_file(){
 	FILE* ingrid;
-    double elec, vdwA, vdwB, solv, rec_solv, pbsa;
+    double elec, vdwA, vdwB, solv, rec_solv, pbsa, delphi;
     size_t garbage;
     int pbsa_flag;
 	ingrid = fopen((Input->grid_prefix + ".grid").c_str(), "rb");
@@ -223,10 +238,17 @@ void Grid::load_grids_from_file(){
 
     garbage = fread(&pbsa_flag, sizeof(int), 1, ingrid);
 
-    (pbsa_flag > 0)? this->pbsa_loaded = true : this->pbsa_loaded = false;
+    switch (pbsa_flag) {
+    case 1:
+        this->pbsa_loaded = true;
+        break;
+    case 2:
+        this->delphi_loaded = true;
+        break;
+    }
 
-    vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz), pbsa_t1(npointsz);
-    vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2, pbsa_t2;
+    vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz), pbsa_t1(npointsz), delphi_t1(npointsz);
+    vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2, pbsa_t2, delphi_t2;
 
 		for(int a=0; a< this->npointsx; a++){
 			for (int b=0; b< this->npointsy; b++){
@@ -237,6 +259,7 @@ void Grid::load_grids_from_file(){
 					garbage = fread(&rec_solv, sizeof(double), 1, ingrid);
 					garbage = fread(&solv, sizeof(double), 1, ingrid);
                     garbage = fread(&pbsa, sizeof(double), 1, ingrid);
+                    garbage = fread(&delphi, sizeof(double), 1, ingrid);
 
 					elec_t1[c] = (elec);
 					vdwA_t1[c] = (vdwA);
@@ -244,6 +267,7 @@ void Grid::load_grids_from_file(){
 					solv_t1[c] = (solv);
 					rec_solv_t1[c] = (rec_solv);
                     pbsa_t1[c] = (pbsa);
+                    delphi_t1[c] = (delphi);
 				}
 				elec_t2.push_back(elec_t1);
 				vdwA_t2.push_back(vdwA_t1);
@@ -251,7 +275,7 @@ void Grid::load_grids_from_file(){
 				solv_t2.push_back(solv_t1);
 				rec_solv_t2.push_back(rec_solv_t1);
                 pbsa_t2.push_back(pbsa_t1);
-
+                delphi_t2.push_back(delphi_t1);
 			}
 			this->elec_grid.push_back(elec_t2);
 			this->vdwA_grid.push_back(vdwA_t2);
@@ -259,12 +283,14 @@ void Grid::load_grids_from_file(){
 			this->solv_gauss.push_back(solv_t2);
 			this->rec_solv_gauss.push_back(rec_solv_t2);
             this->pbsa_grid.push_back(pbsa_t2);
+            this->delphi_grid.push_back(delphi_t2);
 			elec_t2.clear();
 			vdwA_t2.clear();
 			vdwB_t2.clear();
 			solv_t2.clear();
 			rec_solv_t2.clear();
             pbsa_t2.clear();
+            delphi_t2.clear();
 		}
 	fclose(ingrid);
 }
@@ -691,5 +717,7 @@ void Grid::load_phimap_from_file(int gsize){
     this->zbegin = (((1)-((gsize+1)/2))/scale)+oldmid_z;
     this->zend = (((gsize+1)-((gsize+1)/2))/scale)+oldmid_z;
 
+    fclose(phimap);
+    printf("DelPhi Grid file %s read!\n", Input->delphi_grid.c_str());
     this->delphi_loaded = true;
 }
