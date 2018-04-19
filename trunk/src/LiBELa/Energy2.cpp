@@ -905,7 +905,7 @@ void Energy2::trilinear_interpolation(Grid* Grids, double x, double y, double z,
 
     // PBSA Grid
 
-    if (Input->use_pbsa){
+    if (Input->use_pbsa and Grids->pbsa_loaded){
 
     c00=(Grids->pbsa_grid[x0][y0][z0]*(1-xd)) + (Grids->pbsa_grid[x1][y0][z0]*xd);
     c10=(Grids->pbsa_grid[x0][y1][z0]*(1-xd)) + (Grids->pbsa_grid[x1][y1][z0]*xd);
@@ -921,7 +921,7 @@ void Energy2::trilinear_interpolation(Grid* Grids, double x, double y, double z,
 
     // DelPhi Grid
 
-    if (Input->use_delphi){
+    if (Input->use_delphi and Grids->delphi_loaded){
 
     c00=(Grids->delphi_grid[x0][y0][z0]*(1-xd)) + (Grids->delphi_grid[x1][y0][z0]*xd);
     c10=(Grids->delphi_grid[x0][y1][z0]*(1-xd)) + (Grids->delphi_grid[x1][y1][z0]*xd);
