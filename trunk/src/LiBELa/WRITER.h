@@ -33,7 +33,7 @@ public:
 	Mol2 *Cmol;
     //! Gzipped file used to write MC trajectory or docked molecules
     gzFile outmol2;
-    //! Input parameters from @class PARSER
+    //! Input parameters from class PARSER
     PARSER* Input;
 
 /*!

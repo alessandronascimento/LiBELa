@@ -19,15 +19,17 @@ double Grid::distance_squared(double x1, double x2, double y1, double y2, double
 }
 
 
-Grid::Grid(PARSER* _Input) {
+Grid::Grid(PARSER* _Input, WRITER* _Writer) {
     this->Input = _Input;
+    this->Writer = _Writer;
 	grid_spacing = Input->grid_spacing;
     this->pbsa_loaded = false;
     this->delphi_loaded = false;
 }
 
-Grid::Grid(PARSER* _Input, Mol2* Rec, vector<double> com){
+Grid::Grid(PARSER* _Input, WRITER* _Writer, Mol2* Rec, vector<double> com){
 	this->Input = _Input;
+    this->Writer = _Writer;
     this->pbsa_loaded = false;
     this->delphi_loaded = false;
     if (Input->pbsa_grid != "" and Input->use_pbsa){
@@ -429,7 +431,8 @@ void Grid::load_Ambergrids_from_file(){
 
     fclose(pbsa_map);
 
-    printf("PBSA Grid file %s read!\n", Input->pbsa_grid.c_str());
+    sprintf(info, "PBSA Grid file %s read!\n", Input->pbsa_grid.c_str());
+    Writer->print_info(info);
 
     this->pbsa_loaded = true;
 }
@@ -611,7 +614,8 @@ void Grid::load_Delphi_Grid_from_file(){
 
     fclose(phimap);
 
-    printf("DelPhi Grid file %s read!\n", Input->delphi_grid.c_str());
+    sprintf(info, "DelPhi Grid file %s read!\n", Input->delphi_grid.c_str());
+    Writer->print_info(info);
 
     this->delphi_loaded = true;
 }
@@ -718,6 +722,7 @@ void Grid::load_phimap_from_file(int gsize){
     this->zend = (((gsize+1)-((gsize+1)/2))/scale)+oldmid_z;
 
     fclose(phimap);
-    printf("DelPhi Grid file %s read!\n", Input->delphi_grid.c_str());
+    sprintf(info, "DelPhi Grid file %s read!\n", Input->delphi_grid.c_str());
+    Writer->print_info(info);
     this->delphi_loaded = true;
 }

@@ -13,6 +13,7 @@
 #include <sstream>
 #include "Mol2.h"
 #include "PARSER.h"
+#include "WRITER.h"
 
 class Grid {
 public:
@@ -31,27 +32,36 @@ public:
 	vector<vector<vector<double> > > rec_solv_gauss;
     vector<vector<vector<double> > > delphi_grid;
 	double rec_si;
+    //! Pointer to the PARSER class
 	PARSER* Input;
+    //! Pointer to the WRITER class
+    WRITER* Writer;
+    //! Defines whether or not PBSA electrostatic grid was loaded
     bool pbsa_loaded; // = false;
+    //! Defines whether or not DELPHI electrostatic grid was loaded
     bool delphi_loaded; // = false;
+    //! Char array to use with Writer class
+    char info[98];
 
     /*!
      * \brief Grid This function initializes the class. It passes a copy of the PARSER
      * class to the Grid class and defines the grid spacing
      * \param _Input Pointer to the PARSER class.
+     * \param _Writer Pointer to the WRITER class.
      */
-	Grid(PARSER* _Input);
+    Grid(PARSER* _Input, WRITER* _Writer);
     /*!
      * \brief Grid Initializer of the Grid class used through the code. This method copies
      * a pointer to the class PARSER to this class, defines the grid spacing and calls the
      * appropriate methods to start grid computation. Also, if the keyword "write_grids" is
      * set to "yes" in the PARSER, it calls the method to write the grids to a file.
      * \param _Input Pointer to the PARSER class.
+     * \param _Writer Pointer to the WRITER class.
      * \param Rec POINTER to a Mol2 class with Receptor information.
      * \param com C++ vector with the coordinates of the center of mass of the reference
      * ligand. It is used to define the center of the computation box.
      */
-    Grid(PARSER* _Input, Mol2* Rec, vector<double> com);
+    Grid(PARSER* _Input, WRITER* _Writer, Mol2* Rec, vector<double> com);
 
 	double distance(double x1, double x2, double y1, double y2, double z1, double z2) ;
 
@@ -90,7 +100,7 @@ public:
     /**
      * @brief compute_grid_hardcore_omp This function computes hardcore (Amber FF) potential using multicore
      * implementation with OpenMP.
-     * @param Rec @class Mol2 object with receptor description
+     * @param Rec class Mol2 object with receptor description
      */
     void compute_grid_hardcore_omp(Mol2* Rec);
 	virtual ~Grid();

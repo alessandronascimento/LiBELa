@@ -25,7 +25,7 @@ public:
         double rec_solv_gauss;
     };
 
-    //! @class PARSER provided to this class;
+    //! class PARSER provided to this class;
     PARSER* Input;
 
     Energy2(PARSER* _Input);
@@ -56,8 +56,8 @@ public:
     //!
     //! \brief compute_energy_softcore_solvation Computes the interaction energy between ligand and
     //! receptor using a softcore model with solvation (SV model)
-    //! \param Rec Object from @class MOL2 with receptor description
-    //! \param Lig Object from @class MOL2 with ligand description
+    //! \param Rec Object from class MOL2 with receptor description
+    //! \param Lig Object from class MOL2 with ligand description
     //! \param lig_xyz C++ vector of vector with ligand coordinates
     //! \return Rhe interaction energy in kcal/mol.
     //!
