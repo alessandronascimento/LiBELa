@@ -5,7 +5,7 @@
 #include "../LiBELa/PARSER.cpp"
 #include "../LiBELa/Mol2.cpp"
 #include "../LiBELa/COORD_MC.cpp"
-#include "../LiBELa/WRITER.h"
+#include "../LiBELa/WRITER.cpp"
 
 using namespace std;
 
