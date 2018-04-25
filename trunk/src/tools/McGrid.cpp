@@ -5,6 +5,7 @@
 #include "../LiBELa/PARSER.cpp"
 #include "../LiBELa/Mol2.cpp"
 #include "../LiBELa/COORD_MC.cpp"
+#include "../LiBELa/WRITER.h"
 
 using namespace std;
 
@@ -35,6 +36,8 @@ int main(int argc, char* argv[]){
         Input->set_parameters(argv[1]);
         Input->write_grids = true;
 
+        WRITER* Writer = new WRITER(Input);
+
         Mol2* Rec = new Mol2(Input, Input->rec_mol2);
         Mol2* Lig = new Mol2(Input, Input->reflig_mol2);
 
@@ -46,7 +49,7 @@ int main(int argc, char* argv[]){
         printf("This may take a while...\n");
         delete Lig;
         delete Coord;
-        Grid* Grids = new Grid(Input, Rec, com);
+        Grid* Grids = new Grid(Input, Writer, Rec, com);
         printf("Computed energy grids with %d points spaced by %5.3f Angstroms in each directon.\n", Grids->npointsx*Grids->npointsy*Grids->npointsz, Grids->grid_spacing);
         printf("Grid X limits: %10.4f %10.4f.\n", Grids->xbegin, Grids->xend);
         printf("Grid Y limits: %10.4f %10.4f.\n", Grids->ybegin, Grids->yend);
@@ -55,6 +58,7 @@ int main(int argc, char* argv[]){
         printf("Grid computation took %d seconds.\n", int((end-start)/CLOCKS_PER_SEC));
 
         delete Rec;
+        delete Writer;
         delete Input;
 
         return 0;
