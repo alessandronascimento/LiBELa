@@ -431,7 +431,7 @@ void Grid::load_Ambergrids_from_file(){
 
     fclose(pbsa_map);
 
-    sprintf(info, "PBSA Grid file %s read!\n", Input->pbsa_grid.c_str());
+    sprintf(info, "PBSA Grid file %s read!", Input->pbsa_grid.c_str());
     Writer->print_info(info);
 
     this->pbsa_loaded = true;
@@ -614,7 +614,7 @@ void Grid::load_Delphi_Grid_from_file(){
 
     fclose(phimap);
 
-    sprintf(info, "DelPhi Grid file %s read!\n", Input->delphi_grid.c_str());
+    sprintf(info, "DelPhi Grid file %s read!", Input->delphi_grid.c_str());
     Writer->print_info(info);
 
     this->delphi_loaded = true;
@@ -722,7 +722,7 @@ void Grid::load_phimap_from_file(int gsize){
     this->zend = (((gsize+1)-((gsize+1)/2))/scale)+oldmid_z;
 
     fclose(phimap);
-    sprintf(info, "DelPhi Grid file %s read!\n", Input->delphi_grid.c_str());
+    sprintf(info, "DelPhi Grid file %s read!", Input->delphi_grid.c_str());
     Writer->print_info(info);
     this->delphi_loaded = true;
 }
