@@ -14,6 +14,7 @@
 #include "Mol2.h"
 #include "PARSER.h"
 #include "WRITER.h"
+#include <zlib.h>
 
 class Grid {
 public:
@@ -86,6 +87,13 @@ public:
      * by pbsa program in AmberTools
      */
     void load_Ambergrids_from_file(void);
+
+    /**
+     * @brief load_gzAmbergrids_from_file This function loads a gzipped PBSA potential file as computed
+     * by pbsa program in AmberTools.
+     */
+    void load_gzAmbergrids_from_file(void);
+
     /**
      * @brief load_Delphi_Grid_from_file This fuction loads a Delphi potential file in
      * binary BIOSYM format file
