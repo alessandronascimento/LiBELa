@@ -1057,6 +1057,10 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
     step->xyz = this->copy_from_obmol(mol);
     OBff->Setup(*mol);
     step->internal_energy = OBff->Energy();
+    string unit = OBff->GetUnit();
+    if (unit == "kJ/mol"){
+        step->internal_energy = step->internal_energy/4.18;
+    }
     step->nconf = 0;
 }
 

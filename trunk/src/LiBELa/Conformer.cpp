@@ -60,7 +60,7 @@ bool Conformer::generate_conformers_GA(PARSER* Input, Mol2* Lig, string molfile)
     OBConformerSearch cs;
     OBForceField* OBff;
     OBEnergyConformerScore* EneScore = new OBEnergyConformerScore;
-    if (Input->ligand_energy_model == "GAFF"){
+    if (Input->ligand_energy_model == "GAFF" or Input->ligand_energy_model == "gaff"){
         OBff = OBForceField::FindForceField("GAFF");
     }
     else {
@@ -80,7 +80,11 @@ bool Conformer::generate_conformers_GA(PARSER* Input, Mol2* Lig, string molfile)
 // Original conformation energy
     OBff->Setup(*mol);
     mol->SetTotalCharge(mol->GetTotalCharge());
-    Lig->conformer_energies.push_back(OBff->Energy());
+    double energy = OBff->Energy();
+    if (OBff->GetUnit() == "kJ/mol"){       // Converting to kcal/mol, if needed.
+        energy = energy/4.18;
+    }
+    Lig->conformer_energies.push_back(energy);
     Lig->mcoords.push_back(Lig->xyz);
 
 // Conformer Search
@@ -105,7 +109,11 @@ bool Conformer::generate_conformers_GA(PARSER* Input, Mol2* Lig, string molfile)
             OBff->GetCoordinates(*mol);
             OBff->ConjugateGradients(Input->conformer_min_steps);
             OBff->GetCoordinates(*mol);
-            Lig->conformer_energies.push_back(OBff->Energy());
+            energy = OBff->Energy();
+            if (OBff->GetUnit() == "kJ/mol"){       // Converting to kcal/mol, if needed.
+                energy = energy/4.18;
+            }
+            Lig->conformer_energies.push_back(energy);
 
             OBAlign* align = new OBAlign;
             align->SetRefMol(*ref_mol.get());
@@ -139,7 +147,7 @@ bool Conformer::generate_conformers_WRS(PARSER* Input, Mol2* Lig, string molfile
     OBForceField* OBff;
     OBFormat* format;
 
-    if (Input->ligand_energy_model == "GAFF"){
+    if (Input->ligand_energy_model == "GAFF" or Input->ligand_energy_model == "gaff"){
         OBff = OBForceField::FindForceField("GAFF");
     }
     else {
@@ -186,7 +194,11 @@ bool Conformer::generate_conformers_WRS(PARSER* Input, Mol2* Lig, string molfile
                 OBmol->SetConformer(i);
                 OBmol->SetConformer(i);
                 OBff->Setup(*OBmol);
-                Lig->conformer_energies.push_back(OBff->Energy());
+                double energy = OBff->Energy();
+                if (OBff->GetUnit() == "kJ/mol"){       // Converting to kcal/mol, if needed.
+                    energy = energy/4.18;
+                }
+                Lig->conformer_energies.push_back(energy);
 
                 vector<double> v3;
                 vector<vector<double> > xyz_tmp;
