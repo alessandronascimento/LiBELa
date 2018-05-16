@@ -33,7 +33,7 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 
     mol = this->GetMol(Input->lig_mol2);
 
-    if (Input->ligand_energy_model == "GAFF"){
+    if (Input->ligand_energy_model == "GAFF" or Input->ligand_energy_model == "gaff"){
         OBff = OBForceField::FindForceField("GAFF");
     }
     else {
