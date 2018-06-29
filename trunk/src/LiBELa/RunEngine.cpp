@@ -54,7 +54,7 @@ void TEMP_SCHEME::evaluation(){
 
     //! Evaluation of the original binding energy
     start_energy = Ene->compute_ene(REC, LIG, LIG->xyz);
-    sprintf(info,"Original energy: %.4f kcal/mol", start_energy);
+    sprintf(info,"Original Binding Energy: %.4f kcal/mol", start_energy);
     Writer->print_info(info);
     if (Input->reflig_mol2 == ""){
         center = COORD.compute_com(LIG);

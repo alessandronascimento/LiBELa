@@ -277,7 +277,7 @@ void Mol2::initialize_gaff(){
     }
     else {
         strcpy(filename, dir_path);
-        strcat(filename, "/param/gaff2_vdw.dat");
+        strcat(filename, "/param/LJ_parm.dat");
     }
 
     gaff_file = fopen(filename, "r");

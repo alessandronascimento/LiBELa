@@ -222,6 +222,8 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     sprintf(info, "Equilibration done with %5d steps. Current system energy: %9.3f kcal/mol.", Input->eq_steps, energy);
     Writer->print_info(info);
     Writer->print_line();
+    sprintf(info, "%10s %10s %10s", "Step", "Energy", "RMSD");
+    Writer->print_info(info);
 
     while (count <= Input->number_steps){
 
@@ -261,7 +263,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
             if (count % Input->mc_stride == 0){
 
-                sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
+                sprintf(info, "%10d %10.4f %10.4f",count, energy, rmsd);
                 Writer->print_info(info);
 
                 if (Input->write_mol2){
@@ -302,7 +304,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
                 if (count % Input->mc_stride == 0){
 
-                    sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
+                    sprintf(info, "%10d %10.4f %10.4f",count, energy, rmsd);
                     Writer->print_info(info);
 
                     if (Input->write_mol2){
@@ -501,7 +503,10 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
             gzprintf(mc_output_lig, "\n");
         }
 
+
         Writer->print_line();
+        sprintf(info, "%10s %10s %10s", "Step", "Energy", "RMSD");
+        Writer->print_info(info);
 
         while (count <= Input->number_steps){
 
@@ -540,7 +545,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                 Entropy->update(com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->torsion_angles);
 
                 if (count % Input->mc_stride == 0){
-                    sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
+                    sprintf(info, "%10d %10.4f %10.4f",count, energy, rmsd);
                     Writer->print_info(info);
 
                     if (Input->write_mol2){
@@ -580,7 +585,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
 
                     if (count % Input->mc_stride == 0){
 
-                        sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
+                        sprintf(info, "%10d %10.4f %10.4f",count, energy, rmsd);
                         Writer->print_info(info);
 
                         if (Input->write_mol2){
@@ -812,6 +817,8 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
         sprintf(info, "Equilibration done with %5d steps. Current system energy: %9.3f kcal/mol.", Input->eq_steps, energy);
         Writer->print_info(info);
         Writer->print_line();
+        sprintf(info, "%10s %10s %10s", "Step", "Energy", "RMSD");
+        Writer->print_info(info);
 
         while (count <= Input->number_steps){
 
@@ -882,7 +889,7 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
             sprintf(info, "%10d %10.3f %10.3f", count, energy, rmsd);
             count++;
             if (count % Input->mc_stride == 0){
-                sprintf(info, "Accepted steps: %9d. Current energy for the system: %7.3f kcal/mol.",count, energy);
+                sprintf(info, "%10d %10.4f %10.4f",count, energy, rmsd);
                 Writer->print_info(info);
             }
         }
