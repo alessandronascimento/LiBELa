@@ -30,7 +30,7 @@ bool Mol2::parse_mol2file(PARSER *Input, string molfile) {
 	float tcharge;
 	int count=0;
 	char tatomtype[10];
-	char resname[10];
+    char resname[20];
 	string cpstr;
 	bool bret = false;
 
@@ -137,7 +137,7 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
     float tcharge;
     int count=0;
     char tatomtype[10];
-    char resname[10];
+    char resname[20];
     string cpstr;
 
 /*
@@ -622,7 +622,6 @@ string Mol2::sybyl_2_amber(string atom){
             exit(1);
         }
     }
-
     return(amber_atom);
 }
 
@@ -636,7 +635,7 @@ bool Mol2::parse_gzipped_ensemble(PARSER* Input, string molfile, int skipper=1){
     float tcharge;
     int count=0;
     char tatomtype[10];
-    char resname[10];
+    char resname[20];
     string cpstr;
     vector<vector<double> > tcoord;
     int trajsize=0;
