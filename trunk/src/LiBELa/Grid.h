@@ -111,6 +111,12 @@ public:
      * @param Rec class Mol2 object with receptor description
      */
     void compute_grid_hardcore_omp(Mol2* Rec);
+
+    /**
+     * @brief load_delphi_cube This function loads a DelPhi potential in
+     * a CUBE (ASCII) format.
+     */
+    void load_delphi_cube(void);
 	virtual ~Grid();
 };
 

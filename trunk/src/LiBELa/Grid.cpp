@@ -38,6 +38,9 @@ Grid::Grid(PARSER* _Input, WRITER* _Writer, Mol2* Rec, vector<double> com){
     else if (Input->delphi_grid != "" and Input->use_delphi){
         this->load_phimap_from_file(Input->delphi_gsize);
     }
+    else if (Input->delphi_cube_grid != "" and Input->use_delphi){
+        this->load_delphi_cube();
+    }
     else {
         this->grid_spacing = Input->grid_spacing;
         this->generate_points(com);
