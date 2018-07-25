@@ -813,12 +813,15 @@ void Grid::load_delphi_cube(){
     this->grid_spacing = double(1.0/scale);
     this->xbegin = double(originx);
     this->xend = double(this->xbegin + (igrid*this->grid_spacing));
+    this->npointsx = igrid;
 
     this->ybegin = double(originy);
     this->yend = double(this->ybegin + (igrid*this->grid_spacing));
+    this->npointsy = igrid;
 
     this->zbegin = double(originz);
     this->zend = double(this->zbegin + (igrid*this->grid_spacing));
+    this->npointsz = igrid;
 
     fgets(str, 80, phimap);
     fgets(str, 80, phimap);
