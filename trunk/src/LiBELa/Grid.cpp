@@ -804,23 +804,23 @@ void Grid::load_phimap_from_file(int gsize){
 void Grid::load_delphi_cube(){
     FILE* phimap;
     int igrid, itmp;
-    float scale, originx, originy, originz, dtmp;
+    float scale, centerx, centery, centerz, dtmp;
     char str[200];
 
     phimap = fopen(Input->delphi_cube_grid.c_str(), "r");
 
-    fscanf(phimap, "%f %d %f %f %f", &scale, &igrid, &originx, &originy, &originz);
+    fscanf(phimap, "%f %d %f %f %f", &scale, &igrid, &centerx, &centery, &centerz);
     this->grid_spacing = double(1.0/scale);
-    this->xbegin = double(originx);
-    this->xend = double(this->xbegin + (igrid*this->grid_spacing));
+    this->xbegin = double(centerx - ((igrid-1)/2)*this->grid_spacing);
+    this->xend = double(centerx + (((igrid+1)/2)*this->grid_spacing));
     this->npointsx = igrid;
 
-    this->ybegin = double(originy);
-    this->yend = double(this->ybegin + (igrid*this->grid_spacing));
+    this->ybegin = double(centery - ((igrid-1)/2)*this->grid_spacing);
+    this->yend = double(centery + (((igrid+1)/2)*this->grid_spacing));
     this->npointsy = igrid;
 
-    this->zbegin = double(originz);
-    this->zend = double(this->zbegin + (igrid*this->grid_spacing));
+    this->zbegin = double(centerz - ((igrid-1)/2)*this->grid_spacing);
+    this->zend = double(centerz + (((igrid+1)/2)*this->grid_spacing));
     this->npointsz = igrid;
 
     fgets(str, 80, phimap);
