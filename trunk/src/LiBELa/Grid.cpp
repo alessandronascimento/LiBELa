@@ -750,7 +750,7 @@ void Grid::load_phimap_from_file(int gsize){
         for (int ny=0; ny < gsize; ny++){
             for (int nz=0; nz < gsize; nz++){
                 fread(&kt_phi, sizeof(double), 1, phimap);
-                this->delphi_grid[nx][ny][nz] = 0.593*kt_phi;
+                this->delphi_grid[nx][ny][nz] = 0.593*kt_phi;  //converting kt units to kcal/mol
             }
         }
     }
@@ -794,6 +794,61 @@ void Grid::load_phimap_from_file(int gsize){
 
     fclose(phimap);
     sprintf(info, "DelPhi Grid file %s read!", Input->delphi_grid.c_str());
+    Writer->print_info(info);
+    this->delphi_loaded = true;
+}
+
+void Grid::load_delphi_cube(){
+    FILE* phimap;
+    int igrid, itmp;
+    float scale, originx, originy, originz, dtmp;
+    char str[200];
+
+    phimap = fopen(Input->delphi_cube_grid.c_str(), "r");
+
+    fscanf(phimap, "%f %d %f %f %f", &scale, &igrid, &originx, &originy, &originz);
+    this->grid_spacing = double(1.0/scale);
+    this->xbegin = double(originx);
+    this->xend = double(this->xbegin + (igrid*this->grid_spacing));
+
+    this->ybegin = double(originy);
+    this->yend = double(this->ybegin + (igrid*this->grid_spacing));
+
+    this->zbegin = double(originz);
+    this->zend = double(this->zbegin + (igrid*this->grid_spacing));
+
+    fgets(str, 80, phimap);
+    fgets(str, 80, phimap);
+    fscanf(phimap, "%d %f %f %f", &itmp, &dtmp, &dtmp, &dtmp);
+    fscanf(phimap, "%d %f %f %f", &itmp, &dtmp, &dtmp, &dtmp);
+    fscanf(phimap, "%d %f %f %f", &itmp, &dtmp, &dtmp, &dtmp);
+    fscanf(phimap, "%d %f %f %f", &itmp, &dtmp, &dtmp, &dtmp);
+    fscanf(phimap, "%d %f %f %f %f", &itmp, &dtmp, &dtmp, &dtmp, &dtmp);
+
+    vector<double> vz(igrid);
+    vector<vector<double> > vtmp;
+    for (int i=0; i<igrid; i++){
+        vtmp.push_back(vz);
+    }
+
+    for (int i=0; i<igrid; i++){
+        this->delphi_grid.push_back(vtmp);
+    }
+
+    float phi;
+
+    for (int nx=0; nx < igrid; nx++){
+        for (int ny=0; ny < igrid; ny++){
+            for (int nz=0; nz < igrid; nz++){
+                fscanf(phimap, "%f", &phi);
+                this->delphi_grid[nx][ny][nz] = double(0.593*phi);  //converting kt units to kcal/mol
+            }
+        }
+    }
+
+    fclose(phimap);
+
+    sprintf(info, "DelPhi Grid file %s read!", Input->delphi_cube_grid.c_str());
     Writer->print_info(info);
     this->delphi_loaded = true;
 }

@@ -285,6 +285,8 @@ public:
     bool use_delphi;
     //! Number of points in delphi grid in each direction. Must be an odd number.
     int delphi_gsize;
+    //! Defines an electrostatic potential in DelPhi CUBE format
+    string delphi_cube_grid;
 
 #ifdef HAS_GUI
 	QStringList docking_molecules;

@@ -435,6 +435,9 @@ void PARSER::comparing (string param, ifstream &input) {
     else if (param == "delphi_gsize"){
         input >> this->delphi_gsize;
     }
+    else if (param == "delphi_cube_grid"){
+        input >> this->delphi_cube_grid;
+    }
 	else {
 		cout << "Unknown parameter: " << param << endl;
 		exit(1);
