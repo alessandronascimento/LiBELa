@@ -13,7 +13,7 @@
 #include<iostream>
 #include<cmath>
 #include"Mol2.h"
-#include "McLiBELa.h"
+#include "iMcLiBELa.h"
 
 using namespace std;
 

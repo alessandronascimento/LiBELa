@@ -14,7 +14,6 @@
 #include <cstdlib>
 #include "Mol2.h"
 #include "Grid.h"
-//#include "ENERGY.h"
 #include "Energy2.h"
 #include "COORD_MC.h"
 #include "PARSER.h"

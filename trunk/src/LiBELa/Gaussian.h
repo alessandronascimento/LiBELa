@@ -13,7 +13,7 @@
 #include<cmath>
 #include <ctime>
 #include <vector>
-#include "McLiBELa.h"
+#include "iMcLiBELa.h"
 #include"Mol2.h"
 #include"PARSER.h"
 
