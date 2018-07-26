@@ -1,0 +1,240 @@
+\hypertarget{classGrid}{
+\section{Grid Class Reference}
+\label{classGrid}\index{Grid@{Grid}}
+}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classGrid_abac50becd4d0bc1c1763533d200daee8}{Grid} (\hyperlink{classPARSER}{PARSER} $\ast$\_\-Input, \hyperlink{classWRITER}{WRITER} $\ast$\_\-Writer)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classGrid}{Grid} This function initializes the class. It passes a copy of the \hyperlink{classPARSER}{PARSER} class to the \hyperlink{classGrid}{Grid} class and defines the grid spacing. \item\end{DoxyCompactList}\item 
+\hyperlink{classGrid_a67c0d815b4faf1e9f7f6e2a8b52150c8}{Grid} (\hyperlink{classPARSER}{PARSER} $\ast$\_\-Input, \hyperlink{classWRITER}{WRITER} $\ast$\_\-Writer, \hyperlink{classMol2}{Mol2} $\ast$Rec, vector$<$ double $>$ com)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classGrid}{Grid} Initializer of the \hyperlink{classGrid}{Grid} class used through the code. This method copies a pointer to the class \hyperlink{classPARSER}{PARSER} to this class, defines the grid spacing and calls the appropriate methods to start grid computation. Also, if the keyword \char`\"{}write\_\-grids\char`\"{} is set to \char`\"{}yes\char`\"{} in the \hyperlink{classPARSER}{PARSER}, it calls the method to write the grids to a file. \item\end{DoxyCompactList}\item 
+\hypertarget{classGrid_a900f4d89b824efe38fd1649f1224c8be}{
+double {\bfseries distance} (double x1, double x2, double y1, double y2, double z1, double z2)}
+\label{classGrid_a900f4d89b824efe38fd1649f1224c8be}
+
+\item 
+\hypertarget{classGrid_a5221efd9d8edfe17a44c7bc92badee9b}{
+double {\bfseries distance\_\-squared} (double x1, double x2, double y1, double y2, double z1, double z2)}
+\label{classGrid_a5221efd9d8edfe17a44c7bc92badee9b}
+
+\item 
+\hypertarget{classGrid_adb6ec86ee0d27eac8db4ca21448180ef}{
+void {\bfseries generate\_\-points} (vector$<$ double $>$ ref\_\-com)}
+\label{classGrid_adb6ec86ee0d27eac8db4ca21448180ef}
+
+\item 
+\hypertarget{classGrid_ac3c7a81802cc07438eafea1be61adc50}{
+void {\bfseries compute\_\-grid\_\-softcore} (\hyperlink{classMol2}{Mol2} $\ast$Lig)}
+\label{classGrid_ac3c7a81802cc07438eafea1be61adc50}
+
+\item 
+\hypertarget{classGrid_acbed039de7f2a39c7d055be9fae33b98}{
+void {\bfseries compute\_\-grid\_\-hardcore} (\hyperlink{classMol2}{Mol2} $\ast$Lig)}
+\label{classGrid_acbed039de7f2a39c7d055be9fae33b98}
+
+\item 
+\hypertarget{classGrid_ace6f59f2bbe699b976abbc69580c6a43}{
+void \hyperlink{classGrid_ace6f59f2bbe699b976abbc69580c6a43}{write\_\-grids\_\-to\_\-file} (void)}
+\label{classGrid_ace6f59f2bbe699b976abbc69580c6a43}
+
+\begin{DoxyCompactList}\small\item\em write\_\-grids\_\-to\_\-file This function writes a computed potential grid to a file \item\end{DoxyCompactList}\item 
+\hypertarget{classGrid_a961421fbd6b11add9ef00f06421cae33}{
+void \hyperlink{classGrid_a961421fbd6b11add9ef00f06421cae33}{load\_\-grids\_\-from\_\-file} (void)}
+\label{classGrid_a961421fbd6b11add9ef00f06421cae33}
+
+\begin{DoxyCompactList}\small\item\em load\_\-grids\_\-from\_\-file This function loads a pre-\/computed \hyperlink{classGrid}{Grid} file, computed with LiBELa or McGrid \item\end{DoxyCompactList}\item 
+\hypertarget{classGrid_af6fc553fde4b02c37ff34959a6b8cb78}{
+void \hyperlink{classGrid_af6fc553fde4b02c37ff34959a6b8cb78}{load\_\-Ambergrids\_\-from\_\-file} (void)}
+\label{classGrid_af6fc553fde4b02c37ff34959a6b8cb78}
+
+\begin{DoxyCompactList}\small\item\em load\_\-Ambergrids\_\-from\_\-file This function loads a PBSA potential file as computed by pbsa program in AmberTools \item\end{DoxyCompactList}\item 
+\hypertarget{classGrid_ad437ef7d546b3559e5cbb151da149deb}{
+void \hyperlink{classGrid_ad437ef7d546b3559e5cbb151da149deb}{load\_\-gzAmbergrids\_\-from\_\-file} (void)}
+\label{classGrid_ad437ef7d546b3559e5cbb151da149deb}
+
+\begin{DoxyCompactList}\small\item\em load\_\-gzAmbergrids\_\-from\_\-file This function loads a gzipped PBSA potential file as computed by pbsa program in AmberTools. \item\end{DoxyCompactList}\item 
+\hypertarget{classGrid_a2399133a44e1a2c01ac535b710d0d8bd}{
+void \hyperlink{classGrid_a2399133a44e1a2c01ac535b710d0d8bd}{load\_\-Delphi\_\-Grid\_\-from\_\-file} (void)}
+\label{classGrid_a2399133a44e1a2c01ac535b710d0d8bd}
+
+\begin{DoxyCompactList}\small\item\em load\_\-Delphi\_\-Grid\_\-from\_\-file This fuction loads a Delphi potential file in binary BIOSYM format file \item\end{DoxyCompactList}\item 
+void \hyperlink{classGrid_a225400892c1206c62a7fc8c8caf8b287}{load\_\-phimap\_\-from\_\-file} (int gsize)
+\begin{DoxyCompactList}\small\item\em load\_\-phimap\_\-from\_\-file This function loads a Delphi potential file in binary (unformatted) Delphi file \item\end{DoxyCompactList}\item 
+void \hyperlink{classGrid_a3e0a095c71b771e043ff265769cca7c8}{compute\_\-grid\_\-hardcore\_\-omp} (\hyperlink{classMol2}{Mol2} $\ast$Rec)
+\begin{DoxyCompactList}\small\item\em compute\_\-grid\_\-hardcore\_\-omp This function computes hardcore (Amber FF) potential using multicore implementation with OpenMP. \item\end{DoxyCompactList}\item 
+\hypertarget{classGrid_ac7e5328a7eb65b50c15352198a4f0f13}{
+void \hyperlink{classGrid_ac7e5328a7eb65b50c15352198a4f0f13}{load\_\-delphi\_\-cube} (void)}
+\label{classGrid_ac7e5328a7eb65b50c15352198a4f0f13}
+
+\begin{DoxyCompactList}\small\item\em load\_\-delphi\_\-cube This function loads a DelPhi potential in a CUBE (ASCII) format. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classGrid_a638c9f2eb29ed1fa21461791d9d542ee}{
+double \hyperlink{classGrid_a638c9f2eb29ed1fa21461791d9d542ee}{grid\_\-spacing}}
+\label{classGrid_a638c9f2eb29ed1fa21461791d9d542ee}
+
+\begin{DoxyCompactList}\small\item\em Spacing between grid points. \item\end{DoxyCompactList}\item 
+\hypertarget{classGrid_ad919203953732afb942d4527a309d589}{
+int \hyperlink{classGrid_ad919203953732afb942d4527a309d589}{npointsx}}
+\label{classGrid_ad919203953732afb942d4527a309d589}
+
+\begin{DoxyCompactList}\small\item\em Number of points in each grid direction. \item\end{DoxyCompactList}\item 
+\hypertarget{classGrid_ae1fa0b32f9098fc7592a7f2d6479db95}{
+int {\bfseries npointsy}}
+\label{classGrid_ae1fa0b32f9098fc7592a7f2d6479db95}
+
+\item 
+\hypertarget{classGrid_aac592f2a86e90be98e33106e87f48805}{
+int {\bfseries npointsz}}
+\label{classGrid_aac592f2a86e90be98e33106e87f48805}
+
+\item 
+\hypertarget{classGrid_a03901f92aadcf98e4a8c6d6b8b8370d7}{
+double \hyperlink{classGrid_a03901f92aadcf98e4a8c6d6b8b8370d7}{xbegin}}
+\label{classGrid_a03901f92aadcf98e4a8c6d6b8b8370d7}
+
+\begin{DoxyCompactList}\small\item\em Coordinates for the edges of the grid cube. \item\end{DoxyCompactList}\item 
+\hypertarget{classGrid_a7778a21d217d72b3710e10f960a94927}{
+double {\bfseries ybegin}}
+\label{classGrid_a7778a21d217d72b3710e10f960a94927}
+
+\item 
+\hypertarget{classGrid_a6239d160ae58def13731822899d296c9}{
+double {\bfseries zbegin}}
+\label{classGrid_a6239d160ae58def13731822899d296c9}
+
+\item 
+\hypertarget{classGrid_a113d3513607b5ea64d9a2ee0ccec82a8}{
+double {\bfseries xend}}
+\label{classGrid_a113d3513607b5ea64d9a2ee0ccec82a8}
+
+\item 
+\hypertarget{classGrid_ae3e37ed0611da80cb6b41d739a407f18}{
+double {\bfseries yend}}
+\label{classGrid_ae3e37ed0611da80cb6b41d739a407f18}
+
+\item 
+\hypertarget{classGrid_ae0a3054ab6791eb793bee4d708113690}{
+double {\bfseries zend}}
+\label{classGrid_ae0a3054ab6791eb793bee4d708113690}
+
+\item 
+\hypertarget{classGrid_a5efc94c40bc9e5365a0985092ee93cc4}{
+vector$<$ vector$<$ vector$<$ double $>$ $>$ $>$ \hyperlink{classGrid_a5efc94c40bc9e5365a0985092ee93cc4}{elec\_\-grid}}
+\label{classGrid_a5efc94c40bc9e5365a0985092ee93cc4}
+
+\begin{DoxyCompactList}\small\item\em Coordinates. \item\end{DoxyCompactList}\item 
+\hypertarget{classGrid_aae97dd8f7b57c48af8bbdefca7f0380f}{
+vector$<$ vector$<$ vector$<$ double $>$ $>$ $>$ {\bfseries pbsa\_\-grid}}
+\label{classGrid_aae97dd8f7b57c48af8bbdefca7f0380f}
+
+\item 
+\hypertarget{classGrid_a6a9ff1dc6404f6f9da2537f87aaa5abd}{
+vector$<$ vector$<$ vector$<$ double $>$ $>$ $>$ {\bfseries vdwA\_\-grid}}
+\label{classGrid_a6a9ff1dc6404f6f9da2537f87aaa5abd}
+
+\item 
+\hypertarget{classGrid_ae0aea9da56a93ac47532356f99cae203}{
+vector$<$ vector$<$ vector$<$ double $>$ $>$ $>$ {\bfseries vdwB\_\-grid}}
+\label{classGrid_ae0aea9da56a93ac47532356f99cae203}
+
+\item 
+\hypertarget{classGrid_a11037d12b7e7e0fb478112ed9647e21f}{
+vector$<$ vector$<$ vector$<$ double $>$ $>$ $>$ {\bfseries solv\_\-gauss}}
+\label{classGrid_a11037d12b7e7e0fb478112ed9647e21f}
+
+\item 
+\hypertarget{classGrid_a6752c6502c88858cd766ff5552c6a915}{
+vector$<$ vector$<$ vector$<$ double $>$ $>$ $>$ {\bfseries rec\_\-solv\_\-gauss}}
+\label{classGrid_a6752c6502c88858cd766ff5552c6a915}
+
+\item 
+\hypertarget{classGrid_a95c8a328526d61085d95722ee4546032}{
+vector$<$ vector$<$ vector$<$ double $>$ $>$ $>$ {\bfseries delphi\_\-grid}}
+\label{classGrid_a95c8a328526d61085d95722ee4546032}
+
+\item 
+\hypertarget{classGrid_a0d9bc80ce5161c10f16a743027da3109}{
+double {\bfseries rec\_\-si}}
+\label{classGrid_a0d9bc80ce5161c10f16a743027da3109}
+
+\item 
+\hypertarget{classGrid_aa76d01fd180bf81739b26d293307715f}{
+\hyperlink{classPARSER}{PARSER} $\ast$ \hyperlink{classGrid_aa76d01fd180bf81739b26d293307715f}{Input}}
+\label{classGrid_aa76d01fd180bf81739b26d293307715f}
+
+\begin{DoxyCompactList}\small\item\em Pointer to the \hyperlink{classPARSER}{PARSER} class. \item\end{DoxyCompactList}\item 
+\hypertarget{classGrid_a788fa2d58547bc4309743d1ef8981b3d}{
+\hyperlink{classWRITER}{WRITER} $\ast$ \hyperlink{classGrid_a788fa2d58547bc4309743d1ef8981b3d}{Writer}}
+\label{classGrid_a788fa2d58547bc4309743d1ef8981b3d}
+
+\begin{DoxyCompactList}\small\item\em Pointer to the \hyperlink{classWRITER}{WRITER} class. \item\end{DoxyCompactList}\item 
+\hypertarget{classGrid_a7114155ce9e3c8aba21fd7f56566eab2}{
+bool \hyperlink{classGrid_a7114155ce9e3c8aba21fd7f56566eab2}{pbsa\_\-loaded}}
+\label{classGrid_a7114155ce9e3c8aba21fd7f56566eab2}
+
+\begin{DoxyCompactList}\small\item\em Defines whether or not PBSA electrostatic grid was loaded. \item\end{DoxyCompactList}\item 
+\hypertarget{classGrid_a1ec285c2e07c09f86104c4e3cb3a65c7}{
+bool \hyperlink{classGrid_a1ec285c2e07c09f86104c4e3cb3a65c7}{delphi\_\-loaded}}
+\label{classGrid_a1ec285c2e07c09f86104c4e3cb3a65c7}
+
+\begin{DoxyCompactList}\small\item\em Defines whether or not DELPHI electrostatic grid was loaded. \item\end{DoxyCompactList}\item 
+\hypertarget{classGrid_a007cb9dcd963f6e28b9397e812b00e2e}{
+char \hyperlink{classGrid_a007cb9dcd963f6e28b9397e812b00e2e}{info} \mbox{[}98\mbox{]}}
+\label{classGrid_a007cb9dcd963f6e28b9397e812b00e2e}
+
+\begin{DoxyCompactList}\small\item\em Char array to use with Writer class. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classGrid_abac50becd4d0bc1c1763533d200daee8}{
+\index{Grid@{Grid}!Grid@{Grid}}
+\index{Grid@{Grid}!Grid@{Grid}}
+\subsubsection[{Grid}]{\setlength{\rightskip}{0pt plus 5cm}Grid::Grid ({\bf PARSER} $\ast$ {\em \_\-Input}, \/  {\bf WRITER} $\ast$ {\em \_\-Writer})}}
+\label{classGrid_abac50becd4d0bc1c1763533d200daee8}
+
+
+\hyperlink{classGrid}{Grid} This function initializes the class. It passes a copy of the \hyperlink{classPARSER}{PARSER} class to the \hyperlink{classGrid}{Grid} class and defines the grid spacing. 
+\begin{DoxyParams}{Parameters}
+\item[{\em \_\-Input}]Pointer to the \hyperlink{classPARSER}{PARSER} class. \item[{\em \_\-Writer}]Pointer to the \hyperlink{classWRITER}{WRITER} class. \end{DoxyParams}
+\hypertarget{classGrid_a67c0d815b4faf1e9f7f6e2a8b52150c8}{
+\index{Grid@{Grid}!Grid@{Grid}}
+\index{Grid@{Grid}!Grid@{Grid}}
+\subsubsection[{Grid}]{\setlength{\rightskip}{0pt plus 5cm}Grid::Grid ({\bf PARSER} $\ast$ {\em \_\-Input}, \/  {\bf WRITER} $\ast$ {\em \_\-Writer}, \/  {\bf Mol2} $\ast$ {\em Rec}, \/  vector$<$ double $>$ {\em com})}}
+\label{classGrid_a67c0d815b4faf1e9f7f6e2a8b52150c8}
+
+
+\hyperlink{classGrid}{Grid} Initializer of the \hyperlink{classGrid}{Grid} class used through the code. This method copies a pointer to the class \hyperlink{classPARSER}{PARSER} to this class, defines the grid spacing and calls the appropriate methods to start grid computation. Also, if the keyword \char`\"{}write\_\-grids\char`\"{} is set to \char`\"{}yes\char`\"{} in the \hyperlink{classPARSER}{PARSER}, it calls the method to write the grids to a file. 
+\begin{DoxyParams}{Parameters}
+\item[{\em \_\-Input}]Pointer to the \hyperlink{classPARSER}{PARSER} class. \item[{\em \_\-Writer}]Pointer to the \hyperlink{classWRITER}{WRITER} class. \item[{\em Rec}]POINTER to a \hyperlink{classMol2}{Mol2} class with Receptor information. \item[{\em com}]C++ vector with the coordinates of the center of mass of the reference ligand. It is used to define the center of the computation box. \end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classGrid_a3e0a095c71b771e043ff265769cca7c8}{
+\index{Grid@{Grid}!compute\_\-grid\_\-hardcore\_\-omp@{compute\_\-grid\_\-hardcore\_\-omp}}
+\index{compute\_\-grid\_\-hardcore\_\-omp@{compute\_\-grid\_\-hardcore\_\-omp}!Grid@{Grid}}
+\subsubsection[{compute\_\-grid\_\-hardcore\_\-omp}]{\setlength{\rightskip}{0pt plus 5cm}void Grid::compute\_\-grid\_\-hardcore\_\-omp ({\bf Mol2} $\ast$ {\em Rec})}}
+\label{classGrid_a3e0a095c71b771e043ff265769cca7c8}
+
+
+compute\_\-grid\_\-hardcore\_\-omp This function computes hardcore (Amber FF) potential using multicore implementation with OpenMP. 
+\begin{DoxyParams}{Parameters}
+\item[{\em Rec}]class \hyperlink{classMol2}{Mol2} object with receptor description \end{DoxyParams}
+\hypertarget{classGrid_a225400892c1206c62a7fc8c8caf8b287}{
+\index{Grid@{Grid}!load\_\-phimap\_\-from\_\-file@{load\_\-phimap\_\-from\_\-file}}
+\index{load\_\-phimap\_\-from\_\-file@{load\_\-phimap\_\-from\_\-file}!Grid@{Grid}}
+\subsubsection[{load\_\-phimap\_\-from\_\-file}]{\setlength{\rightskip}{0pt plus 5cm}void Grid::load\_\-phimap\_\-from\_\-file (int {\em gsize})}}
+\label{classGrid_a225400892c1206c62a7fc8c8caf8b287}
+
+
+load\_\-phimap\_\-from\_\-file This function loads a Delphi potential file in binary (unformatted) Delphi file 
+\begin{DoxyParams}{Parameters}
+\item[{\em gsize}]number of points in the grid for each direction \end{DoxyParams}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/Grid.h\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/Grid.cpp\end{DoxyCompactItemize}

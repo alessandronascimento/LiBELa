@@ -1,0 +1,116 @@
+\hypertarget{classDocker}{
+\section{Docker Class Reference}
+\label{classDocker}\index{Docker@{Docker}}
+}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classDocker_a718b8d1bc2646f096b4e51cb8587ee56}{Docker} (\hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Lig, \hyperlink{classMol2}{Mol2} $\ast$RefLig, vector$<$ double $>$ com, \hyperlink{classPARSER}{PARSER} $\ast$Input, \hyperlink{classWRITER}{WRITER} $\ast$Writer, unsigned counter)
+\item 
+\hypertarget{classDocker_a3efdf091dbb892f3b9267e733f9358c0}{
+\hyperlink{classDocker_a3efdf091dbb892f3b9267e733f9358c0}{Docker} (\hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Lig, \hyperlink{classMol2}{Mol2} $\ast$RefLig, vector$<$ double $>$ com, \hyperlink{classPARSER}{PARSER} $\ast$Input, \hyperlink{classWRITER}{WRITER} $\ast$Writer, \hyperlink{classGrid}{Grid} $\ast$Grids, unsigned counter)}
+\label{classDocker_a3efdf091dbb892f3b9267e733f9358c0}
+
+\begin{DoxyCompactList}\small\item\em Class constructor. Automatically starts the docking procedure. \item\end{DoxyCompactList}\item 
+\hypertarget{classDocker_a8c6c6543d01963cfc0d4ceaf3e91c9a2}{
+void \hyperlink{classDocker_a8c6c6543d01963cfc0d4ceaf3e91c9a2}{Dock\_\-conformers} (\hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Lig, \hyperlink{classMol2}{Mol2} $\ast$RefLig, vector$<$ double $>$ com, \hyperlink{classPARSER}{PARSER} $\ast$Input, \hyperlink{classWRITER}{WRITER} $\ast$Writer, unsigned counter)}
+\label{classDocker_a8c6c6543d01963cfc0d4ceaf3e91c9a2}
+
+\begin{DoxyCompactList}\small\item\em Method for docking a set of conformers of a molecule. All the conformers are docked and a selected number are optimized in the active site. \item\end{DoxyCompactList}\item 
+\hypertarget{classDocker_a61a766a1ebee1fdf9692299c80977478}{
+void \hyperlink{classDocker_a61a766a1ebee1fdf9692299c80977478}{Dock\_\-conformers} (\hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Lig, \hyperlink{classMol2}{Mol2} $\ast$RefLig, vector$<$ double $>$ com, \hyperlink{classPARSER}{PARSER} $\ast$Input, \hyperlink{classWRITER}{WRITER} $\ast$Writer, \hyperlink{classGrid}{Grid} $\ast$Grids, unsigned counter)}
+\label{classDocker_a61a766a1ebee1fdf9692299c80977478}
+
+\begin{DoxyCompactList}\small\item\em Method for docking a set of conformers of a molecule. All the conformers are docked and a selected number are optimized in the active site. \item\end{DoxyCompactList}\item 
+vector$<$ unsigned $>$ \hyperlink{classDocker_aa0927d334d8b68434c293c13db7e03cc}{sort\_\-vector} (vector$<$ double $>$ vec)
+\item 
+\hypertarget{classDocker_afa90a10b668435955d5fbb898869f718}{
+vector$<$ unsigned $>$ {\bfseries sort\_\-vector\_\-inv} (vector$<$ double $>$ vec)}
+\label{classDocker_afa90a10b668435955d5fbb898869f718}
+
+\item 
+bool \hyperlink{classDocker_a834f5873f6b323033b5060e46e20b4f9}{minimize\_\-overlay} (\hyperlink{classPARSER}{PARSER} $\ast$Input, \hyperlink{classOptimizer}{Optimizer} $\ast$Opt, \hyperlink{classMol2}{Mol2} $\ast$Lig, \hyperlink{structOptimizer_1_1opt__result__t}{Optimizer::opt\_\-result\_\-t} $\ast$opt\_\-result)
+\begin{DoxyCompactList}\small\item\em minimize\_\-overlay This method calls the methods in the \hyperlink{classOptimizer}{Optimizer} class to optimize ligand overlay with respect to the reference ligand. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classDocker_a13bf6c4b63f4338d891210c4d6d767df}{minimize\_\-energy} (\hyperlink{classPARSER}{PARSER} $\ast$Input, \hyperlink{classOptimizer}{Optimizer} $\ast$Opt, \hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Lig, \hyperlink{structOptimizer_1_1opt__result__t}{Optimizer::opt\_\-result\_\-t} $\ast$opt\_\-result)
+\begin{DoxyCompactList}\small\item\em minimize\_\-energy This method calls the methods in the \hyperlink{classOptimizer}{Optimizer} class to optimize ligand binding within receptor active site. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classDocker_afa671217e2a11a355fd0415621ac614b}{
+double \hyperlink{classDocker_afa671217e2a11a355fd0415621ac614b}{f}}
+\label{classDocker_afa671217e2a11a355fd0415621ac614b}
+
+\begin{DoxyCompactList}\small\item\em Objective function value. \item\end{DoxyCompactList}\item 
+\hypertarget{classDocker_ada93d7dbf2bd60cbf782cb9b2893d7a0}{
+double \hyperlink{classDocker_ada93d7dbf2bd60cbf782cb9b2893d7a0}{fo}}
+\label{classDocker_ada93d7dbf2bd60cbf782cb9b2893d7a0}
+
+\begin{DoxyCompactList}\small\item\em Objective function for molecular overlay. \item\end{DoxyCompactList}\item 
+\hypertarget{classDocker_a9c6e40784773594309021ff03e2fc822}{
+char \hyperlink{classDocker_a9c6e40784773594309021ff03e2fc822}{info} \mbox{[}98\mbox{]}}
+\label{classDocker_a9c6e40784773594309021ff03e2fc822}
+
+\begin{DoxyCompactList}\small\item\em Info for printing. \item\end{DoxyCompactList}\item 
+\hypertarget{classDocker_a802a6f5b11a70f9d36bc021d6503cd25}{
+double {\bfseries best\_\-ene}}
+\label{classDocker_a802a6f5b11a70f9d36bc021d6503cd25}
+
+\item 
+\hypertarget{classDocker_aa78ed40985a8bb8d93e4628e19280f8c}{
+int {\bfseries best\_\-conf}}
+\label{classDocker_aa78ed40985a8bb8d93e4628e19280f8c}
+
+\item 
+\hypertarget{classDocker_a5516152319142a5411257775ca81763b}{
+vector$<$ vector$<$ double $>$ $>$ \hyperlink{classDocker_a5516152319142a5411257775ca81763b}{new\_\-coord}}
+\label{classDocker_a5516152319142a5411257775ca81763b}
+
+\begin{DoxyCompactList}\small\item\em C++ vector with the docked (oriented) coordinates. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classDocker_a718b8d1bc2646f096b4e51cb8587ee56}{
+\index{Docker@{Docker}!Docker@{Docker}}
+\index{Docker@{Docker}!Docker@{Docker}}
+\subsubsection[{Docker}]{\setlength{\rightskip}{0pt plus 5cm}Docker::Docker ({\bf Mol2} $\ast$ {\em Rec}, \/  {\bf Mol2} $\ast$ {\em Lig}, \/  {\bf Mol2} $\ast$ {\em RefLig}, \/  vector$<$ double $>$ {\em com}, \/  {\bf PARSER} $\ast$ {\em Input}, \/  {\bf WRITER} $\ast$ {\em Writer}, \/  unsigned {\em counter})}}
+\label{classDocker_a718b8d1bc2646f096b4e51cb8587ee56}
+\hyperlink{classOptimizer}{Optimizer} class Class constructor. Automatically starts the docking procedure. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classDocker_a13bf6c4b63f4338d891210c4d6d767df}{
+\index{Docker@{Docker}!minimize\_\-energy@{minimize\_\-energy}}
+\index{minimize\_\-energy@{minimize\_\-energy}!Docker@{Docker}}
+\subsubsection[{minimize\_\-energy}]{\setlength{\rightskip}{0pt plus 5cm}bool Docker::minimize\_\-energy ({\bf PARSER} $\ast$ {\em Input}, \/  {\bf Optimizer} $\ast$ {\em Opt}, \/  {\bf Mol2} $\ast$ {\em Rec}, \/  {\bf Mol2} $\ast$ {\em Lig}, \/  {\bf Optimizer::opt\_\-result\_\-t} $\ast$ {\em opt\_\-result})}}
+\label{classDocker_a13bf6c4b63f4338d891210c4d6d767df}
+
+
+minimize\_\-energy This method calls the methods in the \hyperlink{classOptimizer}{Optimizer} class to optimize ligand binding within receptor active site. 
+\begin{DoxyParams}{Parameters}
+\item[{\em Input}]\hyperlink{classPARSER}{PARSER} object with execution parameters \item[{\em Opt}]\hyperlink{classOptimizer}{Optimizer} object \item[{\em Rec}]\hyperlink{classMol2}{Mol2} object with biological receptor. \item[{\em Lig}]\hyperlink{classMol2}{Mol2} object with docking ligand. \item[{\em opt\_\-result}]Type defined in \hyperlink{classOptimizer}{Optimizer} class to get all the optimization results. \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+false if optimization has any problem 
+\end{DoxyReturn}
+\hypertarget{classDocker_a834f5873f6b323033b5060e46e20b4f9}{
+\index{Docker@{Docker}!minimize\_\-overlay@{minimize\_\-overlay}}
+\index{minimize\_\-overlay@{minimize\_\-overlay}!Docker@{Docker}}
+\subsubsection[{minimize\_\-overlay}]{\setlength{\rightskip}{0pt plus 5cm}bool Docker::minimize\_\-overlay ({\bf PARSER} $\ast$ {\em Input}, \/  {\bf Optimizer} $\ast$ {\em Opt}, \/  {\bf Mol2} $\ast$ {\em Lig}, \/  {\bf Optimizer::opt\_\-result\_\-t} $\ast$ {\em opt\_\-result})}}
+\label{classDocker_a834f5873f6b323033b5060e46e20b4f9}
+
+
+minimize\_\-overlay This method calls the methods in the \hyperlink{classOptimizer}{Optimizer} class to optimize ligand overlay with respect to the reference ligand. 
+\begin{DoxyParams}{Parameters}
+\item[{\em Input}]\hyperlink{classPARSER}{PARSER} object with execution parameters \item[{\em Opt}]\hyperlink{classOptimizer}{Optimizer} object \item[{\em Lig}]\hyperlink{classMol2}{Mol2} object with docking ligand. \item[{\em opt\_\-result}]Type defined in \hyperlink{classOptimizer}{Optimizer} class to get all the optimization results. \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+false if optimization has any problem. 
+\end{DoxyReturn}
+\hypertarget{classDocker_aa0927d334d8b68434c293c13db7e03cc}{
+\index{Docker@{Docker}!sort\_\-vector@{sort\_\-vector}}
+\index{sort\_\-vector@{sort\_\-vector}!Docker@{Docker}}
+\subsubsection[{sort\_\-vector}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$ unsigned $>$ Docker::sort\_\-vector (vector$<$ double $>$ {\em vec})}}
+\label{classDocker_aa0927d334d8b68434c293c13db7e03cc}
+Method to sort a set of conformers and rank the N best conformers using the binding energy criteria. N is defined in the \hyperlink{classPARSER}{PARSER} class as \hyperlink{classPARSER_adef96790659375a8c00f2775794dec98}{PARSER::conformers\_\-to\_\-evaluate}. 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/Docker.h\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/Docker.cpp\end{DoxyCompactItemize}

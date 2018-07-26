@@ -1,0 +1,213 @@
+\hypertarget{classMC}{
+\section{MC Class Reference}
+\label{classMC}\index{MC@{MC}}
+}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structMC_1_1step__t}{step\_\-t}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classMC_a4e515b81cf961f9c46b031bcaf490b08}{
+{\bfseries MC} (\hyperlink{classWRITER}{WRITER} $\ast$\_\-Writer)}
+\label{classMC_a4e515b81cf961f9c46b031bcaf490b08}
+
+\item 
+\hyperlink{classMC_ac8c6a1cf2db2bd5582668077b2c22db1}{MC} (\hyperlink{classMol2}{Mol2} $\ast$Lig, \hyperlink{classPARSER}{PARSER} $\ast$Input, \hyperlink{classWRITER}{WRITER} $\ast$\_\-Writer)
+\item 
+\hypertarget{classMC_acca8ada3c324a4dec02a4065bf1c53cb}{
+void {\bfseries run} (\hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Reflig, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ xyz, \hyperlink{classPARSER}{PARSER} $\ast$Input, double T)}
+\label{classMC_acca8ada3c324a4dec02a4065bf1c53cb}
+
+\item 
+\hypertarget{classMC_a5283879878118cc83628359d7134c0bd}{
+void {\bfseries run} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Reflig, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ xyz, \hyperlink{classPARSER}{PARSER} $\ast$Input, double T)}
+\label{classMC_a5283879878118cc83628359d7134c0bd}
+
+\item 
+\hypertarget{classMC_ae4aeb3012bd2b7064f2f2dab00f5fe21}{
+double {\bfseries Boltzmman} (double ene, double new\_\-ene, double t, double b)}
+\label{classMC_ae4aeb3012bd2b7064f2f2dab00f5fe21}
+
+\item 
+\hypertarget{classMC_aa27e241868c8263365f849cdf76d296b}{
+void {\bfseries take\_\-step} (\hyperlink{classPARSER}{PARSER} $\ast$Input, \hyperlink{classMol2}{Mol2} $\ast$Lig, \hyperlink{structMC_1_1step__t}{step\_\-t} $\ast$step)}
+\label{classMC_aa27e241868c8263365f849cdf76d296b}
+
+\item 
+\hypertarget{classMC_aa2cd1530ea71c1cef8d29d2ead491668}{
+void {\bfseries take\_\-step\_\-flex} (\hyperlink{classPARSER}{PARSER} $\ast$Input, \hyperlink{classMol2}{Mol2} $\ast$Lig, \hyperlink{structMC_1_1step__t}{step\_\-t} $\ast$step)}
+\label{classMC_aa2cd1530ea71c1cef8d29d2ead491668}
+
+\item 
+\hypertarget{classMC_a7f3d826bbb003d71b863f1b5a80103a8}{
+void {\bfseries take\_\-step\_\-torsion} (\hyperlink{classPARSER}{PARSER} $\ast$Input, \hyperlink{classMol2}{Mol2} $\ast$Lig, \hyperlink{structMC_1_1step__t}{step\_\-t} $\ast$step)}
+\label{classMC_a7f3d826bbb003d71b863f1b5a80103a8}
+
+\item 
+\hypertarget{classMC_a12d646bfbf1d5cd1b4da81362f4d8842}{
+void {\bfseries write\_\-conformers} (\hyperlink{classMol2}{Mol2} $\ast$Lig)}
+\label{classMC_a12d646bfbf1d5cd1b4da81362f4d8842}
+
+\item 
+\hypertarget{classMC_a5d9e957ffb3451e5ded19bef31bbb4e5}{
+void {\bfseries MaxMinCM} (double XCOM, double YCOM, double ZCOM, vector$<$ double $>$ Max)}
+\label{classMC_a5d9e957ffb3451e5ded19bef31bbb4e5}
+
+\item 
+\hypertarget{classMC_aa86bbbc7d1422c1c71471996dcd6c04c}{
+void {\bfseries ligand\_\-run} (\hyperlink{classMol2}{Mol2} $\ast$RefLig, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ xyz, \hyperlink{classPARSER}{PARSER} $\ast$Input, double T)}
+\label{classMC_aa86bbbc7d1422c1c71471996dcd6c04c}
+
+\item 
+\hypertarget{classMC_aeefa103263e6a7e7c5a9f11b87d8ed69}{
+double $\ast$ {\bfseries copy\_\-to\_\-obmol} (vector$<$ vector$<$ double $>$ $>$ vec\_\-xyz)}
+\label{classMC_aeefa103263e6a7e7c5a9f11b87d8ed69}
+
+\item 
+\hypertarget{classMC_a9be6272ea5ab285e9886f824a3576331}{
+vector$<$ vector$<$ double $>$ $>$ {\bfseries copy\_\-from\_\-obmol} (shared\_\-ptr$<$ OBMol $>$ mymol)}
+\label{classMC_a9be6272ea5ab285e9886f824a3576331}
+
+\item 
+\hypertarget{classMC_ae7e44b5f94a065951a40cb85fa46eeb7}{
+shared\_\-ptr$<$ OBMol $>$ {\bfseries GetMol} (const std::string \&molfile)}
+\label{classMC_ae7e44b5f94a065951a40cb85fa46eeb7}
+
+\item 
+\hypertarget{classMC_a0911a662b241e7ea8bd6b828bb67ef5f}{
+double {\bfseries check\_\-angle} (double angle)}
+\label{classMC_a0911a662b241e7ea8bd6b828bb67ef5f}
+
+\item 
+\hypertarget{classMC_aae2290a5ddec7c4fae6d1f9a7682edf3}{
+void {\bfseries increment\_\-angles} (vector$<$ double $>$ $\ast$angles, \hyperlink{structMC_1_1step__t}{step\_\-t} $\ast$step)}
+\label{classMC_aae2290a5ddec7c4fae6d1f9a7682edf3}
+
+\item 
+\hypertarget{classMC_a6608f980b52691b51642857c3a625cdf}{
+bool {\bfseries ligand\_\-is\_\-inside\_\-box} (\hyperlink{classPARSER}{PARSER} $\ast$Input, \hyperlink{structMC_1_1step__t}{step\_\-t} $\ast$step, vector$<$ double $>$ original\_\-com, vector$<$ double $>$ current\_\-com)}
+\label{classMC_a6608f980b52691b51642857c3a625cdf}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classMC_a0e8863dabcdbdefed9803ee9f6023d28}{
+double {\bfseries XSize}}
+\label{classMC_a0e8863dabcdbdefed9803ee9f6023d28}
+
+\item 
+\hypertarget{classMC_ab18ba1f0714aa8d783364e632cbaa650}{
+double {\bfseries YSize}}
+\label{classMC_ab18ba1f0714aa8d783364e632cbaa650}
+
+\item 
+\hypertarget{classMC_a5db17529053b92d5f12adbf6ea0685dd}{
+double {\bfseries ZSize}}
+\label{classMC_a5db17529053b92d5f12adbf6ea0685dd}
+
+\item 
+\hypertarget{classMC_a03df1036efa0fd050cb3a556756dcf40}{
+vector$<$ double $>$ {\bfseries MaxMin}}
+\label{classMC_a03df1036efa0fd050cb3a556756dcf40}
+
+\item 
+\hypertarget{classMC_ab4cc65fd3f605932c3026e156830f6a4}{
+vector$<$ vector$<$ double $>$ $>$ {\bfseries xyz}}
+\label{classMC_ab4cc65fd3f605932c3026e156830f6a4}
+
+\item 
+\hypertarget{classMC_abe5b7db589d8213d41d095a66453759c}{
+double {\bfseries average\_\-energy}}
+\label{classMC_abe5b7db589d8213d41d095a66453759c}
+
+\item 
+\hypertarget{classMC_a31ff549ef9d792da461a1eb2333d9b21}{
+double {\bfseries energy\_\-standard\_\-deviation}}
+\label{classMC_a31ff549ef9d792da461a1eb2333d9b21}
+
+\item 
+\hypertarget{classMC_aeba76a1547f351cb807f701accd9501c}{
+long double {\bfseries Boltzmann\_\-weighted\_\-average\_\-energy}}
+\label{classMC_aeba76a1547f351cb807f701accd9501c}
+
+\item 
+\hypertarget{classMC_abb7e7f9a571cc86372cac04766630741}{
+long double {\bfseries MCR\_\-Boltzmann\_\-weighted\_\-average}}
+\label{classMC_abb7e7f9a571cc86372cac04766630741}
+
+\item 
+\hypertarget{classMC_a4c56f3104200606b207432ca144456ce}{
+long double {\bfseries MCR\_\-Boltzmann\_\-weighted\_\-stdev}}
+\label{classMC_a4c56f3104200606b207432ca144456ce}
+
+\item 
+\hypertarget{classMC_af349b516b885d41993dab122cce9c0ae}{
+gsl\_\-rng $\ast$ {\bfseries r}}
+\label{classMC_af349b516b885d41993dab122cce9c0ae}
+
+\item 
+\hypertarget{classMC_ae13581ab0768a19fc241a7844dec60f4}{
+\hyperlink{classWRITER}{WRITER} $\ast$ {\bfseries Writer}}
+\label{classMC_ae13581ab0768a19fc241a7844dec60f4}
+
+\item 
+\hypertarget{classMC_a1d8424cd5387c7bf4207de279602ef46}{
+char {\bfseries info} \mbox{[}98\mbox{]}}
+\label{classMC_a1d8424cd5387c7bf4207de279602ef46}
+
+\item 
+\hypertarget{classMC_aeb4d6769618676779035f02849743bf2}{
+double $\ast$ {\bfseries myxyz}}
+\label{classMC_aeb4d6769618676779035f02849743bf2}
+
+\item 
+\hypertarget{classMC_a09cd7fbfa04ce737d2b2be5b0f6b3e06}{
+shared\_\-ptr$<$ OBMol $>$ {\bfseries mol}}
+\label{classMC_a09cd7fbfa04ce737d2b2be5b0f6b3e06}
+
+\item 
+\hypertarget{classMC_af9eceb4ac7055a4f1f253414128b1d7a}{
+OBForceField $\ast$ {\bfseries OBff}}
+\label{classMC_af9eceb4ac7055a4f1f253414128b1d7a}
+
+\item 
+\hypertarget{classMC_a4259fe3f9c779287020dd71064dcb753}{
+OBRotorList {\bfseries RotorList}}
+\label{classMC_a4259fe3f9c779287020dd71064dcb753}
+
+\item 
+\hypertarget{classMC_a119e673dff0b8ed425ad29d876a2aefa}{
+OBRotorIterator {\bfseries RotorIterator}}
+\label{classMC_a119e673dff0b8ed425ad29d876a2aefa}
+
+\item 
+\hypertarget{classMC_aa08ef2f6614cd86a223122054fd5f967}{
+OBRotor $\ast$ {\bfseries Rotor}}
+\label{classMC_aa08ef2f6614cd86a223122054fd5f967}
+
+\item 
+\hypertarget{classMC_a216625c1c37e743a4125168ba0e5c645}{
+vector$<$ vector$<$ int $>$ $>$ {\bfseries atoms\_\-in\_\-dihedrals}}
+\label{classMC_a216625c1c37e743a4125168ba0e5c645}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classMC_ac8c6a1cf2db2bd5582668077b2c22db1}{
+\index{MC@{MC}!MC@{MC}}
+\index{MC@{MC}!MC@{MC}}
+\subsubsection[{MC}]{\setlength{\rightskip}{0pt plus 5cm}MC::MC ({\bf Mol2} $\ast$ {\em Lig}, \/  {\bf PARSER} $\ast$ {\em Input}, \/  {\bf WRITER} $\ast$ {\em \_\-Writer})}}
+\label{classMC_ac8c6a1cf2db2bd5582668077b2c22db1}
+
+
+Here we will use OpenBabel API to generate a OBMol and use it to get and set torsion angles for all rotatable bonds.
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/MC.h\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/MC.cpp\end{DoxyCompactItemize}

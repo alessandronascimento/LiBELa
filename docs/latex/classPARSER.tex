@@ -1,0 +1,594 @@
+\hypertarget{classPARSER}{
+\section{PARSER Class Reference}
+\label{classPARSER}\index{PARSER@{PARSER}}
+}
+
+
+The \hyperlink{classPARSER}{PARSER} class is used to get the input parameters from the input file. These parameters are used in almost every class of the program.  
+
+
+{\ttfamily \#include $<$PARSER.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classPARSER_a4153cc523f4a054e7c488c4fe25b9fa1}{set\_\-parameters} (char $\ast$arg)
+\item 
+void \hyperlink{classPARSER_aa33f0f4b7870aa1f5e9bf9e67bc648fa}{comparing} (string \hyperlink{classPARSER_af6b8374a3bf76136231ab9616238b610}{param}, ifstream \&input)
+\item 
+void \hyperlink{classPARSER_a3ae5ce3223fefb960976fe4bbe9083f5}{check\_\-parameters\_\-sanity} (void)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classPARSER_af6b8374a3bf76136231ab9616238b610}{
+string \hyperlink{classPARSER_af6b8374a3bf76136231ab9616238b610}{param}}
+\label{classPARSER_af6b8374a3bf76136231ab9616238b610}
+
+\begin{DoxyCompactList}\small\item\em Used to parse the input file. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a1c15a853750b7050184b006f333d72cd}{
+int \hyperlink{classPARSER_a1c15a853750b7050184b006f333d72cd}{number\_\-steps}}
+\label{classPARSER_a1c15a853750b7050184b006f333d72cd}
+
+\begin{DoxyCompactList}\small\item\em Number of steps of the equilibrium simulation. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a373caeb8915249e3fa0141d8926edcd1}{
+double \hyperlink{classPARSER_a373caeb8915249e3fa0141d8926edcd1}{temp}}
+\label{classPARSER_a373caeb8915249e3fa0141d8926edcd1}
+
+\begin{DoxyCompactList}\small\item\em Temperature of the equilibrium simulation. Used as final temperature of the simulated annealing also. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a88ade7533a8bf13f641fb970c9b90cfe}{
+int \hyperlink{classPARSER_a88ade7533a8bf13f641fb970c9b90cfe}{sweep\_\-steps}}
+\label{classPARSER_a88ade7533a8bf13f641fb970c9b90cfe}
+
+\begin{DoxyCompactList}\small\item\em Number of steps for each sweep. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_ab016d48db3135a8691fc63f268e82054}{
+int \hyperlink{classPARSER_ab016d48db3135a8691fc63f268e82054}{eq\_\-steps}}
+\label{classPARSER_ab016d48db3135a8691fc63f268e82054}
+
+\begin{DoxyCompactList}\small\item\em Number of Equilibration Steps. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_ab41ceabcb019466b1807c6da5a34119c}{
+double \hyperlink{classPARSER_ab41ceabcb019466b1807c6da5a34119c}{cushion}}
+\label{classPARSER_ab41ceabcb019466b1807c6da5a34119c}
+
+\begin{DoxyCompactList}\small\item\em Defines the maximum amplitude of the shift during the simulation. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a3c6e2cdfc52f7c600e6809a15e2ee7a1}{
+double \hyperlink{classPARSER_a3c6e2cdfc52f7c600e6809a15e2ee7a1}{deltaij6}}
+\label{classPARSER_a3c6e2cdfc52f7c600e6809a15e2ee7a1}
+
+\begin{DoxyCompactList}\small\item\em Soft-\/core value for the dispersion-\/repulsion potential. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a9fb6fab6eb473c5cf76b05f23f5b7c8d}{
+double \hyperlink{classPARSER_a9fb6fab6eb473c5cf76b05f23f5b7c8d}{deltaij\_\-es6}}
+\label{classPARSER_a9fb6fab6eb473c5cf76b05f23f5b7c8d}
+
+\begin{DoxyCompactList}\small\item\em Soft-\/core value for the electrostatic potential$\ast$$\ast$6. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a595542a8b5bcafc6d6b7c1e4db1727ef}{
+double \hyperlink{classPARSER_a595542a8b5bcafc6d6b7c1e4db1727ef}{deltaij\_\-es3}}
+\label{classPARSER_a595542a8b5bcafc6d6b7c1e4db1727ef}
+
+\begin{DoxyCompactList}\small\item\em Soft-\/core value for the electrostatic potential $\ast$$\ast$ 3. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a810e7958f2e04522e6915962a9f1e3d9}{
+double \hyperlink{classPARSER_a810e7958f2e04522e6915962a9f1e3d9}{diel}}
+\label{classPARSER_a810e7958f2e04522e6915962a9f1e3d9}
+
+\begin{DoxyCompactList}\small\item\em Dielectric constant. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a15f292abaad105d5e454867ae04e99bd}{
+double \hyperlink{classPARSER_a15f292abaad105d5e454867ae04e99bd}{sigma}}
+\label{classPARSER_a15f292abaad105d5e454867ae04e99bd}
+
+\begin{DoxyCompactList}\small\item\em Weighting scheme in rec/lig\_\-solv\_\-distf. From Verkhivker (1999), it has a value of 3.5 Angstrons. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a566a91168730cb9fcfe242563a03f6b5}{
+string \hyperlink{classPARSER_a566a91168730cb9fcfe242563a03f6b5}{rprmtop}}
+\label{classPARSER_a566a91168730cb9fcfe242563a03f6b5}
+
+\begin{DoxyCompactList}\small\item\em Temporary information. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a4780ee8b1f3c779c0d05be46192f874f}{
+string {\bfseries rcrd}}
+\label{classPARSER_a4780ee8b1f3c779c0d05be46192f874f}
+
+\item 
+\hypertarget{classPARSER_a6a287ab064d25899736201bac9e9082d}{
+string {\bfseries lprmtop}}
+\label{classPARSER_a6a287ab064d25899736201bac9e9082d}
+
+\item 
+\hypertarget{classPARSER_ae07d5337f3d0ec4250a4bc6adf0d8018}{
+string {\bfseries lcrd}}
+\label{classPARSER_ae07d5337f3d0ec4250a4bc6adf0d8018}
+
+\item 
+\hypertarget{classPARSER_ad9fc544191b296d607ce6b75e653a5e4}{
+const char $\ast$ \hyperlink{classPARSER_ad9fc544191b296d607ce6b75e653a5e4}{rec\_\-prmtop}}
+\label{classPARSER_ad9fc544191b296d607ce6b75e653a5e4}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPRMTOP}{PRMTOP} file with receptor information (AMBER format). \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a8edd98ab50c647cdfa1b68105de0ff88}{
+const char $\ast$ \hyperlink{classPARSER_a8edd98ab50c647cdfa1b68105de0ff88}{rec\_\-crd}}
+\label{classPARSER_a8edd98ab50c647cdfa1b68105de0ff88}
+
+\begin{DoxyCompactList}\small\item\em Receptor coordinates in AMBER crd format. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a3703a65df242813e019d61e5c6465ad1}{
+const char $\ast$ \hyperlink{classPARSER_a3703a65df242813e019d61e5c6465ad1}{lig\_\-prmtop}}
+\label{classPARSER_a3703a65df242813e019d61e5c6465ad1}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPRMTOP}{PRMTOP} file with ligand information (AMBER format). \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_af5f1fbb821b6540a17523f0b0181547a}{
+const char $\ast$ \hyperlink{classPARSER_af5f1fbb821b6540a17523f0b0181547a}{lig\_\-crd}}
+\label{classPARSER_af5f1fbb821b6540a17523f0b0181547a}
+
+\begin{DoxyCompactList}\small\item\em Ligand coordinates in AMBER crd format. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a8cdad7cd9572684c65c2f4b2fb856883}{
+string \hyperlink{classPARSER_a8cdad7cd9572684c65c2f4b2fb856883}{sa}}
+\label{classPARSER_a8cdad7cd9572684c65c2f4b2fb856883}
+
+\begin{DoxyCompactList}\small\item\em Used to parse and yes or no answer to the next variable. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_adbe3193ae5abdcb1fce15185cd5026bb}{
+bool \hyperlink{classPARSER_adbe3193ae5abdcb1fce15185cd5026bb}{sa\_\-scheme}}
+\label{classPARSER_adbe3193ae5abdcb1fce15185cd5026bb}
+
+\begin{DoxyCompactList}\small\item\em Will \hyperlink{classSA}{SA} optimization procedure be used? \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_afaf618e4145a7f91eb4b65bcd80c889a}{
+double \hyperlink{classPARSER_afaf618e4145a7f91eb4b65bcd80c889a}{sa\_\-start\_\-temp}}
+\label{classPARSER_afaf618e4145a7f91eb4b65bcd80c889a}
+
+\begin{DoxyCompactList}\small\item\em Start temperature for a Simulated Annealing simulation. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a6e650cc2d6f6f1965c8129c7defb2669}{
+int \hyperlink{classPARSER_a6e650cc2d6f6f1965c8129c7defb2669}{sa\_\-steps}}
+\label{classPARSER_a6e650cc2d6f6f1965c8129c7defb2669}
+
+\begin{DoxyCompactList}\small\item\em Number of simulation steps between each cycle of temperature decrease. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a63171b5e4c3cb087c5c8cd892748f76a}{
+string \hyperlink{classPARSER_a63171b5e4c3cb087c5c8cd892748f76a}{output}}
+\label{classPARSER_a63171b5e4c3cb087c5c8cd892748f76a}
+
+\begin{DoxyCompactList}\small\item\em Defines the prefix for output files. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_aa5c532641ea632ca269db95617c128b2}{
+double \hyperlink{classPARSER_aa5c532641ea632ca269db95617c128b2}{rotation\_\-step}}
+\label{classPARSER_aa5c532641ea632ca269db95617c128b2}
+
+\begin{DoxyCompactList}\small\item\em Defines the rotation step during the \hyperlink{classMC}{MC} sorting. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_abb074a131360149b6c3d74123acdfd41}{
+bool \hyperlink{classPARSER_abb074a131360149b6c3d74123acdfd41}{sample\_\-torsions}}
+\label{classPARSER_abb074a131360149b6c3d74123acdfd41}
+
+\begin{DoxyCompactList}\small\item\em Defines if torsion angles should be sampled in \hyperlink{classMC}{MC}. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a5ed3ab3f2f46e0372cb20b0e507703ff}{
+double \hyperlink{classPARSER_a5ed3ab3f2f46e0372cb20b0e507703ff}{torsion\_\-step}}
+\label{classPARSER_a5ed3ab3f2f46e0372cb20b0e507703ff}
+
+\begin{DoxyCompactList}\small\item\em Defines the step for torsion sampling in \hyperlink{classMC}{MC} sorting. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_add12f1baad1a8ddd2ddfda884ca591f9}{
+double \hyperlink{classPARSER_add12f1baad1a8ddd2ddfda884ca591f9}{x\_\-dim}}
+\label{classPARSER_add12f1baad1a8ddd2ddfda884ca591f9}
+
+\begin{DoxyCompactList}\small\item\em Maximum dimension in X direction to the sampling box. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a686e3e4110b797bdd71685fa06cca819}{
+double \hyperlink{classPARSER_a686e3e4110b797bdd71685fa06cca819}{y\_\-dim}}
+\label{classPARSER_a686e3e4110b797bdd71685fa06cca819}
+
+\begin{DoxyCompactList}\small\item\em Maximum dimension in Y direction to the sampling box. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a3a1ae30f803c95e3feb911ce17150429}{
+double \hyperlink{classPARSER_a3a1ae30f803c95e3feb911ce17150429}{z\_\-dim}}
+\label{classPARSER_a3a1ae30f803c95e3feb911ce17150429}
+
+\begin{DoxyCompactList}\small\item\em Maximum dimension in Z direction to the sampling box. \item\end{DoxyCompactList}\item 
+string \hyperlink{classPARSER_a0e2e4608457fc138a5f76dbba8b0ade2}{lig\_\-traj}
+\item 
+string \hyperlink{classPARSER_ae0e302d8902665dc3a9f9a42ae5e5a34}{rec\_\-traj}
+\item 
+bool \hyperlink{classPARSER_a974c6bc2d7250503d9dddece25abdb62}{flex\_\-lig}
+\item 
+bool \hyperlink{classPARSER_a9f3545bfdf2adb743c7cec9b7ebf904b}{flex\_\-rec}
+\item 
+int \hyperlink{classPARSER_afbcdf1c31d8279ba29032abe0cba11a8}{timeout}
+\item 
+\hypertarget{classPARSER_a795b4bf0cc52270df7557f5c53cd5df1}{
+string \hyperlink{classPARSER_a795b4bf0cc52270df7557f5c53cd5df1}{tmp}}
+\label{classPARSER_a795b4bf0cc52270df7557f5c53cd5df1}
+
+\begin{DoxyCompactList}\small\item\em String to parse temporary information. \item\end{DoxyCompactList}\item 
+int \hyperlink{classPARSER_ad4acb599b6863a95916e0646d27acdd0}{scoring\_\-function}
+\item 
+\hypertarget{classPARSER_a63252f63d49e1e20e9f93e7c5a9997b0}{
+bool \hyperlink{classPARSER_a63252f63d49e1e20e9f93e7c5a9997b0}{dynamic\_\-rate}}
+\label{classPARSER_a63252f63d49e1e20e9f93e7c5a9997b0}
+
+\begin{DoxyCompactList}\small\item\em Defines wether or not the equilibrium \hyperlink{classMC}{MC} will use a dynamic temperature scaling dependent on the acceptance rate. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_adc25c95bc3743182be01af9c74d64f5f}{
+double \hyperlink{classPARSER_adc25c95bc3743182be01af9c74d64f5f}{dyn\_\-rate\_\-inf\_\-limit}}
+\label{classPARSER_adc25c95bc3743182be01af9c74d64f5f}
+
+\begin{DoxyCompactList}\small\item\em Lower limit for the dynamic rate. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a6b7b22494c268e2e0f26363e5711cecd}{
+double \hyperlink{classPARSER_a6b7b22494c268e2e0f26363e5711cecd}{dyn\_\-rate\_\-sup\_\-limit}}
+\label{classPARSER_a6b7b22494c268e2e0f26363e5711cecd}
+
+\begin{DoxyCompactList}\small\item\em Higher limit for the dynamic rate. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_aaf97507aadae947f091b0e9bb94db6d7}{
+int \hyperlink{classPARSER_aaf97507aadae947f091b0e9bb94db6d7}{dyn\_\-rate\_\-steps}}
+\label{classPARSER_aaf97507aadae947f091b0e9bb94db6d7}
+
+\begin{DoxyCompactList}\small\item\em Number of steps in the dynamic rate scheme. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a30516b63f90f0b855494207c576793ff}{
+string \hyperlink{classPARSER_a30516b63f90f0b855494207c576793ff}{rec\_\-mol2}}
+\label{classPARSER_a30516b63f90f0b855494207c576793ff}
+
+\begin{DoxyCompactList}\small\item\em C++ String used to parse the receptor MOL2 filename. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_ae66165af4c30950c92bc8c4a80e017e1}{
+string \hyperlink{classPARSER_ae66165af4c30950c92bc8c4a80e017e1}{lig\_\-mol2}}
+\label{classPARSER_ae66165af4c30950c92bc8c4a80e017e1}
+
+\begin{DoxyCompactList}\small\item\em C++ string used to parse the ligand MOL2 filename. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_ab18627e5c7322611d1b6e89163a7dc3a}{
+bool \hyperlink{classPARSER_ab18627e5c7322611d1b6e89163a7dc3a}{mol2\_\-aa}}
+\label{classPARSER_ab18627e5c7322611d1b6e89163a7dc3a}
+
+\begin{DoxyCompactList}\small\item\em Defines if mol2 file (for both ligand and receptor) uses Amber (true) or Sybyl (false) atom types. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a8829bc2543c6c1edcc502ac74ce90299}{
+double \hyperlink{classPARSER_a8829bc2543c6c1edcc502ac74ce90299}{min\_\-delta}}
+\label{classPARSER_a8829bc2543c6c1edcc502ac74ce90299}
+
+\begin{DoxyCompactList}\small\item\em Optimization initial move. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_af5c5436be0d510e3b55358f345fb7474}{
+double \hyperlink{classPARSER_af5c5436be0d510e3b55358f345fb7474}{min\_\-tol}}
+\label{classPARSER_af5c5436be0d510e3b55358f345fb7474}
+
+\begin{DoxyCompactList}\small\item\em Optimization tolerance used for overlay mathcing. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_af6dec57a6c5a37158329ea62fea32f8f}{
+int \hyperlink{classPARSER_af6dec57a6c5a37158329ea62fea32f8f}{min\_\-timeout}}
+\label{classPARSER_af6dec57a6c5a37158329ea62fea32f8f}
+
+\begin{DoxyCompactList}\small\item\em Minimization timeout (in seconds). \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_ab0cd7619a844099f17a979916b1dd4d8}{
+string \hyperlink{classPARSER_ab0cd7619a844099f17a979916b1dd4d8}{mode}}
+\label{classPARSER_ab0cd7619a844099f17a979916b1dd4d8}
+
+\begin{DoxyCompactList}\small\item\em Mode to use (eq, sa or dock);. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_ad41e42057523395b33af742e773050e8}{
+double \hyperlink{classPARSER_ad41e42057523395b33af742e773050e8}{elec\_\-scale}}
+\label{classPARSER_ad41e42057523395b33af742e773050e8}
+
+\begin{DoxyCompactList}\small\item\em Electrostatic scale in the overlay matching. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_ad4a8e86b35efdb2174533a609864bd8d}{
+double \hyperlink{classPARSER_ad4a8e86b35efdb2174533a609864bd8d}{vdw\_\-scale}}
+\label{classPARSER_ad4a8e86b35efdb2174533a609864bd8d}
+
+\begin{DoxyCompactList}\small\item\em VDW scale in the overlay mathcing. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a898e1966b8ad636d8a3ff2d71d6a00f6}{
+string \hyperlink{classPARSER_a898e1966b8ad636d8a3ff2d71d6a00f6}{reflig\_\-mol2}}
+\label{classPARSER_a898e1966b8ad636d8a3ff2d71d6a00f6}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{classMol2}{Mol2} file with the reference ligand (already posed in the binding pocket). \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_aaf568d2815d54bc4878c0bb87d7a8a60}{
+string \hyperlink{classPARSER_aaf568d2815d54bc4878c0bb87d7a8a60}{multifile}}
+\label{classPARSER_aaf568d2815d54bc4878c0bb87d7a8a60}
+
+\begin{DoxyCompactList}\small\item\em File with the list of molecules to be docked. \item\end{DoxyCompactList}\item 
+string \hyperlink{classPARSER_aeb177596ca3ca3cb2910a8ba3fe2c77e}{overlay\_\-optimizer}
+\item 
+\hypertarget{classPARSER_aa626d0b28618ee4828aad8d929dd091a}{
+string \hyperlink{classPARSER_aa626d0b28618ee4828aad8d929dd091a}{energy\_\-optimizer}}
+\label{classPARSER_aa626d0b28618ee4828aad8d929dd091a}
+
+\begin{DoxyCompactList}\small\item\em energy\_\-optimizer Algorithm for binding energy optimization. Current options are: lbfgs ln\_\-auglag cobyla mma subplex ld\_\-auglag crs direct stogo \hyperlink{classSA}{SA} none \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a472ad18b44b688211ba5c3bac207d733}{
+bool \hyperlink{classPARSER_a472ad18b44b688211ba5c3bac207d733}{dock\_\-no\_\-h}}
+\label{classPARSER_a472ad18b44b688211ba5c3bac207d733}
+
+\begin{DoxyCompactList}\small\item\em Ignore hydrogen atoms during overlay matching. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_afe06b419ab83ef6d8541b783f7cafe8f}{
+int \hyperlink{classPARSER_afe06b419ab83ef6d8541b783f7cafe8f}{deal\_\-pop\_\-size}}
+\label{classPARSER_afe06b419ab83ef6d8541b783f7cafe8f}
+
+\begin{DoxyCompactList}\small\item\em Size of population for density estimation algorithm. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a5e7edda0485ddf3bd64af16de70a5a47}{
+int \hyperlink{classPARSER_a5e7edda0485ddf3bd64af16de70a5a47}{deal\_\-generations}}
+\label{classPARSER_a5e7edda0485ddf3bd64af16de70a5a47}
+
+\begin{DoxyCompactList}\small\item\em Number of generations in DEAl. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a1261a027aee173c44fd780a1e99b92d9}{
+int \hyperlink{classPARSER_a1261a027aee173c44fd780a1e99b92d9}{deal\_\-top\_\-ranked}}
+\label{classPARSER_a1261a027aee173c44fd780a1e99b92d9}
+
+\begin{DoxyCompactList}\small\item\em Number of top-\/ranked poses used to estimate density. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a316c28e50a7cf6073bcd29d7375514e8}{
+bool \hyperlink{classPARSER_a316c28e50a7cf6073bcd29d7375514e8}{deal}}
+\label{classPARSER_a316c28e50a7cf6073bcd29d7375514e8}
+
+\begin{DoxyCompactList}\small\item\em Use binding energy optimization through Density Estimation Algorithm. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_ae00c2a39b1eaf557ef4f2e7fdff8e0fe}{
+bool \hyperlink{classPARSER_ae00c2a39b1eaf557ef4f2e7fdff8e0fe}{generate\_\-conformers}}
+\label{classPARSER_ae00c2a39b1eaf557ef4f2e7fdff8e0fe}
+
+\begin{DoxyCompactList}\small\item\em Generate conformers using Openbabel API. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a9e52c9af18d4401c72c5c95c3e8b6882}{
+int \hyperlink{classPARSER_a9e52c9af18d4401c72c5c95c3e8b6882}{lig\_\-conformers}}
+\label{classPARSER_a9e52c9af18d4401c72c5c95c3e8b6882}
+
+\begin{DoxyCompactList}\small\item\em Number of conformers to generate. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_adef96790659375a8c00f2775794dec98}{
+int \hyperlink{classPARSER_adef96790659375a8c00f2775794dec98}{conformers\_\-to\_\-evaluate}}
+\label{classPARSER_adef96790659375a8c00f2775794dec98}
+
+\begin{DoxyCompactList}\small\item\em Number of conformers that should be optimized. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_af1b41a06f39ed4f7f43ae236519c9c91}{
+string \hyperlink{classPARSER_af1b41a06f39ed4f7f43ae236519c9c91}{conformer\_\-generator}}
+\label{classPARSER_af1b41a06f39ed4f7f43ae236519c9c91}
+
+\begin{DoxyCompactList}\small\item\em Algorithm to be used for conformer generation: WRS or GA. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a4d4c3e04bfc07678d2707871dd186742}{
+int \hyperlink{classPARSER_a4d4c3e04bfc07678d2707871dd186742}{conformer\_\-min\_\-steps}}
+\label{classPARSER_a4d4c3e04bfc07678d2707871dd186742}
+
+\begin{DoxyCompactList}\small\item\em Number of minimization steps before conformer generation, when using WRS. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a9ba3ef77b00a37f15df8bb43897af34c}{
+int \hyperlink{classPARSER_a9ba3ef77b00a37f15df8bb43897af34c}{WRS\_\-geom\_\-steps}}
+\label{classPARSER_a9ba3ef77b00a37f15df8bb43897af34c}
+
+\begin{DoxyCompactList}\small\item\em Geometric steps for WRS. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_afd166d4ee2a41375991d577365c7b574}{
+double \hyperlink{classPARSER_afd166d4ee2a41375991d577365c7b574}{dock\_\-min\_\-tol}}
+\label{classPARSER_afd166d4ee2a41375991d577365c7b574}
+
+\begin{DoxyCompactList}\small\item\em Tolerance for binding energy optimization. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_afb215f7ad9321d0f29566c3bc303f8c3}{
+bool \hyperlink{classPARSER_afb215f7ad9321d0f29566c3bc303f8c3}{eq\_\-mode}}
+\label{classPARSER_afb215f7ad9321d0f29566c3bc303f8c3}
+
+\begin{DoxyCompactList}\small\item\em Turns on the equilibrium mode. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a2955359c2f95e0ab8e01c908460da966}{
+bool \hyperlink{classPARSER_a2955359c2f95e0ab8e01c908460da966}{sa\_\-mode}}
+\label{classPARSER_a2955359c2f95e0ab8e01c908460da966}
+
+\begin{DoxyCompactList}\small\item\em Turns on the simulated annealing mode. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a207f9e04decc8ce256080622f4d9e32f}{
+bool \hyperlink{classPARSER_a207f9e04decc8ce256080622f4d9e32f}{dock\_\-mode}}
+\label{classPARSER_a207f9e04decc8ce256080622f4d9e32f}
+
+\begin{DoxyCompactList}\small\item\em Turns on the docking mode. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a0929e1c79b6128cb26ff6331fb781ef4}{
+bool \hyperlink{classPARSER_a0929e1c79b6128cb26ff6331fb781ef4}{dock\_\-parallel}}
+\label{classPARSER_a0929e1c79b6128cb26ff6331fb781ef4}
+
+\begin{DoxyCompactList}\small\item\em True if parallel execution is active (through OpenMP). \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_afc1b3754847018dd41cace6aaa64d220}{
+unsigned \hyperlink{classPARSER_afc1b3754847018dd41cace6aaa64d220}{parallel\_\-jobs}}
+\label{classPARSER_afc1b3754847018dd41cace6aaa64d220}
+
+\begin{DoxyCompactList}\small\item\em Number of parallel threads to use. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a76e724537f471d32948206061b0a04c4}{
+bool \hyperlink{classPARSER_a76e724537f471d32948206061b0a04c4}{write\_\-mol2}}
+\label{classPARSER_a76e724537f471d32948206061b0a04c4}
+
+\begin{DoxyCompactList}\small\item\em Write docked molecules as mol2 files ? \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a1355dce4f39c9fd9a52be2ba7ee962f4}{
+double \hyperlink{classPARSER_a1355dce4f39c9fd9a52be2ba7ee962f4}{sa\_\-mu\_\-t}}
+\label{classPARSER_a1355dce4f39c9fd9a52be2ba7ee962f4}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{classSA}{SA} mu. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a1d7e3a2a1ae04b12080169dafbc25f67}{
+double \hyperlink{classPARSER_a1d7e3a2a1ae04b12080169dafbc25f67}{grid\_\-spacing}}
+\label{classPARSER_a1d7e3a2a1ae04b12080169dafbc25f67}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{classGrid}{Grid} spacing when using grid computation. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_aafe1aeb46fba4bbdd786ae8a3a69b65e}{
+bool \hyperlink{classPARSER_aafe1aeb46fba4bbdd786ae8a3a69b65e}{use\_\-grids}}
+\label{classPARSER_aafe1aeb46fba4bbdd786ae8a3a69b65e}
+
+\begin{DoxyCompactList}\small\item\em Use energy grids. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a14e80febc60e4ad65bf8e7d2056b080e}{
+double \hyperlink{classPARSER_a14e80febc60e4ad65bf8e7d2056b080e}{search\_\-box\_\-x}}
+\label{classPARSER_a14e80febc60e4ad65bf8e7d2056b080e}
+
+\begin{DoxyCompactList}\small\item\em Maximal box to search during optimization. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a7eaa6173ff254186fba36df1c2c09dd3}{
+double {\bfseries search\_\-box\_\-y}}
+\label{classPARSER_a7eaa6173ff254186fba36df1c2c09dd3}
+
+\item 
+\hypertarget{classPARSER_a0b33916e70c2fc0850381a5807489612}{
+double {\bfseries search\_\-box\_\-z}}
+\label{classPARSER_a0b33916e70c2fc0850381a5807489612}
+
+\item 
+\hypertarget{classPARSER_ab7857bb0771c6d5ca2e0f7ff2c98d7d0}{
+bool \hyperlink{classPARSER_ab7857bb0771c6d5ca2e0f7ff2c98d7d0}{load\_\-grid\_\-from\_\-file}}
+\label{classPARSER_ab7857bb0771c6d5ca2e0f7ff2c98d7d0}
+
+\begin{DoxyCompactList}\small\item\em Load pre-\/computed grids from file. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a023b62e5f1631899ba2916344a3185ea}{
+string \hyperlink{classPARSER_a023b62e5f1631899ba2916344a3185ea}{grid\_\-prefix}}
+\label{classPARSER_a023b62e5f1631899ba2916344a3185ea}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{classGrid}{Grid} file prefix. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a95e2d120bdb28932a0fd7cfcf362f35d}{
+bool \hyperlink{classPARSER_a95e2d120bdb28932a0fd7cfcf362f35d}{write\_\-grids}}
+\label{classPARSER_a95e2d120bdb28932a0fd7cfcf362f35d}
+
+\begin{DoxyCompactList}\small\item\em Write computed grids to file. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a49c71c88e94cb132fc880db52f4f1f0a}{
+bool \hyperlink{classPARSER_a49c71c88e94cb132fc880db52f4f1f0a}{show\_\-rmsd}}
+\label{classPARSER_a49c71c88e94cb132fc880db52f4f1f0a}
+
+\begin{DoxyCompactList}\small\item\em Show RMSD. Used for debuggin purposes only. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classPARSER_a2b4a169dd1600254c33ebb5338342795}{sort\_\-by\_\-energy}
+\item 
+\hypertarget{classPARSER_aeb4a5fc53598e83929871ea481bd5a5a}{
+bool \hyperlink{classPARSER_aeb4a5fc53598e83929871ea481bd5a5a}{only\_\-score}}
+\label{classPARSER_aeb4a5fc53598e83929871ea481bd5a5a}
+
+\begin{DoxyCompactList}\small\item\em Only scores ligands, without optimization. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_aed226057b66b2aaafee2ff0215f2ade8}{
+double \hyperlink{classPARSER_aed226057b66b2aaafee2ff0215f2ade8}{solvation\_\-alpha}}
+\label{classPARSER_aed226057b66b2aaafee2ff0215f2ade8}
+
+\begin{DoxyCompactList}\small\item\em Alpha parameter in solvent affinity. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_af5b49b26dca625c489fd8700e9b1c88f}{
+double \hyperlink{classPARSER_af5b49b26dca625c489fd8700e9b1c88f}{solvation\_\-beta}}
+\label{classPARSER_af5b49b26dca625c489fd8700e9b1c88f}
+
+\begin{DoxyCompactList}\small\item\em Beta parameter in solvent affinity. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_aeaf8bf9b52d3a318492b8d3e420b6742}{
+int \hyperlink{classPARSER_aeaf8bf9b52d3a318492b8d3e420b6742}{seed}}
+\label{classPARSER_aeaf8bf9b52d3a318492b8d3e420b6742}
+
+\begin{DoxyCompactList}\small\item\em seed for random number generation \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_aeb9b56acb5c06a34abef9f3c37d31ee3}{
+bool \hyperlink{classPARSER_aeb9b56acb5c06a34abef9f3c37d31ee3}{ligsim}}
+\label{classPARSER_aeb9b56acb5c06a34abef9f3c37d31ee3}
+
+\begin{DoxyCompactList}\small\item\em ligand simulation \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a6bfc22c8f2f8f26bc27586ba3104fc24}{
+int \hyperlink{classPARSER_a6bfc22c8f2f8f26bc27586ba3104fc24}{mc\_\-stride}}
+\label{classPARSER_a6bfc22c8f2f8f26bc27586ba3104fc24}
+
+\begin{DoxyCompactList}\small\item\em An \char`\"{}stride\char`\"{} parameter for writing trajectory file. Coordinates are written at mc\_\-stride intervals. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a2079483108b3b83d52007342863f3d68}{
+string \hyperlink{classPARSER_a2079483108b3b83d52007342863f3d68}{dielectric\_\-model}}
+\label{classPARSER_a2079483108b3b83d52007342863f3d68}
+
+\begin{DoxyCompactList}\small\item\em dielectric\_\-model This keyword brings the model for dieletric constant usage in electrostatic evaluation within the code. There are three available models: $\backslash$\char`\"{}constant$\backslash$\char`\"{} : will use a single constant value for dieletric. This value can be defined in \hyperlink{classPARSER_a810e7958f2e04522e6915962a9f1e3d9}{PARSER::diel}; $\backslash$\char`\"{}r$\backslash$\char`\"{} : will use a dielectric function where D is equal to r, i.e., the distance between the two atoms. $\backslash$\char`\"{}4r$\backslash$\char`\"{} : uses a 4 times r function for D. This is the model used in UCSF DOC6. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a99ecb75c6287ffa38f88f12129f851a5}{
+int \hyperlink{classPARSER_a99ecb75c6287ffa38f88f12129f851a5}{mcr\_\-size}}
+\label{classPARSER_a99ecb75c6287ffa38f88f12129f851a5}
+
+\begin{DoxyCompactList}\small\item\em Size for Monte Carlo Recursion (MCR) series. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a60dee49e55f10bf3546df6005392810f}{
+vector$<$ double $>$ \hyperlink{classPARSER_a60dee49e55f10bf3546df6005392810f}{mcr\_\-coefficients}}
+\label{classPARSER_a60dee49e55f10bf3546df6005392810f}
+
+\begin{DoxyCompactList}\small\item\em Vector with MCR coefficients (bi values from Li and Scheraga's paper);. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_aee4757f16ee2110b0b7f2187c90737d6}{
+bool \hyperlink{classPARSER_aee4757f16ee2110b0b7f2187c90737d6}{mcr\_\-mode}}
+\label{classPARSER_aee4757f16ee2110b0b7f2187c90737d6}
+
+\begin{DoxyCompactList}\small\item\em Activates MCR mode. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a1872e365e7db950c0472cfe55b89b784}{
+double \hyperlink{classPARSER_a1872e365e7db950c0472cfe55b89b784}{bi}}
+\label{classPARSER_a1872e365e7db950c0472cfe55b89b784}
+
+\begin{DoxyCompactList}\small\item\em b coefficient for MCR in the ith iteration; \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_ac10edf434b48ccd7b4afb63bea264be0}{
+bool \hyperlink{classPARSER_ac10edf434b48ccd7b4afb63bea264be0}{verbose}}
+\label{classPARSER_ac10edf434b48ccd7b4afb63bea264be0}
+
+\begin{DoxyCompactList}\small\item\em Defines whether extensive output should be given. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a41e566fb857232936bab1b70aff18419}{
+int \hyperlink{classPARSER_a41e566fb857232936bab1b70aff18419}{entropy\_\-rotation\_\-bins}}
+\label{classPARSER_a41e566fb857232936bab1b70aff18419}
+
+\begin{DoxyCompactList}\small\item\em Number of bins for histograming the \hyperlink{classMC}{MC} data for ligand rotation. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a9dbf30db599861b8cb6931a69c6b8d4b}{
+int \hyperlink{classPARSER_a9dbf30db599861b8cb6931a69c6b8d4b}{entropy\_\-translation\_\-bins}}
+\label{classPARSER_a9dbf30db599861b8cb6931a69c6b8d4b}
+
+\begin{DoxyCompactList}\small\item\em Number of bins for histograming the \hyperlink{classMC}{MC} data for ligand translation. \item\end{DoxyCompactList}\item 
+string \hyperlink{classPARSER_a0a43b6648c3d3178e2a300750e91eee2}{ligand\_\-energy\_\-model}
+\item 
+\hypertarget{classPARSER_a0e6b81780fb84de567c15a8a3604281a}{
+string \hyperlink{classPARSER_a0e6b81780fb84de567c15a8a3604281a}{atomic\_\-model\_\-ff}}
+\label{classPARSER_a0e6b81780fb84de567c15a8a3604281a}
+
+\begin{DoxyCompactList}\small\item\em Defines whether atoms should be defined as GAFF types or AMBER types. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a52ff2cfc274eb788806278035b3b5e55}{
+string \hyperlink{classPARSER_a52ff2cfc274eb788806278035b3b5e55}{pbsa\_\-grid}}
+\label{classPARSER_a52ff2cfc274eb788806278035b3b5e55}
+
+\begin{DoxyCompactList}\small\item\em Defines an electrostatic potential grid as computed by PBSA (AMBERTools). \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a9a5fa2d02d97a78c0e1bb54fc17c255e}{
+string \hyperlink{classPARSER_a9a5fa2d02d97a78c0e1bb54fc17c255e}{delphi\_\-grid}}
+\label{classPARSER_a9a5fa2d02d97a78c0e1bb54fc17c255e}
+
+\begin{DoxyCompactList}\small\item\em Defines an electrostatic potential grid as computed by DelPhi. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_adab1d9d9c728204a257bf57ca844481a}{
+bool \hyperlink{classPARSER_adab1d9d9c728204a257bf57ca844481a}{use\_\-pbsa}}
+\label{classPARSER_adab1d9d9c728204a257bf57ca844481a}
+
+\begin{DoxyCompactList}\small\item\em Defines whether PBSA potential from AmberTools is to be used. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a88e14ebcae2cc1a70f27dcfe65cab06b}{
+bool \hyperlink{classPARSER_a88e14ebcae2cc1a70f27dcfe65cab06b}{use\_\-delphi}}
+\label{classPARSER_a88e14ebcae2cc1a70f27dcfe65cab06b}
+
+\begin{DoxyCompactList}\small\item\em Defines whether potential from Delphi (binary file) is to be used. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a61400eb6ce0793897de321cddb1716f9}{
+int \hyperlink{classPARSER_a61400eb6ce0793897de321cddb1716f9}{delphi\_\-gsize}}
+\label{classPARSER_a61400eb6ce0793897de321cddb1716f9}
+
+\begin{DoxyCompactList}\small\item\em Number of points in delphi grid in each direction. Must be an odd number. \item\end{DoxyCompactList}\item 
+\hypertarget{classPARSER_a14e5d5f52a940a99e4452aaf9925ce4a}{
+string \hyperlink{classPARSER_a14e5d5f52a940a99e4452aaf9925ce4a}{delphi\_\-cube\_\-grid}}
+\label{classPARSER_a14e5d5f52a940a99e4452aaf9925ce4a}
+
+\begin{DoxyCompactList}\small\item\em Defines an electrostatic potential in DelPhi CUBE format. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{classPARSER}{PARSER} class is used to get the input parameters from the input file. These parameters are used in almost every class of the program. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classPARSER_a3ae5ce3223fefb960976fe4bbe9083f5}{
+\index{PARSER@{PARSER}!check\_\-parameters\_\-sanity@{check\_\-parameters\_\-sanity}}
+\index{check\_\-parameters\_\-sanity@{check\_\-parameters\_\-sanity}!PARSER@{PARSER}}
+\subsubsection[{check\_\-parameters\_\-sanity}]{\setlength{\rightskip}{0pt plus 5cm}void PARSER::check\_\-parameters\_\-sanity (void)}}
+\label{classPARSER_a3ae5ce3223fefb960976fe4bbe9083f5}
+This function check the consistency of some of the given parameters. \hypertarget{classPARSER_aa33f0f4b7870aa1f5e9bf9e67bc648fa}{
+\index{PARSER@{PARSER}!comparing@{comparing}}
+\index{comparing@{comparing}!PARSER@{PARSER}}
+\subsubsection[{comparing}]{\setlength{\rightskip}{0pt plus 5cm}void PARSER::comparing (string {\em param}, \/  ifstream \& {\em input})}}
+\label{classPARSER_aa33f0f4b7870aa1f5e9bf9e67bc648fa}
+This function actually processes the parameter parsed in the input file. \hypertarget{classPARSER_a4153cc523f4a054e7c488c4fe25b9fa1}{
+\index{PARSER@{PARSER}!set\_\-parameters@{set\_\-parameters}}
+\index{set\_\-parameters@{set\_\-parameters}!PARSER@{PARSER}}
+\subsubsection[{set\_\-parameters}]{\setlength{\rightskip}{0pt plus 5cm}void PARSER::set\_\-parameters (char $\ast$ {\em arg})}}
+\label{classPARSER_a4153cc523f4a054e7c488c4fe25b9fa1}
+This function sets some default parameters and then calls the next function while parses the input files to grab the parameters of the simulation; 
+
+\subsection{Member Data Documentation}
+\hypertarget{classPARSER_a974c6bc2d7250503d9dddece25abdb62}{
+\index{PARSER@{PARSER}!flex\_\-lig@{flex\_\-lig}}
+\index{flex\_\-lig@{flex\_\-lig}!PARSER@{PARSER}}
+\subsubsection[{flex\_\-lig}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf PARSER::flex\_\-lig}}}
+\label{classPARSER_a974c6bc2d7250503d9dddece25abdb62}
+Flag to define if the ligand will be defined as flexible. The flag is a automatically turned on when the input command lig\_\-traj is used. \hypertarget{classPARSER_a9f3545bfdf2adb743c7cec9b7ebf904b}{
+\index{PARSER@{PARSER}!flex\_\-rec@{flex\_\-rec}}
+\index{flex\_\-rec@{flex\_\-rec}!PARSER@{PARSER}}
+\subsubsection[{flex\_\-rec}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf PARSER::flex\_\-rec}}}
+\label{classPARSER_a9f3545bfdf2adb743c7cec9b7ebf904b}
+Flag to define if the receptor will be defined as flexible. The flag is a automatically turned on when the input command rec\_\-traj is used. \hypertarget{classPARSER_a0e2e4608457fc138a5f76dbba8b0ade2}{
+\index{PARSER@{PARSER}!lig\_\-traj@{lig\_\-traj}}
+\index{lig\_\-traj@{lig\_\-traj}!PARSER@{PARSER}}
+\subsubsection[{lig\_\-traj}]{\setlength{\rightskip}{0pt plus 5cm}string {\bf PARSER::lig\_\-traj}}}
+\label{classPARSER_a0e2e4608457fc138a5f76dbba8b0ade2}
+Filename with ligand \char`\"{}trajectory\char`\"{} to use it in a semi-\/flexible approach. The file format is the same as in AMBER trajectory. \hypertarget{classPARSER_a0a43b6648c3d3178e2a300750e91eee2}{
+\index{PARSER@{PARSER}!ligand\_\-energy\_\-model@{ligand\_\-energy\_\-model}}
+\index{ligand\_\-energy\_\-model@{ligand\_\-energy\_\-model}!PARSER@{PARSER}}
+\subsubsection[{ligand\_\-energy\_\-model}]{\setlength{\rightskip}{0pt plus 5cm}string {\bf PARSER::ligand\_\-energy\_\-model}}}
+\label{classPARSER_a0a43b6648c3d3178e2a300750e91eee2}
+There are two currently implemented functions for evaluating the ligand internal energy. The possible choices are: $\backslash$\char`\"{}gaff$\backslash$\char`\"{} or $\backslash$\char`\"{}MMFF94$\backslash$\char`\"{} \hypertarget{classPARSER_aeb177596ca3ca3cb2910a8ba3fe2c77e}{
+\index{PARSER@{PARSER}!overlay\_\-optimizer@{overlay\_\-optimizer}}
+\index{overlay\_\-optimizer@{overlay\_\-optimizer}!PARSER@{PARSER}}
+\subsubsection[{overlay\_\-optimizer}]{\setlength{\rightskip}{0pt plus 5cm}string {\bf PARSER::overlay\_\-optimizer}}}
+\label{classPARSER_aeb177596ca3ca3cb2910a8ba3fe2c77e}
+Algorithm for overlay optimization. Current options are: lbfgs ln\_\-auglag cobyla mma subplex ld\_\-auglag crs direct \hypertarget{classPARSER_ae0e302d8902665dc3a9f9a42ae5e5a34}{
+\index{PARSER@{PARSER}!rec\_\-traj@{rec\_\-traj}}
+\index{rec\_\-traj@{rec\_\-traj}!PARSER@{PARSER}}
+\subsubsection[{rec\_\-traj}]{\setlength{\rightskip}{0pt plus 5cm}string {\bf PARSER::rec\_\-traj}}}
+\label{classPARSER_ae0e302d8902665dc3a9f9a42ae5e5a34}
+Filename with receptor \char`\"{}trajectory\char`\"{} to use it in a semi-\/flexible approach. The file format is the same as in AMBER trajectory. \hypertarget{classPARSER_ad4acb599b6863a95916e0646d27acdd0}{
+\index{PARSER@{PARSER}!scoring\_\-function@{scoring\_\-function}}
+\index{scoring\_\-function@{scoring\_\-function}!PARSER@{PARSER}}
+\subsubsection[{scoring\_\-function}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf PARSER::scoring\_\-function}}}
+\label{classPARSER_ad4acb599b6863a95916e0646d27acdd0}
+Defines the scoring function to be used throughout the code. 0 = Softcore + Solvation 1 = Softcore 2 = Amber FF + Solvation 3 = Amber FF \hypertarget{classPARSER_a2b4a169dd1600254c33ebb5338342795}{
+\index{PARSER@{PARSER}!sort\_\-by\_\-energy@{sort\_\-by\_\-energy}}
+\index{sort\_\-by\_\-energy@{sort\_\-by\_\-energy}!PARSER@{PARSER}}
+\subsubsection[{sort\_\-by\_\-energy}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf PARSER::sort\_\-by\_\-energy}}}
+\label{classPARSER_a2b4a169dd1600254c33ebb5338342795}
+Sort conformers using initial binding energy. If set to false, conformers will be ranked by Overlay objective function. \hypertarget{classPARSER_afbcdf1c31d8279ba29032abe0cba11a8}{
+\index{PARSER@{PARSER}!timeout@{timeout}}
+\index{timeout@{timeout}!PARSER@{PARSER}}
+\subsubsection[{timeout}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf PARSER::timeout}}}
+\label{classPARSER_afbcdf1c31d8279ba29032abe0cba11a8}
+Defines a timeout function (in seconds) in Equilibrium simulations. Above this limit, the program will abort the execution. 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/PARSER.h\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/PARSER.cpp\end{DoxyCompactItemize}

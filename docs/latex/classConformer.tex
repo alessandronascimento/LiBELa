@@ -1,0 +1,36 @@
+\hypertarget{classConformer}{
+\section{Conformer Class Reference}
+\label{classConformer}\index{Conformer@{Conformer}}
+}
+
+
+The \hyperlink{classConformer}{Conformer} class is dedicated to the conformer generation during the docking procedure. It heavily relies on the OpenBabel API to such task.  
+
+
+{\ttfamily \#include $<$Conformer.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classConformer_a06ec3936e09d186872a13e484aa33d50}{
+shared\_\-ptr$<$ OBMol $>$ {\bfseries GetMol} (const string \&molfile)}
+\label{classConformer_a06ec3936e09d186872a13e484aa33d50}
+
+\item 
+\hypertarget{classConformer_a72dc33b0b1291bace2642cc96b51a906}{
+bool \hyperlink{classConformer_a72dc33b0b1291bace2642cc96b51a906}{generate\_\-conformers\_\-GA} (\hyperlink{classPARSER}{PARSER} $\ast$Input, \hyperlink{classMol2}{Mol2} $\ast$Lig, string molfile)}
+\label{classConformer_a72dc33b0b1291bace2642cc96b51a906}
+
+\begin{DoxyCompactList}\small\item\em Generates molecule conformers using Genetic Algorithm, as implemented in OpenBabel. \item\end{DoxyCompactList}\item 
+\hypertarget{classConformer_a429a2d0414b9270709761d7bc51f2d47}{
+bool \hyperlink{classConformer_a429a2d0414b9270709761d7bc51f2d47}{generate\_\-conformers\_\-WRS} (\hyperlink{classPARSER}{PARSER} $\ast$Input, \hyperlink{classMol2}{Mol2} $\ast$Lig, string molfile)}
+\label{classConformer_a429a2d0414b9270709761d7bc51f2d47}
+
+\begin{DoxyCompactList}\small\item\em Generates molecule conformers using the weighted rotor search, as implemented in OpenBabel. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{classConformer}{Conformer} class is dedicated to the conformer generation during the docking procedure. It heavily relies on the OpenBabel API to such task. 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/Conformer.h\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/Conformer.cpp\end{DoxyCompactItemize}
