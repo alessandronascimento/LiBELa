@@ -1,0 +1,231 @@
+\hypertarget{classMol2}{
+\section{Mol2 Class Reference}
+\label{classMol2}\index{Mol2@{Mol2}}
+}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structMol2_1_1atom__param}{atom\_\-param}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classMol2_a418668977615fd445e59cb4a49e98787}{Mol2} ()
+\item 
+\hypertarget{classMol2_ae1d5f65764f483ef0202d0fb9374557d}{
+{\bfseries Mol2} (\hyperlink{classPARSER}{PARSER} $\ast$Input, string molfile)}
+\label{classMol2_ae1d5f65764f483ef0202d0fb9374557d}
+
+\item 
+\hypertarget{classMol2_a0c47e92dbbd1c9b82e310f2fb8c7c607}{
+bool {\bfseries parse\_\-gzipped\_\-file} (\hyperlink{classPARSER}{PARSER} $\ast$Input, string molfile)}
+\label{classMol2_a0c47e92dbbd1c9b82e310f2fb8c7c607}
+
+\item 
+\hypertarget{classMol2_aae3befcff264c7bd4843ea4038e79328}{
+bool {\bfseries parse\_\-mol2file} (\hyperlink{classPARSER}{PARSER} $\ast$Input, string molfile)}
+\label{classMol2_aae3befcff264c7bd4843ea4038e79328}
+
+\item 
+\hypertarget{classMol2_a63f69cd391baa0413b25222ae8040c53}{
+bool {\bfseries parse\_\-gzipped\_\-ensemble} (\hyperlink{classPARSER}{PARSER} $\ast$Input, string molfile, int skipper)}
+\label{classMol2_a63f69cd391baa0413b25222ae8040c53}
+
+\item 
+\hypertarget{classMol2_afd54ce3d57ba43d53f471758251a032d}{
+void {\bfseries initialize\_\-gaff} ()}
+\label{classMol2_afd54ce3d57ba43d53f471758251a032d}
+
+\item 
+\hypertarget{classMol2_ae78d6728556da4ce73b7e0bb2ff6b2ba}{
+void {\bfseries get\_\-gaff\_\-atomic\_\-parameters} (string gaff\_\-atom, \hyperlink{structMol2_1_1atom__param}{atom\_\-param} $\ast$ap)}
+\label{classMol2_ae78d6728556da4ce73b7e0bb2ff6b2ba}
+
+\item 
+\hypertarget{classMol2_acf278b038166af8801bb4a32eb05bc66}{
+string {\bfseries sybyl\_\-2\_\-gaff} (string atom)}
+\label{classMol2_acf278b038166af8801bb4a32eb05bc66}
+
+\item 
+\hypertarget{classMol2_a8ee4dc0edb8a381b6ce1cb5f13ebe0ed}{
+string {\bfseries sybyl\_\-2\_\-amber} (string atom)}
+\label{classMol2_a8ee4dc0edb8a381b6ce1cb5f13ebe0ed}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classMol2_a7fcd40f8ea09f926d94e8394afb4751b}{
+int \hyperlink{classMol2_a7fcd40f8ea09f926d94e8394afb4751b}{N}}
+\label{classMol2_a7fcd40f8ea09f926d94e8394afb4751b}
+
+\begin{DoxyCompactList}\small\item\em Number of atoms. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_a1cc7fff66596ea277d2ff447082b8808}{
+int \hyperlink{classMol2_a1cc7fff66596ea277d2ff447082b8808}{Nres}}
+\label{classMol2_a1cc7fff66596ea277d2ff447082b8808}
+
+\begin{DoxyCompactList}\small\item\em Number of residues. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_abec1d304ce65117eafb1bfc03bd37cae}{
+int \hyperlink{classMol2_abec1d304ce65117eafb1bfc03bd37cae}{Natomtypes}}
+\label{classMol2_abec1d304ce65117eafb1bfc03bd37cae}
+
+\begin{DoxyCompactList}\small\item\em Number of atomtypes. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_a2c0dbb3b4214d3f462882f21ac0827d5}{
+int \hyperlink{classMol2_a2c0dbb3b4214d3f462882f21ac0827d5}{Nbonds}}
+\label{classMol2_a2c0dbb3b4214d3f462882f21ac0827d5}
+
+\begin{DoxyCompactList}\small\item\em Number of bonds;. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_a55113887837f3028146348ff6a0cc1b4}{
+string {\bfseries molname}}
+\label{classMol2_a55113887837f3028146348ff6a0cc1b4}
+
+\item 
+\hypertarget{classMol2_a85429e831336c4f3044b6cc879a8b656}{
+vector$<$ double $>$ \hyperlink{classMol2_a85429e831336c4f3044b6cc879a8b656}{charges}}
+\label{classMol2_a85429e831336c4f3044b6cc879a8b656}
+
+\begin{DoxyCompactList}\small\item\em Charges of the atoms. Must be divided by 18.2223 to get electron charges. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_a74b5089ad2715395ee10b9fd88bff5cb}{
+vector$<$ double $>$ \hyperlink{classMol2_a74b5089ad2715395ee10b9fd88bff5cb}{masses}}
+\label{classMol2_a74b5089ad2715395ee10b9fd88bff5cb}
+
+\begin{DoxyCompactList}\small\item\em Atomic masses for the system. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_af85e3cb0ab589edbe1f892600dd00d16}{
+vector$<$ string $>$ \hyperlink{classMol2_af85e3cb0ab589edbe1f892600dd00d16}{amberatoms}}
+\label{classMol2_af85e3cb0ab589edbe1f892600dd00d16}
+
+\begin{DoxyCompactList}\small\item\em Atom names for the system according to AMBER FF. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_a6bda0cb634fcad4bc779b68e15e4862a}{
+vector$<$ string $>$ \hyperlink{classMol2_a6bda0cb634fcad4bc779b68e15e4862a}{atomtypes\_\-prm}}
+\label{classMol2_a6bda0cb634fcad4bc779b68e15e4862a}
+
+\begin{DoxyCompactList}\small\item\em Atomic parameters. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_acfc5e49a5d727d7eb189d14af49dc686}{
+vector$<$ string $>$ \hyperlink{classMol2_acfc5e49a5d727d7eb189d14af49dc686}{atomnames}}
+\label{classMol2_acfc5e49a5d727d7eb189d14af49dc686}
+
+\begin{DoxyCompactList}\small\item\em Atomic names. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_afb3479b3d5aea0293e981c2f94f20851}{
+vector$<$ vector$<$ double $>$ $>$ \hyperlink{classMol2_afb3479b3d5aea0293e981c2f94f20851}{xyz}}
+\label{classMol2_afb3479b3d5aea0293e981c2f94f20851}
+
+\begin{DoxyCompactList}\small\item\em Atomic coordinates. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_acc192964e0d203c413a24b5344cdcf20}{
+vector$<$ vector$<$ double $>$ $>$ \hyperlink{classMol2_acc192964e0d203c413a24b5344cdcf20}{new\_\-xyz}}
+\label{classMol2_acc192964e0d203c413a24b5344cdcf20}
+
+\begin{DoxyCompactList}\small\item\em Atomic coordinates after rotation/translation. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_a610095e1130b4083d386ca5d5e279b1f}{
+vector$<$ vector$<$ double $>$ $>$ \hyperlink{classMol2_a610095e1130b4083d386ca5d5e279b1f}{old\_\-xyz}}
+\label{classMol2_a610095e1130b4083d386ca5d5e279b1f}
+
+\begin{DoxyCompactList}\small\item\em Atomic coordinates from the last step accepted. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_a85603d7c0efd02e0300af83d795bffc7}{
+vector$<$ vector$<$ double $>$ $>$ \hyperlink{classMol2_a85603d7c0efd02e0300af83d795bffc7}{opt\_\-overlay\_\-xyz}}
+\label{classMol2_a85603d7c0efd02e0300af83d795bffc7}
+
+\begin{DoxyCompactList}\small\item\em Atomic coordinates from the optimized pose. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_a4966098d311df353325581cf73cd9d51}{
+vector$<$ vector$<$ double $>$ $>$ \hyperlink{classMol2_a4966098d311df353325581cf73cd9d51}{opt\_\-energy\_\-xyz}}
+\label{classMol2_a4966098d311df353325581cf73cd9d51}
+
+\begin{DoxyCompactList}\small\item\em Atomic coordinates from the optimized pose. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_aaebd576ac40a953d005ab11b90ff60a3}{
+vector$<$ vector$<$ vector$<$ double $>$ $>$ $>$ \hyperlink{classMol2_aaebd576ac40a953d005ab11b90ff60a3}{mcoords}}
+\label{classMol2_aaebd576ac40a953d005ab11b90ff60a3}
+
+\begin{DoxyCompactList}\small\item\em Trajectory vector. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_adcc95358a2c491ac6a14a30044787472}{
+vector$<$ double $>$ \hyperlink{classMol2_adcc95358a2c491ac6a14a30044787472}{epsilons}}
+\label{classMol2_adcc95358a2c491ac6a14a30044787472}
+
+\begin{DoxyCompactList}\small\item\em Atomic parameter for LJ computation. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_ae70f58cb375c447b9ec696083ee9eef8}{
+vector$<$ double $>$ \hyperlink{classMol2_ae70f58cb375c447b9ec696083ee9eef8}{epsilons\_\-sqrt}}
+\label{classMol2_ae70f58cb375c447b9ec696083ee9eef8}
+
+\begin{DoxyCompactList}\small\item\em Squared root of atoms epsilons. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_a7b15edd05ff72f2d22479ad8f4d1429a}{
+vector$<$ double $>$ \hyperlink{classMol2_a7b15edd05ff72f2d22479ad8f4d1429a}{radii}}
+\label{classMol2_a7b15edd05ff72f2d22479ad8f4d1429a}
+
+\begin{DoxyCompactList}\small\item\em Atomic radii. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_ae90bc79def72332bc0673ad31ad73fdd}{
+vector$<$ string $>$ \hyperlink{classMol2_ae90bc79def72332bc0673ad31ad73fdd}{resnames}}
+\label{classMol2_ae90bc79def72332bc0673ad31ad73fdd}
+
+\begin{DoxyCompactList}\small\item\em C++ vector with the names of the residues. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_af422c05d5d408a1b5d64522532ace2d3}{
+vector$<$ int $>$ \hyperlink{classMol2_af422c05d5d408a1b5d64522532ace2d3}{residue\_\-pointer}}
+\label{classMol2_af422c05d5d408a1b5d64522532ace2d3}
+
+\begin{DoxyCompactList}\small\item\em Pointers to the number of residues / number of atoms. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_a67ceb39981358eff84552a6eefa21065}{
+string \hyperlink{classMol2_a67ceb39981358eff84552a6eefa21065}{line}}
+\label{classMol2_a67ceb39981358eff84552a6eefa21065}
+
+\begin{DoxyCompactList}\small\item\em Temporary string to parse prmtop file. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_a6041f89cb497b7bd329a7d2de0bdd164}{
+char {\bfseries str} \mbox{[}80\mbox{]}}
+\label{classMol2_a6041f89cb497b7bd329a7d2de0bdd164}
+
+\item 
+\hypertarget{classMol2_adc7bfbbd47db76a1754510a21617a243}{
+double \hyperlink{classMol2_adc7bfbbd47db76a1754510a21617a243}{self\_\-obj\_\-function}}
+\label{classMol2_adc7bfbbd47db76a1754510a21617a243}
+
+\begin{DoxyCompactList}\small\item\em Keeps Vaa for RefMol/CompMol. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_a3be83bf91977f14cd2b8d2d9571f770f}{
+vector$<$ vector$<$ string $>$ $>$ {\bfseries bonds}}
+\label{classMol2_a3be83bf91977f14cd2b8d2d9571f770f}
+
+\item 
+\hypertarget{classMol2_a5a55037dab7bfc93bbc79be4370d4cb0}{
+vector$<$ string $>$ {\bfseries sybyl\_\-atoms}}
+\label{classMol2_a5a55037dab7bfc93bbc79be4370d4cb0}
+
+\item 
+\hypertarget{classMol2_a9a288053790fae593b7a83fa4c0fdf46}{
+vector$<$ vector$<$ vector$<$ double $>$ $>$ $>$ {\bfseries new\_\-mcoords}}
+\label{classMol2_a9a288053790fae593b7a83fa4c0fdf46}
+
+\item 
+\hypertarget{classMol2_a91fdebbbedf3445c41bd69f50ce7fffa}{
+string {\bfseries atm}}
+\label{classMol2_a91fdebbbedf3445c41bd69f50ce7fffa}
+
+\item 
+\hypertarget{classMol2_ab8b46ba77418c59d655e7fff5a5ac988}{
+vector$<$ double $>$ \hyperlink{classMol2_ab8b46ba77418c59d655e7fff5a5ac988}{conformer\_\-energies}}
+\label{classMol2_ab8b46ba77418c59d655e7fff5a5ac988}
+
+\begin{DoxyCompactList}\small\item\em Energies evaluated for the conformers generated. Uses GAFF. \item\end{DoxyCompactList}\item 
+\hypertarget{classMol2_af1d8d0fc093877e7d44a6d706c1e58f5}{
+vector$<$ double $>$ {\bfseries ensemble\_\-energies}}
+\label{classMol2_af1d8d0fc093877e7d44a6d706c1e58f5}
+
+\item 
+\hypertarget{classMol2_ae421fa0138847be547a747098dd398bf}{
+vector$<$ double $>$ {\bfseries ensemble\_\-rmsd}}
+\label{classMol2_ae421fa0138847be547a747098dd398bf}
+
+\item 
+\hypertarget{classMol2_a5f26f2369bc424207c647333aa94120d}{
+vector$<$ \hyperlink{structMol2_1_1atom__param}{atom\_\-param} $>$ {\bfseries gaff\_\-force\_\-field}}
+\label{classMol2_a5f26f2369bc424207c647333aa94120d}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classMol2_a418668977615fd445e59cb4a49e98787}{
+\index{Mol2@{Mol2}!Mol2@{Mol2}}
+\index{Mol2@{Mol2}!Mol2@{Mol2}}
+\subsubsection[{Mol2}]{\setlength{\rightskip}{0pt plus 5cm}Mol2::Mol2 ()}}
+\label{classMol2_a418668977615fd445e59cb4a49e98787}
+Initializer. This class has, as arguments, a pointer to the class \hyperlink{classPARSER}{PARSER}. The class uses some information given by the user there. The filename is also given as argument. This makes possible to use the same object to reference and comparing molecules. 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/Mol2.h\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/Mol2.cpp\end{DoxyCompactItemize}

@@ -1,0 +1,2 @@
+\form#0:$ prob = \exp(\frac{-\Delta E}{kT}) = \exp(\frac{-\Delta E}{(0.00198587752*T)})$
+\form#1:$ \Delta E = new energy - old energy $

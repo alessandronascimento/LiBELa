@@ -1,0 +1,231 @@
+\hypertarget{classEnergy2}{
+\section{Energy2 Class Reference}
+\label{classEnergy2}\index{Energy2@{Energy2}}
+}
+
+
+The \hyperlink{classEnergy2}{Energy2} class is used for energy calculations during docking and \hyperlink{classMC}{MC} simulations.  
+
+
+{\ttfamily \#include $<$Energy2.h$>$}\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structEnergy2_1_1GridInterpol}{GridInterpol}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classEnergy2_af4fe0287b93c3df2d2421dab5b366aad}{
+{\bfseries Energy2} (\hyperlink{classPARSER}{PARSER} $\ast$\_\-Input)}
+\label{classEnergy2_af4fe0287b93c3df2d2421dab5b366aad}
+
+\item 
+double \hyperlink{classEnergy2_a39f28781562359d06bef39ad66f33e85}{distance} (double x1, double x2, double y1, double y2, double z1, double z2)
+\begin{DoxyCompactList}\small\item\em distance Computes the distance between two atoms \item\end{DoxyCompactList}\item 
+double \hyperlink{classEnergy2_a1711c52d5df4cd462fe5a5bd34c56e46}{distance\_\-squared} (double x1, double x2, double y1, double y2, double z1, double z2)
+\begin{DoxyCompactList}\small\item\em distance\_\-squared Computes the square of the distance between two atoms \item\end{DoxyCompactList}\item 
+double \hyperlink{classEnergy2_af89f6892acb0a6db0da0b8e941edbed4}{compute\_\-energy\_\-softcore\_\-solvation} (\hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ lig\_\-xyz)
+\begin{DoxyCompactList}\small\item\em compute\_\-energy\_\-softcore\_\-solvation Computes the interaction energy between ligand and receptor using a softcore model with solvation (SV model) \item\end{DoxyCompactList}\item 
+double \hyperlink{classEnergy2_aaac598707f6a3fab0df8d7436b3cdeeb}{compute\_\-energy\_\-softcore} (\hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ lig\_\-xyz)
+\item 
+\hypertarget{classEnergy2_ace8c57a67ba48c2f6e386e6413937112}{
+double {\bfseries compute\_\-energy\_\-hardcore\_\-solvation} (\hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ lig\_\-xyz)}
+\label{classEnergy2_ace8c57a67ba48c2f6e386e6413937112}
+
+\item 
+\hypertarget{classEnergy2_aa82974473ccb43be045d488f05d38eee}{
+double {\bfseries compute\_\-energy\_\-hardcore} (\hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ lig\_\-xyz)}
+\label{classEnergy2_aa82974473ccb43be045d488f05d38eee}
+
+\item 
+\hypertarget{classEnergy2_a3e8255bddfc1ff5e88ef94fadcdb47c2}{
+double {\bfseries compute\_\-ene\_\-from\_\-grids\_\-softcore\_\-solvation} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ xyz)}
+\label{classEnergy2_a3e8255bddfc1ff5e88ef94fadcdb47c2}
+
+\item 
+\hypertarget{classEnergy2_acb9337e5b968239a2c7588e2e557f25b}{
+double {\bfseries compute\_\-ene\_\-from\_\-grids\_\-softcore} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ xyz)}
+\label{classEnergy2_acb9337e5b968239a2c7588e2e557f25b}
+
+\item 
+\hypertarget{classEnergy2_a33b6f06a4ef1657edcabc6a6e332ba7f}{
+double {\bfseries compute\_\-ene\_\-from\_\-grids\_\-hardcore\_\-solvation} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ xyz)}
+\label{classEnergy2_a33b6f06a4ef1657edcabc6a6e332ba7f}
+
+\item 
+\hypertarget{classEnergy2_ae090db2ca1e8b37093f23d1c2722d85e}{
+double {\bfseries compute\_\-ene\_\-from\_\-grids\_\-hardcore} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ xyz)}
+\label{classEnergy2_ae090db2ca1e8b37093f23d1c2722d85e}
+
+\item 
+double \hyperlink{classEnergy2_aeaab8d7882978f706c549575abbfb571}{compute\_\-energy\_\-softcore\_\-solvation} (\hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ lig\_\-xyz, \hyperlink{structenergy__result__t}{energy\_\-result\_\-t} $\ast$energy\_\-result)
+\item 
+double \hyperlink{classEnergy2_ade85175ed28a01f9e065683e7bb20a29}{compute\_\-energy\_\-softcore} (\hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ lig\_\-xyz, \hyperlink{structenergy__result__t}{energy\_\-result\_\-t} $\ast$energy\_\-result)
+\item 
+\hypertarget{classEnergy2_aea2da15b31ab8c032e1d562989672fb1}{
+double {\bfseries compute\_\-energy\_\-hardcore\_\-solvation} (\hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ lig\_\-xyz, \hyperlink{structenergy__result__t}{energy\_\-result\_\-t} $\ast$energy\_\-result)}
+\label{classEnergy2_aea2da15b31ab8c032e1d562989672fb1}
+
+\item 
+\hypertarget{classEnergy2_aa07e503921a676ce153515fa7aa4b8ce}{
+double {\bfseries compute\_\-energy\_\-hardcore} (\hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ lig\_\-xyz, \hyperlink{structenergy__result__t}{energy\_\-result\_\-t} $\ast$energy\_\-result)}
+\label{classEnergy2_aa07e503921a676ce153515fa7aa4b8ce}
+
+\item 
+\hypertarget{classEnergy2_af9aef75d1e5070a3f3e53cecccdec6b7}{
+double {\bfseries compute\_\-ene} (\hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$lig\_\-xyz)}
+\label{classEnergy2_af9aef75d1e5070a3f3e53cecccdec6b7}
+
+\item 
+\hypertarget{classEnergy2_acdc4ed50530d45cd313b5e8f7ebbe4b1}{
+double {\bfseries compute\_\-ene} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$lig\_\-xyz)}
+\label{classEnergy2_acdc4ed50530d45cd313b5e8f7ebbe4b1}
+
+\item 
+\hypertarget{classEnergy2_a74a7e5634998629b6fd52d42fa2a29a5}{
+double {\bfseries compute\_\-ene} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ lig\_\-xyz, \hyperlink{structenergy__result__t}{energy\_\-result\_\-t} $\ast$energy\_\-result)}
+\label{classEnergy2_a74a7e5634998629b6fd52d42fa2a29a5}
+
+\item 
+\hypertarget{classEnergy2_a2318a84e61afa6a70f94f5f57c73e005}{
+double {\bfseries compute\_\-ene} (\hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ lig\_\-xyz, \hyperlink{structenergy__result__t}{energy\_\-result\_\-t} $\ast$energy\_\-result)}
+\label{classEnergy2_a2318a84e61afa6a70f94f5f57c73e005}
+
+\item 
+\hypertarget{classEnergy2_a94aaca51dc2357f6e05ba1a63c1e04bb}{
+double {\bfseries compute\_\-ene\_\-from\_\-grids\_\-hardcore\_\-solvation} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ xyz, \hyperlink{structenergy__result__t}{energy\_\-result\_\-t} $\ast$energy\_\-result)}
+\label{classEnergy2_a94aaca51dc2357f6e05ba1a63c1e04bb}
+
+\item 
+\hypertarget{classEnergy2_a502b0f9cc1cff0a5999ae8cbcc4b45fd}{
+double {\bfseries compute\_\-ene\_\-from\_\-grids\_\-hardcore} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ xyz, \hyperlink{structenergy__result__t}{energy\_\-result\_\-t} $\ast$energy\_\-result)}
+\label{classEnergy2_a502b0f9cc1cff0a5999ae8cbcc4b45fd}
+
+\item 
+\hypertarget{classEnergy2_af318343551e84e01b35677d1ef56c9d9}{
+double {\bfseries compute\_\-ene\_\-from\_\-grids\_\-softcore\_\-solvation} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ xyz, \hyperlink{structenergy__result__t}{energy\_\-result\_\-t} $\ast$energy\_\-result)}
+\label{classEnergy2_af318343551e84e01b35677d1ef56c9d9}
+
+\item 
+\hypertarget{classEnergy2_a569533dd35443958603e94777e0cdb37}{
+double {\bfseries compute\_\-ene\_\-from\_\-grids\_\-softcore} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ xyz, \hyperlink{structenergy__result__t}{energy\_\-result\_\-t} $\ast$energy\_\-result)}
+\label{classEnergy2_a569533dd35443958603e94777e0cdb37}
+
+\item 
+\hypertarget{classEnergy2_a4d6f5584b85e8557c6e77c678c59cb9a}{
+double {\bfseries trilinear\_\-interpolation} (vector$<$ vector$<$ vector$<$ double $>$ $>$ $>$ grid, double x, double y, double z, int x0, int y0, int z0, int x1, int y1, int z1)}
+\label{classEnergy2_a4d6f5584b85e8557c6e77c678c59cb9a}
+
+\item 
+\hypertarget{classEnergy2_a8f9f19efb62791a6bff5b297e42b2f24}{
+void {\bfseries trilinear\_\-interpolation} (\hyperlink{classGrid}{Grid} $\ast$Grids, double x, double y, double z, int x0, int y0, int z0, int x1, int y1, int z1, \hyperlink{structEnergy2_1_1GridInterpol}{GridInterpol} $\ast$GI)}
+\label{classEnergy2_a8f9f19efb62791a6bff5b297e42b2f24}
+
+\item 
+\hypertarget{classEnergy2_a16b42e7830b50eb81c0b1b7bf627135d}{
+double {\bfseries evaluate\_\-forces\_\-hardcore\_\-solvation} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ xyz)}
+\label{classEnergy2_a16b42e7830b50eb81c0b1b7bf627135d}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classEnergy2_a377af6b19cbb3aef542421616c7918c2}{
+\hyperlink{classPARSER}{PARSER} $\ast$ \hyperlink{classEnergy2_a377af6b19cbb3aef542421616c7918c2}{Input}}
+\label{classEnergy2_a377af6b19cbb3aef542421616c7918c2}
+
+\begin{DoxyCompactList}\small\item\em class \hyperlink{classPARSER}{PARSER} provided to this class; \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{classEnergy2}{Energy2} class is used for energy calculations during docking and \hyperlink{classMC}{MC} simulations. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classEnergy2_ade85175ed28a01f9e065683e7bb20a29}{
+\index{Energy2@{Energy2}!compute\_\-energy\_\-softcore@{compute\_\-energy\_\-softcore}}
+\index{compute\_\-energy\_\-softcore@{compute\_\-energy\_\-softcore}!Energy2@{Energy2}}
+\subsubsection[{compute\_\-energy\_\-softcore}]{\setlength{\rightskip}{0pt plus 5cm}double Energy2::compute\_\-energy\_\-softcore ({\bf Mol2} $\ast$ {\em Rec}, \/  {\bf Mol2} $\ast$ {\em Lig}, \/  vector$<$ vector$<$ double $>$ $>$ {\em lig\_\-xyz}, \/  {\bf energy\_\-result\_\-t} $\ast$ {\em energy\_\-result})}}
+\label{classEnergy2_ade85175ed28a01f9e065683e7bb20a29}
+
+
+distances
+
+electrostactic energy (softcore)
+
+VDW energy (softcore) \hypertarget{classEnergy2_aaac598707f6a3fab0df8d7436b3cdeeb}{
+\index{Energy2@{Energy2}!compute\_\-energy\_\-softcore@{compute\_\-energy\_\-softcore}}
+\index{compute\_\-energy\_\-softcore@{compute\_\-energy\_\-softcore}!Energy2@{Energy2}}
+\subsubsection[{compute\_\-energy\_\-softcore}]{\setlength{\rightskip}{0pt plus 5cm}double Energy2::compute\_\-energy\_\-softcore ({\bf Mol2} $\ast$ {\em Rec}, \/  {\bf Mol2} $\ast$ {\em Lig}, \/  vector$<$ vector$<$ double $>$ $>$ {\em lig\_\-xyz})}}
+\label{classEnergy2_aaac598707f6a3fab0df8d7436b3cdeeb}
+
+
+distances
+
+electrostactic energy (softcore)
+
+VDW energy (softcore) \hypertarget{classEnergy2_aeaab8d7882978f706c549575abbfb571}{
+\index{Energy2@{Energy2}!compute\_\-energy\_\-softcore\_\-solvation@{compute\_\-energy\_\-softcore\_\-solvation}}
+\index{compute\_\-energy\_\-softcore\_\-solvation@{compute\_\-energy\_\-softcore\_\-solvation}!Energy2@{Energy2}}
+\subsubsection[{compute\_\-energy\_\-softcore\_\-solvation}]{\setlength{\rightskip}{0pt plus 5cm}double Energy2::compute\_\-energy\_\-softcore\_\-solvation ({\bf Mol2} $\ast$ {\em Rec}, \/  {\bf Mol2} $\ast$ {\em Lig}, \/  vector$<$ vector$<$ double $>$ $>$ {\em lig\_\-xyz}, \/  {\bf energy\_\-result\_\-t} $\ast$ {\em energy\_\-result})}}
+\label{classEnergy2_aeaab8d7882978f706c549575abbfb571}
+
+
+distances
+
+electrostactic energy (softcore)
+
+VDW energy (softcore)
+
+Solvation energy \hypertarget{classEnergy2_af89f6892acb0a6db0da0b8e941edbed4}{
+\index{Energy2@{Energy2}!compute\_\-energy\_\-softcore\_\-solvation@{compute\_\-energy\_\-softcore\_\-solvation}}
+\index{compute\_\-energy\_\-softcore\_\-solvation@{compute\_\-energy\_\-softcore\_\-solvation}!Energy2@{Energy2}}
+\subsubsection[{compute\_\-energy\_\-softcore\_\-solvation}]{\setlength{\rightskip}{0pt plus 5cm}double Energy2::compute\_\-energy\_\-softcore\_\-solvation ({\bf Mol2} $\ast$ {\em Rec}, \/  {\bf Mol2} $\ast$ {\em Lig}, \/  vector$<$ vector$<$ double $>$ $>$ {\em lig\_\-xyz})}}
+\label{classEnergy2_af89f6892acb0a6db0da0b8e941edbed4}
+
+
+compute\_\-energy\_\-softcore\_\-solvation Computes the interaction energy between ligand and receptor using a softcore model with solvation (SV model) 
+\begin{DoxyParams}{Parameters}
+\item[{\em Rec}]Object from class MOL2 with receptor description \item[{\em Lig}]Object from class MOL2 with ligand description \item[{\em lig\_\-xyz}]C++ vector of vector with ligand coordinates \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Rhe interaction energy in kcal/mol. 
+\end{DoxyReturn}
+
+
+distances
+
+electrostactic energy (softcore)
+
+VDW energy (softcore)
+
+Solvation energy \hypertarget{classEnergy2_a39f28781562359d06bef39ad66f33e85}{
+\index{Energy2@{Energy2}!distance@{distance}}
+\index{distance@{distance}!Energy2@{Energy2}}
+\subsubsection[{distance}]{\setlength{\rightskip}{0pt plus 5cm}double Energy2::distance (double {\em x1}, \/  double {\em x2}, \/  double {\em y1}, \/  double {\em y2}, \/  double {\em z1}, \/  double {\em z2})}}
+\label{classEnergy2_a39f28781562359d06bef39ad66f33e85}
+
+
+distance Computes the distance between two atoms 
+\begin{DoxyParams}{Parameters}
+\item[{\em x1}]X coordinate for atom 1 \item[{\em x2}]X coordinate for atom 2 \item[{\em y1}]Y coordinate for atom 1 \item[{\em y2}]Y coordinate for atom 2 \item[{\em z1}]Z coordinate for atom 1 \item[{\em z2}]Z coordinate for atom 2 \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the distance between the two atoms 
+\end{DoxyReturn}
+\hypertarget{classEnergy2_a1711c52d5df4cd462fe5a5bd34c56e46}{
+\index{Energy2@{Energy2}!distance\_\-squared@{distance\_\-squared}}
+\index{distance\_\-squared@{distance\_\-squared}!Energy2@{Energy2}}
+\subsubsection[{distance\_\-squared}]{\setlength{\rightskip}{0pt plus 5cm}double Energy2::distance\_\-squared (double {\em x1}, \/  double {\em x2}, \/  double {\em y1}, \/  double {\em y2}, \/  double {\em z1}, \/  double {\em z2})}}
+\label{classEnergy2_a1711c52d5df4cd462fe5a5bd34c56e46}
+
+
+distance\_\-squared Computes the square of the distance between two atoms 
+\begin{DoxyParams}{Parameters}
+\item[{\em x1}]X coordinate for atom 1 \item[{\em x2}]X coordinate for atom 2 \item[{\em y1}]Y coordinate for atom 1 \item[{\em y2}]Y coordinate for atom 2 \item[{\em z1}]Z coordinate for atom 1 \item[{\em z2}]Z coordinate for atom 2 \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the square o the distance between two atoms 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/Energy2.h\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/Energy2.cpp\end{DoxyCompactItemize}

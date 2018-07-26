@@ -1,0 +1,232 @@
+\hypertarget{classPRMTOP}{
+\section{PRMTOP Class Reference}
+\label{classPRMTOP}\index{PRMTOP@{PRMTOP}}
+}
+
+
+{\ttfamily \#include $<$PRMTOP.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classPRMTOP_a12f75d42e2d9e9c9d08f53b4159a1674}{PRMTOP} (ifstream \&prmtop, ifstream \&inpcrd)
+\item 
+void \hyperlink{classPRMTOP_acc2429d80ed7fa556e7b47a12cfaab41}{get\_\-N} (ifstream \&prmtop)
+\item 
+\hypertarget{classPRMTOP_a470ee3f83e5840859f9f6d0fb8525dd0}{
+void {\bfseries get\_\-atomnames} (ifstream \&prmtop, int \hyperlink{classPRMTOP_a8afaf54b7d07f2bca4ecd90468d21a70}{N})}
+\label{classPRMTOP_a470ee3f83e5840859f9f6d0fb8525dd0}
+
+\item 
+void \hyperlink{classPRMTOP_a945c862c383b5983a5a6f7e12880d92d}{get\_\-charges} (ifstream \&prmtop, int \hyperlink{classPRMTOP_a8afaf54b7d07f2bca4ecd90468d21a70}{N})
+\item 
+void \hyperlink{classPRMTOP_a75e8519cbcddb63eab50a3372371f51b}{get\_\-resnames} (ifstream \&prmtop)
+\item 
+void \hyperlink{classPRMTOP_a0548d72491a07082eada2260447d0124}{get\_\-res\_\-pointers} (ifstream \&prmtop)
+\item 
+void \hyperlink{classPRMTOP_a4861564abec2a2b093edb25f5a6e1d56}{get\_\-masses} (ifstream \&prmtop, int \hyperlink{classPRMTOP_a8afaf54b7d07f2bca4ecd90468d21a70}{N})
+\item 
+void \hyperlink{classPRMTOP_a3e2a5ff95e8c590dff48b70bcfb4bc5c}{get\_\-amberatoms} (ifstream \&prmtop, int \hyperlink{classPRMTOP_a8afaf54b7d07f2bca4ecd90468d21a70}{N})
+\item 
+void \hyperlink{classPRMTOP_ad460d8f9f6cf96b053771c2a3e098f58}{read\_\-atomtypes\_\-prm} ()
+\item 
+void \hyperlink{classPRMTOP_a449bb48040f0ceea40407dd94f993a04}{get\_\-vdw\_\-parms} (vector$<$ string $>$\hyperlink{classPRMTOP_a227b954c56ca7d19a11369fedec7ace2}{amberatoms}, vector$<$ string $>$\hyperlink{classPRMTOP_a69bebe395149b367f27747d6f6291d8e}{a\_\-atomtypes\_\-prm}, vector$<$ double $>$ \hyperlink{classPRMTOP_a5de8b26b6a9ee7e3890617a5c77b1c6a}{a\_\-radius}, vector$<$ double $>$\hyperlink{classPRMTOP_abcb76ac56534cf67fc883e16ab63a850}{a\_\-welldepth})
+\item 
+void \hyperlink{classPRMTOP_aa0673ca09290212cddc944cd88c475c4}{get\_\-coordinates} (ifstream \&inpcrd)
+\item 
+void \hyperlink{classPRMTOP_ad887581ff384f7c8cc7d3cf4e3d19b58}{get\_\-trajectory} (ifstream \&mdcrd)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classPRMTOP_a8afaf54b7d07f2bca4ecd90468d21a70}{
+int \hyperlink{classPRMTOP_a8afaf54b7d07f2bca4ecd90468d21a70}{N}}
+\label{classPRMTOP_a8afaf54b7d07f2bca4ecd90468d21a70}
+
+\begin{DoxyCompactList}\small\item\em Number of atoms. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_a385cc1c43a0e7033adcf72f6bef12c95}{
+int \hyperlink{classPRMTOP_a385cc1c43a0e7033adcf72f6bef12c95}{Nres}}
+\label{classPRMTOP_a385cc1c43a0e7033adcf72f6bef12c95}
+
+\begin{DoxyCompactList}\small\item\em Number of residues. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_a9c933007652dbf34f73bf703b52f74af}{
+int \hyperlink{classPRMTOP_a9c933007652dbf34f73bf703b52f74af}{Natomtypes}}
+\label{classPRMTOP_a9c933007652dbf34f73bf703b52f74af}
+
+\begin{DoxyCompactList}\small\item\em Number of AMBER atomtypes. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_a78bc895ea33fed199c7e1824afd4b677}{
+int \hyperlink{classPRMTOP_a78bc895ea33fed199c7e1824afd4b677}{count}}
+\label{classPRMTOP_a78bc895ea33fed199c7e1824afd4b677}
+
+\begin{DoxyCompactList}\small\item\em Counter variable. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_ae4e8f933a71e6128b603c0b3e9ef6a71}{
+string \hyperlink{classPRMTOP_ae4e8f933a71e6128b603c0b3e9ef6a71}{atm}}
+\label{classPRMTOP_ae4e8f933a71e6128b603c0b3e9ef6a71}
+
+\begin{DoxyCompactList}\small\item\em String to parse atom names. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_afb253672cc1cb930fd9c082602865faa}{
+string \hyperlink{classPRMTOP_afb253672cc1cb930fd9c082602865faa}{line}}
+\label{classPRMTOP_afb253672cc1cb930fd9c082602865faa}
+
+\begin{DoxyCompactList}\small\item\em String to parse comment lines. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_afac097c4e7f91d921a9032ac7706c4d9}{
+vector$<$ string $>$ {\bfseries atomnames}}
+\label{classPRMTOP_afac097c4e7f91d921a9032ac7706c4d9}
+
+\item 
+\hypertarget{classPRMTOP_aa6db8463ce47125e481b24c9a5326da1}{
+vector$<$ double $>$ \hyperlink{classPRMTOP_aa6db8463ce47125e481b24c9a5326da1}{charges}}
+\label{classPRMTOP_aa6db8463ce47125e481b24c9a5326da1}
+
+\begin{DoxyCompactList}\small\item\em C++ vector to store atomic charges. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_a77af00256f2f4bd10b651e14c2389b2c}{
+vector$<$ double $>$ \hyperlink{classPRMTOP_a77af00256f2f4bd10b651e14c2389b2c}{masses}}
+\label{classPRMTOP_a77af00256f2f4bd10b651e14c2389b2c}
+
+\begin{DoxyCompactList}\small\item\em C++ vector to store atomic masses. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_a32ac8c887a12390780562c9a49e1fe6a}{
+vector$<$ string $>$ \hyperlink{classPRMTOP_a32ac8c887a12390780562c9a49e1fe6a}{resnames}}
+\label{classPRMTOP_a32ac8c887a12390780562c9a49e1fe6a}
+
+\begin{DoxyCompactList}\small\item\em C++ vector to store the residue labels. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_a227b954c56ca7d19a11369fedec7ace2}{
+vector$<$ string $>$ \hyperlink{classPRMTOP_a227b954c56ca7d19a11369fedec7ace2}{amberatoms}}
+\label{classPRMTOP_a227b954c56ca7d19a11369fedec7ace2}
+
+\begin{DoxyCompactList}\small\item\em C++ vector to store the AMBERatoms. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_a0967f676f9011344e7b00edf5b09f808}{
+vector$<$ int $>$ \hyperlink{classPRMTOP_a0967f676f9011344e7b00edf5b09f808}{residue\_\-pointer}}
+\label{classPRMTOP_a0967f676f9011344e7b00edf5b09f808}
+
+\begin{DoxyCompactList}\small\item\em C++ vector with pointer to the number of the atoms in the residue. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_a69bebe395149b367f27747d6f6291d8e}{
+vector$<$ string $>$ \hyperlink{classPRMTOP_a69bebe395149b367f27747d6f6291d8e}{a\_\-atomtypes\_\-prm}}
+\label{classPRMTOP_a69bebe395149b367f27747d6f6291d8e}
+
+\begin{DoxyCompactList}\small\item\em C++ vector to store the atomtypes in the FF. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_a5de8b26b6a9ee7e3890617a5c77b1c6a}{
+vector$<$ double $>$ \hyperlink{classPRMTOP_a5de8b26b6a9ee7e3890617a5c77b1c6a}{a\_\-radius}}
+\label{classPRMTOP_a5de8b26b6a9ee7e3890617a5c77b1c6a}
+
+\begin{DoxyCompactList}\small\item\em C++ vector to store FF atomic radii. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_abcb76ac56534cf67fc883e16ab63a850}{
+vector$<$ double $>$ \hyperlink{classPRMTOP_abcb76ac56534cf67fc883e16ab63a850}{a\_\-welldepth}}
+\label{classPRMTOP_abcb76ac56534cf67fc883e16ab63a850}
+
+\begin{DoxyCompactList}\small\item\em C++ vector to store FF well depth for Amberatoms. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_a54201e31a7caee9b235321cd9c41d568}{
+vector$<$ double $>$ \hyperlink{classPRMTOP_a54201e31a7caee9b235321cd9c41d568}{epsilons}}
+\label{classPRMTOP_a54201e31a7caee9b235321cd9c41d568}
+
+\begin{DoxyCompactList}\small\item\em C++ vector with N size to store the epsilons of the amberatoms;. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_a91fac95c4d64aa1ef1e2c1c9eabda370}{
+vector$<$ double $>$ \hyperlink{classPRMTOP_a91fac95c4d64aa1ef1e2c1c9eabda370}{radii}}
+\label{classPRMTOP_a91fac95c4d64aa1ef1e2c1c9eabda370}
+
+\begin{DoxyCompactList}\small\item\em C++ vector with N size to store the radii of the amberatoms;. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_a08bae98f1227295af546593e7aadef3f}{
+vector$<$ double $>$ \hyperlink{classPRMTOP_a08bae98f1227295af546593e7aadef3f}{coords}}
+\label{classPRMTOP_a08bae98f1227295af546593e7aadef3f}
+
+\begin{DoxyCompactList}\small\item\em C++ vector to store the atomic coordinates (3$\ast$N size). \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_a184999818da0e3c7bf66c4a6020a7471}{
+double \hyperlink{classPRMTOP_a184999818da0e3c7bf66c4a6020a7471}{mass}}
+\label{classPRMTOP_a184999818da0e3c7bf66c4a6020a7471}
+
+\begin{DoxyCompactList}\small\item\em Atomic mass. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_a93c7af00cb35b054ab17ce782e88c008}{
+double \hyperlink{classPRMTOP_a93c7af00cb35b054ab17ce782e88c008}{charge}}
+\label{classPRMTOP_a93c7af00cb35b054ab17ce782e88c008}
+
+\begin{DoxyCompactList}\small\item\em Atomic charge. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_aefdd26dacafbc4f13fa7b94c6553878b}{
+double \hyperlink{classPRMTOP_aefdd26dacafbc4f13fa7b94c6553878b}{coord}}
+\label{classPRMTOP_aefdd26dacafbc4f13fa7b94c6553878b}
+
+\begin{DoxyCompactList}\small\item\em Atomic coordinate;. \item\end{DoxyCompactList}\item 
+\hypertarget{classPRMTOP_aeb54222a51e40d6c03db445cba8b6c30}{
+vector$<$ vector$<$ double $>$ $>$ {\bfseries mcoords}}
+\label{classPRMTOP_aeb54222a51e40d6c03db445cba8b6c30}
+
+\item 
+\hypertarget{classPRMTOP_adf5e6fb11cd778d8f1f032d380dc62d7}{
+vector$<$ vector$<$ double $>$ $>$ {\bfseries new\_\-mcoords}}
+\label{classPRMTOP_adf5e6fb11cd778d8f1f032d380dc62d7}
+
+\item 
+\hypertarget{classPRMTOP_aa4913eb379c76b24b1ab5550bec315da}{
+\hyperlink{classPRMTOP}{PRMTOP} $\ast$ {\bfseries Cmol}}
+\label{classPRMTOP_aa4913eb379c76b24b1ab5550bec315da}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{classPRMTOP}{PRMTOP} class has a number of methods dedicated to parse a AMBER prmtop file and get all the necessary information for energy evaluation in a receptor-\/ligand system. There is also a method to parse the atomic coordinates of a inpcrd file. The parser works well for ligand and receptor prmtop/inpcrd files. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classPRMTOP_a12f75d42e2d9e9c9d08f53b4159a1674}{
+\index{PRMTOP@{PRMTOP}!PRMTOP@{PRMTOP}}
+\index{PRMTOP@{PRMTOP}!PRMTOP@{PRMTOP}}
+\subsubsection[{PRMTOP}]{\setlength{\rightskip}{0pt plus 5cm}PRMTOP::PRMTOP (ifstream \& {\em prmtop}, \/  ifstream \& {\em inpcrd})}}
+\label{classPRMTOP_a12f75d42e2d9e9c9d08f53b4159a1674}
+Class constructor. The some internal methods are called to parse the number of atoms, the atomic charges, the atomic masses, the amberatom names, and the coordinates. Also, the parameters of the force field are taken from the file \char`\"{}vdw.param\char`\"{} (epsilons, radius) 
+
+\subsection{Member Function Documentation}
+\hypertarget{classPRMTOP_a3e2a5ff95e8c590dff48b70bcfb4bc5c}{
+\index{PRMTOP@{PRMTOP}!get\_\-amberatoms@{get\_\-amberatoms}}
+\index{get\_\-amberatoms@{get\_\-amberatoms}!PRMTOP@{PRMTOP}}
+\subsubsection[{get\_\-amberatoms}]{\setlength{\rightskip}{0pt plus 5cm}void PRMTOP::get\_\-amberatoms (ifstream \& {\em prmtop}, \/  int {\em N})}}
+\label{classPRMTOP_a3e2a5ff95e8c590dff48b70bcfb4bc5c}
+This method parses the atomic types of the system in Amber FF type. \hypertarget{classPRMTOP_a945c862c383b5983a5a6f7e12880d92d}{
+\index{PRMTOP@{PRMTOP}!get\_\-charges@{get\_\-charges}}
+\index{get\_\-charges@{get\_\-charges}!PRMTOP@{PRMTOP}}
+\subsubsection[{get\_\-charges}]{\setlength{\rightskip}{0pt plus 5cm}void PRMTOP::get\_\-charges (ifstream \& {\em prmtop}, \/  int {\em N})}}
+\label{classPRMTOP_a945c862c383b5983a5a6f7e12880d92d}
+This method parses the prmtop file to get the atomic charges (electron charge multiplied by 18.2223). \hypertarget{classPRMTOP_aa0673ca09290212cddc944cd88c475c4}{
+\index{PRMTOP@{PRMTOP}!get\_\-coordinates@{get\_\-coordinates}}
+\index{get\_\-coordinates@{get\_\-coordinates}!PRMTOP@{PRMTOP}}
+\subsubsection[{get\_\-coordinates}]{\setlength{\rightskip}{0pt plus 5cm}void PRMTOP::get\_\-coordinates (ifstream \& {\em inpcrd})}}
+\label{classPRMTOP_aa0673ca09290212cddc944cd88c475c4}
+This method parses the inpcrd file to get the atomic coordinates of every atom in the system. The coordinates are them stored in a C++ vector. \hypertarget{classPRMTOP_a4861564abec2a2b093edb25f5a6e1d56}{
+\index{PRMTOP@{PRMTOP}!get\_\-masses@{get\_\-masses}}
+\index{get\_\-masses@{get\_\-masses}!PRMTOP@{PRMTOP}}
+\subsubsection[{get\_\-masses}]{\setlength{\rightskip}{0pt plus 5cm}void PRMTOP::get\_\-masses (ifstream \& {\em prmtop}, \/  int {\em N})}}
+\label{classPRMTOP_a4861564abec2a2b093edb25f5a6e1d56}
+This method parses the prmtop file to get the atomic masses of the atoms in the system and stores them in a C++ vector \hypertarget{classPRMTOP_acc2429d80ed7fa556e7b47a12cfaab41}{
+\index{PRMTOP@{PRMTOP}!get\_\-N@{get\_\-N}}
+\index{get\_\-N@{get\_\-N}!PRMTOP@{PRMTOP}}
+\subsubsection[{get\_\-N}]{\setlength{\rightskip}{0pt plus 5cm}void PRMTOP::get\_\-N (ifstream \& {\em prmtop})}}
+\label{classPRMTOP_acc2429d80ed7fa556e7b47a12cfaab41}
+This method parses the prmtop file to get the number of atoms in the system \hypertarget{classPRMTOP_a0548d72491a07082eada2260447d0124}{
+\index{PRMTOP@{PRMTOP}!get\_\-res\_\-pointers@{get\_\-res\_\-pointers}}
+\index{get\_\-res\_\-pointers@{get\_\-res\_\-pointers}!PRMTOP@{PRMTOP}}
+\subsubsection[{get\_\-res\_\-pointers}]{\setlength{\rightskip}{0pt plus 5cm}void PRMTOP::get\_\-res\_\-pointers (ifstream \& {\em prmtop})}}
+\label{classPRMTOP_a0548d72491a07082eada2260447d0124}
+This method parses the \hyperlink{classPRMTOP}{PRMTOP} file to get the pointers to residues. That is, the number of the initial atom of each residue. \hypertarget{classPRMTOP_a75e8519cbcddb63eab50a3372371f51b}{
+\index{PRMTOP@{PRMTOP}!get\_\-resnames@{get\_\-resnames}}
+\index{get\_\-resnames@{get\_\-resnames}!PRMTOP@{PRMTOP}}
+\subsubsection[{get\_\-resnames}]{\setlength{\rightskip}{0pt plus 5cm}void PRMTOP::get\_\-resnames (ifstream \& {\em prmtop})}}
+\label{classPRMTOP_a75e8519cbcddb63eab50a3372371f51b}
+This method parses the \hyperlink{classPRMTOP}{PRMTOP} file to get the residue label. \hypertarget{classPRMTOP_ad887581ff384f7c8cc7d3cf4e3d19b58}{
+\index{PRMTOP@{PRMTOP}!get\_\-trajectory@{get\_\-trajectory}}
+\index{get\_\-trajectory@{get\_\-trajectory}!PRMTOP@{PRMTOP}}
+\subsubsection[{get\_\-trajectory}]{\setlength{\rightskip}{0pt plus 5cm}void PRMTOP::get\_\-trajectory (ifstream \& {\em mdcrd})}}
+\label{classPRMTOP_ad887581ff384f7c8cc7d3cf4e3d19b58}
+
+\begin{DoxyParams}{Parameters}
+\item[{\em mdcrd}]\end{DoxyParams}
+\hypertarget{classPRMTOP_a449bb48040f0ceea40407dd94f993a04}{
+\index{PRMTOP@{PRMTOP}!get\_\-vdw\_\-parms@{get\_\-vdw\_\-parms}}
+\index{get\_\-vdw\_\-parms@{get\_\-vdw\_\-parms}!PRMTOP@{PRMTOP}}
+\subsubsection[{get\_\-vdw\_\-parms}]{\setlength{\rightskip}{0pt plus 5cm}void PRMTOP::get\_\-vdw\_\-parms (vector$<$ string $>$ {\em amberatoms}, \/  vector$<$ string $>$ {\em a\_\-atomtypes\_\-prm}, \/  vector$<$ double $>$ {\em a\_\-radius}, \/  vector$<$ double $>$ {\em a\_\-welldepth})}}
+\label{classPRMTOP_a449bb48040f0ceea40407dd94f993a04}
+This method parses the amberatoms in the system and returns two C++ vectors with the radii and well depths for each atom type according to the AMBER FF (Cornell, 99). \hypertarget{classPRMTOP_ad460d8f9f6cf96b053771c2a3e098f58}{
+\index{PRMTOP@{PRMTOP}!read\_\-atomtypes\_\-prm@{read\_\-atomtypes\_\-prm}}
+\index{read\_\-atomtypes\_\-prm@{read\_\-atomtypes\_\-prm}!PRMTOP@{PRMTOP}}
+\subsubsection[{read\_\-atomtypes\_\-prm}]{\setlength{\rightskip}{0pt plus 5cm}void PRMTOP::read\_\-atomtypes\_\-prm ()}}
+\label{classPRMTOP_ad460d8f9f6cf96b053771c2a3e098f58}
+This method parses the file \char`\"{}vdw.param\char`\"{} to get the parameters of the AMBER force field. 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/PRMTOP.h\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/PRMTOP.cpp\end{DoxyCompactItemize}

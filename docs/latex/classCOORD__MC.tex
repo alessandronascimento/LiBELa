@@ -1,0 +1,263 @@
+\hypertarget{classCOORD__MC}{
+\section{COORD\_\-MC Class Reference}
+\label{classCOORD__MC}\index{COORD\_\-MC@{COORD\_\-MC}}
+}
+
+
+{\ttfamily \#include $<$COORD\_\-MC.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ double $>$ \hyperlink{classCOORD__MC_add97b29900401a44464b400267076544}{compute\_\-com} (\hyperlink{classMol2}{Mol2} $\ast$\hyperlink{classCOORD__MC_abdacaab2b3fca9018229d3ec220cf39d}{Cmol})
+\item 
+vector$<$ double $>$ \hyperlink{classCOORD__MC_ac77f14f3b04611c7bf46915a53792116}{compute\_\-com} (vector$<$ vector$<$ double $>$ $>$coords, \hyperlink{classMol2}{Mol2} $\ast$\hyperlink{classCOORD__MC_abdacaab2b3fca9018229d3ec220cf39d}{Cmol})
+\item 
+vector$<$ vector$<$ double $>$ $>$ \hyperlink{classCOORD__MC_aac39d2abe16a2f0b6015c4e69fb11753}{translate} (vector$<$ vector$<$ double $>$ $>$\hyperlink{classCOORD__MC_ad57a46a39d0a10f664128225e24bf99f}{coordinates}, int N, double tx, double ty, double tz)
+\item 
+vector$<$ vector$<$ double $>$ $>$ \hyperlink{classCOORD__MC_a79d104dc9fd9c0d6b52387c01cbac576}{rotate} (vector$<$ vector$<$ double $>$ $>$\hyperlink{classCOORD__MC_ad57a46a39d0a10f664128225e24bf99f}{coordinates}, int N, double \hyperlink{classCOORD__MC_a80872e7f1fedc71b060472be6565e83a}{alpha}, double \hyperlink{classCOORD__MC_a60fa21206cc164282a8d7b4e45b322c2}{beta}, double \hyperlink{classCOORD__MC_a67fa08c5c5dddf4cf3b5d01789124892}{gamma})
+\item 
+vector$<$ vector$<$ double $>$ $>$ \hyperlink{classCOORD__MC_ad5f14a1e75608fa9309c76337e5b38a7}{rototranslate} (vector$<$ vector$<$ double $>$ $>$\hyperlink{classCOORD__MC_ad57a46a39d0a10f664128225e24bf99f}{coordinates}, int N, double \hyperlink{classCOORD__MC_a80872e7f1fedc71b060472be6565e83a}{alpha}, double \hyperlink{classCOORD__MC_a60fa21206cc164282a8d7b4e45b322c2}{beta}, double \hyperlink{classCOORD__MC_a67fa08c5c5dddf4cf3b5d01789124892}{gamma}, double \hyperlink{classCOORD__MC_acc43aa187cde8621749a6297895906b5}{transx}, double \hyperlink{classCOORD__MC_abcea4fc50769038aa68487317f07d208}{transy}, double \hyperlink{classCOORD__MC_ae6a278f635288d901a8d00a512ab481b}{transz})
+\item 
+\hypertarget{classCOORD__MC_accbf9887772987d587c6468743972e47}{
+vector$<$ vector$<$ double $>$ $>$ {\bfseries rototranslate} (vector$<$ vector$<$ double $>$ $>$\hyperlink{classCOORD__MC_ad57a46a39d0a10f664128225e24bf99f}{coordinates}, \hyperlink{classMol2}{Mol2} $\ast$Lig, double \hyperlink{classCOORD__MC_a80872e7f1fedc71b060472be6565e83a}{alpha}, double \hyperlink{classCOORD__MC_a60fa21206cc164282a8d7b4e45b322c2}{beta}, double \hyperlink{classCOORD__MC_a67fa08c5c5dddf4cf3b5d01789124892}{gamma}, double \hyperlink{classCOORD__MC_acc43aa187cde8621749a6297895906b5}{transx}, double \hyperlink{classCOORD__MC_abcea4fc50769038aa68487317f07d208}{transy}, double \hyperlink{classCOORD__MC_ae6a278f635288d901a8d00a512ab481b}{transz})}
+\label{classCOORD__MC_accbf9887772987d587c6468743972e47}
+
+\item 
+\hypertarget{classCOORD__MC_a8575dab03d846a6e6291684574dcf473}{
+vector$<$ vector$<$ double $>$ $>$ {\bfseries rototranslate} (vector$<$ vector$<$ double $>$ $>$\hyperlink{classCOORD__MC_ad57a46a39d0a10f664128225e24bf99f}{coordinates}, \hyperlink{classMol2}{Mol2} $\ast$LIG, \hyperlink{classRAND}{RAND} $\ast$Rand)}
+\label{classCOORD__MC_a8575dab03d846a6e6291684574dcf473}
+
+\item 
+void \hyperlink{classCOORD__MC_a589bdc525228164c9d212312f262e3c8}{rototranslate\_\-all} (\hyperlink{classMol2}{Mol2} $\ast$\hyperlink{classCOORD__MC_abdacaab2b3fca9018229d3ec220cf39d}{Cmol}, \hyperlink{classRAND}{RAND} $\ast$Rand)
+\item 
+void \hyperlink{classCOORD__MC_ab54ac0814f32c1b752807a062546bcd3}{rototranslate\_\-all} (\hyperlink{classMol2}{Mol2} $\ast$\hyperlink{classCOORD__MC_abdacaab2b3fca9018229d3ec220cf39d}{Cmol}, double \hyperlink{classCOORD__MC_a80872e7f1fedc71b060472be6565e83a}{alpha}, double \hyperlink{classCOORD__MC_a60fa21206cc164282a8d7b4e45b322c2}{beta}, double \hyperlink{classCOORD__MC_a67fa08c5c5dddf4cf3b5d01789124892}{gamma}, double \hyperlink{classCOORD__MC_acc43aa187cde8621749a6297895906b5}{transx}, double \hyperlink{classCOORD__MC_abcea4fc50769038aa68487317f07d208}{transy}, double \hyperlink{classCOORD__MC_ae6a278f635288d901a8d00a512ab481b}{transz})
+\item 
+vector$<$ vector$<$ double $>$ $>$ \hyperlink{classCOORD__MC_a08009030898b97b0ab3ca85fc79f663e}{rototranslate} (vector$<$ vector$<$ double $>$ $>$\hyperlink{classCOORD__MC_ad57a46a39d0a10f664128225e24bf99f}{coordinates}, int N, \hyperlink{classRAND}{RAND} $\ast$rand)
+\item 
+double \hyperlink{classCOORD__MC_a3e94bd18aedf819364703921c9ce7a35}{compute\_\-rmsd} (vector$<$ vector$<$ double $>$ $>$\hyperlink{classCOORD__MC_ad57a46a39d0a10f664128225e24bf99f}{coordinates}, vector$<$ vector$<$ double $>$ $>$new\_\-coord, int N)
+\item 
+double \hyperlink{classCOORD__MC_a35f89a9d58d63bddebc1f3e5e48c4091}{compute\_\-prob} (double old\_\-energy, double new\_\-energy, double temp)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classCOORD__MC_a1f2430cd7731666b9202da65d4faf9e8}{
+double \hyperlink{classCOORD__MC_a1f2430cd7731666b9202da65d4faf9e8}{x}}
+\label{classCOORD__MC_a1f2430cd7731666b9202da65d4faf9e8}
+
+\begin{DoxyCompactList}\small\item\em Atomic coordinate X. \item\end{DoxyCompactList}\item 
+\hypertarget{classCOORD__MC_ad5d3a82a3fd22855a8a33506c5e00b79}{
+double \hyperlink{classCOORD__MC_ad5d3a82a3fd22855a8a33506c5e00b79}{y}}
+\label{classCOORD__MC_ad5d3a82a3fd22855a8a33506c5e00b79}
+
+\begin{DoxyCompactList}\small\item\em Atomic coordinate Y. \item\end{DoxyCompactList}\item 
+\hypertarget{classCOORD__MC_aaa8a639c2339542c24aa276181cc010d}{
+double \hyperlink{classCOORD__MC_aaa8a639c2339542c24aa276181cc010d}{z}}
+\label{classCOORD__MC_aaa8a639c2339542c24aa276181cc010d}
+
+\begin{DoxyCompactList}\small\item\em Atomic coordinate Z. \item\end{DoxyCompactList}\item 
+\hypertarget{classCOORD__MC_a20c1a707450f12d825043eb42c5beaa5}{
+double \hyperlink{classCOORD__MC_a20c1a707450f12d825043eb42c5beaa5}{centerx}}
+\label{classCOORD__MC_a20c1a707450f12d825043eb42c5beaa5}
+
+\begin{DoxyCompactList}\small\item\em X component of the center of mass. \item\end{DoxyCompactList}\item 
+\hypertarget{classCOORD__MC_af4cf1b3aa02305d0355533ce53de96ab}{
+double \hyperlink{classCOORD__MC_af4cf1b3aa02305d0355533ce53de96ab}{centery}}
+\label{classCOORD__MC_af4cf1b3aa02305d0355533ce53de96ab}
+
+\begin{DoxyCompactList}\small\item\em Y component of the center of mass. \item\end{DoxyCompactList}\item 
+\hypertarget{classCOORD__MC_aa1460a53a8d28f0b996b5fa2cbf380bb}{
+double \hyperlink{classCOORD__MC_aa1460a53a8d28f0b996b5fa2cbf380bb}{centerz}}
+\label{classCOORD__MC_aa1460a53a8d28f0b996b5fa2cbf380bb}
+
+\begin{DoxyCompactList}\small\item\em Z component of the center of mass. \item\end{DoxyCompactList}\item 
+\hypertarget{classCOORD__MC_a70416fcf15164c93c2620dcec369168e}{
+double \hyperlink{classCOORD__MC_a70416fcf15164c93c2620dcec369168e}{totalmass}}
+\label{classCOORD__MC_a70416fcf15164c93c2620dcec369168e}
+
+\begin{DoxyCompactList}\small\item\em Sum over the total atoms in the system (mainly, the ligand). Used to compute the center of mass. \item\end{DoxyCompactList}\item 
+\hypertarget{classCOORD__MC_ad57a46a39d0a10f664128225e24bf99f}{
+vector$<$ double $>$ \hyperlink{classCOORD__MC_ad57a46a39d0a10f664128225e24bf99f}{coordinates}}
+\label{classCOORD__MC_ad57a46a39d0a10f664128225e24bf99f}
+
+\begin{DoxyCompactList}\small\item\em C++ vector that stores the atomic coordinates. \item\end{DoxyCompactList}\item 
+vector$<$ double $>$ \hyperlink{classCOORD__MC_adf957d739f01ee5eb6fa85cbbb106c18}{com}
+\begin{DoxyCompactList}\small\item\em C++ vector that stores the modified atomic coordinates (rotated/translated). \item\end{DoxyCompactList}\item 
+\hypertarget{classCOORD__MC_a3c3862298348e0550aa384e3e21b4e5f}{
+double \hyperlink{classCOORD__MC_a3c3862298348e0550aa384e3e21b4e5f}{rmsd}}
+\label{classCOORD__MC_a3c3862298348e0550aa384e3e21b4e5f}
+
+\begin{DoxyCompactList}\small\item\em Root mean square deviation. Used to compute the deviation among original and rotated/translated ligand coordinates. \item\end{DoxyCompactList}\item 
+\hypertarget{classCOORD__MC_aa86b929ad05eaf8bb81ab53976d143f7}{
+double \hyperlink{classCOORD__MC_aa86b929ad05eaf8bb81ab53976d143f7}{delta\_\-energy}}
+\label{classCOORD__MC_aa86b929ad05eaf8bb81ab53976d143f7}
+
+\begin{DoxyCompactList}\small\item\em Variation in binding energy used to compute Metropolis criterium. \item\end{DoxyCompactList}\item 
+\hypertarget{classCOORD__MC_a80872e7f1fedc71b060472be6565e83a}{
+double \hyperlink{classCOORD__MC_a80872e7f1fedc71b060472be6565e83a}{alpha}}
+\label{classCOORD__MC_a80872e7f1fedc71b060472be6565e83a}
+
+\begin{DoxyCompactList}\small\item\em Alpha angle to rotate around this Euler angle. \item\end{DoxyCompactList}\item 
+\hypertarget{classCOORD__MC_a60fa21206cc164282a8d7b4e45b322c2}{
+double \hyperlink{classCOORD__MC_a60fa21206cc164282a8d7b4e45b322c2}{beta}}
+\label{classCOORD__MC_a60fa21206cc164282a8d7b4e45b322c2}
+
+\begin{DoxyCompactList}\small\item\em Beta angle to rotate around this Euler angle. \item\end{DoxyCompactList}\item 
+\hypertarget{classCOORD__MC_a67fa08c5c5dddf4cf3b5d01789124892}{
+double \hyperlink{classCOORD__MC_a67fa08c5c5dddf4cf3b5d01789124892}{gamma}}
+\label{classCOORD__MC_a67fa08c5c5dddf4cf3b5d01789124892}
+
+\begin{DoxyCompactList}\small\item\em Gamma angle to rotate around this Euler angle. \item\end{DoxyCompactList}\item 
+\hypertarget{classCOORD__MC_acc43aa187cde8621749a6297895906b5}{
+double \hyperlink{classCOORD__MC_acc43aa187cde8621749a6297895906b5}{transx}}
+\label{classCOORD__MC_acc43aa187cde8621749a6297895906b5}
+
+\begin{DoxyCompactList}\small\item\em X-\/shift for molecule translation. \item\end{DoxyCompactList}\item 
+\hypertarget{classCOORD__MC_abcea4fc50769038aa68487317f07d208}{
+double \hyperlink{classCOORD__MC_abcea4fc50769038aa68487317f07d208}{transy}}
+\label{classCOORD__MC_abcea4fc50769038aa68487317f07d208}
+
+\begin{DoxyCompactList}\small\item\em Y-\/shift for molecule translation. \item\end{DoxyCompactList}\item 
+\hypertarget{classCOORD__MC_ae6a278f635288d901a8d00a512ab481b}{
+double \hyperlink{classCOORD__MC_ae6a278f635288d901a8d00a512ab481b}{transz}}
+\label{classCOORD__MC_ae6a278f635288d901a8d00a512ab481b}
+
+\begin{DoxyCompactList}\small\item\em Z-\/shift for molecule translation. \item\end{DoxyCompactList}\item 
+\hypertarget{classCOORD__MC_abdacaab2b3fca9018229d3ec220cf39d}{
+\hyperlink{classMol2}{Mol2} $\ast$ \hyperlink{classCOORD__MC_abdacaab2b3fca9018229d3ec220cf39d}{Cmol}}
+\label{classCOORD__MC_abdacaab2b3fca9018229d3ec220cf39d}
+
+\begin{DoxyCompactList}\small\item\em Pointer to a \hyperlink{classPRMTOP}{PRMTOP} object. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The C++ class {\itshape \hyperlink{classCOORD__MC}{COORD\_\-MC}\/} handles the coordinates changes necessary throughout the code. It includes methods for translating and rotating cartesian coordinates around Euler angles, Center of Mass (COM) computation and RMSD computation. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classCOORD__MC_ac77f14f3b04611c7bf46915a53792116}{
+\index{COORD\_\-MC@{COORD\_\-MC}!compute\_\-com@{compute\_\-com}}
+\index{compute\_\-com@{compute\_\-com}!COORD_MC@{COORD\_\-MC}}
+\subsubsection[{compute\_\-com}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$ double $>$ COORD\_\-MC::compute\_\-com (vector$<$ vector$<$ double $>$ $>$ {\em coords}, \/  {\bf Mol2} $\ast$ {\em Cmol})}}
+\label{classCOORD__MC_ac77f14f3b04611c7bf46915a53792116}
+This overloaded method computed the center of mass of a ligand given by the object Cmol (Class \hyperlink{classPRMTOP}{PRMTOP}) 
+\begin{DoxyParams}{Parameters}
+\item[{\em coords}]C++ vector with ligand coordinates \item[{\em Cmol}]Pointer to a \hyperlink{classPRMTOP}{PRMTOP} object with ligand description (atributes) \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A C++ vector with three elements: the X, Y and Z components of the center of mass. 
+\end{DoxyReturn}
+\hypertarget{classCOORD__MC_add97b29900401a44464b400267076544}{
+\index{COORD\_\-MC@{COORD\_\-MC}!compute\_\-com@{compute\_\-com}}
+\index{compute\_\-com@{compute\_\-com}!COORD_MC@{COORD\_\-MC}}
+\subsubsection[{compute\_\-com}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$ double $>$ COORD\_\-MC::compute\_\-com ({\bf Mol2} $\ast$ {\em Cmol})}}
+\label{classCOORD__MC_add97b29900401a44464b400267076544}
+This method computed the center of mass of a ligand given by the object Cmol (Class \hyperlink{classPRMTOP}{PRMTOP}) 
+\begin{DoxyParams}{Parameters}
+\item[{\em Cmol}]Pointer to the \hyperlink{classPRMTOP}{PRMTOP} class with molecule properties. \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A C++ vector with three elements: X, Y and Z components of the center of mass. 
+\end{DoxyReturn}
+\hypertarget{classCOORD__MC_a35f89a9d58d63bddebc1f3e5e48c4091}{
+\index{COORD\_\-MC@{COORD\_\-MC}!compute\_\-prob@{compute\_\-prob}}
+\index{compute\_\-prob@{compute\_\-prob}!COORD_MC@{COORD\_\-MC}}
+\subsubsection[{compute\_\-prob}]{\setlength{\rightskip}{0pt plus 5cm}double COORD\_\-MC::compute\_\-prob (double {\em old\_\-energy}, \/  double {\em new\_\-energy}, \/  double {\em temp})}}
+\label{classCOORD__MC_a35f89a9d58d63bddebc1f3e5e48c4091}
+This method computes the probability for acceptance for a move usign Metropolis criterium. 
+\begin{DoxyParams}{Parameters}
+\item[{\em old\_\-energy}]Energy of the system prior to the attempt to move. \item[{\em new\_\-energy}]New energy of the system after the movement. \item[{\em temp}]Temperature of the system. \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Probability (double precision) The probability is computed as:
+\end{DoxyReturn}
+$ prob = \exp(\frac{-\Delta E}{kT}) = \exp(\frac{-\Delta E}{(0.00198587752*T)})$.
+
+where
+
+$ \Delta E = new energy - old energy $ \hypertarget{classCOORD__MC_a3e94bd18aedf819364703921c9ce7a35}{
+\index{COORD\_\-MC@{COORD\_\-MC}!compute\_\-rmsd@{compute\_\-rmsd}}
+\index{compute\_\-rmsd@{compute\_\-rmsd}!COORD_MC@{COORD\_\-MC}}
+\subsubsection[{compute\_\-rmsd}]{\setlength{\rightskip}{0pt plus 5cm}double COORD\_\-MC::compute\_\-rmsd (vector$<$ vector$<$ double $>$ $>$ {\em coordinates}, \/  vector$<$ vector$<$ double $>$ $>$ {\em new\_\-coord}, \/  int {\em N})}}
+\label{classCOORD__MC_a3e94bd18aedf819364703921c9ce7a35}
+Method to compute the root mean square deviation among the original ligand coordinates and the rotated/translated coordinates. 
+\begin{DoxyParams}{Parameters}
+\item[{\em coordinates}]C++ vector with ligand coordinates \item[{\em new\_\-coord}]C++ vector with modified coordinates \item[{\em N}]Number of atoms \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The computed RMSD (double precision) 
+\end{DoxyReturn}
+\hypertarget{classCOORD__MC_a79d104dc9fd9c0d6b52387c01cbac576}{
+\index{COORD\_\-MC@{COORD\_\-MC}!rotate@{rotate}}
+\index{rotate@{rotate}!COORD_MC@{COORD\_\-MC}}
+\subsubsection[{rotate}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$ vector$<$ double $>$ $>$ COORD\_\-MC::rotate (vector$<$ vector$<$ double $>$ $>$ {\em coordinates}, \/  int {\em N}, \/  double {\em alpha}, \/  double {\em beta}, \/  double {\em gamma})}}
+\label{classCOORD__MC_a79d104dc9fd9c0d6b52387c01cbac576}
+Method to rotate a 3D system in Euler angles (alpha, beta and gamma). To keep it simpler, the rotation is carried out around the system center of mass. That's the reason why COM is required in this method. 
+\begin{DoxyParams}{Parameters}
+\item[{\em coordinates}]C++ vector with molecular (cartesian) coordinates. \item[{\em N}]Number of atoms in the molecule. \item[{\em alpha}]Alpha angle for rotation. \item[{\em beta}]Beta angle for rotation. \item[{\em gamma}]Gamma angle for rotation. \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A new C++ vector with rotated coordinates. 
+\end{DoxyReturn}
+\hypertarget{classCOORD__MC_a08009030898b97b0ab3ca85fc79f663e}{
+\index{COORD\_\-MC@{COORD\_\-MC}!rototranslate@{rototranslate}}
+\index{rototranslate@{rototranslate}!COORD_MC@{COORD\_\-MC}}
+\subsubsection[{rototranslate}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$ vector$<$ double $>$ $>$ COORD\_\-MC::rototranslate (vector$<$ vector$<$ double $>$ $>$ {\em coordinates}, \/  int {\em N}, \/  {\bf RAND} $\ast$ {\em rand})}}
+\label{classCOORD__MC_a08009030898b97b0ab3ca85fc79f663e}
+This overloaded method rototranslates a ligand applying a rotations around Euler angles and shifts in X, Y and Z direction. 
+\begin{DoxyParams}{Parameters}
+\item[{\em coordinates}]C++ vector with ligand coordinates. \item[{\em N}]Number of atoms in the ligand. \item[{\em rand}]Pointer to the \hyperlink{classRAND}{RAND} object with sorted (random) numbers for Euler rotation and for translation. \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+C++ vector with modified coordinates 
+\end{DoxyReturn}
+\hypertarget{classCOORD__MC_ad5f14a1e75608fa9309c76337e5b38a7}{
+\index{COORD\_\-MC@{COORD\_\-MC}!rototranslate@{rototranslate}}
+\index{rototranslate@{rototranslate}!COORD_MC@{COORD\_\-MC}}
+\subsubsection[{rototranslate}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$ vector$<$ double $>$ $>$ COORD\_\-MC::rototranslate (vector$<$ vector$<$ double $>$ $>$ {\em coordinates}, \/  int {\em N}, \/  double {\em alpha}, \/  double {\em beta}, \/  double {\em gamma}, \/  double {\em transx}, \/  double {\em transy}, \/  double {\em transz})}}
+\label{classCOORD__MC_ad5f14a1e75608fa9309c76337e5b38a7}
+Method to rotate (in Euler angles) and translate a set of coordinates at once. 
+\begin{DoxyParams}{Parameters}
+\item[{\em coordinates}]C++ vector with original ligand coordinates \item[{\em N}]Number of atoms \item[{\em alpha}]First Euler angle to define a rotation (see \href{http://www.gregslabaugh.name/publications/euler.pdf}{\tt http://www.gregslabaugh.name/publications/euler.pdf} for a reference) \item[{\em beta}]Second Euler angle. \item[{\em gamma}]Third Euler angle. \item[{\em transx}]Shift in X direction. \item[{\em transy}]Shift in Y direction. \item[{\em transz}]Shift in Z direction. \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+C++ vector with modified coordinates 
+\end{DoxyReturn}
+\hypertarget{classCOORD__MC_ab54ac0814f32c1b752807a062546bcd3}{
+\index{COORD\_\-MC@{COORD\_\-MC}!rototranslate\_\-all@{rototranslate\_\-all}}
+\index{rototranslate\_\-all@{rototranslate\_\-all}!COORD_MC@{COORD\_\-MC}}
+\subsubsection[{rototranslate\_\-all}]{\setlength{\rightskip}{0pt plus 5cm}void COORD\_\-MC::rototranslate\_\-all ({\bf Mol2} $\ast$ {\em Cmol}, \/  double {\em alpha}, \/  double {\em beta}, \/  double {\em gamma}, \/  double {\em transx}, \/  double {\em transy}, \/  double {\em transz})}}
+\label{classCOORD__MC_ab54ac0814f32c1b752807a062546bcd3}
+This overloaded method rototranslates a set of coordinates from a MD simulation, for example. The new coordinates are written in the \hyperlink{classPRMTOP}{PRMTOP} attribute 'new\_\-mcoord'.
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em Cmol}]Pointer to a \hyperlink{classPRMTOP}{PRMTOP} object defining a ligand. \item[{\em alpha}]First Euler angle to define a rotation (see \href{http://www.gregslabaugh.name/publications/euler.pdf}{\tt http://www.gregslabaugh.name/publications/euler.pdf} for a reference) \item[{\em beta}]Second Euler angle. \item[{\em gamma}]Third Euler angle. \item[{\em transx}]Shift in X direction. \item[{\em transy}]Shift in Y direction. \item[{\em transz}]Shift in Z direction. \end{DoxyParams}
+\hypertarget{classCOORD__MC_a589bdc525228164c9d212312f262e3c8}{
+\index{COORD\_\-MC@{COORD\_\-MC}!rototranslate\_\-all@{rototranslate\_\-all}}
+\index{rototranslate\_\-all@{rototranslate\_\-all}!COORD_MC@{COORD\_\-MC}}
+\subsubsection[{rototranslate\_\-all}]{\setlength{\rightskip}{0pt plus 5cm}void COORD\_\-MC::rototranslate\_\-all ({\bf Mol2} $\ast$ {\em Cmol}, \/  {\bf RAND} $\ast$ {\em Rand})}}
+\label{classCOORD__MC_a589bdc525228164c9d212312f262e3c8}
+This method rototranslates a set of coordinates from a MD simulation, for example. The new coordinates are written in the \hyperlink{classPRMTOP}{PRMTOP} attribute 'new\_\-mcoord'.
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em Cmol}]Pointer to a \hyperlink{classPRMTOP}{PRMTOP} object defining a ligand. \item[{\em Rand}]Ponter to a \hyperlink{classRAND}{RAND} object with sorted angles and shifts. \end{DoxyParams}
+\hypertarget{classCOORD__MC_aac39d2abe16a2f0b6015c4e69fb11753}{
+\index{COORD\_\-MC@{COORD\_\-MC}!translate@{translate}}
+\index{translate@{translate}!COORD_MC@{COORD\_\-MC}}
+\subsubsection[{translate}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$ vector$<$ double $>$ $>$ COORD\_\-MC::translate (vector$<$ vector$<$ double $>$ $>$ {\em coordinates}, \/  int {\em N}, \/  double {\em tx}, \/  double {\em ty}, \/  double {\em tz})}}
+\label{classCOORD__MC_aac39d2abe16a2f0b6015c4e69fb11753}
+This method shifts (i.e. translates) a molecule to any desired position. 
+\begin{DoxyParams}{Parameters}
+\item[{\em coordinates}]C++ vector with molecular (cartesian) coordinates. \item[{\em N}]Number of atoms in the molecule. \item[{\em tx}]Shift in X direction. \item[{\em ty}]Shift in Y direction. \item[{\em tz}]Shift in Z direction. \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A new C++ vector with new (shifted) coordinates. 
+\end{DoxyReturn}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classCOORD__MC_adf957d739f01ee5eb6fa85cbbb106c18}{
+\index{COORD\_\-MC@{COORD\_\-MC}!com@{com}}
+\index{com@{com}!COORD_MC@{COORD\_\-MC}}
+\subsubsection[{com}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$double$>$ {\bf COORD\_\-MC::com}}}
+\label{classCOORD__MC_adf957d739f01ee5eb6fa85cbbb106c18}
+
+
+C++ vector that stores the modified atomic coordinates (rotated/translated). C++ vector that stores the center of mass for the system (ligand) 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/COORD\_\-MC.h\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/COORD\_\-MC.cpp\end{DoxyCompactItemize}

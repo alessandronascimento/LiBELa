@@ -1,0 +1,155 @@
+\hypertarget{classWRITER}{
+\section{WRITER Class Reference}
+\label{classWRITER}\index{WRITER@{WRITER}}
+}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classWRITER_a307cdce6b130bef1464f6314c282357a}{WRITER} (string prefix, \hyperlink{classPARSER}{PARSER} $\ast$\_\-Input)
+\item 
+\hypertarget{classWRITER_a74b98ae5522d2c7ade60d66ee7645209}{
+{\bfseries WRITER} (string prefix)}
+\label{classWRITER_a74b98ae5522d2c7ade60d66ee7645209}
+
+\item 
+\hypertarget{classWRITER_a4f06e34397eece428f5d18f03d4e42ff}{
+{\bfseries WRITER} (\hyperlink{classPARSER}{PARSER} $\ast$\_\-Input)}
+\label{classWRITER_a4f06e34397eece428f5d18f03d4e42ff}
+
+\item 
+void \hyperlink{classWRITER_aa111d42a3e15462bc5f1e5d450220ac4}{write\_\-box} (vector$<$ double $>$center, double min\_\-x, double min\_\-y, double min\_\-z, double max\_\-x, double max\_\-y, double max\_\-z)
+\item 
+void \hyperlink{classWRITER_a953d816265ab366b0e700cfb1083a9c1}{write\_\-pdb} (vector$<$ vector$<$ double $>$ $>$xyz, int N, vector$<$ string $>$ atomnames, double energy, double temp, string outname)
+\item 
+\hypertarget{classWRITER_a28080617b6da0a6e6c4b620c5ec21cda}{
+void {\bfseries write\_\-pdb} (\hyperlink{classMol2}{Mol2} $\ast$\hyperlink{classWRITER_aaea0524b142c7c6e27082d070b5ba95c}{Cmol}, vector$<$ vector$<$ double $>$ $>$xyz, double energy, double rmsd, string outname)}
+\label{classWRITER_a28080617b6da0a6e6c4b620c5ec21cda}
+
+\item 
+\hypertarget{classWRITER_a93e648a726d4d74a6935df22a9fef5aa}{
+void {\bfseries writeMol2} (\hyperlink{classMol2}{Mol2} $\ast$\hyperlink{classWRITER_aaea0524b142c7c6e27082d070b5ba95c}{Cmol}, vector$<$ vector$<$ double $>$ $>$xyz, double energy, double rmsd, string outname)}
+\label{classWRITER_a93e648a726d4d74a6935df22a9fef5aa}
+
+\item 
+\hypertarget{classWRITER_a94626976f7f68f2ba5d16a3b9db64b9a}{
+void {\bfseries writeMol2} (\hyperlink{classMol2}{Mol2} $\ast$\hyperlink{classWRITER_aaea0524b142c7c6e27082d070b5ba95c}{Cmol}, vector$<$ vector$<$ double $>$ $>$xyz, double energy, double rmsd)}
+\label{classWRITER_a94626976f7f68f2ba5d16a3b9db64b9a}
+
+\item 
+\hypertarget{classWRITER_a60c384c4332ce8fdce7ce1b88abfc4ce}{
+void {\bfseries writeMol2\_\-Mol\_\-new\_\-xyz} (\hyperlink{classMol2}{Mol2} $\ast$\hyperlink{classWRITER_aaea0524b142c7c6e27082d070b5ba95c}{Cmol}, double energy, double rmsd)}
+\label{classWRITER_a60c384c4332ce8fdce7ce1b88abfc4ce}
+
+\item 
+void \hyperlink{classWRITER_ae7b3e548525f5fe8dd27b228f5c0eb63}{write\_\-pqr} (\hyperlink{classMol2}{Mol2} $\ast$\hyperlink{classWRITER_aaea0524b142c7c6e27082d070b5ba95c}{Cmol}, string outname)
+\begin{DoxyCompactList}\small\item\em write\_\-pqr Function to write a PQR file from a MOL2 file. Atomic radii and charges are taken \mbox{]} LIBELA conversion (AMBER/GAFF) and from mol2 files, respectively. \item\end{DoxyCompactList}\item 
+void \hyperlink{classWRITER_a11c7d32eb43e430e5d27eb219465a076}{print\_\-info} (char info\mbox{[}98\mbox{]})
+\item 
+\hypertarget{classWRITER_a9e601b63788f9c708df7d6e61885da4b}{
+void {\bfseries print\_\-info\_\-no\_\-newline} (char info\mbox{[}98\mbox{]})}
+\label{classWRITER_a9e601b63788f9c708df7d6e61885da4b}
+
+\item 
+\hypertarget{classWRITER_ae4ddcacf87db8082ac1db1314596a540}{
+void {\bfseries print\_\-line} (void)}
+\label{classWRITER_ae4ddcacf87db8082ac1db1314596a540}
+
+\item 
+\hypertarget{classWRITER_a8e00990a76c4759fe28660369b3caff6}{
+void {\bfseries print\_\-welcome} (void)}
+\label{classWRITER_a8e00990a76c4759fe28660369b3caff6}
+
+\item 
+\hypertarget{classWRITER_a10a69c452dc11bc6d8616ea0da5c94e7}{
+void {\bfseries print\_\-params} ()}
+\label{classWRITER_a10a69c452dc11bc6d8616ea0da5c94e7}
+
+\item 
+\hypertarget{classWRITER_a3ef855f75e7ddf4b99a2ab6792506279}{
+bool {\bfseries FileExists} (string strFilename)}
+\label{classWRITER_a3ef855f75e7ddf4b99a2ab6792506279}
+
+\item 
+\hypertarget{classWRITER_abe72a9aeaa5993a5b6439528656b91eb}{
+void {\bfseries print\_\-dock\_\-params} ()}
+\label{classWRITER_abe72a9aeaa5993a5b6439528656b91eb}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classWRITER_abe253e51ab49fe0837757383267e9f98}{
+FILE $\ast$ \hyperlink{classWRITER_abe253e51ab49fe0837757383267e9f98}{output}}
+\label{classWRITER_abe253e51ab49fe0837757383267e9f98}
+
+\begin{DoxyCompactList}\small\item\em The output file is defined as a log file of the simulation. \item\end{DoxyCompactList}\item 
+\hypertarget{classWRITER_afc513098438e6b6a0cfc075916cbd6a6}{
+string \hyperlink{classWRITER_afc513098438e6b6a0cfc075916cbd6a6}{outputfile}}
+\label{classWRITER_afc513098438e6b6a0cfc075916cbd6a6}
+
+\begin{DoxyCompactList}\small\item\em String used to generate the output file name. \item\end{DoxyCompactList}\item 
+\hypertarget{classWRITER_a5089c4353a7e6cd0421782ce60d086b9}{
+string \hyperlink{classWRITER_a5089c4353a7e6cd0421782ce60d086b9}{output\_\-prefix}}
+\label{classWRITER_a5089c4353a7e6cd0421782ce60d086b9}
+
+\begin{DoxyCompactList}\small\item\em String used to parse the prefix for all output files. \item\end{DoxyCompactList}\item 
+\hypertarget{classWRITER_aaea0524b142c7c6e27082d070b5ba95c}{
+\hyperlink{classMol2}{Mol2} $\ast$ \hyperlink{classWRITER_aaea0524b142c7c6e27082d070b5ba95c}{Cmol}}
+\label{classWRITER_aaea0524b142c7c6e27082d070b5ba95c}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{classMol2}{Mol2} molecule used to get coordinates, atom names, etc. \item\end{DoxyCompactList}\item 
+\hypertarget{classWRITER_acb2209762ef921d0e04efd4c9ad5fd76}{
+gzFile \hyperlink{classWRITER_acb2209762ef921d0e04efd4c9ad5fd76}{outmol2}}
+\label{classWRITER_acb2209762ef921d0e04efd4c9ad5fd76}
+
+\begin{DoxyCompactList}\small\item\em Gzipped file used to write \hyperlink{classMC}{MC} trajectory or docked molecules. \item\end{DoxyCompactList}\item 
+\hypertarget{classWRITER_aa4434d97fabf3182b0ea387f76508695}{
+\hyperlink{classPARSER}{PARSER} $\ast$ \hyperlink{classWRITER_aa4434d97fabf3182b0ea387f76508695}{Input}}
+\label{classWRITER_aa4434d97fabf3182b0ea387f76508695}
+
+\begin{DoxyCompactList}\small\item\em Input parameters from class \hyperlink{classPARSER}{PARSER}. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classWRITER_a307cdce6b130bef1464f6314c282357a}{
+\index{WRITER@{WRITER}!WRITER@{WRITER}}
+\index{WRITER@{WRITER}!WRITER@{WRITER}}
+\subsubsection[{WRITER}]{\setlength{\rightskip}{0pt plus 5cm}WRITER::WRITER (string {\em prefix}, \/  {\bf PARSER} $\ast$ {\em \_\-Input})}}
+\label{classWRITER_a307cdce6b130bef1464f6314c282357a}
+The constructor is used only to parse the output\_\-prefix as defined in the input file and store it in the class. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classWRITER_a11c7d32eb43e430e5d27eb219465a076}{
+\index{WRITER@{WRITER}!print\_\-info@{print\_\-info}}
+\index{print\_\-info@{print\_\-info}!WRITER@{WRITER}}
+\subsubsection[{print\_\-info}]{\setlength{\rightskip}{0pt plus 5cm}void WRITER::print\_\-info (char {\em info}\mbox{[}98\mbox{]})}}
+\label{classWRITER_a11c7d32eb43e430e5d27eb219465a076}
+The print\_\-info method is used to, at the same time, print some useful(?) information about the simulation in the screen and write it to the log file. \hypertarget{classWRITER_aa111d42a3e15462bc5f1e5d450220ac4}{
+\index{WRITER@{WRITER}!write\_\-box@{write\_\-box}}
+\index{write\_\-box@{write\_\-box}!WRITER@{WRITER}}
+\subsubsection[{write\_\-box}]{\setlength{\rightskip}{0pt plus 5cm}void WRITER::write\_\-box (vector$<$ double $>$ {\em center}, \/  double {\em min\_\-x}, \/  double {\em min\_\-y}, \/  double {\em min\_\-z}, \/  double {\em max\_\-x}, \/  double {\em max\_\-y}, \/  double {\em max\_\-z})}}
+\label{classWRITER_aa111d42a3e15462bc5f1e5d450220ac4}
+
+\begin{DoxyParams}{Parameters}
+\item[{\em center}]C++ vector with center of mass for box computation, i.e., comX, comY and comZ. \item[{\em min\_\-x}]\item[{\em min\_\-y}]\item[{\em min\_\-z}]\item[{\em max\_\-x}]\item[{\em max\_\-y}]\item[{\em max\_\-z}]\end{DoxyParams}
+\hypertarget{classWRITER_a953d816265ab366b0e700cfb1083a9c1}{
+\index{WRITER@{WRITER}!write\_\-pdb@{write\_\-pdb}}
+\index{write\_\-pdb@{write\_\-pdb}!WRITER@{WRITER}}
+\subsubsection[{write\_\-pdb}]{\setlength{\rightskip}{0pt plus 5cm}void WRITER::write\_\-pdb (vector$<$ vector$<$ double $>$ $>$ {\em xyz}, \/  int {\em N}, \/  vector$<$ string $>$ {\em atomnames}, \/  double {\em energy}, \/  double {\em temp}, \/  string {\em outname})}}
+\label{classWRITER_a953d816265ab366b0e700cfb1083a9c1}
+The write pdb method is used to write gzipped file everytime a configuration is accepted during a \hyperlink{classSA}{SA} run or during an equilibrium run. \hypertarget{classWRITER_ae7b3e548525f5fe8dd27b228f5c0eb63}{
+\index{WRITER@{WRITER}!write\_\-pqr@{write\_\-pqr}}
+\index{write\_\-pqr@{write\_\-pqr}!WRITER@{WRITER}}
+\subsubsection[{write\_\-pqr}]{\setlength{\rightskip}{0pt plus 5cm}void WRITER::write\_\-pqr ({\bf Mol2} $\ast$ {\em Cmol}, \/  string {\em outname})}}
+\label{classWRITER_ae7b3e548525f5fe8dd27b228f5c0eb63}
+
+
+write\_\-pqr Function to write a PQR file from a MOL2 file. Atomic radii and charges are taken \mbox{]} LIBELA conversion (AMBER/GAFF) and from mol2 files, respectively. 
+\begin{DoxyParams}{Parameters}
+\item[{\em Cmol}]MOL2 object \item[{\em outname}]prefix for file writting. \end{DoxyParams}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/WRITER.h\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/WRITER.cpp\end{DoxyCompactItemize}

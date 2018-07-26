@@ -1,0 +1,126 @@
+\hypertarget{classMcEntropy}{
+\section{McEntropy Class Reference}
+\label{classMcEntropy}\index{McEntropy@{McEntropy}}
+}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structMcEntropy_1_1entropy__t}{entropy\_\-t}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classMcEntropy_aefeb5643677c1e75519d8fe65033230a}{
+{\bfseries McEntropy} (\hyperlink{classPARSER}{PARSER} $\ast$\_\-Input, \hyperlink{classCOORD__MC}{COORD\_\-MC} $\ast$\_\-Coord, vector$<$ double $>$ \_\-com, int \_\-n\_\-rot)}
+\label{classMcEntropy_aefeb5643677c1e75519d8fe65033230a}
+
+\item 
+\hypertarget{classMcEntropy_ae6be1218461bd35bea36eb5befca1b5a}{
+void {\bfseries update} (double x, double y, double z, double alpha, double beta, double gamma, vector$<$ double $>$ torsion)}
+\label{classMcEntropy_ae6be1218461bd35bea36eb5befca1b5a}
+
+\item 
+\hypertarget{classMcEntropy_a6314618b4df20a6154fbdfa2bce6dc0f}{
+void {\bfseries get\_\-results} (\hyperlink{structMcEntropy_1_1entropy__t}{entropy\_\-t} $\ast$entropy, \hyperlink{structMcEntropy_1_1entropy__t}{entropy\_\-t} $\ast$max\_\-entropy, int count)}
+\label{classMcEntropy_a6314618b4df20a6154fbdfa2bce6dc0f}
+
+\item 
+\hypertarget{classMcEntropy_a400ddf907035ec30ec95374d22c1c359}{
+void {\bfseries get\_\-results} (\hyperlink{structMcEntropy_1_1entropy__t}{entropy\_\-t} $\ast$entropy, int count)}
+\label{classMcEntropy_a400ddf907035ec30ec95374d22c1c359}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classMcEntropy_ad3285786c1fdcbacd657d6d55fe30522}{
+int {\bfseries rot\_\-bins}}
+\label{classMcEntropy_ad3285786c1fdcbacd657d6d55fe30522}
+
+\item 
+\hypertarget{classMcEntropy_a55676ce4d1152943d16e685f51ed8bd9}{
+int {\bfseries trans\_\-bins}}
+\label{classMcEntropy_a55676ce4d1152943d16e685f51ed8bd9}
+
+\item 
+\hypertarget{classMcEntropy_a175d13b147d9c33f7c01336c59cd0648}{
+int {\bfseries translation\_\-window}}
+\label{classMcEntropy_a175d13b147d9c33f7c01336c59cd0648}
+
+\item 
+\hypertarget{classMcEntropy_a9bfc8395dc3f25a5fffcdc9b4d0af2b4}{
+int {\bfseries n\_\-rot}}
+\label{classMcEntropy_a9bfc8395dc3f25a5fffcdc9b4d0af2b4}
+
+\item 
+\hypertarget{classMcEntropy_a8cabdcae6d44b86f5780b6288a083493}{
+double {\bfseries translation\_\-step}}
+\label{classMcEntropy_a8cabdcae6d44b86f5780b6288a083493}
+
+\item 
+\hypertarget{classMcEntropy_ac629e5e22b2364d19d31a856a4679980}{
+double {\bfseries rotation\_\-step}}
+\label{classMcEntropy_ac629e5e22b2364d19d31a856a4679980}
+
+\item 
+\hypertarget{classMcEntropy_a389197e84b267dd171d7afde3aba15d9}{
+vector$<$ double $>$ {\bfseries hist\_\-x}}
+\label{classMcEntropy_a389197e84b267dd171d7afde3aba15d9}
+
+\item 
+\hypertarget{classMcEntropy_a072f90de79f3e7a9e5a714f6c34e42fc}{
+vector$<$ double $>$ {\bfseries hist\_\-y}}
+\label{classMcEntropy_a072f90de79f3e7a9e5a714f6c34e42fc}
+
+\item 
+\hypertarget{classMcEntropy_a873bae96a0014d78b9cdb5758dd26b6a}{
+vector$<$ double $>$ {\bfseries hist\_\-z}}
+\label{classMcEntropy_a873bae96a0014d78b9cdb5758dd26b6a}
+
+\item 
+\hypertarget{classMcEntropy_a2c3831cf9f94e52b80fb0b93a1c7b0e5}{
+vector$<$ double $>$ {\bfseries hist\_\-alpha}}
+\label{classMcEntropy_a2c3831cf9f94e52b80fb0b93a1c7b0e5}
+
+\item 
+\hypertarget{classMcEntropy_ac2babf7dfaf13de2a697d6de2509a69a}{
+vector$<$ double $>$ {\bfseries hist\_\-beta}}
+\label{classMcEntropy_ac2babf7dfaf13de2a697d6de2509a69a}
+
+\item 
+\hypertarget{classMcEntropy_ac89119e2776444781c93247c503558ef}{
+vector$<$ double $>$ {\bfseries hist\_\-gamma}}
+\label{classMcEntropy_ac89119e2776444781c93247c503558ef}
+
+\item 
+\hypertarget{classMcEntropy_a952d89418d03753bd0a49c8de983c550}{
+vector$<$ double $>$ {\bfseries com}}
+\label{classMcEntropy_a952d89418d03753bd0a49c8de983c550}
+
+\item 
+\hypertarget{classMcEntropy_ac15cca889dc032e44a997251f13ed426}{
+float $\ast$$\ast$ {\bfseries hist\_\-torsions}}
+\label{classMcEntropy_ac15cca889dc032e44a997251f13ed426}
+
+\item 
+\hypertarget{classMcEntropy_a849dfb9b7592383ec3d241f3bb162e52}{
+\hyperlink{classPARSER}{PARSER} $\ast$ {\bfseries Input}}
+\label{classMcEntropy_a849dfb9b7592383ec3d241f3bb162e52}
+
+\item 
+\hypertarget{classMcEntropy_a5936fa7d6cf66b5dd26a0b245b9bcc27}{
+\hyperlink{classCOORD__MC}{COORD\_\-MC} $\ast$ {\bfseries Coord}}
+\label{classMcEntropy_a5936fa7d6cf66b5dd26a0b245b9bcc27}
+
+\item 
+\hypertarget{classMcEntropy_a43e8372c7b0f0cd06777783d948f1042}{
+double {\bfseries k}}
+\label{classMcEntropy_a43e8372c7b0f0cd06777783d948f1042}
+
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/McEntropy.h\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/McEntropy.cpp\end{DoxyCompactItemize}

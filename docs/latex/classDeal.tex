@@ -1,0 +1,186 @@
+\hypertarget{classDeal}{
+\section{Deal Class Reference}
+\label{classDeal}\index{Deal@{Deal}}
+}
+
+
+This class was written to use the Density Estination Algorithm to optimize binding energy after a rough ligand docking based on ligand similarity and using a reference small molecule to 'guide' the docking. The density estimation here uses gaussian estimates of rotation angles and translations.  
+
+
+{\ttfamily \#include $<$Deal.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classDeal_acc21499a89384247e4fb15568cf17982}{Deal} (\hyperlink{classMol2}{Mol2} $\ast$\_\-Rec, \hyperlink{classMol2}{Mol2} $\ast$\_\-Lig, \hyperlink{classPARSER}{PARSER} $\ast$Input)
+\item 
+\hypertarget{classDeal_a2e59a24920d5ccdd893c0962b92c61af}{
+virtual \hyperlink{classDeal_a2e59a24920d5ccdd893c0962b92c61af}{$\sim$Deal} ()}
+\label{classDeal_a2e59a24920d5ccdd893c0962b92c61af}
+
+\begin{DoxyCompactList}\small\item\em Deconstructor. Deletes the gsl rng interface;. \item\end{DoxyCompactList}\item 
+void \hyperlink{classDeal_ab36a3bcdb00eebadca5d8e1b83903afe}{sort\_\-array} (void)
+\item 
+\hypertarget{classDeal_abbff975a52cf2cf3c67af7c23ad909ff}{
+void \hyperlink{classDeal_abbff975a52cf2cf3c67af7c23ad909ff}{sort\_\-and\_\-evaluate} (double $\ast$\hyperlink{classDeal_a3ebd25a0952e605a7ba348081ca02dff}{mu}, int iteration)}
+\label{classDeal_abbff975a52cf2cf3c67af7c23ad909ff}
+
+\begin{DoxyCompactList}\small\item\em This method iterates PARSER::deal\_\-generation 'generations', each generation with \hyperlink{classPARSER_afe06b419ab83ef6d8541b783f7cafe8f}{PARSER::deal\_\-pop\_\-size} sampling;. \item\end{DoxyCompactList}\item 
+\hypertarget{classDeal_a61921feaaf8c68aec2964013fdea0c12}{
+void \hyperlink{classDeal_a61921feaaf8c68aec2964013fdea0c12}{update\_\-mu} (int top\_\-ranked)}
+\label{classDeal_a61921feaaf8c68aec2964013fdea0c12}
+
+\begin{DoxyCompactList}\small\item\em Here, the estimates are computed (simple averages) for further use to sample angles and rotations in a gaussian distribution centered on mu;. \item\end{DoxyCompactList}\item 
+\hypertarget{classDeal_add1bf8643006b1c33cf41072e023e128}{
+void \hyperlink{classDeal_add1bf8643006b1c33cf41072e023e128}{iterate} (\hyperlink{classPARSER}{PARSER} $\ast$Input)}
+\label{classDeal_add1bf8643006b1c33cf41072e023e128}
+
+\begin{DoxyCompactList}\small\item\em This method couples iterations and mu updates. \item\end{DoxyCompactList}\item 
+\hypertarget{classDeal_a83199504a901a2844d182196b1d644f3}{
+double {\bfseries evaluate\_\-energy} (QVector$<$ double $>$ temp)}
+\label{classDeal_a83199504a901a2844d182196b1d644f3}
+
+\item 
+\hypertarget{classDeal_a8737d935dbc8958518c16a24b4b26257}{
+vector$<$ int $>$ {\bfseries define\_\-chunck\_\-sizes} (void)}
+\label{classDeal_a8737d935dbc8958518c16a24b4b26257}
+
+\item 
+\hypertarget{classDeal_af455962f09d71519e0651b7bc5822b2f}{
+vector$<$ vector$<$ double $>$ $>$ {\bfseries rototranslate} (\hyperlink{classMol2}{Mol2} $\ast$Lig, double alpha, double beta, double gamma, double transx, double transy, double transz)}
+\label{classDeal_af455962f09d71519e0651b7bc5822b2f}
+
+\item 
+\hypertarget{classDeal_a4c14bc771b0b80045bb30224e8c4eb30}{
+vector$<$ double $>$ {\bfseries compute\_\-com} (\hyperlink{classMol2}{Mol2} $\ast$Cmol)}
+\label{classDeal_a4c14bc771b0b80045bb30224e8c4eb30}
+
+\item 
+double \hyperlink{classDeal_a413250a08bd09f48c746b046f2fe832f}{compute\_\-ene\_\-softcore\_\-solvation} (\hyperlink{classMol2}{Mol2} $\ast$Rec, \hyperlink{classMol2}{Mol2} $\ast$Lig, \hyperlink{classPARSER}{PARSER} $\ast$Input, vector$<$ vector$<$ double $>$ $>$coords)
+\item 
+\hypertarget{classDeal_ab47d9b35bd969fb1dda4ae259ff818a2}{
+double {\bfseries distance\_\-squared} (double x1, double x2, double y1, double y2, double z1, double z2)}
+\label{classDeal_ab47d9b35bd969fb1dda4ae259ff818a2}
+
+\item 
+\hypertarget{classDeal_a8769484e9659041ff51605729733635c}{
+double {\bfseries distance} (double x1, double x2, double y1, double y2, double z1, double z2)}
+\label{classDeal_a8769484e9659041ff51605729733635c}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classDeal_a94b3deb88235446e08a13d12103fc441}{
+int \hyperlink{classDeal_a94b3deb88235446e08a13d12103fc441}{population\_\-size}}
+\label{classDeal_a94b3deb88235446e08a13d12103fc441}
+
+\begin{DoxyCompactList}\small\item\em Size of population. \item\end{DoxyCompactList}\item 
+\hypertarget{classDeal_ad3f7ad66c44e737d0c02c99c1eb017b6}{
+const gsl\_\-rng\_\-type $\ast$ \hyperlink{classDeal_ad3f7ad66c44e737d0c02c99c1eb017b6}{T}}
+\label{classDeal_ad3f7ad66c44e737d0c02c99c1eb017b6}
+
+\begin{DoxyCompactList}\small\item\em GSL type. \item\end{DoxyCompactList}\item 
+\hypertarget{classDeal_a16ff5bce803143e1f731618c0df7dcf6}{
+gsl\_\-rng $\ast$ \hyperlink{classDeal_a16ff5bce803143e1f731618c0df7dcf6}{r}}
+\label{classDeal_a16ff5bce803143e1f731618c0df7dcf6}
+
+\begin{DoxyCompactList}\small\item\em GSL Random number generator interface. \item\end{DoxyCompactList}\item 
+\hypertarget{classDeal_a3ebd25a0952e605a7ba348081ca02dff}{
+double $\ast$ \hyperlink{classDeal_a3ebd25a0952e605a7ba348081ca02dff}{mu}}
+\label{classDeal_a3ebd25a0952e605a7ba348081ca02dff}
+
+\begin{DoxyCompactList}\small\item\em Double array used to keep 6 variables: mean for alpha, beta, gamma, x, y and z;. \item\end{DoxyCompactList}\item 
+\hypertarget{classDeal_a7f25c3c7056763a79c9e6924c36fc4fe}{
+double $\ast$ \hyperlink{classDeal_a7f25c3c7056763a79c9e6924c36fc4fe}{sigma}}
+\label{classDeal_a7f25c3c7056763a79c9e6924c36fc4fe}
+
+\begin{DoxyCompactList}\small\item\em Double array used to keep sigmas for gaussian distribution generations. Initially defined as \{60.0, 30.0,0 60.0, 1.0, 1.0, 1.0\}. \item\end{DoxyCompactList}\item 
+\hypertarget{classDeal_a11b9859d6624186ecc75aad21b30791a}{
+vector$<$ vector$<$ double $>$ $>$ \hyperlink{classDeal_a11b9859d6624186ecc75aad21b30791a}{rotrans}}
+\label{classDeal_a11b9859d6624186ecc75aad21b30791a}
+
+\begin{DoxyCompactList}\small\item\em C++ vector with the rotations and translations (angles and displacements). Important to define the next estimate. \item\end{DoxyCompactList}\item 
+\hypertarget{classDeal_a7088d41426d89d85d70893b8aae6c171}{
+vector$<$ double $>$ \hyperlink{classDeal_a7088d41426d89d85d70893b8aae6c171}{energies}}
+\label{classDeal_a7088d41426d89d85d70893b8aae6c171}
+
+\begin{DoxyCompactList}\small\item\em C++ vector with the energies of each 'pose', defined as a set of 3 angles and translation in 3 directions. \item\end{DoxyCompactList}\item 
+\hypertarget{classDeal_a2395c32eb3258cbe9835caa3c774086b}{
+\hyperlink{classMol2}{Mol2} $\ast$ {\bfseries Rec}}
+\label{classDeal_a2395c32eb3258cbe9835caa3c774086b}
+
+\item 
+\hypertarget{classDeal_ae3fc38342edb04056cf06023e1ac942b}{
+\hyperlink{classMol2}{Mol2} $\ast$ {\bfseries Lig}}
+\label{classDeal_ae3fc38342edb04056cf06023e1ac942b}
+
+\item 
+\hypertarget{classDeal_a7a0b4be112eef19bdad0e31de7364861}{
+\hyperlink{classPARSER}{PARSER} $\ast$ {\bfseries Input}}
+\label{classDeal_a7a0b4be112eef19bdad0e31de7364861}
+
+\item 
+\hypertarget{classDeal_a3777429077011fe2e04ef41266d7dc93}{
+vector$<$ int $>$ {\bfseries slices}}
+\label{classDeal_a3777429077011fe2e04ef41266d7dc93}
+
+\item 
+\hypertarget{classDeal_afcc9298da87fc0bdd80a2cf8201d7089}{
+int {\bfseries chunck\_\-size}}
+\label{classDeal_afcc9298da87fc0bdd80a2cf8201d7089}
+
+\item 
+\hypertarget{classDeal_a0fa1dcafa8e1d88a5ac7cf88a27b2f87}{
+clock\_\-t {\bfseries time\_\-i}}
+\label{classDeal_a0fa1dcafa8e1d88a5ac7cf88a27b2f87}
+
+\item 
+\hypertarget{classDeal_a1469a187f67215e4e10a2f5f94c3b16d}{
+clock\_\-t {\bfseries time\_\-f}}
+\label{classDeal_a1469a187f67215e4e10a2f5f94c3b16d}
+
+\item 
+\hypertarget{classDeal_a7cb8a68a46ce64218c0328b808c10357}{
+vector$<$ vector$<$ double $>$ $>$ {\bfseries final\_\-coords}}
+\label{classDeal_a7cb8a68a46ce64218c0328b808c10357}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class was written to use the Density Estination Algorithm to optimize binding energy after a rough ligand docking based on ligand similarity and using a reference small molecule to 'guide' the docking. The density estimation here uses gaussian estimates of rotation angles and translations. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classDeal_acc21499a89384247e4fb15568cf17982}{
+\index{Deal@{Deal}!Deal@{Deal}}
+\index{Deal@{Deal}!Deal@{Deal}}
+\subsubsection[{Deal}]{\setlength{\rightskip}{0pt plus 5cm}Deal::Deal ({\bf Mol2} $\ast$ {\em \_\-Rec}, \/  {\bf Mol2} $\ast$ {\em \_\-Lig}, \/  {\bf PARSER} $\ast$ {\em Input})}}
+\label{classDeal_acc21499a89384247e4fb15568cf17982}
+Constructor. Here, the other methods are also called. So, calling the constructor, should be all that is necessary to perform the optimization. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classDeal_a413250a08bd09f48c746b046f2fe832f}{
+\index{Deal@{Deal}!compute\_\-ene\_\-softcore\_\-solvation@{compute\_\-ene\_\-softcore\_\-solvation}}
+\index{compute\_\-ene\_\-softcore\_\-solvation@{compute\_\-ene\_\-softcore\_\-solvation}!Deal@{Deal}}
+\subsubsection[{compute\_\-ene\_\-softcore\_\-solvation}]{\setlength{\rightskip}{0pt plus 5cm}double Deal::compute\_\-ene\_\-softcore\_\-solvation ({\bf Mol2} $\ast$ {\em Rec}, \/  {\bf Mol2} $\ast$ {\em Lig}, \/  {\bf PARSER} $\ast$ {\em Input}, \/  vector$<$ vector$<$ double $>$ $>$ {\em coords})}}
+\label{classDeal_a413250a08bd09f48c746b046f2fe832f}
+
+
+electrostactic energy (softcore)
+
+VDW energy (softcore)
+
+Solvation energy
+
+electrostactic energy (softcore)
+
+VDW energy (softcore) \hypertarget{classDeal_ab36a3bcdb00eebadca5d8e1b83903afe}{
+\index{Deal@{Deal}!sort\_\-array@{sort\_\-array}}
+\index{sort\_\-array@{sort\_\-array}!Deal@{Deal}}
+\subsubsection[{sort\_\-array}]{\setlength{\rightskip}{0pt plus 5cm}void Deal::sort\_\-array (void)}}
+\label{classDeal_ab36a3bcdb00eebadca5d8e1b83903afe}
+This method sorts the energies array together with the angles/translations. It's important to select the top ranked rototranslations and define the next estimative. Here, we used N$\ast$$\ast$2 comparisong. This method can be further optimized. 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/Deal.h\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/Deal.cpp\end{DoxyCompactItemize}

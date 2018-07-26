@@ -1,0 +1,200 @@
+\hypertarget{classOptimizer}{
+\section{Optimizer Class Reference}
+\label{classOptimizer}\index{Optimizer@{Optimizer}}
+}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classOptimizer_aa414405d8d2bee0a5a9ed7a57d5e0e48}{
+{\bfseries Optimizer} (\hyperlink{classMol2}{Mol2} $\ast$\_\-Rec, \hyperlink{classMol2}{Mol2} $\ast$\_\-RefLig, \hyperlink{classPARSER}{PARSER} $\ast$\_\-Parser)}
+\label{classOptimizer_aa414405d8d2bee0a5a9ed7a57d5e0e48}
+
+\item 
+\hypertarget{classOptimizer_a1121dce6693ac845a934baf17295ea71}{
+{\bfseries Optimizer} (\hyperlink{classMol2}{Mol2} $\ast$\_\-Rec, \hyperlink{classMol2}{Mol2} $\ast$\_\-RefLig, \hyperlink{classPARSER}{PARSER} $\ast$\_\-Parser, \hyperlink{classGrid}{Grid} $\ast$\_\-Grids)}
+\label{classOptimizer_a1121dce6693ac845a934baf17295ea71}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classOptimizer_a7afdce3d26b60974488ed46779db8301}{
+static double {\bfseries evaluate\_\-rmsd} (\hyperlink{classMol2}{Mol2} $\ast$Lig1, \hyperlink{classMol2}{Mol2} $\ast$Lig2)}
+\label{classOptimizer_a7afdce3d26b60974488ed46779db8301}
+
+\item 
+\hypertarget{classOptimizer_a340041cdd7ec2f6de4954bf260d17ae9}{
+static void {\bfseries Simulated\_\-Annealing} (\hyperlink{classMol2}{Mol2} $\ast$Lig, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_a340041cdd7ec2f6de4954bf260d17ae9}
+
+\item 
+\hypertarget{classOptimizer_ad8fa14f155db9108dfc9744a69c4bf11}{
+static vector$<$ vector$<$ double $>$ $>$ {\bfseries update\_\-coords} (const std::vector$<$ double $>$ \&x, \hyperlink{classMol2}{Mol2} $\ast$Lig2)}
+\label{classOptimizer_ad8fa14f155db9108dfc9744a69c4bf11}
+
+\item 
+\hypertarget{classOptimizer_a10878c5f4c187227c9ac2b92278a789b}{
+static double {\bfseries evaluate\_\-energy} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, vector$<$ vector$<$ double $>$ $>$ new\_\-xyz)}
+\label{classOptimizer_a10878c5f4c187227c9ac2b92278a789b}
+
+\item 
+\hypertarget{classOptimizer_a8ecb4e920938808d1a036a58ee7ec931}{
+static void {\bfseries evaluate\_\-energy} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, vector$<$ vector$<$ double $>$ $>$ new\_\-xyz, \hyperlink{structenergy__result__t}{energy\_\-result\_\-t} $\ast$energy\_\-result)}
+\label{classOptimizer_a8ecb4e920938808d1a036a58ee7ec931}
+
+\item 
+\hypertarget{classOptimizer_a7ec8537c088066c81a00e56e51803dda}{
+static double {\bfseries objective\_\-energy\_\-function} (const vector$<$ double $>$ \&x, vector$<$ double $>$ \&grad, void $\ast$data)}
+\label{classOptimizer_a7ec8537c088066c81a00e56e51803dda}
+
+\item 
+\hypertarget{classOptimizer_a104c35bbafe56b8dec183644191e455a}{
+static double {\bfseries objective\_\-overlay\_\-function} (const vector$<$ double $>$ \&x, vector$<$ double $>$ \&grad, void $\ast$data)}
+\label{classOptimizer_a104c35bbafe56b8dec183644191e455a}
+
+\item 
+\hypertarget{classOptimizer_ac7cbc77ff69b9b85661cbb0a36b86958}{
+static void {\bfseries minimize\_\-energy\_\-nlopt\_\-cobyla} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_ac7cbc77ff69b9b85661cbb0a36b86958}
+
+\item 
+\hypertarget{classOptimizer_a015f83dc4f7c75c6a9090a4bc6c8dbb1}{
+static void {\bfseries minimize\_\-energy\_\-nlopt\_\-lbfgs} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_a015f83dc4f7c75c6a9090a4bc6c8dbb1}
+
+\item 
+\hypertarget{classOptimizer_a110f1d6756a09b2b76ed1ba2f0c6f009}{
+static void {\bfseries minimize\_\-energy\_\-nlopt\_\-ln\_\-auglag} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_a110f1d6756a09b2b76ed1ba2f0c6f009}
+
+\item 
+\hypertarget{classOptimizer_abc8ea7108444e73d66b0670ea445c123}{
+static void {\bfseries minimize\_\-energy\_\-nlopt\_\-ld\_\-auglag} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_abc8ea7108444e73d66b0670ea445c123}
+
+\item 
+\hypertarget{classOptimizer_a38cf97bda91286c13574f6596d6252ed}{
+static void {\bfseries minimize\_\-energy\_\-nlopt\_\-mma} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_a38cf97bda91286c13574f6596d6252ed}
+
+\item 
+\hypertarget{classOptimizer_a3ef39df8f990aff28897d5f764be4610}{
+static void {\bfseries minimize\_\-energy\_\-nlopt\_\-subplex} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_a3ef39df8f990aff28897d5f764be4610}
+
+\item 
+\hypertarget{classOptimizer_ab1c44ef3185fdc7a3a1560354e6524d6}{
+static void {\bfseries minimize\_\-energy\_\-nlopt\_\-simplex} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_ab1c44ef3185fdc7a3a1560354e6524d6}
+
+\item 
+\hypertarget{classOptimizer_a448c58b2b6f20e8ca68496b3ad74d5a0}{
+static void {\bfseries minimize\_\-energy\_\-nlopt\_\-crs} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_a448c58b2b6f20e8ca68496b3ad74d5a0}
+
+\item 
+\hypertarget{classOptimizer_afb60b77b665a9faeebe5aab7bcf008c9}{
+static void {\bfseries minimize\_\-energy\_\-nlopt\_\-direct} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_afb60b77b665a9faeebe5aab7bcf008c9}
+
+\item 
+\hypertarget{classOptimizer_a754f227df3287cc59a31e3ddfad9f490}{
+static void {\bfseries minimize\_\-energy\_\-nlopt\_\-direct\_\-only} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_a754f227df3287cc59a31e3ddfad9f490}
+
+\item 
+\hypertarget{classOptimizer_a3c91bdf965360fc4fe48b5d78aef73f3}{
+static void {\bfseries minimize\_\-energy\_\-nlopt\_\-stogo} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_a3c91bdf965360fc4fe48b5d78aef73f3}
+
+\item 
+\hypertarget{classOptimizer_a130bfd93e4af2e9bff264628f890418b}{
+static void {\bfseries minimize\_\-energy\_\-nlopt\_\-isres} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_a130bfd93e4af2e9bff264628f890418b}
+
+\item 
+\hypertarget{classOptimizer_a7f9c6528edd2a11d4a38a4d4bfa5392f}{
+static void {\bfseries minimize\_\-energy\_\-nlopt\_\-esch} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_a7f9c6528edd2a11d4a38a4d4bfa5392f}
+
+\item 
+\hypertarget{classOptimizer_a79586edeab7f4060a6ebd1e35b19c60d}{
+static void {\bfseries minimize\_\-energy\_\-adaptative} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_a79586edeab7f4060a6ebd1e35b19c60d}
+
+\item 
+\hypertarget{classOptimizer_aa4dfc6df1c44e9be45c40fdf8d5a9041}{
+static void {\bfseries minimize\_\-overlay\_\-nlopt\_\-cobyla} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_aa4dfc6df1c44e9be45c40fdf8d5a9041}
+
+\item 
+\hypertarget{classOptimizer_a95094208f71f945463ad540b274c48d4}{
+static void {\bfseries minimize\_\-overlay\_\-nlopt\_\-subplex} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_a95094208f71f945463ad540b274c48d4}
+
+\item 
+\hypertarget{classOptimizer_a1d88ee253a63b6529e6a26daff761a7b}{
+static void {\bfseries minimize\_\-overlay\_\-nlopt\_\-lbfgs} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_a1d88ee253a63b6529e6a26daff761a7b}
+
+\item 
+\hypertarget{classOptimizer_ada0f69b357d7bfe823a9c2e32e43d78b}{
+static void {\bfseries minimize\_\-overlay\_\-nlopt\_\-ln\_\-auglag} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_ada0f69b357d7bfe823a9c2e32e43d78b}
+
+\item 
+\hypertarget{classOptimizer_aa7582a886e66ad804a4e1bb16c41c159}{
+static void {\bfseries minimize\_\-overlay\_\-nlopt\_\-ld\_\-auglag} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_aa7582a886e66ad804a4e1bb16c41c159}
+
+\item 
+\hypertarget{classOptimizer_aa14d3efb62930e170820f6e649e82642}{
+static void {\bfseries minimize\_\-overlay\_\-nlopt\_\-mma} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_aa14d3efb62930e170820f6e649e82642}
+
+\item 
+\hypertarget{classOptimizer_a7826f3f1b4b0a22c32debf21486ce7b4}{
+static void {\bfseries minimize\_\-overlay\_\-nlopt\_\-crs} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_a7826f3f1b4b0a22c32debf21486ce7b4}
+
+\item 
+\hypertarget{classOptimizer_afc3fa17e2c1d1e9124eb55e8c651639a}{
+static void {\bfseries minimize\_\-overlay\_\-nlopt\_\-direct} (\hyperlink{classMol2}{Mol2} $\ast$Lig2, \hyperlink{structOptimizer_1_1opt__result__t}{opt\_\-result\_\-t} $\ast$opt\_\-result)}
+\label{classOptimizer_afc3fa17e2c1d1e9124eb55e8c651639a}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classOptimizer_a5c24b324ab19df11738bef91bc76bb53}{
+static \hyperlink{classMol2}{Mol2} $\ast$ {\bfseries Rec}}
+\label{classOptimizer_a5c24b324ab19df11738bef91bc76bb53}
+
+\item 
+\hypertarget{classOptimizer_a3a9f0461d3a2c5a80e74dc148a36f4aa}{
+static \hyperlink{classMol2}{Mol2} $\ast$ {\bfseries RefLig}}
+\label{classOptimizer_a3a9f0461d3a2c5a80e74dc148a36f4aa}
+
+\item 
+\hypertarget{classOptimizer_adb6ce5eb8dde2397acb547575ea92d27}{
+static \hyperlink{classPARSER}{PARSER} $\ast$ {\bfseries Parser}}
+\label{classOptimizer_adb6ce5eb8dde2397acb547575ea92d27}
+
+\item 
+\hypertarget{classOptimizer_a79bf9e282fc1fd7f87cf98362c546639}{
+static \hyperlink{classGrid}{Grid} $\ast$ {\bfseries Grids}}
+\label{classOptimizer_a79bf9e282fc1fd7f87cf98362c546639}
+
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/Optimizer.h\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/main.h\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/Optimizer.cpp\end{DoxyCompactItemize}

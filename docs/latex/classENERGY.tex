@@ -1,0 +1,258 @@
+\hypertarget{classENERGY}{
+\section{ENERGY Class Reference}
+\label{classENERGY}\index{ENERGY@{ENERGY}}
+}
+
+
+{\ttfamily \#include $<$ENERGY.h$>$}\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classENERGY_ac7870a394c7fad5207160d6c79da9ee6}{
+double {\bfseries distance} (double x1, double x2, double y1, double y2, double z1, double z2)}
+\label{classENERGY_ac7870a394c7fad5207160d6c79da9ee6}
+
+\item 
+\hypertarget{classENERGY_a3e62d5e4d58e5cc8e28960fd376ef1c5}{
+double {\bfseries distance\_\-squared} (double x1, double x2, double y1, double y2, double z1, double z2)}
+\label{classENERGY_a3e62d5e4d58e5cc8e28960fd376ef1c5}
+
+\item 
+double \hyperlink{classENERGY_a7ee01a8c6db5ab51a468c9d7ce3dea2f}{compute\_\-elec} (vector$<$ double $>$ rec\_\-charges, vector$<$ double $>$ lig\_\-charges, vector$<$ double $>$ rec\_\-crd, vector$<$ double $>$ lig\_\-crd)
+\item 
+double \hyperlink{classENERGY_a8c733b5450a52c8ed45709bb7c83fea3}{compute\_\-vdw} (vector$<$ double $>$ rec\_\-epsilons, vector$<$ double $>$ lig\_\-epsilons, vector$<$ double $>$ rec\_\-radii, vector$<$ double $>$ lig\_\-radii, vector$<$ double $>$ rec\_\-crd, vector$<$ double $>$ lig\_\-crd)
+\item 
+double \hyperlink{classENERGY_a71a6fd89c93fcd0a0a3a671c761972c2}{compute\_\-ene} (vector$<$ double $>$ rec\_\-epsilons, vector$<$ double $>$ lig\_\-epsilons, vector$<$ double $>$ rec\_\-radii, vector$<$ double $>$ lig\_\-radii, vector$<$ double $>$ rec\_\-charges, vector$<$ double $>$ lig\_\-charges, vector$<$ vector$<$ double $>$ $>$rec\_\-crd, vector$<$ vector$<$ double $>$ $>$lig\_\-crd)
+\item 
+double \hyperlink{classENERGY_a4751b0e8d0d3ce83b2f447236b7e8e38}{compute\_\-vdw\_\-softcore} (vector$<$ double $>$ rec\_\-epsilons, vector$<$ double $>$ lig\_\-epsilons, vector$<$ double $>$ rec\_\-radii, vector$<$ double $>$ lig\_\-radii, vector$<$ vector$<$ double $>$ $>$rec\_\-crd, vector$<$ vector$<$ double $>$ $>$lig\_\-crd, double deltaij6)
+\item 
+double \hyperlink{classENERGY_a2823f8524885ae4866f7baf9d6736359}{compute\_\-elec\_\-softcore} (vector$<$ double $>$ rec\_\-charges, vector$<$ double $>$ lig\_\-charges, vector$<$ vector$<$ double $>$ $>$rec\_\-crd, vector$<$ vector$<$ double $>$ $>$lig\_\-crd, double diel, double deltaij\_\-es6)
+\item 
+double \hyperlink{classENERGY_a712ccab3019a6cb120b2b49e5391898c}{compute\_\-solvation} (vector$<$ double $>$rec\_\-charges, vector$<$ double $>$ lig\_\-charges, vector$<$ double $>$rec\_\-radii, vector$<$ double $>$lig\_\-radii, vector$<$ vector$<$ double $>$ $>$rec\_\-crd, vector$<$ vector$<$ double $>$ $>$lig\_\-crd, double deltaij\_\-es6, double sigma)
+\item 
+double \hyperlink{classENERGY_a161909a8b166eeb653561abfcb49c54b}{compute\_\-ene\_\-softcore\_\-solvation} (vector$<$ double $>$rec\_\-charges, vector$<$ double $>$ lig\_\-charges, vector$<$ double $>$rec\_\-radii, vector$<$ double $>$lig\_\-radii, vector$<$ double $>$ rec\_\-epsilons, vector$<$ double $>$ lig\_\-epsilons, vector$<$ vector$<$ double $>$ $>$rec\_\-crd, vector$<$ vector$<$ double $>$ $>$lig\_\-crd, double diel, double deltaij\_\-es6, double deltaij6, double sigma)
+\item 
+\hypertarget{classENERGY_a901cb83200ea5e4bc5d3c47ab95d2b0a}{
+double \hyperlink{classENERGY_a901cb83200ea5e4bc5d3c47ab95d2b0a}{compute\_\-ene\_\-softcore\_\-solvation} (\hyperlink{classMol2}{Mol2} $\ast$REC, \hyperlink{classMol2}{Mol2} $\ast$LIG, \hyperlink{classPARSER}{PARSER} $\ast$Input, vector$<$ vector$<$ double $>$ $>$coord)}
+\label{classENERGY_a901cb83200ea5e4bc5d3c47ab95d2b0a}
+
+\begin{DoxyCompactList}\small\item\em Method overloaded. \item\end{DoxyCompactList}\item 
+\hypertarget{classENERGY_aff66abe3b15d2771d04bd03cb82c255a}{
+double \hyperlink{classENERGY_aff66abe3b15d2771d04bd03cb82c255a}{compute\_\-ene\_\-softcore\_\-solvation} (\hyperlink{classMol2}{Mol2} $\ast$REC, \hyperlink{classMol2}{Mol2} $\ast$LIG, \hyperlink{classPARSER}{PARSER} $\ast$Input)}
+\label{classENERGY_aff66abe3b15d2771d04bd03cb82c255a}
+
+\begin{DoxyCompactList}\small\item\em Method overloaded. \item\end{DoxyCompactList}\item 
+double \hyperlink{classENERGY_a40411aebcd70e744cb7f687585f63416}{compute\_\-ene\_\-softcore\_\-solvation} (\hyperlink{classMol2}{Mol2} $\ast$REC, \hyperlink{classMol2}{Mol2} $\ast$LIG, \hyperlink{classPARSER}{PARSER} $\ast$Input, \hyperlink{classRAND}{RAND} $\ast$Rand)
+\item 
+\hypertarget{classENERGY_aa7fb2d6d0539d054fe1eba2e101e764c}{
+double {\bfseries compute\_\-ene\_\-softcore\_\-solvation} (\hyperlink{classMol2}{Mol2} $\ast$REC, vector$<$ vector$<$ double $>$ $>$coord, \hyperlink{classMol2}{Mol2} $\ast$LIG, \hyperlink{classPARSER}{PARSER} $\ast$Input, \hyperlink{classRAND}{RAND} $\ast$Rand)}
+\label{classENERGY_aa7fb2d6d0539d054fe1eba2e101e764c}
+
+\item 
+\hypertarget{classENERGY_a149328ed6c63073bf4e78a2563bd9dd7}{
+double {\bfseries compute\_\-ene\_\-softcore\_\-solvation} (\hyperlink{classMol2}{Mol2} $\ast$REC, vector$<$ vector$<$ double $>$ $>$coord, vector$<$ vector$<$ double $>$ $>$lig\_\-coords, \hyperlink{classMol2}{Mol2} $\ast$LIG, \hyperlink{classPARSER}{PARSER} $\ast$Input)}
+\label{classENERGY_a149328ed6c63073bf4e78a2563bd9dd7}
+
+\item 
+\hypertarget{classENERGY_a4485b1971d1493f3c259cc2fd652223f}{
+double {\bfseries compute\_\-ene} (\hyperlink{classMol2}{Mol2} $\ast$REC, vector$<$ vector$<$ double $>$ $>$coords, \hyperlink{classMol2}{Mol2} $\ast$LIG, \hyperlink{classRAND}{RAND} $\ast$Rand)}
+\label{classENERGY_a4485b1971d1493f3c259cc2fd652223f}
+
+\item 
+\hypertarget{classENERGY_a37969f398f3831b4ec07a02469e7d242}{
+double {\bfseries compute\_\-ene} (\hyperlink{classMol2}{Mol2} $\ast$REC, \hyperlink{classMol2}{Mol2} $\ast$LIG, \hyperlink{classRAND}{RAND} $\ast$Rand)}
+\label{classENERGY_a37969f398f3831b4ec07a02469e7d242}
+
+\item 
+\hypertarget{classENERGY_a9b3a32737323c78562c690da4919c0eb}{
+double {\bfseries compute\_\-ene} (\hyperlink{classMol2}{Mol2} $\ast$REC, \hyperlink{classMol2}{Mol2} $\ast$LIG, vector$<$ vector$<$ double $>$ $>$coord)}
+\label{classENERGY_a9b3a32737323c78562c690da4919c0eb}
+
+\item 
+\hypertarget{classENERGY_a9cb9598c31546dea5965933b5f7375d6}{
+double {\bfseries compute\_\-ene} (\hyperlink{classMol2}{Mol2} $\ast$REC, vector$<$ vector$<$ double $>$ $>$coord, vector$<$ vector$<$ double $>$ $>$lig\_\-coords, \hyperlink{classMol2}{Mol2} $\ast$LIG)}
+\label{classENERGY_a9cb9598c31546dea5965933b5f7375d6}
+
+\item 
+\hypertarget{classENERGY_a12ca9457a3dae5359f70dd74f41bb691}{
+double {\bfseries compute\_\-ene\_\-solvation} (vector$<$ double $>$ rec\_\-epsilons, vector$<$ double $>$ lig\_\-epsilons, vector$<$ double $>$ rec\_\-radii, vector$<$ double $>$ lig\_\-radii, vector$<$ double $>$ rec\_\-charges, vector$<$ double $>$ lig\_\-charges, vector$<$ vector$<$ double $>$ $>$rec\_\-crd, vector$<$ vector$<$ double $>$ $>$lig\_\-crd, double deltaij\_\-es6, double sigma)}
+\label{classENERGY_a12ca9457a3dae5359f70dd74f41bb691}
+
+\item 
+double \hyperlink{classENERGY_ad01bf537f4d415c8f3851c752b76cdcb}{compute\_\-ene\_\-softcore} (vector$<$ double $>$rec\_\-charges, vector$<$ double $>$ lig\_\-charges, vector$<$ double $>$rec\_\-radii, vector$<$ double $>$lig\_\-radii, vector$<$ double $>$ rec\_\-epsilons, vector$<$ double $>$ lig\_\-epsilons, vector$<$ vector$<$ double $>$ $>$rec\_\-crd, vector$<$ vector$<$ double $>$ $>$lig\_\-crd, double diel, double deltaij\_\-es6, double deltaij6)
+\item 
+\hypertarget{classENERGY_a2a1521dbb9ea6f6df1a655837d549f92}{
+double {\bfseries compute\_\-ene\_\-from\_\-grids} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Lig)}
+\label{classENERGY_a2a1521dbb9ea6f6df1a655837d549f92}
+
+\item 
+\hypertarget{classENERGY_a0f61a662e8b538d0e910b9b7c82b07e0}{
+double {\bfseries compute\_\-ene\_\-from\_\-grids} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ xyz)}
+\label{classENERGY_a0f61a662e8b538d0e910b9b7c82b07e0}
+
+\item 
+\hypertarget{classENERGY_a805d6694a178459221ee5fd6b96af562}{
+double {\bfseries compute\_\-ene\_\-from\_\-grids\_\-nosolv} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ xyz)}
+\label{classENERGY_a805d6694a178459221ee5fd6b96af562}
+
+\item 
+\hypertarget{classENERGY_a198df6d975e929181b5fcb3cd8fe14c8}{
+double {\bfseries compute\_\-ene\_\-from\_\-grids\_\-hardcore} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ xyz)}
+\label{classENERGY_a198df6d975e929181b5fcb3cd8fe14c8}
+
+\item 
+\hypertarget{classENERGY_ac3c727288f8732f511bc690a3d3fb530}{
+double {\bfseries compute\_\-ene\_\-from\_\-grids\_\-hardcore\_\-nosolv} (\hyperlink{classGrid}{Grid} $\ast$Grids, \hyperlink{classMol2}{Mol2} $\ast$Lig, vector$<$ vector$<$ double $>$ $>$ xyz)}
+\label{classENERGY_ac3c727288f8732f511bc690a3d3fb530}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classENERGY_aa7420595950a201734ce22f12782922e}{
+double \hyperlink{classENERGY_aa7420595950a201734ce22f12782922e}{vdw}}
+\label{classENERGY_aa7420595950a201734ce22f12782922e}
+
+\begin{DoxyCompactList}\small\item\em van der Waals energy term \item\end{DoxyCompactList}\item 
+\hypertarget{classENERGY_ad25b424448ea4a4f222978b1dfa26b91}{
+double \hyperlink{classENERGY_ad25b424448ea4a4f222978b1dfa26b91}{elec}}
+\label{classENERGY_ad25b424448ea4a4f222978b1dfa26b91}
+
+\begin{DoxyCompactList}\small\item\em Electrostatic energy term. \item\end{DoxyCompactList}\item 
+\hypertarget{classENERGY_addcc3639162bd515a0ba20e9c702371d}{
+double \hyperlink{classENERGY_addcc3639162bd515a0ba20e9c702371d}{rij}}
+\label{classENERGY_addcc3639162bd515a0ba20e9c702371d}
+
+\begin{DoxyCompactList}\small\item\em Sum of radius of atoms i and j. \item\end{DoxyCompactList}\item 
+\hypertarget{classENERGY_a8d63c0a9c6762c78e2445e5f0970b688}{
+double \hyperlink{classENERGY_a8d63c0a9c6762c78e2445e5f0970b688}{eij}}
+\label{classENERGY_a8d63c0a9c6762c78e2445e5f0970b688}
+
+\begin{DoxyCompactList}\small\item\em Geometric mean of the well depths of for atoms i and j. \item\end{DoxyCompactList}\item 
+\hypertarget{classENERGY_ade8b46bccae17da31618ce1e6a0c231c}{
+double \hyperlink{classENERGY_ade8b46bccae17da31618ce1e6a0c231c}{dij}}
+\label{classENERGY_ade8b46bccae17da31618ce1e6a0c231c}
+
+\begin{DoxyCompactList}\small\item\em Distance between atoms i and j. \item\end{DoxyCompactList}\item 
+\hypertarget{classENERGY_a29efa4e802eaaaf9d74295fadea4f2f7}{
+double \hyperlink{classENERGY_a29efa4e802eaaaf9d74295fadea4f2f7}{dij2}}
+\label{classENERGY_a29efa4e802eaaaf9d74295fadea4f2f7}
+
+\begin{DoxyCompactList}\small\item\em Squared distance (dij$\ast$dij) between atom i and j. \item\end{DoxyCompactList}\item 
+\hypertarget{classENERGY_a0b0ffeca2fb48b6d54dfbd380d6e2664}{
+double \hyperlink{classENERGY_a0b0ffeca2fb48b6d54dfbd380d6e2664}{deff}}
+\label{classENERGY_a0b0ffeca2fb48b6d54dfbd380d6e2664}
+
+\begin{DoxyCompactList}\small\item\em \char`\"{}Effective\char`\"{} distance given as (dij2$\ast$dij2$\ast$dij2)+deltaij\_\-es6 \item\end{DoxyCompactList}\item 
+\hypertarget{classENERGY_ad6e0badc95381c69d406461a4b82b62d}{
+double \hyperlink{classENERGY_ad6e0badc95381c69d406461a4b82b62d}{acoef}}
+\label{classENERGY_ad6e0badc95381c69d406461a4b82b62d}
+
+\begin{DoxyCompactList}\small\item\em Repulsive term of VDW potential, given as eij$\ast$(rij$^\wedge$12). \item\end{DoxyCompactList}\item 
+\hypertarget{classENERGY_a32cd90b52dc94e3c4e2d05498cd85458}{
+double \hyperlink{classENERGY_a32cd90b52dc94e3c4e2d05498cd85458}{bcoef}}
+\label{classENERGY_a32cd90b52dc94e3c4e2d05498cd85458}
+
+\begin{DoxyCompactList}\small\item\em Attractive term of VDW potential, given as 2$\ast$eij$\ast$(rij$^\wedge$6). \item\end{DoxyCompactList}\item 
+\hypertarget{classENERGY_a4875430a612bac0905837b8a06a81f9b}{
+double \hyperlink{classENERGY_a4875430a612bac0905837b8a06a81f9b}{rec\_\-solv}}
+\label{classENERGY_a4875430a612bac0905837b8a06a81f9b}
+
+\begin{DoxyCompactList}\small\item\em Receptor solvation energy (kcal/mol). Given as Sum over all receptor atoms (rec\_\-solv\_\-affinity$\ast$rec\_\-solv\_\-distf). \item\end{DoxyCompactList}\item 
+\hypertarget{classENERGY_a28bfd0ebbeb592bc29d3362a0dbd678a}{
+double \hyperlink{classENERGY_a28bfd0ebbeb592bc29d3362a0dbd678a}{lig\_\-solv}}
+\label{classENERGY_a28bfd0ebbeb592bc29d3362a0dbd678a}
+
+\begin{DoxyCompactList}\small\item\em Ligand solvation energy (kcal/mol). Given as Sum over all ligand atoms (lig\_\-solv\_\-affinity$\ast$lig\_\-solv\_\-distf). \item\end{DoxyCompactList}\item 
+\hypertarget{classENERGY_a61cfed5d4be73c890c0f6b48fe6cff64}{
+double \hyperlink{classENERGY_a61cfed5d4be73c890c0f6b48fe6cff64}{rec\_\-solv\_\-affinity}}
+\label{classENERGY_a61cfed5d4be73c890c0f6b48fe6cff64}
+
+\begin{DoxyCompactList}\small\item\em Phenomenologically determined affinity of each receptor atom for the solvent. \item\end{DoxyCompactList}\item 
+\hypertarget{classENERGY_a4fc0db8e32ed2115a636b5b91f4b1ddd}{
+double \hyperlink{classENERGY_a4fc0db8e32ed2115a636b5b91f4b1ddd}{lig\_\-solv\_\-affinity}}
+\label{classENERGY_a4fc0db8e32ed2115a636b5b91f4b1ddd}
+
+\begin{DoxyCompactList}\small\item\em Phenomenologically determined affinity of each ligand atom for the solvent. \item\end{DoxyCompactList}\item 
+\hypertarget{classENERGY_aff96157428ab097046ca8b4d8074ef19}{
+double \hyperlink{classENERGY_aff96157428ab097046ca8b4d8074ef19}{rec\_\-solv\_\-distf}}
+\label{classENERGY_aff96157428ab097046ca8b4d8074ef19}
+
+\begin{DoxyCompactList}\small\item\em A gaussian weighted function of the atomic volumes displaced by ligand atoms when binding to receptor. \item\end{DoxyCompactList}\item 
+\hypertarget{classENERGY_afb87b01bdccf6af63d70bef97fe9021e}{
+double \hyperlink{classENERGY_afb87b01bdccf6af63d70bef97fe9021e}{lig\_\-solv\_\-distf}}
+\label{classENERGY_afb87b01bdccf6af63d70bef97fe9021e}
+
+\begin{DoxyCompactList}\small\item\em A gaussian weighted function of the atomic volumes displaced by receptor atoms when binding to ligand. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The class \hyperlink{classENERGY}{ENERGY} contains three methods dedicated to Binding Energy computation. Here we implemented a method to compute a typical VDW term (AMBER FF Style), typical electrostatic term (Coulomb potential), and soft-\/core potentials for both VDW and electrostatic terms. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classENERGY_a7ee01a8c6db5ab51a468c9d7ce3dea2f}{
+\index{ENERGY@{ENERGY}!compute\_\-elec@{compute\_\-elec}}
+\index{compute\_\-elec@{compute\_\-elec}!ENERGY@{ENERGY}}
+\subsubsection[{compute\_\-elec}]{\setlength{\rightskip}{0pt plus 5cm}double ENERGY::compute\_\-elec (vector$<$ double $>$ {\em rec\_\-charges}, \/  vector$<$ double $>$ {\em lig\_\-charges}, \/  vector$<$ double $>$ {\em rec\_\-crd}, \/  vector$<$ double $>$ {\em lig\_\-crd})}}
+\label{classENERGY_a7ee01a8c6db5ab51a468c9d7ce3dea2f}
+This function computes the electrostatic term of the binding potential energy \hypertarget{classENERGY_a2823f8524885ae4866f7baf9d6736359}{
+\index{ENERGY@{ENERGY}!compute\_\-elec\_\-softcore@{compute\_\-elec\_\-softcore}}
+\index{compute\_\-elec\_\-softcore@{compute\_\-elec\_\-softcore}!ENERGY@{ENERGY}}
+\subsubsection[{compute\_\-elec\_\-softcore}]{\setlength{\rightskip}{0pt plus 5cm}double ENERGY::compute\_\-elec\_\-softcore (vector$<$ double $>$ {\em rec\_\-charges}, \/  vector$<$ double $>$ {\em lig\_\-charges}, \/  vector$<$ vector$<$ double $>$ $>$ {\em rec\_\-crd}, \/  vector$<$ vector$<$ double $>$ $>$ {\em lig\_\-crd}, \/  double {\em diel}, \/  double {\em deltaij\_\-es6})}}
+\label{classENERGY_a2823f8524885ae4866f7baf9d6736359}
+This function computes the electrostatic binding term using a Soft-\/core potential. Details about the potential can de found in Verkhivker GM, et al (1999). J. Mol. Recog. 12:371-\/389. \hypertarget{classENERGY_a71a6fd89c93fcd0a0a3a671c761972c2}{
+\index{ENERGY@{ENERGY}!compute\_\-ene@{compute\_\-ene}}
+\index{compute\_\-ene@{compute\_\-ene}!ENERGY@{ENERGY}}
+\subsubsection[{compute\_\-ene}]{\setlength{\rightskip}{0pt plus 5cm}double ENERGY::compute\_\-ene (vector$<$ double $>$ {\em rec\_\-epsilons}, \/  vector$<$ double $>$ {\em lig\_\-epsilons}, \/  vector$<$ double $>$ {\em rec\_\-radii}, \/  vector$<$ double $>$ {\em lig\_\-radii}, \/  vector$<$ double $>$ {\em rec\_\-charges}, \/  vector$<$ double $>$ {\em lig\_\-charges}, \/  vector$<$ vector$<$ double $>$ $>$ {\em rec\_\-crd}, \/  vector$<$ vector$<$ double $>$ $>$ {\em lig\_\-crd})}}
+\label{classENERGY_a71a6fd89c93fcd0a0a3a671c761972c2}
+This function computes both, electrostatic and vdw term in a single method, i.e., looping just once over atoms i and j. \hypertarget{classENERGY_ad01bf537f4d415c8f3851c752b76cdcb}{
+\index{ENERGY@{ENERGY}!compute\_\-ene\_\-softcore@{compute\_\-ene\_\-softcore}}
+\index{compute\_\-ene\_\-softcore@{compute\_\-ene\_\-softcore}!ENERGY@{ENERGY}}
+\subsubsection[{compute\_\-ene\_\-softcore}]{\setlength{\rightskip}{0pt plus 5cm}double ENERGY::compute\_\-ene\_\-softcore (vector$<$ double $>$ {\em rec\_\-charges}, \/  vector$<$ double $>$ {\em lig\_\-charges}, \/  vector$<$ double $>$ {\em rec\_\-radii}, \/  vector$<$ double $>$ {\em lig\_\-radii}, \/  vector$<$ double $>$ {\em rec\_\-epsilons}, \/  vector$<$ double $>$ {\em lig\_\-epsilons}, \/  vector$<$ vector$<$ double $>$ $>$ {\em rec\_\-crd}, \/  vector$<$ vector$<$ double $>$ $>$ {\em lig\_\-crd}, \/  double {\em diel}, \/  double {\em deltaij\_\-es6}, \/  double {\em deltaij6})}}
+\label{classENERGY_ad01bf537f4d415c8f3851c752b76cdcb}
+
+
+electrostactic energy (softcore)
+
+VDW energy (softcore) \hypertarget{classENERGY_a40411aebcd70e744cb7f687585f63416}{
+\index{ENERGY@{ENERGY}!compute\_\-ene\_\-softcore\_\-solvation@{compute\_\-ene\_\-softcore\_\-solvation}}
+\index{compute\_\-ene\_\-softcore\_\-solvation@{compute\_\-ene\_\-softcore\_\-solvation}!ENERGY@{ENERGY}}
+\subsubsection[{compute\_\-ene\_\-softcore\_\-solvation}]{\setlength{\rightskip}{0pt plus 5cm}double ENERGY::compute\_\-ene\_\-softcore\_\-solvation ({\bf Mol2} $\ast$ {\em REC}, \/  {\bf Mol2} $\ast$ {\em LIG}, \/  {\bf PARSER} $\ast$ {\em Input}, \/  {\bf RAND} $\ast$ {\em Rand})}}
+\label{classENERGY_a40411aebcd70e744cb7f687585f63416}
+
+\begin{DoxyParams}{Parameters}
+\item[{\em REC}]\item[{\em LIG}]\item[{\em Input}]\item[{\em Rand}]\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\hypertarget{classENERGY_a161909a8b166eeb653561abfcb49c54b}{
+\index{ENERGY@{ENERGY}!compute\_\-ene\_\-softcore\_\-solvation@{compute\_\-ene\_\-softcore\_\-solvation}}
+\index{compute\_\-ene\_\-softcore\_\-solvation@{compute\_\-ene\_\-softcore\_\-solvation}!ENERGY@{ENERGY}}
+\subsubsection[{compute\_\-ene\_\-softcore\_\-solvation}]{\setlength{\rightskip}{0pt plus 5cm}double ENERGY::compute\_\-ene\_\-softcore\_\-solvation (vector$<$ double $>$ {\em rec\_\-charges}, \/  vector$<$ double $>$ {\em lig\_\-charges}, \/  vector$<$ double $>$ {\em rec\_\-radii}, \/  vector$<$ double $>$ {\em lig\_\-radii}, \/  vector$<$ double $>$ {\em rec\_\-epsilons}, \/  vector$<$ double $>$ {\em lig\_\-epsilons}, \/  vector$<$ vector$<$ double $>$ $>$ {\em rec\_\-crd}, \/  vector$<$ vector$<$ double $>$ $>$ {\em lig\_\-crd}, \/  double {\em diel}, \/  double {\em deltaij\_\-es6}, \/  double {\em deltaij6}, \/  double {\em sigma})}}
+\label{classENERGY_a161909a8b166eeb653561abfcb49c54b}
+This method computes the total system energy, i.e., the VDW term, in a softcore fashion; the electrostatic term, also in the softcore fashion; and the solvation correction as described in the method above. The main difference is that the atoms in the system are looped only once. 
+
+electrostactic energy (softcore)
+
+VDW energy (softcore)
+
+Solvation energy \hypertarget{classENERGY_a712ccab3019a6cb120b2b49e5391898c}{
+\index{ENERGY@{ENERGY}!compute\_\-solvation@{compute\_\-solvation}}
+\index{compute\_\-solvation@{compute\_\-solvation}!ENERGY@{ENERGY}}
+\subsubsection[{compute\_\-solvation}]{\setlength{\rightskip}{0pt plus 5cm}double ENERGY::compute\_\-solvation (vector$<$ double $>$ {\em rec\_\-charges}, \/  vector$<$ double $>$ {\em lig\_\-charges}, \/  vector$<$ double $>$ {\em rec\_\-radii}, \/  vector$<$ double $>$ {\em lig\_\-radii}, \/  vector$<$ vector$<$ double $>$ $>$ {\em rec\_\-crd}, \/  vector$<$ vector$<$ double $>$ $>$ {\em lig\_\-crd}, \/  double {\em deltaij\_\-es6}, \/  double {\em sigma})}}
+\label{classENERGY_a712ccab3019a6cb120b2b49e5391898c}
+This function computed the energy penalty due to the rupture of interactions with solvent when a ligand binds to a receptor. It is derived from Verkhivker GM (1999) with AMBER radii and atomic charges. If necessary, other solvent modeling schemes such as GB, can be implemented in the future. \hypertarget{classENERGY_a8c733b5450a52c8ed45709bb7c83fea3}{
+\index{ENERGY@{ENERGY}!compute\_\-vdw@{compute\_\-vdw}}
+\index{compute\_\-vdw@{compute\_\-vdw}!ENERGY@{ENERGY}}
+\subsubsection[{compute\_\-vdw}]{\setlength{\rightskip}{0pt plus 5cm}double ENERGY::compute\_\-vdw (vector$<$ double $>$ {\em rec\_\-epsilons}, \/  vector$<$ double $>$ {\em lig\_\-epsilons}, \/  vector$<$ double $>$ {\em rec\_\-radii}, \/  vector$<$ double $>$ {\em lig\_\-radii}, \/  vector$<$ double $>$ {\em rec\_\-crd}, \/  vector$<$ double $>$ {\em lig\_\-crd})}}
+\label{classENERGY_a8c733b5450a52c8ed45709bb7c83fea3}
+This function computes the van der Waals term of the binding potential energy \hypertarget{classENERGY_a4751b0e8d0d3ce83b2f447236b7e8e38}{
+\index{ENERGY@{ENERGY}!compute\_\-vdw\_\-softcore@{compute\_\-vdw\_\-softcore}}
+\index{compute\_\-vdw\_\-softcore@{compute\_\-vdw\_\-softcore}!ENERGY@{ENERGY}}
+\subsubsection[{compute\_\-vdw\_\-softcore}]{\setlength{\rightskip}{0pt plus 5cm}double ENERGY::compute\_\-vdw\_\-softcore (vector$<$ double $>$ {\em rec\_\-epsilons}, \/  vector$<$ double $>$ {\em lig\_\-epsilons}, \/  vector$<$ double $>$ {\em rec\_\-radii}, \/  vector$<$ double $>$ {\em lig\_\-radii}, \/  vector$<$ vector$<$ double $>$ $>$ {\em rec\_\-crd}, \/  vector$<$ vector$<$ double $>$ $>$ {\em lig\_\-crd}, \/  double {\em deltaij6})}}
+\label{classENERGY_a4751b0e8d0d3ce83b2f447236b7e8e38}
+This function computes the VDW binding term using a Soft-\/core potential. Details about the potential can de found in Verkhivker GM, et al (1999). J. Mol. Recog. 12:371-\/389. 
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/ENERGY.h\item 
+/share/apps/iMcLiBELa/trunk/src/LiBELa/ENERGY.cpp\end{DoxyCompactItemize}
