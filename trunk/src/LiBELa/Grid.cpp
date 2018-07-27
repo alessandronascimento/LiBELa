@@ -428,9 +428,9 @@ void Grid::load_Ambergrids_from_file(){
 
         float phi;
 
-        for (int x=0; x<npointsx; x++){
+        for (int z=0; z<npointsz; z++){
             for (int y=0; y<npointsy; y++){
-                for (int z=0; z< npointsz; z++){
+                for (int x=0; x< npointsx; x++){
                     fscanf(pbsa_map, "%f", &phi);
                     this->pbsa_grid[x][y][z] = double(phi);
                 }
@@ -489,10 +489,10 @@ void Grid::load_gzAmbergrids_from_file(){
     float phi;
     int count_line;
 
-    for (int x=0; x<npointsx; x++){
+    for (int z=0; z<npointsz; z++){
         for (int y=0; y<npointsy; y++){
             count_line = 0;
-            for (int z=0; z< npointsz; z++){
+            for (int x=0; x< npointsx; x++){
                 count_line++;
                gzgets(pbsa_map, str, 19);
                phi = atof(str);
