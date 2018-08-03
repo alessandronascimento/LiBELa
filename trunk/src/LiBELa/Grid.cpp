@@ -392,7 +392,7 @@ void Grid::load_Ambergrids_from_file(){
 
         pbsa_map=fopen(Input->pbsa_grid.c_str(),"r");
 
-        if (pbsa_map == NULL){
+        if (pbsa_map == nullptr){
             printf("Could not open PBSA Grid file. Please check");
             exit(1);
         }
@@ -428,9 +428,9 @@ void Grid::load_Ambergrids_from_file(){
 
         float phi;
 
-        for (int z=0; z<npointsz; z++){
+        for (int x=0; x<npointsx; x++){
             for (int y=0; y<npointsy; y++){
-                for (int x=0; x< npointsx; x++){
+                for (int z=0; z< npointsz; z++){
                     fscanf(pbsa_map, "%f", &phi);
                     this->pbsa_grid[x][y][z] = double(phi);
                 }
@@ -451,7 +451,7 @@ void Grid::load_gzAmbergrids_from_file(){
 
     gzFile pbsa_map=gzopen(Input->pbsa_grid.c_str(),"r");
 
-    if (pbsa_map == NULL){
+    if (pbsa_map == nullptr){
         printf("Could not open PBSA Grid file. Please check");
         exit(1);
     }
@@ -489,15 +489,15 @@ void Grid::load_gzAmbergrids_from_file(){
     float phi;
     int count_line;
 
-    for (int z=0; z<npointsz; z++){
+    for (int x=0; x<npointsx; x++){
         for (int y=0; y<npointsy; y++){
             count_line = 0;
-            for (int x=0; x< npointsx; x++){
+            for (int z=0; z< npointsz; z++){
                 count_line++;
                gzgets(pbsa_map, str, 19);
                phi = atof(str);
                this->pbsa_grid[x][y][z] = double(phi);
-               if (count_line ==6){
+               if (count_line == 6){
                    count_line = 0;
                    gzgets(pbsa_map, str, 80);               // go to the end of line
                }
