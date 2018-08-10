@@ -392,7 +392,7 @@ void Grid::load_Ambergrids_from_file(){
 
         pbsa_map=fopen(Input->pbsa_grid.c_str(),"r");
 
-        if (pbsa_map == nullptr){
+        if (pbsa_map == NULL){
             printf("Could not open PBSA Grid file. Please check");
             exit(1);
         }
@@ -451,7 +451,7 @@ void Grid::load_gzAmbergrids_from_file(){
 
     gzFile pbsa_map=gzopen(Input->pbsa_grid.c_str(),"r");
 
-    if (pbsa_map == nullptr){
+    if (pbsa_map == NULL){
         printf("Could not open PBSA Grid file. Please check");
         exit(1);
     }
