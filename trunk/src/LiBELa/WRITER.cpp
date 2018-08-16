@@ -327,10 +327,10 @@ void WRITER::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, do
 	while(resn < Cmol->residue_pointer.size()-1){
 		while(i < Cmol->residue_pointer[resn+1]-1){
 			if (int(Cmol->sybyl_atoms.size()) == Cmol->N){
-                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %5d %18.18s %8.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %4d %17.17s %7.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
 			}
 			else {
-                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %5d %18.18s %8.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %4d %17.17s %7.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
 			}
 			i++;
 		}
@@ -338,10 +338,10 @@ void WRITER::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, do
 	}
 	while(i < Cmol->N){
 		if (int(Cmol->sybyl_atoms.size()) == Cmol->N){
-            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %5d %18.18s %8.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %4d %17.17s %7.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
 		}
 		else{
-            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %5d %18.18s %8.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %4d %17.17s %7.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
 		}
 		i++;
 	}
@@ -380,10 +380,10 @@ void WRITER::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, do
 	while(resn < Cmol->residue_pointer.size()-1){
 		while(i < Cmol->residue_pointer[resn+1]-1){
 			if (int(Cmol->sybyl_atoms.size()) == Cmol->N){
-                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %5d %18.18s %8.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %4d %17.17s %7.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
 			}
 			else {
-                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %5d %18.18s %8.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %4d %17.17s %7.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
 			}
 			i++;
 		}
@@ -391,10 +391,10 @@ void WRITER::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, do
 	}
 	while(i < Cmol->N){
 		if (int(Cmol->sybyl_atoms.size()) == Cmol->N){
-            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %5d %18.18s %8.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %4d %17.17s %7.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
 		}
 		else{
-            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %5d %18.18s %8.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %4d %17.17s %7.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
 		}
 		i++;
 	}
@@ -426,10 +426,10 @@ void WRITER::writeMol2_Mol_new_xyz(Mol2* Cmol, double energy, double rmsd){
 	while(resn < Cmol->residue_pointer.size()-1){
 		while(i < Cmol->residue_pointer[resn+1]-1){
 			if (int(Cmol->sybyl_atoms.size()) == Cmol->N){
-                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %5d %18.18s %8.4f\n", i+1, Cmol->atomnames[i].c_str(), Cmol->new_xyz[i][0], Cmol->new_xyz[i][1], Cmol->new_xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %4d %17.17s %7.4f\n", i+1, Cmol->atomnames[i].c_str(), Cmol->new_xyz[i][0], Cmol->new_xyz[i][1], Cmol->new_xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
 			}
 			else {
-                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %5d %18.18s %8.4f\n", i+1, Cmol->atomnames[i].c_str(), Cmol->new_xyz[i][0], Cmol->new_xyz[i][1], Cmol->new_xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %4d %17.17s %7.4f\n", i+1, Cmol->atomnames[i].c_str(), Cmol->new_xyz[i][0], Cmol->new_xyz[i][1], Cmol->new_xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
 			}
 			i++;
 		}
@@ -437,10 +437,10 @@ void WRITER::writeMol2_Mol_new_xyz(Mol2* Cmol, double energy, double rmsd){
 	}
 	while(i < Cmol->N){
 		if (int(Cmol->sybyl_atoms.size()) == Cmol->N){
-            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %5d %18.18s %8.4f\n", i+1, Cmol->atomnames[i].c_str(), Cmol->new_xyz[i][0], Cmol->new_xyz[i][1], Cmol->new_xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %4d %17.17s %7.4f\n", i+1, Cmol->atomnames[i].c_str(), Cmol->new_xyz[i][0], Cmol->new_xyz[i][1], Cmol->new_xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
 		}
 		else{
-            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %5d %18.18s %8.4f\n", i+1, Cmol->atomnames[i].c_str(), Cmol->new_xyz[i][0], Cmol->new_xyz[i][1], Cmol->new_xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %4d %17.17s %7.4f\n", i+1, Cmol->atomnames[i].c_str(), Cmol->new_xyz[i][0], Cmol->new_xyz[i][1], Cmol->new_xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
 		}
 		i++;
 	}
