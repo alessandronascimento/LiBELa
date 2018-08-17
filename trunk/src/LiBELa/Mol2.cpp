@@ -153,20 +153,20 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
             gzgets(mol2file, str, 80);
 
         }
-        gzgets(mol2file, str, 80);
+        gzgets(mol2file, str, 100);
         this->molname = str;
         this->molname = this->molname.substr(0,this->molname.size()-1);
-        gzgets(mol2file, str, 80);
+        gzgets(mol2file, str, 100);
         sscanf(str, "%d %d %d %d %d", &this->N, &this->Nbonds, &this->Nres, &tint, &tint);
 
         cpstr = string(str);
         while (cpstr.substr(0,13) != "@<TRIPOS>ATOM"){
-            gzgets(mol2file, str, 80);
+            gzgets(mol2file, str, 100);
             cpstr = string(str);
         }
 
         for (int i=0; i<this->N; i++){
-            gzgets(mol2file, str, 80);
+            gzgets(mol2file, str, 100);
             sscanf(str, "%d %s %f %f %f %5s%d %s %f\n", &tint, str, &tx, &ty, &tz, tatomtype, &tres, resname, &tcharge);
             txyz.push_back(tx);
             txyz.push_back(ty);
@@ -211,10 +211,10 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
             }
         }
 
-        gzgets(mol2file, str, 80);
+        gzgets(mol2file, str, 100);
         if (str[0] != '@'){
             while (str[0] != '@'){
-                gzgets(mol2file, str, 80);
+                gzgets(mol2file, str, 100);
             }
         }
 
