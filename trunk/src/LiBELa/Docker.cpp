@@ -416,11 +416,11 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 
 			Lig->xyz = new_mcoords[index[i]];
 
-			Optimizer* Opt = new Optimizer(Rec, RefLig, Input, Grids);
+            Optimizer* Opt2 = new Optimizer(Rec, RefLig, Input, Grids);
 			Optimizer::opt_result_t* opt_result = new Optimizer::opt_result_t;
             opt_result->energy_result = new energy_result_t;
 
-            if (! this->minimize_energy(Input, Opt, Rec, Lig, opt_result)){
+            if (! this->minimize_energy(Input, Opt2, Rec, Lig, opt_result)){
                 sprintf(info, "Energy optimizer %s is not defined. Exiting...\n", Input->energy_optimizer.c_str());
             }
 
@@ -431,7 +431,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 				best_conf=index[i];
 				energy_status = opt_result->optimization_status;
 			}
-			delete Opt;
+            delete Opt2;
 			delete opt_result;
 		}
 	}
