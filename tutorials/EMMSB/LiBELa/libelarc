@@ -1,0 +1,5 @@
+#!/bin/bash
+this_folder=$PWD;
+echo "LiBELA is set up in folder $this_folder";
+export PATH=$PATH:${this_folder}/bin
+export LIBELA=${this_folder};
