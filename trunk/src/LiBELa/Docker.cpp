@@ -418,7 +418,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 
             Optimizer* Opt2 = new Optimizer(Rec, RefLig, Input, Grids);
             Optimizer::opt_result_t* opt_result2 = new Optimizer::opt_result_t;
-            opt_result->energy_result = new energy_result_t;
+            opt_result2->energy_result = new energy_result_t;
 
             if (! this->minimize_energy(Input, Opt2, Rec, Lig, opt_result2)){
                 sprintf(info, "Energy optimizer %s is not defined. Exiting...\n", Input->energy_optimizer.c_str());
