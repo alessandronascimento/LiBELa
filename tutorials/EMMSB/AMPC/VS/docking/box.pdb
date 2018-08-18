@@ -1,0 +1,18 @@
+REMARK    CENTER OF THE BOX  79.902  5.432  29.996
+ATOM      1  DUA BOX     1      64.902  -9.568  14.996
+ATOM      2  DUB BOX     1      94.902  -9.568  14.996
+ATOM      3  DUC BOX     1      94.902  -9.568  44.996
+ATOM      4  DUD BOX     1      64.902  -9.568  44.996
+ATOM      5  DUE BOX     1      64.902  20.432  14.996
+ATOM      6  DUF BOX     1      94.902  20.432  14.996
+ATOM      7  DUG BOX     1      94.902  20.432  44.996
+ATOM      8  DUH BOX     1      64.902  20.432  44.996
+CONECT    1    2    4    5
+CONECT    2    1    3    6
+CONECT    3    2    4    7
+CONECT    4    1    3    8
+CONECT    5    1    6    8
+CONECT    6    2    5    7
+CONECT    7    3    6    8
+CONECT    8    4    5    7
+END

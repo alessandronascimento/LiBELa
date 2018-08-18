@@ -1,0 +1,7 @@
+#!/bin/bash
+#PBS -N FDA
+#PBS -l nodes=1:ppn=1
+#PBS -o FDA.out
+#PBS -V
+cd $PBS_O_WORKDIR
+time /home/asn/workspace/libela/trunk/bin/McLiBELa.openmp iMcLiBELa.inp

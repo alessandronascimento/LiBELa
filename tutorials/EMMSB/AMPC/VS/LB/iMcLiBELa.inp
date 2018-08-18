@@ -1,0 +1,78 @@
+# mode
+
+mode                    dock
+dock_parallel           yes
+parallel_jobs           1
+
+#
+# input files
+#
+
+rec_mol2                ../../ampc_xtallig.mol2.gz
+lig_mol2                ../../ampc_xtallig.mol2.gz
+reflig_mol2             ../../ampc_xtallig.mol2.gz
+mol2_aa                 no
+multifile               ./multimol.dat
+
+#
+# force field parameters
+#
+
+scoring_function        3
+dielectric_model        r
+diel                    1.0
+deltaij                 0.0
+deltaij_es              0.0
+use_grids               no
+use_delphi              no
+grid_spacing            0.3
+grid_box                30.0    30.0    30.0
+write_grids             McGrid
+solvation_alpha         0.25
+solvation_beta          -0.005
+
+#
+# Optimization
+#
+
+search_box              12.0    12.0    12.0
+minimization_tolerance  1.0e-6
+minimization_delta      1.0e-6
+dock_min_tol            1.0e-6
+minimization_timeout    30
+overlay_optimizer       ln_auglag
+energy_optimizer        none
+ignore_h                no
+deal                    no
+elec_scale              1.0
+vdw_scale               1.0
+sort_by_energy          no
+
+#
+# SA Options
+#
+
+sa_start_temp           100
+temperature             0.001
+sa_steps                1000
+cushion                 1.0
+rotation_step           10.0
+sa_mu_t                 1.1
+
+#
+# output
+#
+
+output_prefix           AMPC_FDA_LB
+write_mol2              yes
+
+#
+# flexible ligands
+#
+
+generate_conformers     yes
+number_of_conformers    10
+conformers_to_rank      1
+conformer_generator     GA
+conformer_min_steps     1000
+
