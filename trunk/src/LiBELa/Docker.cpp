@@ -350,7 +350,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 	}
 }
 
-void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, Grid* Grids, unsigned counter){
+void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, Grid* Grids, unsigned counter){
 	COORD_MC* Coord = new COORD_MC;
 	double best_ene=0.00;
 	int best_conf=0;
@@ -431,8 +431,8 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 				best_conf=index[i];
                 energy_status = opt_result2->optimization_status;
 			}
-            delete Opt2;
             delete opt_result2;
+            delete Opt2;
 		}
 	}
     Gaussian* Gauss = new Gaussian;
@@ -443,6 +443,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 
     si = (2*t1) / (t2+t3);
     delete Gauss;
+
     sprintf(info, "%5d %-12.12s %-4.4s %-10.3e  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlays[best_conf],
             best_energy_t->elec, best_energy_t->vdw, best_energy_t->rec_solv, best_energy_t->lig_solv, best_energy_t->total, best_conf, overlay_status[best_conf], energy_status, si);
     Writer->print_info(info);

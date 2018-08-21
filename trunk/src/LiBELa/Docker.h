@@ -23,7 +23,7 @@
 #include "Deal.h"
 #endif
 
-class Docker {
+class Docker{
 public:
 	//! Objective function value
 	double f;
