@@ -47,7 +47,8 @@ public:
      * @param molfile a C++ string with the mol2 file to be opened
      * @return a OBMol type with the molecule characteristics.
      */
-    shared_ptr<OBMol> GetMol(const string &molfile);
+    OBMol GetMol(const string &molfile);
+//    shared_ptr<OBMol> GetMol(const string &molfile);
     //!
     /**
      * @brief generate_conformers_GA Generates molecule conformers using Genetic Algorithm, as implemented in OpenBabel
