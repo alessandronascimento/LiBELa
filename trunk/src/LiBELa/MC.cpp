@@ -50,14 +50,14 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
         exit(1);
     }
 
-    OBff->Setup(*mol);
-    OBff->GetCoordinates(*mol);
+    OBff->Setup(mol);
+    OBff->GetCoordinates(mol);
     OBff->SteepestDescent(Input->conformer_min_steps, 1.0e-10);
-    OBff->GetCoordinates(*mol);
+    OBff->GetCoordinates(mol);
     Lig->xyz = this->copy_from_obmol(mol);
-    RotorList.Setup(*mol);
+    RotorList.Setup(mol);
     Rotor = RotorList.BeginRotor(RotorIterator);
-    mol->ToInertialFrame();
+    mol.ToInertialFrame();
 
 
     vector<int> tmp(4);
@@ -74,7 +74,7 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 
     srand(rand());
     r = gsl_rng_alloc (gsl_rng_ranlxs2);
-    myxyz = new double[mol->NumAtoms()*3];
+    myxyz = new double[mol.NumAtoms()*3];
 }
 
 
@@ -1042,7 +1042,7 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
 // Copy coordinates to OBMol
 
     myxyz = this->copy_to_obmol(step->xyz);
-    mol->SetCoordinates(myxyz);
+    mol.SetCoordinates(myxyz);
 
     delete Coord;
 
@@ -1051,10 +1051,10 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
     double current_angle, new_angle;
     for (unsigned i=0; i< RotorList.Size(); i++){
         rnumber = gsl_rng_uniform(r);
-        current_angle = mol->GetTorsion(mol->GetAtom(atoms_in_dihedrals[i][0]), mol->GetAtom(atoms_in_dihedrals[i][1]), mol->GetAtom(atoms_in_dihedrals[i][2]), mol->GetAtom(atoms_in_dihedrals[i][3]));
+        current_angle = mol.GetTorsion(mol.GetAtom(atoms_in_dihedrals[i][0]), mol.GetAtom(atoms_in_dihedrals[i][1]), mol.GetAtom(atoms_in_dihedrals[i][2]), mol.GetAtom(atoms_in_dihedrals[i][3]));
         new_angle = (current_angle + (-Input->torsion_step + (rnumber*(2*Input->torsion_step))));
         new_angle = this->check_angle(new_angle);
-        mol->SetTorsion(mol->GetAtom(atoms_in_dihedrals[i][0]), mol->GetAtom(atoms_in_dihedrals[i][1]), mol->GetAtom(atoms_in_dihedrals[i][2]), mol->GetAtom(atoms_in_dihedrals[i][3]), new_angle*PI/180.);
+        mol.SetTorsion(mol.GetAtom(atoms_in_dihedrals[i][0]), mol.GetAtom(atoms_in_dihedrals[i][1]), mol.GetAtom(atoms_in_dihedrals[i][2]), mol.GetAtom(atoms_in_dihedrals[i][3]), new_angle*PI/180.);
         step->torsion_angles.push_back(new_angle);
     }
 
@@ -1062,7 +1062,7 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
 // copy coordinates and internal energy to type step_t
 
     step->xyz = this->copy_from_obmol(mol);
-    OBff->Setup(*mol);
+    OBff->Setup(mol);
     step->internal_energy = OBff->Energy();
     string unit = OBff->GetUnit();
     if (unit == "kJ/mol"){
@@ -1079,12 +1079,11 @@ double MC::Boltzmman(double ene, double new_ene, double t, double b){
     return(exp(x));
 }
 
-vector<vector<double> > MC::copy_from_obmol(shared_ptr<OBMol> mymol){
+vector<vector<double> > MC::copy_from_obmol(OBMol mymol){
     vector<vector<double > > vec_xyz;
     vector<double> tmp(3);
-//    double *myxyz = new double[mymol->NumAtoms()*3];
-    myxyz = mymol->GetCoordinates();
-    for (unsigned i=0; i < mymol->NumAtoms(); i++){
+    myxyz = mymol.GetCoordinates();
+    for (unsigned i=0; i < mymol.NumAtoms(); i++){
         tmp[0] = (myxyz[3*i]);
         tmp[1] = (myxyz[(3*i)+1]);
         tmp[2] = (myxyz[(3*i)+2]);
@@ -1092,9 +1091,7 @@ vector<vector<double> > MC::copy_from_obmol(shared_ptr<OBMol> mymol){
     }
 
     tmp.clear();
-//    delete[] myxyz;
     return vec_xyz;
-
 }
 
 double* MC::copy_to_obmol(vector<vector<double> > vec_xyz){
@@ -1106,24 +1103,24 @@ double* MC::copy_to_obmol(vector<vector<double> > vec_xyz){
     return myxyz;
 }
 
-shared_ptr<OBMol> MC::GetMol(const std::string &molfile){
-    shared_ptr<OBMol> mol(new OBMol);
+OBMol MC::GetMol(const std::string &molfile){
+    OBMol mol;
 
     OBConversion conv;
     OBFormat *format = conv.FormatFromExt(molfile.c_str());
     if (!format || !conv.SetInFormat(format)) {
-    std::cout << "Could not find input format for file " << molfile << endl;
+    printf("Could not find input format for file\n");
     return mol;
   }
 
     ifstream ifs(molfile.c_str());
     if (!ifs) {
-        std::cout << "Could not open " << molfile << " for reading." << endl;
+        printf("Could not open &s for reading.\n", molfile.c_str());
         return mol;
     }
 
-    if (!conv.Read(mol.get(), &ifs)) {
-        std::cout << "Could not read molecule from file " << molfile << endl;
+    if (!conv.Read(&mol, &ifs)) {
+        printf("Could not read molecule from file\n");
         return mol;
     }
     return mol;

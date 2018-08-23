@@ -16,7 +16,7 @@
 #include <openbabel/obconversion.h>
 #include <openbabel/rotor.h>
 #include <openbabel/conformersearch.h>
-#include <openbabel/shared_ptr.h>
+//#include <openbabel/shared_ptr.h>
 #include <openbabel/forcefield.h>
 #include <openbabel/math/vector3.h>
 
@@ -49,7 +49,7 @@ public:
     double* myxyz;
 
 
-    shared_ptr<OBMol> mol;
+    OBMol mol;
     OBForceField* OBff;
     OBRotorList RotorList;
     OBRotorIterator RotorIterator;
@@ -70,8 +70,8 @@ public:
     void MaxMinCM(double XCOM, double YCOM, double ZCOM, vector<double> Max);
     void ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER* Input, double T);
     double* copy_to_obmol(vector<vector<double> > vec_xyz);
-    vector<vector<double> > copy_from_obmol(shared_ptr<OBMol> mymol);
-    shared_ptr<OBMol> GetMol(const std::string &molfile);
+    vector<vector<double> > copy_from_obmol(OBMol mymol);
+    OBMol GetMol(const std::string &molfile);
     double check_angle(double angle);
     void increment_angles(vector<double> *angles, step_t* step);
     bool ligand_is_inside_box(PARSER* Input, step_t* step, vector<double> original_com, vector<double> current_com);
