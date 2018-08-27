@@ -54,11 +54,29 @@ OBMol Conformer::GetMol(const std::string &molfile){
 
 bool Conformer::generate_conformers_GA(PARSER* Input, Mol2* Lig, string molfile){
     bool file_read;
-    double charge;
-    OBMol mol = this->GetMol(molfile);
-    OBMol ref_mol = this->GetMol(molfile);
+    OBMol* mol = new OBMol;
+    OBConversion conv;
+    OBFormat *format = conv.FormatFromExt(molfile.c_str());
+    if (!format || !conv.SetInFormat(format)) {
+    printf("Could not find input format for file\n");
+    exit(1);
+  }
 
-    OBConformerSearch cs;
+    ifstream ifs(molfile.c_str());
+    if (!ifs) {
+        printf("Could not open %s for reading\n", molfile.c_str());
+        exit(1);
+    }
+
+    if (!conv.Read(mol, &ifs)) {
+        printf("Could not read molecule from file\n");
+        exit(1);
+    }
+
+    OBMol* ref_mol = new OBMol;
+    ref_mol = mol;
+
+    OBConformerSearch* cs = new OBConformerSearch;
     OBForceField* OBff;
     OBEnergyConformerScore* EneScore = new OBEnergyConformerScore;
     if (Input->ligand_energy_model == "GAFF" or Input->ligand_energy_model == "gaff"){
@@ -79,8 +97,8 @@ bool Conformer::generate_conformers_GA(PARSER* Input, Mol2* Lig, string molfile)
     }
 
 // Original conformation energy
-    OBff->Setup(mol);
-    mol.SetTotalCharge(mol.GetTotalCharge());
+    OBff->Setup(*mol);
+    mol->SetTotalCharge(mol->GetTotalCharge());
     double energy = OBff->Energy();
     if (OBff->GetUnit() == "kJ/mol"){       // Converting to kcal/mol, if needed.
         energy = energy/4.18;
@@ -89,25 +107,25 @@ bool Conformer::generate_conformers_GA(PARSER* Input, Mol2* Lig, string molfile)
     Lig->mcoords.push_back(Lig->xyz);
 
 // Conformer Search
-    cs.Setup(mol,
+    cs->Setup(*mol,
              Input->lig_conformers, // numConformers
              5, // numChildren=5
              5, // mutability=5
              25); // convergence=25
-    cs.SetScore(EneScore);
-    cs.Search();
-    cs.GetConformers(mol);
+    cs->SetScore(EneScore);
+    cs->Search();
+    cs->GetConformers(*mol);
 
-    if (mol.NumConformers() > 0){
-        for (int i=0; i<mol.NumConformers(); i++){
-            double* xyz = new double[mol.NumAtoms()*3];
+    if (mol->NumConformers() > 0){
+        for (int i=0; i<mol->NumConformers(); i++){
+            double* xyz = new double[mol->NumAtoms()*3];
             vector<double> v3;
             vector<vector<double> > xyz_tmp;
-            mol.SetConformer(i);
+            mol->SetConformer(i);
 
-            OBff->Setup(mol);
+            OBff->Setup(*mol);
 
-            OBff->GetCoordinates(mol);
+            OBff->GetCoordinates(*mol);
 //            OBff->ConjugateGradients(Input->conformer_min_steps);
 //            OBff->GetCoordinates(mol);
             energy = OBff->Energy();
@@ -117,14 +135,14 @@ bool Conformer::generate_conformers_GA(PARSER* Input, Mol2* Lig, string molfile)
             Lig->conformer_energies.push_back(energy);
 
             OBAlign* align = new OBAlign;
-            align->SetRefMol(ref_mol);
-            align->SetTargetMol(mol);
+            align->SetRefMol(*ref_mol);
+            align->SetTargetMol(*mol);
             align->Align();
-            align->UpdateCoords(&mol);
+            align->UpdateCoords(mol);
             delete align;
 
-            xyz = mol.GetCoordinates();
-            for (unsigned j=0; j<mol.NumAtoms(); j++){
+            xyz = mol->GetCoordinates();
+            for (unsigned j=0; j<mol->NumAtoms(); j++){
                 v3.push_back(xyz[3*j]);
                 v3.push_back(xyz[(3*j)+1]);
                 v3.push_back(xyz[(3*j)+2]);
@@ -141,7 +159,7 @@ bool Conformer::generate_conformers_GA(PARSER* Input, Mol2* Lig, string molfile)
     else {
         file_read = false;
     }
-    delete EneScore;
+    delete cs;
     return file_read;
  }
 

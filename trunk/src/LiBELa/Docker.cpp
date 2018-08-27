@@ -348,6 +348,8 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 		sprintf(info, "RMSD: %7.3f", rmsd);
 		Writer->print_info(info);
 	}
+    new_mcoords.clear();
+    new_xyz.clear();
 }
 
 void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, Grid* Grids, unsigned counter){
