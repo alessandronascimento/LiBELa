@@ -1220,7 +1220,7 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
         step->xyz[i][1] = xyz[i][1] + step->dy;
         step->xyz[i][2] = xyz[i][2] + step->dz;
     }
-
+/*
     rnumber = gsl_rng_uniform(r);
     step->dx = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
     rnumber = gsl_rng_uniform(r);
@@ -1236,7 +1236,7 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
     step->dgamma = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
 
     step->xyz = Coord->rototranslate(step->xyz, Lig, step->dalpha, step->dbeta,step->dgamma, step->dx, step->dy, step->dz);
-
+*/
 // copy coordinates and internal energy to type step_t
 
     myxyz = this->copy_to_obmol(step->xyz);
