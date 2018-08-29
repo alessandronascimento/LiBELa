@@ -61,11 +61,12 @@ public:
     MC(Mol2* Lig, PARSER* Input, WRITER *_Writer);
     ~MC();
     void run(Mol2 *Rec, Mol2* Reflig , Mol2* Lig, vector<vector<double> > xyz, PARSER* Input, double T);
-    void run(Grid* Grids, Mol2* Reflig , Mol2* Lig, vector<vector<double> > xyz, PARSER* Input, double T);
+    void run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER* Input, double T);
     double Boltzmman(double ene, double new_ene, double t, double b);
     void take_step(PARSER* Input, Mol2* Lig, step_t* step);
     void take_step_flex(PARSER* Input, Mol2* Lig, step_t* step);
     void take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step);
+    void take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step);
     void write_conformers(Mol2* Lig);
     void MaxMinCM(double XCOM, double YCOM, double ZCOM, vector<double> Max);
     void ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER* Input, double T);

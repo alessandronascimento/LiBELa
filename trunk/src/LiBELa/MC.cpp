@@ -140,6 +140,9 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
         else if (Input->sample_torsions){
             this->take_step_torsion(Input, Lig, step);
         }
+        else if (Input->mc_full_flex){
+            this->take_step_full_flex(Input, Lig, step);
+        }
         else {
             this->take_step(Input, Lig, step);
         }
@@ -182,6 +185,9 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             }
             else if (Input->sample_torsions){
                 this->take_step_torsion(Input, Lig, step);
+            }
+            else if (Input->mc_full_flex){
+                this->take_step_full_flex(Input, Lig, step);
             }
             else {
                 this->take_step(Input, Lig, step);
@@ -233,6 +239,9 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             }
             else if (Input->sample_torsions){
                 this->take_step_torsion(Input, Lig, step);
+            }
+            else if (Input->mc_full_flex){
+                this->take_step_full_flex(Input, Lig, step);
             }
             else {
                 this->take_step(Input, Lig, step);
@@ -478,6 +487,9 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
             else if (Input->sample_torsions){
                 this->take_step_torsion(Input, Lig, step);
             }
+            else if(Input->mc_full_flex){
+                this->take_step_full_flex(Input, Lig, step);
+            }
             else {
                 this->take_step(Input, Lig, step);
             }
@@ -516,6 +528,9 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                 }
                 else if (Input->sample_torsions){
                     this->take_step_torsion(Input, Lig, step);
+                }
+                else if (Input->mc_full_flex){
+                    this->take_step_full_flex(Input, Lig, step);
                 }
                 else {
                     this->take_step(Input, Lig, step);
@@ -1180,4 +1195,60 @@ bool MC::ligand_is_inside_box(PARSER* Input, step_t* step, vector<double> origin
         }
     }
     return ret;
+}
+
+void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
+
+    COORD_MC* Coord = new COORD_MC;
+    double rnumber;
+    step->torsion_angles.clear();
+
+    step->xyz = this->xyz;
+    for (int i=0; i< Lig->N; i++){
+
+// Do rigid body rotation and translation
+
+        rnumber = gsl_rng_uniform(r);
+        step->dx = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
+        rnumber = gsl_rng_uniform(r);
+        step->dy = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
+        rnumber = gsl_rng_uniform(r);
+        step->dz = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
+        rnumber = gsl_rng_uniform(r);
+
+        step->xyz[i][0] = xyz[i][0] + step->dx;
+        step->xyz[i][1] = xyz[i][1] + step->dy;
+        step->xyz[i][2] = xyz[i][2] + step->dz;
+    }
+
+    rnumber = gsl_rng_uniform(r);
+    step->dx = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
+    rnumber = gsl_rng_uniform(r);
+    step->dy = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
+    rnumber = gsl_rng_uniform(r);
+    step->dz = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
+
+    rnumber = gsl_rng_uniform(r);
+    step->dalpha = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
+    rnumber = gsl_rng_uniform(r);
+    step->dbeta = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
+    rnumber = gsl_rng_uniform(r);
+    step->dgamma = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
+
+    step->xyz = Coord->rototranslate(step->xyz, Lig, step->dalpha, step->dbeta,step->dgamma, step->dx, step->dy, step->dz);
+
+// copy coordinates and internal energy to type step_t
+
+    myxyz = this->copy_to_obmol(step->xyz);
+    mol.SetCoordinates(myxyz);
+
+    delete Coord;
+
+    OBff->Setup(mol);
+    step->internal_energy = OBff->Energy();
+    string unit = OBff->GetUnit();
+    if (unit == "kJ/mol"){
+        step->internal_energy = step->internal_energy/4.18;
+    }
+    step->nconf = 0;
 }

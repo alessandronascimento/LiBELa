@@ -287,6 +287,8 @@ public:
     int delphi_gsize;
     //! Defines an electrostatic potential in DelPhi CUBE format
     string delphi_cube_grid;
+    //! Activates the full flexible approach in MC simulations
+    bool mc_full_flex;
 
 #ifdef HAS_GUI
 	QStringList docking_molecules;

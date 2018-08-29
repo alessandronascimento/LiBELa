@@ -89,6 +89,7 @@ PARSER::PARSER(){
     this->use_pbsa = false;
     this->use_delphi = false;
     this->delphi_gsize = 121;
+    this->mc_full_flex = false;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -437,6 +438,12 @@ void PARSER::comparing (string param, ifstream &input) {
     }
     else if (param == "delphi_cube_grid"){
         input >> this->delphi_cube_grid;
+    }
+    else if (param == "mc_full_flex"){
+        input >> tmp;
+        if (tmp == "yes" or tmp == "Yes" or tmp == "YES"){
+            mc_full_flex = true;
+        }
     }
 	else {
 		cout << "Unknown parameter: " << param << endl;
