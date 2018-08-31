@@ -1251,4 +1251,10 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
         step->internal_energy = step->internal_energy/4.18;
     }
     step->nconf = 0;
+    step->dx = 0.0;
+    step->dy = 0.0;
+    step->dz = 0.0;
+    step->dalpha = 0.0;
+    step->dbeta = 0.0;
+    step->dgamma = 0.0;
 }
