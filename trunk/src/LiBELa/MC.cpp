@@ -1232,7 +1232,7 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
     Optimizer::align_result_t* opt_result = new Optimizer::align_result_t;
 
     Optimizer* opt = new Optimizer(Lig, Lig, Input);
-    opt->minimize_alignment_nlopt_ln_auglag(align_data, opt_result);
+    opt->minimize_alignment_nlopt_simplex(align_data, opt_result);
 
 
 

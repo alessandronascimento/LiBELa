@@ -1265,8 +1265,8 @@ double Optimizer::superpose_function(const std::vector<double> &x, std::vector<d
     return (f);
 }
 
-void Optimizer::minimize_alignment_nlopt_ln_auglag(align_t* align_data, align_result_t* opt_result){
-    nlopt::opt *opt = new nlopt::opt(nlopt::LN_AUGLAG,6);
+void Optimizer::minimize_alignment_nlopt_simplex(align_t* align_data, align_result_t* opt_result){
+    nlopt::opt *opt = new nlopt::opt(nlopt::LN_NELDERMEAD,6);
 
     vector<double> lb(6);
     lb[0] = -180.0;
