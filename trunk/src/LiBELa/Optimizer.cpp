@@ -1225,3 +1225,88 @@ void Optimizer::minimize_energy_adaptative(Mol2* Lig2, opt_result_t* opt_result)
         count++;
     }
 }
+
+double Optimizer::superpose_function(const std::vector<double> &x, std::vector<double> &grad, void *data){
+    COORD_MC* Coord = new COORD_MC;
+    vector<vector<double> > new_xyz;
+    double f, f2;
+    align_t* align_data= (align_t*) data;
+
+    new_xyz = Coord->rototranslate(align_data->current_xyz, int(align_data->current_xyz.size()), x[0], x[1], x[2], x[3], x[4], x[5]);
+
+    f = Coord->compute_rmsd(align_data->ref_xyz, new_xyz, int(align_data->ref_xyz.size()));
+
+    if (!grad.empty()){
+        new_xyz = Coord->rototranslate(align_data->current_xyz, int(align_data->current_xyz.size()), x[0] + Parser->min_delta, x[1], x[2], x[3], x[4], x[5]);
+        f2 = Coord->compute_rmsd(align_data->ref_xyz, new_xyz, int(align_data->ref_xyz.size()));
+        grad[0] = (f2-f)/Parser->min_delta;
+
+        new_xyz = Coord->rototranslate(align_data->current_xyz, int(align_data->current_xyz.size()), x[0], x[1] + Parser->min_delta, x[2], x[3], x[4], x[5]);
+        f2 = Coord->compute_rmsd(align_data->ref_xyz, new_xyz, int(align_data->ref_xyz.size()));
+        grad[1] = (f2-f)/Parser->min_delta;
+
+        new_xyz = Coord->rototranslate(align_data->current_xyz, int(align_data->current_xyz.size()), x[0], x[1], x[2]+ Parser->min_delta, x[3], x[4], x[5]);
+        f2 = Coord->compute_rmsd(align_data->ref_xyz, new_xyz, int(align_data->ref_xyz.size()));
+        grad[2] = (f2-f)/Parser->min_delta;
+
+        new_xyz = Coord->rototranslate(align_data->current_xyz, int(align_data->current_xyz.size()), x[0], x[1], x[2], x[3]+ Parser->min_delta, x[4], x[5]);
+        f2 = Coord->compute_rmsd(align_data->ref_xyz, new_xyz, int(align_data->ref_xyz.size()));
+        grad[3] = (f2-f)/Parser->min_delta;
+
+        new_xyz = Coord->rototranslate(align_data->current_xyz, int(align_data->current_xyz.size()), x[0], x[1], x[2], x[3], x[4]+Parser->min_delta, x[5]);
+        f2 = Coord->compute_rmsd(align_data->ref_xyz, new_xyz, int(align_data->ref_xyz.size()));
+        grad[4] = (f2-f)/Parser->min_delta;
+
+        new_xyz = Coord->rototranslate(align_data->current_xyz, int(align_data->current_xyz.size()), x[0], x[1], x[2], x[3], x[4], x[5]+Parser->min_delta);
+        f2 = Coord->compute_rmsd(align_data->ref_xyz, new_xyz, int(align_data->ref_xyz.size()));
+        grad[5] = (f2-f)/Parser->min_delta;
+    }
+    delete Coord;
+    return (f);
+}
+
+void Optimizer::minimize_alignment_nlopt_ln_auglag(align_t* align_data, align_result_t* opt_result){
+    nlopt::opt *opt = new nlopt::opt(nlopt::LN_AUGLAG,6);
+
+    vector<double> lb(6);
+    lb[0] = -180.0;
+    lb[1] = -90.0;
+    lb[2] = -180.0;
+    lb[3] = -(Parser->search_box_x/2.0);
+    lb[4] = -(Parser->search_box_y/2.0);
+    lb[5] = -(Parser->search_box_z/2.0);
+    vector<double> ub(6);
+    ub[0] = 180.0;
+    ub[1] = 90.0;
+    ub[2] = 180.0;
+    ub[3] = Parser->search_box_x/2.0;
+    ub[4] = Parser->search_box_y/2.0;
+    ub[5] = Parser->search_box_z/2.0;
+
+    opt->set_lower_bounds(lb);
+    opt->set_upper_bounds(ub);
+
+    opt->set_max_objective(Optimizer::superpose_function, align_data);
+    opt->set_xtol_rel(Parser->min_tol);
+    opt->set_maxtime(Parser->min_timeout);
+
+    vector<double> x(6);
+    x[0] = 0.0;
+    x[1] = 0.0;
+    x[2] = 0.0;
+    x[3] = 0.0;
+    x[4] = 0.0;
+    x[5] = 0.0;
+
+    double fo;
+    nlopt::result nres = opt->optimize(x,fo);
+    delete opt;
+
+    opt_result->rmsd = fo;
+    opt_result->translation.push_back(x[3]);
+    opt_result->translation.push_back(x[4]);
+    opt_result->translation.push_back(x[5]);
+    opt_result->rotation.push_back(x[0]);
+    opt_result->rotation.push_back(x[1]);
+    opt_result->rotation.push_back(x[2]);
+}

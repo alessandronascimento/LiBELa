@@ -21,7 +21,6 @@ McEntropy::McEntropy(PARSER* _Input, COORD_MC* _Coord, vector<double> _com, int 
 
     for (int i=0; i< rot_bins; i++){
         hist_alpha.push_back(0.0);
-//        hist_beta.push_back(0.0);
         hist_gamma.push_back(0.0);
     }
 

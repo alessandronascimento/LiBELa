@@ -1204,8 +1204,9 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
 
     COORD_MC* Coord = new COORD_MC;
     double rnumber;
+    double current_angle;
     step->torsion_angles.clear();
-
+    vector<vector<double> > ref_xyz = this->xyz;
     step->xyz = this->xyz;
     for (int i=0; i< Lig->N; i++){
 
@@ -1224,10 +1225,28 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
         step->xyz[i][2] = xyz[i][2] + step->dz;
     }
 
+    Optimizer::align_t* align_data = new Optimizer::align_t;
+    align_data->ref_xyz = ref_xyz;
+    align_data->current_xyz = step->xyz;
+
+    Optimizer::align_result_t* opt_result = new Optimizer::align_result_t;
+
+    Optimizer* opt = new Optimizer(Lig, Lig, Input);
+    opt->minimize_alignment_nlopt_ln_auglag(align_data, opt_result);
+
+
+
 // copy coordinates and internal energy to type step_t
 
     myxyz = this->copy_to_obmol(step->xyz);
     mol.SetCoordinates(myxyz);
+
+// compute torsion angles with Babel
+
+    for (unsigned i=0; i< RotorList.Size(); i++){
+            current_angle = mol.GetTorsion(mol.GetAtom(atoms_in_dihedrals[i][0]), mol.GetAtom(atoms_in_dihedrals[i][1]), mol.GetAtom(atoms_in_dihedrals[i][2]), mol.GetAtom(atoms_in_dihedrals[i][3]));
+            step->torsion_angles.push_back(current_angle);
+    }
 
     delete Coord;
 
@@ -1238,10 +1257,13 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
         step->internal_energy = step->internal_energy/4.18;
     }
     step->nconf = 0;
-    step->dx = 0.0;
-    step->dy = 0.0;
-    step->dz = 0.0;
-    step->dalpha = 0.0;
-    step->dbeta = 0.0;
-    step->dgamma = 0.0;
+    step->dx = opt_result->translation[0];
+    step->dy = opt_result->translation[1];
+    step->dz = opt_result->translation[2];
+    step->dalpha = opt_result->rotation[0];
+    step->dbeta = opt_result->rotation[1];
+    step->dgamma = opt_result->rotation[2];
+
+    delete align_data;
+    delete opt_result;
 }

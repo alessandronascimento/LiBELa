@@ -21,6 +21,7 @@
 #include<time.h>
 #include<vector>
 #include "SA.h"
+#include "MC.h"
 
 using namespace std;
 
@@ -39,6 +40,17 @@ public:
 		vector<vector<double> > optimized_xyz;
 	};
 
+    struct align_result_t{
+        double rmsd;
+        vector<double> translation;
+        vector<double> rotation;
+    };
+
+    struct align_t{
+        vector<vector<double> > ref_xyz;
+        vector<vector<double> > current_xyz;
+    };
+
 
 	Optimizer(Mol2* _Rec, Mol2* _RefLig, PARSER* _Parser);
 	Optimizer(Mol2* _Rec, Mol2* _RefLig, PARSER* _Parser, Grid* _Grids);
@@ -54,6 +66,7 @@ public:
 
 	static double objective_energy_function(const vector<double> &x, vector<double> &grad, void *data);
 	static double objective_overlay_function(const vector<double> &x, vector<double> &grad, void *data);
+    static double superpose_function(const vector<double> &x, vector<double> &grad, void *data);
 
 	static void minimize_energy_nlopt_cobyla(Mol2* Lig2, opt_result_t* opt_result);
 	static void minimize_energy_nlopt_lbfgs(Mol2* Lig2, opt_result_t* opt_result);
@@ -79,6 +92,7 @@ public:
 	static void minimize_overlay_nlopt_crs(Mol2* Lig2, opt_result_t* opt_result);
     static void minimize_overlay_nlopt_direct(Mol2* Lig2, opt_result_t* opt_result);
 
+    static void minimize_alignment_nlopt_ln_auglag(align_t* align_data, align_result_t* opt_result);
 };
 
 #endif /* OPTIMIZER_H_ */
