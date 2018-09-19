@@ -66,7 +66,7 @@ public:
     void take_step(PARSER* Input, Mol2* Lig, step_t* step);
     void take_step_flex(PARSER* Input, Mol2* Lig, step_t* step);
     void take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step);
-    void take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step);
+    void take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step, bool fit=false);
     void write_conformers(Mol2* Lig);
     void MaxMinCM(double XCOM, double YCOM, double ZCOM, vector<double> Max);
     void ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER* Input, double T);
