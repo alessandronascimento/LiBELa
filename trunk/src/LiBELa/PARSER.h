@@ -289,6 +289,8 @@ public:
     string delphi_cube_grid;
     //! Activates the full flexible approach in MC simulations
     bool mc_full_flex;
+    //!
+    bool compute_rotation_entropy;
 
 #ifdef HAS_GUI
 	QStringList docking_molecules;

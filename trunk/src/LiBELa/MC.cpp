@@ -241,7 +241,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 this->take_step_torsion(Input, Lig, step);
             }
             else if (Input->mc_full_flex){
-                this->take_step_full_flex(Input, Lig, step, true);
+                this->take_step_full_flex(Input, Lig, step, Input->compute_rotation_entropy);
             }
             else {
                 this->take_step(Input, Lig, step);
