@@ -645,7 +645,7 @@ void Optimizer::minimize_energy_nlopt_direct_only(Mol2* Lig2, opt_result_t* opt_
 }
 
 void Optimizer::minimize_energy_nlopt_stogo(Mol2* Lig2, opt_result_t* opt_result){
-	nlopt::opt *opt = new nlopt::opt(nlopt::GD_STOGO,6);
+    nlopt::opt *opt = new nlopt::opt(nlopt::GD_STOGO_RAND,6);
 
 	vector<double> lb(6);
 	lb[0] = -180.0;
