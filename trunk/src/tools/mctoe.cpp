@@ -26,6 +26,8 @@ int main(int argc, char* argv[]){
     vector<double> conf_energies;
     vector<double> delta_energies;
     double average_delta;
+    double average_RL;
+    double average_L;
 
     gzFile inpfile = gzopen(argv[1], "r");
     gzgets(inpfile, str, 250);
@@ -33,7 +35,7 @@ int main(int argc, char* argv[]){
     sscanf(str, "%s %f %s %f %s %f %s %f ", stmp, &size_x, stmp, &size_y, stmp, &size_z, stmp, &Temp);
     printf("Temperature: %.3f\n", Temp);
 
-    beta=1/(k*Temp);
+    beta=1.0/(k*Temp);
 
     gzgets(inpfile, str, 200);
     sscanf(str, "%s %s %d", stmp, stmp, &nrot);
@@ -56,30 +58,41 @@ int main(int argc, char* argv[]){
             ss >> torsion[i];
         }
 
-        sum_ene+= double(tenergy-tconf_energy);
+        average_L+= double(tconf_energy);
+        average_RL+= double(tenergy);
+        average_delta+= double(tenergy-tconf_energy);
         energies.push_back(double(tenergy));
         conf_energies.push_back(double(tconf_energy));
         delta_energies.push_back(double(tenergy-tconf_energy));
     }
         gzclose(inpfile);
 
-        average_delta = sum_ene/count;
+
+        average_L = average_L / count;
+        average_RL = average_RL / count;
+        average_delta = average_delta / count;
         printf("Average Delta_Energy: %10.4f\n", average_delta);
 
-        double deltaU;
-        double second_order=0.0, third_order=0.0;
+        double deltaU_L, deltaU_RL;;
+        double RL_2=0.0, RL_3=0.0, L_2=0, L_3=0.0;
         for (int i=0; i< delta_energies.size(); i++){
-            deltaU=delta_energies[i]-average_delta;
-            second_order+= (deltaU*deltaU);
-            third_order+= (deltaU*deltaU*deltaU);
+            deltaU_L=conf_energies[i]-average_L;
+            deltaU_RL = energies[i]-average_RL;
+
+            L_2+= (deltaU_L*deltaU_L);
+            L_3+= (deltaU_L*deltaU_L*deltaU_L);
+
+            RL_2+= (deltaU_RL*deltaU_RL);
+            RL_3+= (deltaU_RL*deltaU_RL*deltaU_RL);
         }
-        second_order = ((beta/2)*(second_order/delta_energies.size()));
-        third_order = ((beta*beta/6)*(third_order/delta_energies.size()));
+
+        double second_order = ((beta*beta/2)*(RL_2 - L_2));
+        double third_order = ((beta*beta*beta/6)*(RL_3-L_3));
 
         printf("Second-Order Term: %10.4f kcal/mol\n", second_order);
         printf("Third-Order Term:  %10.4f kcal/mol\n", third_order);
 
-        double DG=average_delta + second_order + third_order;
+        double DG=average_RL - average_L + second_order + third_order;
         printf("DeltaG = %10.3f kcal/mol\n", DG);
 
 
