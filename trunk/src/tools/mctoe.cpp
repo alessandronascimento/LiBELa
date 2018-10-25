@@ -90,8 +90,8 @@ int main(int argc, char* argv[]){
             RL_2+= (deltaU_RL*deltaU_RL);
             RL_3+= (deltaU_RL*deltaU_RL*deltaU_RL);
 
-            delta_delta_U2+= (energies[i]-conf_energies[i]-average_delta)*(energies[i]-conf_energies[i]-average_delta);
-            delta_delta_U3+= (energies[i]-conf_energies[i]-average_delta)*(energies[i]-conf_energies[i]-average_delta)*(energies[i]-conf_energies[i]-average_delta);
+            delta_delta_U2+= (delta_energies[i]-average_delta)*(delta_energies[i]-average_delta);
+            delta_delta_U3+= (delta_energies[i]-average_delta)*(delta_energies[i]-average_delta)*(delta_energies[i]-average_delta);
         }
 
 // Taking the average
@@ -115,7 +115,9 @@ int main(int argc, char* argv[]){
         printf("**********************************************************\n");
         second_order = (beta/2.0)*delta_delta_U2;
         third_order = (beta*beta/6.0)*delta_delta_U3;
-        DG=average_RL - average_L + second_order + third_order;
+        DG = average_delta + second_order + third_order;
+        printf("Second-Order Term: %10.4Lf kcal/mol\n", second_order);
+        printf("Third-Order Term:  %10.4Lf kcal/mol\n", third_order);
         printf("DeltaG = %10.3f kcal/mol\n", DG);
         printf("**********************************************************\n");
     }
