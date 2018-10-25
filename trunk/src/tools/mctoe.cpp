@@ -29,6 +29,8 @@ int main(int argc, char* argv[]){
     double average_RL;
     double average_L;
 
+//Reading receptor-ligand complex file
+
     gzFile inpfile = gzopen(argv[1], "r");
     gzgets(inpfile, str, 250);
     gzgets(inpfile, str, 250);
@@ -75,6 +77,9 @@ int main(int argc, char* argv[]){
 
         double deltaU_L, deltaU_RL;;
         double RL_2=0.0, RL_3=0.0, L_2=0, L_3=0.0;
+
+// Computing deltas
+
         for (int i=0; i< delta_energies.size(); i++){
             deltaU_L=conf_energies[i]-average_L;
             deltaU_RL = energies[i]-average_RL;
@@ -85,6 +90,13 @@ int main(int argc, char* argv[]){
             RL_2+= (deltaU_RL*deltaU_RL);
             RL_3+= (deltaU_RL*deltaU_RL*deltaU_RL);
         }
+
+// Taking the average
+
+        L_2=L_2/delta_energies.size();
+        L_3=L_3/delta_energies.size();
+        RL_2=RL_2/delta_energies.size();
+        RL_3=RL_3/delta_energies.size();
 
         double second_order = ((beta*beta/2)*(RL_2 - L_2));
         double third_order = ((beta*beta*beta/6)*(RL_3-L_3));
