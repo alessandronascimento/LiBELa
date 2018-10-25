@@ -25,9 +25,9 @@ int main(int argc, char* argv[]){
     vector<double> energies;
     vector<double> conf_energies;
     vector<double> delta_energies;
-    double average_delta;
-    double average_RL;
-    double average_L;
+    double average_delta=0.0;
+    double average_RL=0.0;
+    double average_L=0.0;
 
 //Reading receptor-ligand complex file
 
@@ -75,7 +75,7 @@ int main(int argc, char* argv[]){
         average_delta = average_delta / count;
         printf("Average Delta_Energy: %10.4f\n", average_delta);
 
-        double deltaU_L, deltaU_RL;;
+        double deltaU_L, deltaU_RL;
         double RL_2=0.0, RL_3=0.0, L_2=0, L_3=0.0;
 
 // Computing deltas
@@ -98,11 +98,11 @@ int main(int argc, char* argv[]){
         RL_2=RL_2/delta_energies.size();
         RL_3=RL_3/delta_energies.size();
 
-        double second_order = ((beta*beta/2)*(RL_2 - L_2));
-        double third_order = ((beta*beta*beta/6)*(RL_3-L_3));
+        long double second_order = ((beta*beta/2)*(RL_2 - L_2));
+        long double third_order = ((beta*beta*beta/6)*(RL_3-L_3));
 
-        printf("Second-Order Term: %10.4f kcal/mol\n", second_order);
-        printf("Third-Order Term:  %10.4f kcal/mol\n", third_order);
+        printf("Second-Order Term: %10.4Lf kcal/mol\n", second_order);
+        printf("Third-Order Term:  %10.4Lf kcal/mol\n", third_order);
 
         double DG=average_RL - average_L + second_order + third_order;
         printf("DeltaG = %10.3f kcal/mol\n", DG);
