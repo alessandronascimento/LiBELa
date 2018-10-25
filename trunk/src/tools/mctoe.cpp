@@ -115,7 +115,7 @@ int main(int argc, char* argv[]){
         printf("**********************************************************\n");
         second_order = (beta/2.0)*delta_delta_U2;
         third_order = (beta*beta/6.0)*delta_delta_U3;
-        double DG=average_RL - average_L + second_order + third_order;
+        DG=average_RL - average_L + second_order + third_order;
         printf("DeltaG = %10.3f kcal/mol\n", DG);
         printf("**********************************************************\n");
     }
