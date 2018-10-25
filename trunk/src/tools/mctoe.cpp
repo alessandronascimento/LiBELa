@@ -75,8 +75,8 @@ int main(int argc, char* argv[]){
         average_delta = average_delta / count;
         printf("Average Delta_Energy: %10.4f\n", average_delta);
 
-        double deltaU_L, deltaU_RL;
-        double RL_2=0.0, RL_3=0.0, L_2=0, L_3=0.0;
+        double deltaU_L, deltaU_RL, delta_delta_U2, delta_delta_U3;
+        double RL_2=0.0, RL_3=0.0, L_2=0, L_3=0.0, delta_2=0.0, delta_3=0.0;
 
 // Computing deltas
 
@@ -89,6 +89,9 @@ int main(int argc, char* argv[]){
 
             RL_2+= (deltaU_RL*deltaU_RL);
             RL_3+= (deltaU_RL*deltaU_RL*deltaU_RL);
+
+            delta_delta_U2+= (energies[i]-conf_energies[i]-average_delta)*(energies[i]-conf_energies[i]-average_delta);
+            delta_delta_U3+= (energies[i]-conf_energies[i]-average_delta)*(energies[i]-conf_energies[i]-average_delta)*(energies[i]-conf_energies[i]-average_delta);
         }
 
 // Taking the average
@@ -97,6 +100,8 @@ int main(int argc, char* argv[]){
         L_3=L_3/delta_energies.size();
         RL_2=RL_2/delta_energies.size();
         RL_3=RL_3/delta_energies.size();
+        delta_delta_U2 = delta_delta_U2/delta_energies.size();
+        delta_delta_U3 = delta_delta_U3/delta_energies.size();
 
         long double second_order = ((beta*beta/2)*(RL_2 - L_2));
         long double third_order = ((beta*beta*beta/6)*(RL_3-L_3));
@@ -107,6 +112,10 @@ int main(int argc, char* argv[]){
         double DG=average_RL - average_L + second_order + third_order;
         printf("DeltaG = %10.3f kcal/mol\n", DG);
 
-
-
+        printf("**********************************************************\n");
+        second_order = (beta/2.0)*delta_delta_U2;
+        third_order = (beta*beta/6.0)*delta_delta_U3;
+        double DG=average_RL - average_L + second_order + third_order;
+        printf("DeltaG = %10.3f kcal/mol\n", DG);
+        printf("**********************************************************\n");
     }
