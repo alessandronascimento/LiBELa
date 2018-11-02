@@ -1062,7 +1062,7 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
     double* dxyz = new double[(Lig->N*3)];
     dxyz = this->copy_to_obmol(step->xyz);
     mol.SetCoordinates(dxyz);
-    delete[] dxyz;
+//    delete dxyz;
 
     delete Coord;
 
