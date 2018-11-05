@@ -1062,7 +1062,7 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
     double* dxyz = new double[(Lig->N*3)];
     dxyz = this->copy_to_obmol(step->xyz);
     mol.SetCoordinates(dxyz);
-//    delete dxyz;
+    delete[] dxyz;
 
     delete Coord;
 
@@ -1115,12 +1115,13 @@ vector<vector<double> > MC::copy_from_obmol(OBMol mymol){
 }
 
 double* MC::copy_to_obmol(vector<vector<double> > vec_xyz){
+    double* xyz = new double[vec_xyz.size()*3];
     for (unsigned i=0; i<vec_xyz.size(); i++){
-        myxyz[3*i] = vec_xyz[i][0];
-        myxyz[(3*i)+1] = vec_xyz[i][1];
-        myxyz[(3*i)+2] = vec_xyz[i][2];
+        xyz[3*i] = vec_xyz[i][0];
+        xyz[(3*i)+1] = vec_xyz[i][1];
+        xyz[(3*i)+2] = vec_xyz[i][2];
     }
-    return myxyz;
+    return xyz;
 }
 
 OBMol MC::GetMol(const std::string &molfile){
