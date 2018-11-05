@@ -70,7 +70,7 @@ public:
     void write_conformers(Mol2* Lig);
     void MaxMinCM(double XCOM, double YCOM, double ZCOM, vector<double> Max);
     void ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER* Input, double T);
-    double* copy_to_obmol(vector<vector<double> > vec_xyz);
+    void copy_to_obmol(vector<vector<double> > vec_xyz);
     vector<vector<double> > copy_from_obmol(OBMol mymol);
     OBMol GetMol(const std::string &molfile);
     double check_angle(double angle);
