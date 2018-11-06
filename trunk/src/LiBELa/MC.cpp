@@ -1113,7 +1113,7 @@ vector<vector<double> > MC::copy_from_obmol(OBMol mymol){
 }
 
 void MC::copy_to_obmol(vector<vector<double> > vec_xyz){
-    for (unsigned i=0; i<vec_xyz.size(); i++){
+    for (unsigned i=0; i<mol.NumAtoms(); i++){
         this->myxyz[3*i] = vec_xyz[i][0];
         this->myxyz[(3*i)+1] = vec_xyz[i][1];
         this->myxyz[(3*i)+2] = vec_xyz[i][2];
