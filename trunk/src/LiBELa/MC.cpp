@@ -1060,7 +1060,6 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
 // Copy coordinates to OBMol
 
     this->copy_to_obmol(step->xyz);
-    mol.SetCoordinates(this->myxyz);
 
     delete Coord;
 
@@ -1113,11 +1112,14 @@ vector<vector<double> > MC::copy_from_obmol(OBMol mymol){
 }
 
 void MC::copy_to_obmol(vector<vector<double> > vec_xyz){
-    for (unsigned i=0; i<mol.NumAtoms(); i++){
-        this->myxyz[3*i] = vec_xyz[i][0];
-        this->myxyz[(3*i)+1] = vec_xyz[i][1];
-        this->myxyz[(3*i)+2] = vec_xyz[i][2];
+    double* dxyz = new double[vec_xyz.size()*3];
+    for (unsigned i=0; i<vec_xyz.size(); i++){
+        dxyz[3*i] = vec_xyz[i][0];
+        dxyz[(3*i)+1] = vec_xyz[i][1];
+        dxyz[(3*i)+2] = vec_xyz[i][2];
     }
+    mol.SetCoordinates(dxyz);
+    delete [] dxyz;
 }
 
 OBMol MC::GetMol(const std::string &molfile){
@@ -1258,7 +1260,6 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step, bool fit){
 // copy coordinates and internal energy to type step_t
 
     this->copy_to_obmol(step->xyz);
-    mol.SetCoordinates(this->myxyz);
 
 // compute torsion angles with Babel API
 
