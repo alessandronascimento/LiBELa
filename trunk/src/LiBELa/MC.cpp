@@ -348,7 +348,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     delete Coord;
     delete energy_t;
     Writer->print_line();
-    sprintf(info, "Finished MC simulation after %d accepted steps, %d total steps, acceptance rate %5.3f", Input->number_steps, (Input->number_steps+nReject),double((Input->number_steps*1.0)/(Input->number_steps+nReject)));
+    sprintf(info, "Finished MC simulation for complex. Acceptance rate: %5.3f", double((Input->number_steps*1.0)/(Input->number_steps+nReject)));
     Writer->print_info(info);
     Writer->print_line();
     sprintf(info, "Conformer energies:");
