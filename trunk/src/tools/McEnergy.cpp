@@ -119,7 +119,7 @@ int main(int argc, char* argv[]){
 
     Mol2* RefMol = new Mol2(Input, ref_mol2);                   // read the initial coordinates of the ligand
 
-    OBMol mol = GetMol(Input->lig_mol2);
+    OBMol mol = GetMol(ref_mol2);
     double* myxyz = new double[mol.NumAtoms()*3];
     OBForceField* OBff;
     OBRotorList RotorList;
