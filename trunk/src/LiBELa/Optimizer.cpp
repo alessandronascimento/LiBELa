@@ -1272,21 +1272,21 @@ void Optimizer::minimize_alignment_nlopt_simplex(align_t* align_data, align_resu
     lb[0] = -180.0;
     lb[1] = -90.0;
     lb[2] = -180.0;
-    lb[3] = -(Parser->search_box_x/2.0);
-    lb[4] = -(Parser->search_box_y/2.0);
-    lb[5] = -(Parser->search_box_z/2.0);
+    lb[3] = -(Parser->search_box_x);
+    lb[4] = -(Parser->search_box_y);
+    lb[5] = -(Parser->search_box_z);
     vector<double> ub(6);
     ub[0] = 180.0;
     ub[1] = 90.0;
     ub[2] = 180.0;
-    ub[3] = Parser->search_box_x/2.0;
-    ub[4] = Parser->search_box_y/2.0;
-    ub[5] = Parser->search_box_z/2.0;
+    ub[3] = Parser->search_box_x;
+    ub[4] = Parser->search_box_y;
+    ub[5] = Parser->search_box_z;
 
     opt->set_lower_bounds(lb);
     opt->set_upper_bounds(ub);
 
-    opt->set_max_objective(Optimizer::superpose_function, align_data);
+    opt->set_min_objective(Optimizer::superpose_function, align_data);
     opt->set_xtol_rel(Parser->min_tol);
     opt->set_maxtime(Parser->min_timeout);
 

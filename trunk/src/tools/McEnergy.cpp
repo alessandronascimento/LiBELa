@@ -5,6 +5,9 @@
 #include<cmath>
 #include<string>
 #include <vector>
+#include <openbabel/mol.h>
+#include <openbabel/obconversion.h>
+#include <openbabel/rotor.h>
 #include "../LiBELa/iMcLiBELa.h"
 #include "../LiBELa/main.h"
 #include "../LiBELa/Mol2.h"
@@ -12,19 +15,14 @@
 #include "../LiBELa/PARSER.h"
 #include "../LiBELa/Optimizer.h"
 #include "../LiBELa/McEntropy.h"
-#include <openbabel/mol.h>
-#include <openbabel/obconversion.h>
-#include <openbabel/rotor.h>
-#include <openbabel/conformersearch.h>
-#include <openbabel/forcefield.h>
-#include <openbabel/math/vector3.h>
+
 
 #define k 0.0019872041
 
 using namespace std;
 using namespace OpenBabel;
 
-OBMol GetMol(const std::string &molfile){
+OBMol GetMol(const string &molfile){
     OBMol mol;
 
     OBConversion conv;
@@ -69,26 +67,26 @@ int main(int argc, char* argv[]){
     string ref_mol2;
     int stride;
     int c;
-    double dx, dy, dz, dalpha, dbeta, dgamma, angle;
-    string ff = "GAFF";
+    double dx, dy, dz, dalpha, dbeta, dgamma, angle, rmsdi, rmsdf, T=300.0;
+    double energy;
     vector<vector<int> > atoms_in_dihedrals;
 
     if (argc < 2){
-      printf("Usage %s -t <traj_file> -s <stride> -r <ref_mol2> [-h]\n", argv[0]);
+      printf("Usage %s -t <traj_file> -s <stride> -r <ref_mol2> -T <temperature> [-h]\n", argv[0]);
       exit(1);
     }
 
-    while ((c = getopt(argc, argv, "t:r:s:g:h")) != -1)
+    while ((c = getopt(argc, argv, "t:r:s:T:h")) != -1)
       switch (c){
       case 't':
           trajfile = string(optarg);
           break;
       case 'h':
-          printf("Usage %s -t <traj_file> -s <stride> -r <ref_mol2>\n", argv[0]);
+          printf("Usage %s -t <traj_file> -s <stride> -r <ref_mol2> -f <OB Force Field> -T <temperature> [-h]\n", argv[0]);
           break;
           exit(1);
       case '?':
-          printf("Usage %s -t <traj_file> -s <stride> -r <ref_mol2>\n\n", argv[0]);
+          printf("Usage %s -t <traj_file> -s <stride> -r <ref_mol2> -f <OB Force Field> -T <temperature> [-h]\n", argv[0]);
           break;
           exit(1);
       case 'r':
@@ -97,8 +95,9 @@ int main(int argc, char* argv[]){
       case 's':
           stride = atoi(optarg);
           break;
-      case 'f':
-          ff = string(optarg);
+      case 'T':
+          T = double(atof(optarg));
+          break;
       }
 
     printf("#*****************************************************************************************\n");
@@ -112,39 +111,21 @@ int main(int argc, char* argv[]){
     printf("#*****************************************************************************************\n");
     printf("# Trajectory file:  %-74.74s\n", trajfile.c_str());
     printf("# Reference file: %-74.74s\n", ref_mol2.c_str());
+    printf("#*****************************************************************************************\n");
 
 
     PARSER* Input = new PARSER;
+    Input->temp = T;
     COORD_MC* Coord = new COORD_MC;
 
     Mol2* RefMol = new Mol2(Input, ref_mol2);                   // read the initial coordinates of the ligand
 
     OBMol mol = GetMol(ref_mol2);
     double* myxyz = new double[mol.NumAtoms()*3];
-    OBForceField* OBff;
     OBRotorList RotorList;
     OBRotorIterator RotorIterator;
     OBRotor *Rotor;
 
-    if ( ff == "GAFF"){
-        OBff = OBForceField::FindForceField("GAFF");
-    }
-    else if (ff == "MMFF94"){
-        OBff = OBForceField::FindForceField("MMFF94");
-    }
-    else{
-        OBff = OBForceField::FindForceField(ff);
-    }
-
-    if (!OBff){
-        printf("Could not find OpenBabel FF parameters!\n");
-        exit(1);
-    }
-
-    OBff->SetLogFile(&cout);
-    OBff->SetLogLevel(OBFF_LOGLVL_LOW);
-
-    OBff->GetCoordinates(mol);
     RotorList.Setup(mol);
     Rotor = RotorList.BeginRotor(RotorIterator);
     mol.ToInertialFrame();
@@ -162,19 +143,25 @@ int main(int argc, char* argv[]){
     Mol2* TrajMol2 = new Mol2;
     TrajMol2->parse_gzipped_ensemble(Input, trajfile, stride);              // loads the trajectory at once;
 
-    printf("#%8s %7.7s %7.7s %7.7s %7.7s %7.7s %7.7s ", "Frame", "DX", "DY", "DZ", "DALPHA", "DBETA", "DGAMMA");
+    vector<double> com = Coord->compute_com(RefMol);
+
+    McEntropy* Entropy = new McEntropy(Input, Coord, com, int(RotorList.Size()));
+
+    printf("#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s ", "Frame", "DX", "DY", "DZ", "DALPHA", "DBETA", "DGAMMA", "RMSDi", "RMSDf");
 
     for (int j=0; j< RotorList.Size(); j++){
-        printf("ROT[%3d] ", j);
+        printf(" ROT[%3d] ", j);
     }
 
     printf("\n");
 
+    energy = 0.0;
 
     for (unsigned i=0; i< TrajMol2->mcoords.size(); i++){
         Optimizer::align_t* align_data = new Optimizer::align_t;
         align_data->ref_xyz = RefMol->xyz;
         align_data->current_xyz = TrajMol2->mcoords[i];
+        rmsdi = Coord->compute_rmsd(RefMol->xyz, TrajMol2->mcoords[i], RefMol->N);
 
         Optimizer::align_result_t* opt_result = new Optimizer::align_result_t;
 
@@ -186,23 +173,74 @@ int main(int argc, char* argv[]){
         dalpha = opt_result->rotation[0];
         dbeta = opt_result->rotation[1];
         dgamma = opt_result->rotation[2];
+        rmsdf = opt_result->rmsd;
+
+        energy+= TrajMol2->ensemble_energies[i];
 
         for (unsigned j=0; j< RotorList.Size(); j++){
             torsions[j] = mol.GetTorsion(mol.GetAtom(atoms_in_dihedrals[j][0]), mol.GetAtom(atoms_in_dihedrals[j][1]), mol.GetAtom(atoms_in_dihedrals[j][2]), mol.GetAtom(atoms_in_dihedrals[j][3]));
         }
 
-        printf("%8d %7.3f %7.3f %7.3f %7.3f %7.3f %7.3f ", i, dx, dy, dz, dalpha, dbeta, dgamma);
+        Entropy->update(dx, dy, dz, dalpha, dbeta, dgamma, torsions);
+
+        printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f ", i, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf);
 
         for (int j=0; j< RotorList.Size(); j++){
-            printf("%7.3f ", torsions[j]);
+            printf("%10.4f ", torsions[j]);
         }
-
         printf("\n");
 
         delete align_data;
         delete opt_result;
         delete opt;
     }
+
+    McEntropy::entropy_t* McEnt = new McEntropy::entropy_t;
+    McEntropy::entropy_t* Max_Ent = new McEntropy::entropy_t;
+    McEnt->Srot = 0.0; McEnt->Storsion = 0.0; McEnt->Strans = 0.0;
+
+    Entropy->get_results(McEnt, Max_Ent, int(TrajMol2->mcoords.size()));
+
+    energy = energy / TrajMol2->mcoords.size();
+
+    printf("#*****************************************************************************************\n");
+
+    printf("First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K\n", McEnt->Strans*T, T);
+    printf("First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K\n", McEnt->Srot*T, T);
+    printf("First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K\n", McEnt->Storsion*T, T);
+    printf("First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K\n", McEnt->S, T);
+    printf("First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K\n", -McEnt->TS, T);
+    printf("First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K\n", -McEnt->S*300., 300.);
+
+    printf("#*****************************************************************************************\n");
+
+    printf("Maximal Entropies Computed for this System:\n");
+    printf("First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K\n", Max_Ent->Strans*T, T);
+    printf("First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K\n", Max_Ent->Srot*T, T);
+    printf("First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K\n", Max_Ent->Storsion*T, T);
+    printf("First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K\n", Max_Ent->S, T);
+    printf("First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K\n", -Max_Ent->TS, T);
+    printf("First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K\n", -Max_Ent->S*300., 300.);
+
+    printf("#*****************************************************************************************\n");
+
+    printf("Entropy loss (-TdS): %10.4g kcal/mol (%10.4f %s) @ %7.2f K\n", (-McEnt->TS - (-Max_Ent->TS)), ((-McEnt->TS/-Max_Ent->TS)*100), "%", T);
+
+    printf("#*****************************************************************************************\n");
+
+    printf("Ebind = <E> -TS\n");
+    printf("Ebind = %8.4f - %8.4f = %8.4f kcal/mol\n", energy, McEnt->TS, (energy-McEnt->TS));
+
+    printf("#*****************************************************************************************\n");
+
+    delete [] myxyz;
+    delete McEnt;
+    delete Max_Ent;
+    delete Entropy;
+    delete RefMol;
+    delete Coord;
+    delete Input;
+    delete TrajMol2;
 
     return 0;
 }

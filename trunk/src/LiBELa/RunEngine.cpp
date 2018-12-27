@@ -154,7 +154,7 @@ void TEMP_SCHEME::evaluation(PARSER* Input, QProgressBar* progressbar){
         if (Input->load_grid_from_file){
             sprintf(info,"Loading grids from file %s.grid...", Input->grid_prefix.c_str());
             QWriter->print_info(info);
-            Grids = new Grid(Input);
+            Grids = new Grid(Input, Writer);
             Grids->load_grids_from_file();
             sprintf(info, "Loaded energy grids with %d points spaced by %5.3f Angstroms in each directon.", Grids->npointsx*Grids->npointsy*Grids->npointsz, Grids->grid_spacing);
             QWriter->print_info(info);
@@ -166,7 +166,7 @@ void TEMP_SCHEME::evaluation(PARSER* Input, QProgressBar* progressbar){
             sprintf(info,"Generating energy grids. It can take a couple of minutes. Coffee time maybe ?");
             QWriter->print_info(info);
             start = clock();
-            Grids = new Grid(Input, REC, center);
+            Grids = new Grid(Input, Writer, REC, center);
             end = clock();
             sprintf(info, "Computed energy grids with %d points spaced by %5.3f Angstroms in each directon.", Grids->npointsx*Grids->npointsy*Grids->npointsz, Grids->grid_spacing);
             QWriter->print_info(info);
