@@ -8,6 +8,7 @@
 #include <openbabel/mol.h>
 #include <openbabel/obconversion.h>
 #include <openbabel/rotor.h>
+#include <openbabel/forcefield.h>
 #include "../LiBELa/iMcLiBELa.h"
 #include "../LiBELa/main.h"
 #include "../LiBELa/Mol2.h"
@@ -22,8 +23,8 @@
 using namespace std;
 using namespace OpenBabel;
 
-OBMol GetMol(const string &molfile){
-    OBMol mol;
+OBMol* GetMol(const string &molfile){
+    OBMol* mol = new OBMol;
 
     OBConversion conv;
     OBFormat *format = conv.FormatFromExt(molfile.c_str());
@@ -38,7 +39,7 @@ OBMol GetMol(const string &molfile){
         return mol;
     }
 
-    if (!conv.Read(&mol, &ifs)) {
+    if (!conv.Read(mol, &ifs)) {
         printf("Could not read molecule from file\n");
         return mol;
     }
@@ -61,12 +62,125 @@ vector<vector<double> > copy_from_obmol(OBMol mymol){
     return vec_xyz;
 }
 
+void copy_to_obmol(vector<vector<double> > vec_xyz, OBMol* mol){
+    double* dxyz = new double[vec_xyz.size()*3];
+    for (unsigned i=0; i<vec_xyz.size(); i++){
+        dxyz[3*i] = vec_xyz[i][0];
+        dxyz[(3*i)+1] = vec_xyz[i][1];
+        dxyz[(3*i)+2] = vec_xyz[i][2];
+    }
+    mol->SetCoordinates(dxyz);
+    delete [] dxyz;
+}
+
+double* copy_to_obmol(vector<vector<double> > vec_xyz){
+    double* dxyz = new double[vec_xyz.size()*3];
+    for (unsigned i=0; i<vec_xyz.size(); i++){
+        dxyz[3*i] = vec_xyz[i][0];
+        dxyz[(3*i)+1] = vec_xyz[i][1];
+        dxyz[(3*i)+2] = vec_xyz[i][2];
+    }
+    return(dxyz);
+}
+
+double get_dihedral(vector<double> a, vector<double> b, vector<double> c, vector<double> d){
+// Calculando os vetores C,B,C
+    double xij = a[0]-b[0];
+    double yij = a[1]-b[1];
+    double zij = a[2]-b[2];
+    double xkj = c[0]-b[0];
+    double ykj = c[1]-b[1];
+    double zkj = c[2]-b[2];
+    double xkl = c[0]-d[0];
+    double ykl = c[1]-d[1];
+    double zkl = c[2]-d[2];
+
+//     Calculate the normals to the two planes n1 and n2
+//      this is given as the cross products:
+//       AB x BC
+//      --------- = n1
+//      |AB x BC|
+//
+//       BC x CD
+//      --------- = n2
+//      |BC x CD|
+//
+    double dxi = (yij * zkj) - (zij * ykj);     // Normal to plane 1
+    double dyi = (zij * xkj) - (xij * zkj);
+    double dzi = (xij * ykj) - (yij * xkj);
+    double gxi = (zkj * ykl) - (ykj * zkl);    // Normal to plane 2
+    double gyi = (xkj * zkl) - (zkj * xkl);
+    double gzi = (ykj * xkl) - (xkj * ykl);
+
+//  Calculate the length of the two normals
+
+    double bi = (dxi * dxi) + (dyi * dyi) + (dzi * dzi);
+    double bk = (gxi * gxi) + (gyi * gyi) + (gzi * gzi);
+    double ct = (dxi * gxi) + (dyi * gyi) + (dzi * gzi);
+
+    double boi2 = 1./bi;
+    double boj2 = 1./bk;
+    bi   = sqrt(bi);
+    bk   = sqrt(bk);
+
+    double z1   = 1./bi;
+    double z2   = 1./bk;
+    double bioj = bi * z2;
+    double bjoi = bk * z1;
+
+
+    ct   = ct * z1 * z2;
+
+
+    if (ct >  1.0){
+        ct = 1.0;
+    }
+    else if (ct < (-1.0)){
+        ct = -1.0;
+    }
+    double ap = acos(ct);
+
+    double s = xkj * (dzi * gyi - dyi * gzi) + ykj * (dxi * gzi - dzi * gxi) + zkj * (dyi * gxi - dxi * gyi);
+
+    if (s < 0.0){
+           ap = -ap;
+    }
+
+    else if (ap > 0.0){
+           ap = PI - ap;
+    }
+    else{
+           ap = -(PI + ap);
+    }
+    ap = ap*180/PI;       // convert to degrees
+    return (ap);
+}
+
+double get_OB_dihedral(OBMol* mol, int a, int b, int c, int d){
+    return mol->GetTorsion(a, b, c, d);
+}
+
+double check_angle(double angle){
+    if ( angle > 360.0){
+        while (angle > 360.0){
+            angle -= 360.0;
+        }
+    }
+    else if (angle < 0.0){
+        while (angle < 0.0){
+            angle += 360.0;
+        }
+    }
+    return angle;
+}
+
+
+
 int main(int argc, char* argv[]){
 
     string trajfile;
     string ref_mol2;
-    int stride;
-    int c;
+    int stride, c, nrot;
     double dx, dy, dz, dalpha, dbeta, dgamma, angle, rmsdi, rmsdf, T=300.0;
     double energy;
     vector<vector<int> > atoms_in_dihedrals;
@@ -111,45 +225,58 @@ int main(int argc, char* argv[]){
     printf("#*****************************************************************************************\n");
     printf("# Trajectory file:  %-74.74s\n", trajfile.c_str());
     printf("# Reference file: %-74.74s\n", ref_mol2.c_str());
+    printf("# Temperature: %-74.3f\n", T);
     printf("#*****************************************************************************************\n");
 
 
     PARSER* Input = new PARSER;
     Input->temp = T;
+    Input->sample_torsions = true;
     COORD_MC* Coord = new COORD_MC;
 
     Mol2* RefMol = new Mol2(Input, ref_mol2);                   // read the initial coordinates of the ligand
 
-    OBMol mol = GetMol(ref_mol2);
-    double* myxyz = new double[mol.NumAtoms()*3];
+    OBMol* mol = new OBMol;
+    mol = GetMol(ref_mol2);
+
     OBRotorList RotorList;
     OBRotorIterator RotorIterator;
     OBRotor *Rotor;
 
-    RotorList.Setup(mol);
+    RotorList.Setup(*mol);
     Rotor = RotorList.BeginRotor(RotorIterator);
-    mol.ToInertialFrame();
+    mol->ToInertialFrame();
     vector<int> tmp(4);
+
+    nrot = int(RotorList.Size());
+    printf("Found %d rotatable bonds in ligand %s.\n", nrot, RefMol->molname.c_str());
+
     for (unsigned i = 0; i < RotorList.Size(); ++i, Rotor = RotorList.NextRotor(RotorIterator)) {
         tmp = Rotor->GetDihedralAtoms();
+        for (unsigned j=0; j<4; j++){
+            tmp[j] = tmp[j]-1;      // now indexes start with 0 instead of the OB default 1.
+        }
+        angle = get_dihedral(RefMol->xyz[tmp[0]], RefMol->xyz[tmp[1]], RefMol->xyz[tmp[2]], RefMol->xyz[tmp[3]]);
+        printf("Torsion [%2d]: %2d %2d %2d %2d = %8.4f\n", i+1, tmp[0], tmp[1], tmp[2], tmp[3],angle);
         atoms_in_dihedrals.push_back(tmp);
         tmp.clear();
     }
 
-    printf("Found %lu    rotatable bonds in ligand %s.\n", RotorList.Size(), RefMol->molname.c_str());
+    delete mol;
 
-    vector<double> torsions(RotorList.Size());
+    printf("#*****************************************************************************************\n");
+
+    vector<double> torsions(nrot);
 
     Mol2* TrajMol2 = new Mol2;
     TrajMol2->parse_gzipped_ensemble(Input, trajfile, stride);              // loads the trajectory at once;
-
     vector<double> com = Coord->compute_com(RefMol);
 
-    McEntropy* Entropy = new McEntropy(Input, Coord, com, int(RotorList.Size()));
+    McEntropy* Entropy = new McEntropy(Input, Coord, com, nrot);
 
     printf("#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s ", "Frame", "DX", "DY", "DZ", "DALPHA", "DBETA", "DGAMMA", "RMSDi", "RMSDf");
 
-    for (int j=0; j< RotorList.Size(); j++){
+    for (int j=0; j< nrot; j++){
         printf(" ROT[%3d] ", j);
     }
 
@@ -174,24 +301,27 @@ int main(int argc, char* argv[]){
         dbeta = opt_result->rotation[1];
         dgamma = opt_result->rotation[2];
         rmsdf = opt_result->rmsd;
-
         energy+= TrajMol2->ensemble_energies[i];
 
-        for (unsigned j=0; j< RotorList.Size(); j++){
-            torsions[j] = mol.GetTorsion(mol.GetAtom(atoms_in_dihedrals[j][0]), mol.GetAtom(atoms_in_dihedrals[j][1]), mol.GetAtom(atoms_in_dihedrals[j][2]), mol.GetAtom(atoms_in_dihedrals[j][3]));
+        for (int j=0; j< nrot; j++){
+            angle = get_dihedral(TrajMol2->mcoords[i][atoms_in_dihedrals[j][0]], TrajMol2->mcoords[i][atoms_in_dihedrals[j][1]], TrajMol2->mcoords[i][atoms_in_dihedrals[j][2]], TrajMol2->mcoords[i][atoms_in_dihedrals[j][3]]);
+            angle = check_angle(angle);
+            torsions[j] = (angle);
         }
 
         Entropy->update(dx, dy, dz, dalpha, dbeta, dgamma, torsions);
 
-        printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f ", i, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf);
+        printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f ", i+1, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf);
 
         for (int j=0; j< RotorList.Size(); j++){
             printf("%10.4f ", torsions[j]);
         }
         printf("\n");
 
-        delete align_data;
+        align_data->ref_xyz.clear();
+        align_data->current_xyz.clear();
         delete opt_result;
+        delete align_data;
         delete opt;
     }
 
@@ -233,13 +363,15 @@ int main(int argc, char* argv[]){
 
     printf("#*****************************************************************************************\n");
 
-    delete [] myxyz;
     delete McEnt;
     delete Max_Ent;
     delete Entropy;
+
     delete RefMol;
+
     delete Coord;
     delete Input;
+
     delete TrajMol2;
 
     return 0;

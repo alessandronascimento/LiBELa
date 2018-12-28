@@ -646,19 +646,19 @@ bool Mol2::parse_gzipped_ensemble(PARSER* Input, string molfile, int skipper=1){
     if (mol2file != NULL){
         str[0]='#';
         while(str[0] !='@'){
-            gzgets(mol2file, str, 80);
+            gzgets(mol2file, str, 100);
 
         }
-        gzgets(mol2file, str, 80);
+        gzgets(mol2file, str, 100);
         this->molname = str;
         this->molname = this->molname.substr(0,this->molname.size()-1);
-        gzgets(mol2file, str, 80);
+        gzgets(mol2file, str, 100);
         sscanf(str, "%d %d %d %d %d", &this->N, &this->Nbonds, &this->Nres, &tint, &tint);
 
 
         cpstr = string(str);
         while (cpstr.substr(0,6) != "Energy"){
-            gzgets(mol2file, str, 80);
+            gzgets(mol2file, str, 100);
             cpstr = string(str);
         }
         sscanf(str, "%s %f\n", tstr, &tx);              //parsing ensemble energy
@@ -666,7 +666,7 @@ bool Mol2::parse_gzipped_ensemble(PARSER* Input, string molfile, int skipper=1){
         trajsize++;
 
         while (cpstr.substr(0,13) != "RMSD/OVERLAY:"){
-            gzgets(mol2file, str, 80);
+            gzgets(mol2file, str, 100);
             cpstr = string(str);
         }
         sscanf(str, "%s %f\n", tstr, &tx);              //parsing ensemble rmsd
@@ -674,12 +674,12 @@ bool Mol2::parse_gzipped_ensemble(PARSER* Input, string molfile, int skipper=1){
 
         cpstr = string(str);
         while (cpstr.substr(0,13) != "@<TRIPOS>ATOM"){
-            gzgets(mol2file, str, 80);
+            gzgets(mol2file, str, 100);
             cpstr = string(str);
         }
 
         for (int i=0; i<this->N; i++){
-            gzgets(mol2file, str, 80);
+            gzgets(mol2file, str, 100);
             sscanf(str, "%d %s %f %f %f %s %d %s %f\n", &tint, str, &tx, &ty, &tz, tatomtype, &tres, resname, &tcharge);
             txyz.push_back(tx);
             txyz.push_back(ty);
@@ -724,17 +724,17 @@ bool Mol2::parse_gzipped_ensemble(PARSER* Input, string molfile, int skipper=1){
             }
         }
 
-        gzgets(mol2file, str, 80);
+        gzgets(mol2file, str, 100);
         if (str[0] != '@'){
             while (str[0] != '@'){
-                gzgets(mol2file, str, 80);
+                gzgets(mol2file, str, 100);
             }
         }
 
         vector<string> bond;
         char s1[6], s2[6], s3[5];
         for (int i=0; i<this->Nbonds; i++){
-            gzgets(mol2file, str, 80);
+            gzgets(mol2file, str, 100);
             sscanf(str, "%d%s%s%s\n", &tint, s1, s2, s3);
             bond.push_back(string(s1));
             bond.push_back(string(s2));
@@ -748,9 +748,9 @@ bool Mol2::parse_gzipped_ensemble(PARSER* Input, string molfile, int skipper=1){
         this->mcoords.push_back(this->xyz);
 
         while (! gzeof(mol2file)){
-            gzgets(mol2file, str, 80);
+            gzgets(mol2file, str, 100);
             while ((str[0] != 'E' or str[6] != ':') and (!gzeof(mol2file))){
-                gzgets(mol2file, str, 80);
+                gzgets(mol2file, str, 100);
             }
 
             if (!gzeof(mol2file)){
@@ -762,7 +762,7 @@ bool Mol2::parse_gzipped_ensemble(PARSER* Input, string molfile, int skipper=1){
             }
 
             while ((str[0] != 'R' or str[12] != ':') and (!gzeof(mol2file))){
-                gzgets(mol2file, str, 80);
+                gzgets(mol2file, str, 100);
             }
 
             if (!gzeof(mol2file)){
@@ -773,12 +773,12 @@ bool Mol2::parse_gzipped_ensemble(PARSER* Input, string molfile, int skipper=1){
             }
 
             while ((str[0] != '@' or str[9] != 'A') and (!gzeof(mol2file))){
-                gzgets(mol2file, str, 80);
+                gzgets(mol2file, str, 100);
             }
             if (!gzeof(mol2file) and (trajsize % skipper == 0)){
                 txyz.clear();
                 for (int i=0; i<this->N; i++){
-                    gzgets(mol2file, str, 80);
+                    gzgets(mol2file, str, 100);
                     sscanf(str, "%d %s %f %f %f %s %d %s %f\n", &tint, tstr, &tx, &ty, &tz, tatomtype, &tres, resname, &tcharge);
                     txyz.push_back(tx);
                     txyz.push_back(ty);
