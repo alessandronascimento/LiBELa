@@ -368,10 +368,8 @@ int main(int argc, char* argv[]){
     delete RefMol;
     delete Coord;
     delete Input;
-
-    delete TrajMol2;
-
     delete align_data;
+    delete TrajMol2;
     delete Entropy;
 
     return 0;
