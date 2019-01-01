@@ -8,7 +8,6 @@
 #include <openbabel/mol.h>
 #include <openbabel/obconversion.h>
 #include <openbabel/rotor.h>
-#include <openbabel/forcefield.h>
 #include "../LiBELa/iMcLiBELa.h"
 #include "../LiBELa/main.h"
 #include "../LiBELa/Mol2.h"
@@ -43,6 +42,8 @@ OBMol* GetMol(const string &molfile){
         printf("Could not read molecule from file\n");
         return mol;
     }
+
+    delete format;
     return mol;
 }
 
@@ -283,15 +284,13 @@ int main(int argc, char* argv[]){
     printf("\n");
 
     energy = 0.0;
+    Optimizer::align_result_t* opt_result = new Optimizer::align_result_t;
+    Optimizer::align_t* align_data = new Optimizer::align_t;
 
-    for (unsigned i=0; i< TrajMol2->mcoords.size(); i++){
-        Optimizer::align_t* align_data = new Optimizer::align_t;
+    for (unsigned i=0; i< TrajMol2->mcoords.size(); i++){        
         align_data->ref_xyz = RefMol->xyz;
         align_data->current_xyz = TrajMol2->mcoords[i];
         rmsdi = Coord->compute_rmsd(RefMol->xyz, TrajMol2->mcoords[i], RefMol->N);
-
-        Optimizer::align_result_t* opt_result = new Optimizer::align_result_t;
-
         Optimizer* opt = new Optimizer(RefMol, RefMol, Input);
         opt->minimize_alignment_nlopt_simplex(align_data, opt_result);
         dx = opt_result->translation[0];
@@ -320,10 +319,12 @@ int main(int argc, char* argv[]){
 
         align_data->ref_xyz.clear();
         align_data->current_xyz.clear();
-        delete opt_result;
-        delete align_data;
+
         delete opt;
     }
+
+    delete opt_result;
+    delete align_data;
 
     McEntropy::entropy_t* McEnt = new McEntropy::entropy_t;
     McEntropy::entropy_t* Max_Ent = new McEntropy::entropy_t;
