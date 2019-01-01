@@ -324,9 +324,6 @@ int main(int argc, char* argv[]){
         delete opt_result;
     }
 
-    align_data->ref_xyz.clear();
-    align_data->current_xyz.clear();
-    delete align_data;
 
     McEntropy::entropy_t* McEnt = new McEntropy::entropy_t;
     McEntropy::entropy_t* Max_Ent = new McEntropy::entropy_t;
@@ -376,6 +373,11 @@ int main(int argc, char* argv[]){
     delete Input;
 
     delete TrajMol2;
+
+    align_data->ref_xyz.clear();
+    align_data->current_xyz.clear();
+    delete align_data;
+
 
     return 0;
 }
