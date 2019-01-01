@@ -289,6 +289,10 @@ int main(int argc, char* argv[]){
     for (unsigned i=0; i< TrajMol2->mcoords.size(); i++){        
         align_data->ref_xyz = RefMol->xyz;
         align_data->current_xyz = TrajMol2->mcoords[i];
+        if (align_data->ref_xyz.size() != align_data->current_xyz.size()){
+            printf("# Size of coordinate vector element %3lu differs from Reference Molecule (%3lu)!\n", align_data->current_xyz.size(), align_data->ref_xyz.size());
+            exit(1);
+        }
         rmsdi = Coord->compute_rmsd(RefMol->xyz, TrajMol2->mcoords[i], RefMol->N);
         Optimizer* opt = new Optimizer(RefMol, RefMol, Input);
         opt->minimize_alignment_nlopt_simplex(align_data, opt_result);
