@@ -305,7 +305,7 @@ int main(int argc, char* argv[]){
         rmsdf = opt_result->rmsd;
         energy+= TrajMol2->ensemble_energies[i];
 
-        for (int j=0; j< nrot; j++){
+        for (unsigned j=0; j< unsigned(nrot); j++){
             angle = get_dihedral(TrajMol2->mcoords[i][atoms_in_dihedrals[j][0]], TrajMol2->mcoords[i][atoms_in_dihedrals[j][1]], TrajMol2->mcoords[i][atoms_in_dihedrals[j][2]], TrajMol2->mcoords[i][atoms_in_dihedrals[j][3]]);
             angle = check_angle(angle);
             torsions[j] = (angle);
@@ -315,7 +315,7 @@ int main(int argc, char* argv[]){
 
         printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f ", i+1, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf);
 
-        for (int j=0; j< RotorList.Size(); j++){
+        for (unsigned j=0; j< RotorList.Size(); j++){
             printf("%10.4f ", torsions[j]);
         }
         printf("\n");
