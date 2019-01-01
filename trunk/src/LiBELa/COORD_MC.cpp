@@ -100,18 +100,17 @@ vector<vector<double> >COORD_MC::rototranslate(vector<vector<double> >coordinate
 }
 
 vector<vector<double> >COORD_MC::rototranslate(vector<vector<double> >coordinates, int N, double alpha, double beta, double gamma, double transx, double transy, double transz){
-	vector<vector<double> >new_coordinates;
-	vector<double> txyz;
+    vector<vector<double> >new_coordinates(N);
+    vector<double> txyz(3);
 	double x, y, z;
-	for(int i=0; i < N ; i++){
+    for(unsigned i=0; i < unsigned(N); i++){
 		x=coordinates[i][0];
 		y=coordinates[i][1];
 		z=coordinates[i][2];
-		txyz.push_back((((x)*(((cos(alpha*PI/180))*(cos(gamma*PI/180)))-((sin(alpha*PI/180))*(cos(beta*PI/180))*sin(gamma*PI/180)))) + ((y)*(((-cos(alpha*PI/180))*(sin(gamma*PI/180)))-(sin(alpha*PI/180)*cos(beta*PI/180)*cos(gamma*PI/180))))+ ((z)*(sin(beta*PI/180)*sin(alpha*PI/180))))+transx);
-		txyz.push_back((((x)*((sin(alpha*PI/180)*cos(gamma*PI/180))+(cos(alpha*PI/180)*cos(beta*PI/180)*sin(gamma*PI/180)))) + ((y)*((-sin(alpha*PI/180)*sin(gamma*PI/180))+(cos(alpha*PI/180)*cos(beta*PI/180)*cos(gamma*PI/180)))) + ((z)*(-sin(beta*PI/180)*cos(alpha*PI/180))))+transy);
-		txyz.push_back((((x)*(sin(beta*PI/180)*sin(gamma*PI/180))) + ((y)*sin(beta*PI/180)*cos(gamma*PI/180)) + ((z)*cos(beta*PI/180)))+transz);
-		new_coordinates.push_back(txyz);
-		txyz.clear();
+        txyz[0] = ((((x)*(((cos(alpha*PI/180))*(cos(gamma*PI/180)))-((sin(alpha*PI/180))*(cos(beta*PI/180))*sin(gamma*PI/180)))) + ((y)*(((-cos(alpha*PI/180))*(sin(gamma*PI/180)))-(sin(alpha*PI/180)*cos(beta*PI/180)*cos(gamma*PI/180))))+ ((z)*(sin(beta*PI/180)*sin(alpha*PI/180))))+transx);
+        txyz[1] = ((((x)*((sin(alpha*PI/180)*cos(gamma*PI/180))+(cos(alpha*PI/180)*cos(beta*PI/180)*sin(gamma*PI/180)))) + ((y)*((-sin(alpha*PI/180)*sin(gamma*PI/180))+(cos(alpha*PI/180)*cos(beta*PI/180)*cos(gamma*PI/180)))) + ((z)*(-sin(beta*PI/180)*cos(alpha*PI/180))))+transy);
+        txyz[2] = ((((x)*(sin(beta*PI/180)*sin(gamma*PI/180))) + ((y)*sin(beta*PI/180)*cos(gamma*PI/180)) + ((z)*cos(beta*PI/180)))+transz);
+        new_coordinates[i] = txyz;
 	}
 	return(new_coordinates);
 }
@@ -212,14 +211,14 @@ vector<vector<double> >COORD_MC::rototranslate(vector<vector<double> >coordinate
 
 
 double COORD_MC::compute_rmsd(vector<vector<double> >coordinates, vector<vector<double> >new_coord, int N){
-	rmsd = 0.00;
+    double lrmsd = 0.00;
 	for (int i=0; i < N; i++){
 		for (int j=0; j<3; j++){
-			rmsd+= (coordinates[i][j]-new_coord[i][j])*(coordinates[i][j]-new_coord[i][j]);
+            lrmsd+= (coordinates[i][j]-new_coord[i][j])*(coordinates[i][j]-new_coord[i][j]);
 		}
 	}
-	rmsd = (sqrt(rmsd/N));
-	return(rmsd);
+    lrmsd = (sqrt(lrmsd/N));
+    return(lrmsd);
 }
 
 double COORD_MC::compute_prob(double old_energy, double new_energy, double temp){
