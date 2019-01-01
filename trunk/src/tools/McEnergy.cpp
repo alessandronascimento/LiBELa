@@ -324,6 +324,8 @@ int main(int argc, char* argv[]){
         delete opt_result;
     }
 
+    align_data->ref_xyz.clear();
+    align_data->current_xyz.clear();
     delete align_data;
 
     McEntropy::entropy_t* McEnt = new McEntropy::entropy_t;
