@@ -130,7 +130,6 @@ vector<vector<double> >COORD_MC::rototranslate(vector<vector<double> >coordinate
 		new_coordinates.push_back(txyz);
 	}
 	return(new_coordinates);
-	new_coordinates.clear();
 }
 
 void COORD_MC::rototranslate_all(Mol2 *Cmol, RAND *Rand){

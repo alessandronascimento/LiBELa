@@ -320,9 +320,6 @@ int main(int argc, char* argv[]){
         }
         printf("\n");
 
-        align_data->ref_xyz.clear();
-        align_data->current_xyz.clear();
-
         delete opt;
         delete opt_result;
     }

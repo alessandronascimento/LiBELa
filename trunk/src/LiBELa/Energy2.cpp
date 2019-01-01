@@ -269,11 +269,17 @@ double Energy2::compute_ene_from_grids_softcore_solvation(Grid* Grids, Mol2* Lig
         b1 = floor(bf);
         c1 = floor(cf);
         a2 = ceil(af);
-        (a2 > a1) ? : a2++;
+        if (a2 <= a1){
+            a2++;
+        }
         b2 = ceil(bf);
-        (b2 > b1)? : b2++;
+        if (b2 <= b1){
+            b2++;
+        }
         c2 = ceil(cf);
-        (c2 > c1) ? : c2++;
+        if (c2 <= c1){
+            c2++;
+        }
 
         if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
 
@@ -322,11 +328,17 @@ double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<v
         b1 = floor(bf);
         c1 = floor(cf);
         a2 = ceil(af);
-        (a2 > a1) ? : a2++;
+        if (a2 <= a1){
+            a2++;
+        }
         b2 = ceil(bf);
-        (b2 > b1)? : b2++;
+        if (b2 <= b1){
+            b2++;
+        }
         c2 = ceil(cf);
-        (c2 > c1) ? : c2++;
+        if (c2 <= c1){
+            c2++;
+        }
 
         if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
 
@@ -371,11 +383,17 @@ double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig
         b1 = floor(bf);
         c1 = floor(cf);
         a2 = ceil(af);
-        (a2 > a1) ? : a2++;
+        if (a2 <= a1){
+            a2++;
+        }
         b2 = ceil(bf);
-        (b2 > b1)? : b2++;
+        if (b2 <= b1){
+            b2++;
+        }
         c2 = ceil(cf);
-        (c2 > c1) ? : c2++;
+        if (c2 <= c1){
+            c2++;
+        }
 
 
         if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
@@ -425,11 +443,17 @@ double Energy2::compute_ene_from_grids_hardcore(Grid* Grids, Mol2* Lig, vector<v
         b1 = floor(bf);
         c1 = floor(cf);
         a2 = ceil(af);
-        (a2 > a1) ? : a2++;
+        if (a2 <= a1){
+            a2++;
+        }
         b2 = ceil(bf);
-        (b2 > b1)? : b2++;
+        if (b2 <= b1){
+            b2++;
+        }
         c2 = ceil(cf);
-        (c2 > c1) ? : c2++;
+        if (c2 <= c1){
+            c2++;
+        }
 
         if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
 
@@ -475,11 +499,17 @@ double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig
         b1 = floor(bf);
         c1 = floor(cf);
         a2 = ceil(af);
-        (a2 > a1) ? : a2++;
+        if (a2 <= a1){
+            a2++;
+        }
         b2 = ceil(bf);
-        (b2 > b1)? : b2++;
+        if (b2 <= b1){
+            b2++;
+        }
         c2 = ceil(cf);
-        (c2 > c1) ? : c2++;
+        if (c2 <= c1){
+            c2++;
+        }
 
         if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
 
@@ -532,11 +562,17 @@ double Energy2::compute_ene_from_grids_hardcore(Grid* Grids, Mol2* Lig, vector<v
         b1 = floor(bf);
         c1 = floor(cf);
         a2 = ceil(af);
-        (a2 > a1) ? : a2++;
+        if (a2 <= a1){
+            a2++;
+        }
         b2 = ceil(bf);
-        (b2 > b1)? : b2++;
+        if (b2 <= b1){
+            b2++;
+        }
         c2 = ceil(cf);
-        (c2 > c1) ? : c2++;
+        if (c2 <= c1){
+            c2++;
+        }
 
         if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
             GridInterpol* GI = new GridInterpol;
@@ -583,11 +619,17 @@ double Energy2::compute_ene_from_grids_softcore_solvation(Grid* Grids, Mol2* Lig
         b1 = floor(bf);
         c1 = floor(cf);
         a2 = ceil(af);
-        (a2 > a1) ? : a2++;
+        if (a2 <= a1){
+            a2++;
+        }
         b2 = ceil(bf);
-        (b2 > b1)? : b2++;
+        if (b2 <= b1){
+            b2++;
+        }
         c2 = ceil(cf);
-        (c2 > c1) ? : c2++;
+        if (c2 <= c1){
+            c2++;
+        }
 
         if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
             GridInterpol* GI = new GridInterpol;
@@ -638,11 +680,17 @@ double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<v
         b1 = floor(bf);
         c1 = floor(cf);
         a2 = ceil(af);
-        (a2 > a1) ? : a2++;
+        if (a2 <= a1){
+            a2++;
+        }
         b2 = ceil(bf);
-        (b2 > b1)? : b2++;
+        if (b2 <= b1){
+            b2++;
+        }
         c2 = ceil(cf);
-        (c2 > c1) ? : c2++;
+        if (c2 <= c1){
+            c2++;
+        }
 
         if (a1 > 0 and b1 > 0 and c1 > 0 and a2 < Grids->npointsx and b2 < Grids->npointsy and c2 < Grids->npointsz){
             GridInterpol* GI = new GridInterpol;
