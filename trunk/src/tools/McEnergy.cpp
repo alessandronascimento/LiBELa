@@ -365,19 +365,16 @@ int main(int argc, char* argv[]){
 
     delete McEnt;
     delete Max_Ent;
-    delete Entropy;
-
     delete RefMol;
-
     delete Coord;
     delete Input;
-
     delete TrajMol2;
 
     align_data->ref_xyz.clear();
     align_data->current_xyz.clear();
-    delete align_data;
 
+    delete align_data;
+    delete Entropy;
 
     return 0;
 }
