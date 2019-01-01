@@ -367,6 +367,7 @@ int main(int argc, char* argv[]){
 
     printf("#*****************************************************************************************\n");
 
+/*
     delete McEnt;
     delete Max_Ent;
     delete Entropy;
@@ -376,7 +377,7 @@ int main(int argc, char* argv[]){
     delete Input;
 
     delete TrajMol2;
-
+*/
     return 0;
 }
 
