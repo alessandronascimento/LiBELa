@@ -43,7 +43,6 @@ OBMol* GetMol(const string &molfile){
         return mol;
     }
 
-    delete format;
     return mol;
 }
 
