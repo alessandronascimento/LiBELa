@@ -260,7 +260,6 @@ Mol2::~Mol2(){
 	this->atomnames.clear();
 	this->masses.clear();
 	this->amberatoms.clear();
-
 }
 
 void Mol2::initialize_gaff(){
