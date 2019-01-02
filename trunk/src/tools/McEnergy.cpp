@@ -285,19 +285,16 @@ int main(int argc, char* argv[]){
     energy = 0.0;
     Optimizer::align_t* align_data = new Optimizer::align_t;
     align_data->ref_xyz = RefMol->xyz;
+    Optimizer* opt = new Optimizer(RefMol, RefMol, Input);
 
     for (unsigned i=0; i< TrajMol2->mcoords.size(); i++){
         Optimizer::align_result_t* opt_result = new Optimizer::align_result_t;
         align_data->current_xyz = TrajMol2->mcoords[i];
-
         if (align_data->ref_xyz.size() != align_data->current_xyz.size()){
             printf("# Size of coordinate vector element %3lu differs from Reference Molecule (%3lu)!\n", align_data->current_xyz.size(), align_data->ref_xyz.size());
             exit(1);
         }
 
-        rmsdi = Coord->compute_rmsd(RefMol->xyz, TrajMol2->mcoords[i], RefMol->N);
-
-        Optimizer* opt = new Optimizer(RefMol, TrajMol2, Input);        
         opt->minimize_alignment_nlopt_simplex(align_data, opt_result);
 
         dx = opt_result->translation[0];
@@ -306,6 +303,7 @@ int main(int argc, char* argv[]){
         dalpha = opt_result->rotation[0];
         dbeta = opt_result->rotation[1];
         dgamma = opt_result->rotation[2];
+        rmsdi = Coord->compute_rmsd(RefMol->xyz, TrajMol2->mcoords[i], RefMol->N);
         rmsdf = opt_result->rmsd;
         energy+= TrajMol2->ensemble_energies[i];
 
@@ -324,10 +322,10 @@ int main(int argc, char* argv[]){
         }
         printf("\n");
 
-        delete opt;
         delete opt_result;
     }
 
+    delete opt;
 
     McEntropy::entropy_t* McEnt = new McEntropy::entropy_t;
     McEntropy::entropy_t* Max_Ent = new McEntropy::entropy_t;
@@ -367,17 +365,22 @@ int main(int argc, char* argv[]){
 
     printf("#*****************************************************************************************\n");
 
-/*
-    delete McEnt;
-    delete Max_Ent;
-    delete Entropy;
+
+
+    vector<vector<double> > vclear;
+    align_data->ref_xyz = vclear;
+    align_data->current_xyz = vclear;
+    delete align_data;
+    delete TrajMol2;
 
     delete RefMol;
     delete Coord;
     delete Input;
 
-    delete TrajMol2;
-*/
+    delete McEnt;
+    delete Max_Ent;
+    delete Entropy;
+
     return 0;
 }
 
