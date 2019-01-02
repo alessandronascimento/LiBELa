@@ -28,10 +28,10 @@ McEntropy::McEntropy(PARSER* _Input, COORD_MC* _Coord, vector<double> _com, int 
         hist_beta.push_back(0.0);
     }
 
-    hist_torsions = new float*[n_rot];
-    for (int i=0; i< n_rot; i++){
-        hist_torsions[i] = new float[rot_bins];
-    }
+    float hist_torsions[n_rot][rot_bins];
+//    for (int i=0; i< n_rot; i++){
+//        hist_torsions[i] = float*[rot_bins];
+//    }
 
     for (int i=0; i<n_rot; i++){
         for (int j=0; j< rot_bins; j++){
@@ -213,10 +213,12 @@ McEntropy::~McEntropy(){
     hist_beta.clear();
     hist_gamma.clear();
 
+/*
     for (int i=0; i< n_rot; i++){
         delete [] hist_torsions[i];
     }
 
     delete [] hist_torsions;
+*/
 }
 
