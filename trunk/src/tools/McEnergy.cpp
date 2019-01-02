@@ -272,7 +272,7 @@ int main(int argc, char* argv[]){
     TrajMol2.parse_gzipped_ensemble(Input, trajfile, stride);              // loads the trajectory at once;
     vector<double> com = Coord->compute_com(RefMol);
 
-    McEntropy Entropy(Input, Coord, com, nrot);
+    McEntropy* Entropy = new McEntropy(Input, Coord, com, nrot);
 
     printf("#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s ", "Frame", "DX", "DY", "DZ", "DALPHA", "DBETA", "DGAMMA", "RMSDi", "RMSDf");
 
@@ -313,7 +313,7 @@ int main(int argc, char* argv[]){
             torsions[j] = (angle);
         }
 
-        Entropy.update(dx, dy, dz, dalpha, dbeta, dgamma, torsions);
+        Entropy->update(dx, dy, dz, dalpha, dbeta, dgamma, torsions);
 
         printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f ", i+1, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf);
 
@@ -328,7 +328,7 @@ int main(int argc, char* argv[]){
     McEntropy::entropy_t Max_Ent;
     McEnt.Srot = 0.0; McEnt.Storsion = 0.0; McEnt.Strans = 0.0;
 
-    Entropy.get_results(&McEnt, &Max_Ent, int(TrajMol2.mcoords.size()));
+    Entropy->get_results(&McEnt, &Max_Ent, int(TrajMol2.mcoords.size()));
 
     energy = energy / TrajMol2.mcoords.size();
 
@@ -362,6 +362,7 @@ int main(int argc, char* argv[]){
 
     printf("#*****************************************************************************************\n");
 
+    delete Entropy;
     delete RefMol;
     delete Coord;
     delete Input;
