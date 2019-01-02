@@ -268,11 +268,11 @@ int main(int argc, char* argv[]){
 
     vector<double> torsions(nrot);
 
-    Mol2* TrajMol2 = new Mol2;
-    TrajMol2->parse_gzipped_ensemble(Input, trajfile, stride);              // loads the trajectory at once;
+    Mol2 TrajMol2;
+    TrajMol2.parse_gzipped_ensemble(Input, trajfile, stride);              // loads the trajectory at once;
     vector<double> com = Coord->compute_com(RefMol);
 
-    McEntropy* Entropy = new McEntropy(Input, Coord, com, nrot);
+    McEntropy Entropy(Input, Coord, com, nrot);
 
     printf("#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s ", "Frame", "DX", "DY", "DZ", "DALPHA", "DBETA", "DGAMMA", "RMSDi", "RMSDf");
 
@@ -283,37 +283,37 @@ int main(int argc, char* argv[]){
     printf("\n");
 
     energy = 0.0;
-    Optimizer::align_t* align_data = new Optimizer::align_t;
-    align_data->ref_xyz = RefMol->xyz;
-    Optimizer* opt = new Optimizer(RefMol, RefMol, Input);
+    Optimizer::align_t align_data;
+    align_data.ref_xyz = RefMol->xyz;
+    Optimizer opt(RefMol, RefMol, Input);
 
-    for (unsigned i=0; i< TrajMol2->mcoords.size(); i++){
-        Optimizer::align_result_t* opt_result = new Optimizer::align_result_t;
-        align_data->current_xyz = TrajMol2->mcoords[i];
-        if (align_data->ref_xyz.size() != align_data->current_xyz.size()){
-            printf("# Size of coordinate vector element %3lu differs from Reference Molecule (%3lu)!\n", align_data->current_xyz.size(), align_data->ref_xyz.size());
+    for (unsigned i=0; i< TrajMol2.mcoords.size(); i++){
+        Optimizer::align_result_t opt_result;
+        align_data.current_xyz = TrajMol2.mcoords[i];
+        if (align_data.ref_xyz.size() != align_data.current_xyz.size()){
+            printf("# Size of coordinate vector element %3lu differs from Reference Molecule (%3lu)!\n", align_data.current_xyz.size(), align_data.ref_xyz.size());
             exit(1);
         }
 
-        opt->minimize_alignment_nlopt_simplex(align_data, opt_result);
+        opt.minimize_alignment_nlopt_simplex(&align_data, &opt_result);
 
-        dx = opt_result->translation[0];
-        dy = opt_result->translation[1];
-        dz = opt_result->translation[2];
-        dalpha = opt_result->rotation[0];
-        dbeta = opt_result->rotation[1];
-        dgamma = opt_result->rotation[2];
-        rmsdi = Coord->compute_rmsd(RefMol->xyz, TrajMol2->mcoords[i], RefMol->N);
-        rmsdf = opt_result->rmsd;
-        energy+= TrajMol2->ensemble_energies[i];
+        dx = opt_result.translation[0];
+        dy = opt_result.translation[1];
+        dz = opt_result.translation[2];
+        dalpha = opt_result.rotation[0];
+        dbeta = opt_result.rotation[1];
+        dgamma = opt_result.rotation[2];
+        rmsdi = Coord->compute_rmsd(RefMol->xyz, TrajMol2.mcoords[i], RefMol->N);
+        rmsdf = opt_result.rmsd;
+        energy+= TrajMol2.ensemble_energies[i];
 
         for (unsigned j=0; j< unsigned(nrot); j++){
-            angle = get_dihedral(TrajMol2->mcoords[i][atoms_in_dihedrals[j][0]], TrajMol2->mcoords[i][atoms_in_dihedrals[j][1]], TrajMol2->mcoords[i][atoms_in_dihedrals[j][2]], TrajMol2->mcoords[i][atoms_in_dihedrals[j][3]]);
+            angle = get_dihedral(TrajMol2.mcoords[i][atoms_in_dihedrals[j][0]], TrajMol2.mcoords[i][atoms_in_dihedrals[j][1]], TrajMol2.mcoords[i][atoms_in_dihedrals[j][2]], TrajMol2.mcoords[i][atoms_in_dihedrals[j][3]]);
             angle = check_angle(angle);
             torsions[j] = (angle);
         }
 
-        Entropy->update(dx, dy, dz, dalpha, dbeta, dgamma, torsions);
+        Entropy.update(dx, dy, dz, dalpha, dbeta, dgamma, torsions);
 
         printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f ", i+1, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf);
 
@@ -322,64 +322,49 @@ int main(int argc, char* argv[]){
         }
         printf("\n");
 
-        delete opt_result;
     }
 
-    delete opt;
+    McEntropy::entropy_t McEnt;
+    McEntropy::entropy_t Max_Ent;
+    McEnt.Srot = 0.0; McEnt.Storsion = 0.0; McEnt.Strans = 0.0;
 
-    McEntropy::entropy_t* McEnt = new McEntropy::entropy_t;
-    McEntropy::entropy_t* Max_Ent = new McEntropy::entropy_t;
-    McEnt->Srot = 0.0; McEnt->Storsion = 0.0; McEnt->Strans = 0.0;
+    Entropy.get_results(&McEnt, &Max_Ent, int(TrajMol2.mcoords.size()));
 
-    Entropy->get_results(McEnt, Max_Ent, int(TrajMol2->mcoords.size()));
-
-    energy = energy / TrajMol2->mcoords.size();
+    energy = energy / TrajMol2.mcoords.size();
 
     printf("#*****************************************************************************************\n");
 
-    printf("First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K\n", McEnt->Strans*T, T);
-    printf("First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K\n", McEnt->Srot*T, T);
-    printf("First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K\n", McEnt->Storsion*T, T);
-    printf("First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K\n", McEnt->S, T);
-    printf("First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K\n", -McEnt->TS, T);
-    printf("First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K\n", -McEnt->S*300., 300.);
+    printf("First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K\n", McEnt.Strans*T, T);
+    printf("First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K\n", McEnt.Srot*T, T);
+    printf("First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K\n", McEnt.Storsion*T, T);
+    printf("First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K\n", McEnt.S, T);
+    printf("First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K\n", -McEnt.TS, T);
+    printf("First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K\n", -McEnt.S*300., 300.);
 
     printf("#*****************************************************************************************\n");
 
     printf("Maximal Entropies Computed for this System:\n");
-    printf("First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K\n", Max_Ent->Strans*T, T);
-    printf("First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K\n", Max_Ent->Srot*T, T);
-    printf("First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K\n", Max_Ent->Storsion*T, T);
-    printf("First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K\n", Max_Ent->S, T);
-    printf("First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K\n", -Max_Ent->TS, T);
-    printf("First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K\n", -Max_Ent->S*300., 300.);
+    printf("First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K\n", Max_Ent.Strans*T, T);
+    printf("First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K\n", Max_Ent.Srot*T, T);
+    printf("First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K\n", Max_Ent.Storsion*T, T);
+    printf("First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K\n", Max_Ent.S, T);
+    printf("First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K\n", -Max_Ent.TS, T);
+    printf("First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K\n", -Max_Ent.S*300., 300.);
 
     printf("#*****************************************************************************************\n");
 
-    printf("Entropy loss (-TdS): %10.4g kcal/mol (%10.4f %s) @ %7.2f K\n", (-McEnt->TS - (-Max_Ent->TS)), ((-McEnt->TS/-Max_Ent->TS)*100), "%", T);
+    printf("Entropy loss (-TdS): %10.4g kcal/mol (%10.4f %s) @ %7.2f K\n", (-McEnt.TS - (-Max_Ent.TS)), ((-McEnt.TS/-Max_Ent.TS)*100), "%", T);
 
     printf("#*****************************************************************************************\n");
 
     printf("Ebind = <E> -TS\n");
-    printf("Ebind = %8.4f - %8.4f = %8.4f kcal/mol\n", energy, McEnt->TS, (energy-McEnt->TS));
+    printf("Ebind = %8.4f - %8.4f = %8.4f kcal/mol\n", energy, McEnt.TS, (energy-McEnt.TS));
 
     printf("#*****************************************************************************************\n");
-
-
-
-    vector<vector<double> > vclear;
-    align_data->ref_xyz = vclear;
-    align_data->current_xyz = vclear;
-    delete align_data;
-    delete TrajMol2;
 
     delete RefMol;
     delete Coord;
     delete Input;
-
-    delete McEnt;
-    delete Max_Ent;
-    delete Entropy;
 
     return 0;
 }
