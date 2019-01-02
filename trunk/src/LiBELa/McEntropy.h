@@ -31,7 +31,7 @@ public:
     vector<double> hist_beta;
     vector<double> hist_gamma;
     vector<double> com;
-    float** hist_torsions;
+    vector<vector<double> > hist_torsions;
 
     PARSER* Input;
     COORD_MC* Coord;

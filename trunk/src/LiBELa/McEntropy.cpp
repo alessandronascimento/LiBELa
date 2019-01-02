@@ -28,15 +28,9 @@ McEntropy::McEntropy(PARSER* _Input, COORD_MC* _Coord, vector<double> _com, int 
         hist_beta.push_back(0.0);
     }
 
-    float hist_torsions[n_rot][rot_bins];
-//    for (int i=0; i< n_rot; i++){
-//        hist_torsions[i] = float*[rot_bins];
-//    }
-
     for (int i=0; i<n_rot; i++){
-        for (int j=0; j< rot_bins; j++){
-            hist_torsions[i][j] = 0.0;
-        }
+        vector<double> vtmp(rot_bins);
+        hist_torsions.push_back(vtmp);
     }
 }
 
@@ -207,4 +201,3 @@ void McEntropy::get_results(entropy_t* entropy, int count){
 
 McEntropy::~McEntropy(){
 }
-
