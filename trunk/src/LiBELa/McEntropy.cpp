@@ -206,19 +206,5 @@ void McEntropy::get_results(entropy_t* entropy, int count){
 }
 
 McEntropy::~McEntropy(){
-    hist_x.clear();
-    hist_y.clear();
-    hist_z.clear();
-    hist_alpha.clear();
-    hist_beta.clear();
-    hist_gamma.clear();
-
-/*
-    for (int i=0; i< n_rot; i++){
-        delete [] hist_torsions[i];
-    }
-
-    delete [] hist_torsions;
-*/
 }
 
