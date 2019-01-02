@@ -272,7 +272,7 @@ int main(int argc, char* argv[]){
     TrajMol2.parse_gzipped_ensemble(Input, trajfile, stride);              // loads the trajectory at once;
     vector<double> com = Coord->compute_com(RefMol);
 
-    auto Entropy = std::make_unique<McEntropy>(Input, Coord, com, nrot);
+    unique_ptr<McEntropy> Entropy(new McEntropy(Input, Coord, com, nrot));
 //    McEntropy* Entropy = new McEntropy(Input, Coord, com, nrot);
 
     printf("#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s ", "Frame", "DX", "DY", "DZ", "DALPHA", "DBETA", "DGAMMA", "RMSDi", "RMSDf");
