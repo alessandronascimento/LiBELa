@@ -296,7 +296,7 @@ int main(int argc, char* argv[]){
     int count=0;
     int opt_status;
     int i;
-#pragma omp parallel shared(Entropy, energy) private (i, align_data, rmsdi, rmsdf) num_threads(nthreads)
+#pragma omp parallel shared(Entropy, energy, RefMol, atoms_in_dihedrals) private(Coord, TrajMol2, i, align_data, rmsdi, rmsdf, torsions) num_threads(nthreads)
     {
 #pragma omp for schedule(dynamic) nowait
         for (i=0; i< nframes; i++){
