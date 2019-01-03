@@ -430,7 +430,8 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
     Writer->print_line();
 
-    delete McEnt, Max_Ent;
+    delete McEnt;
+    delete Max_Ent;
     delete Entropy;
 }
 

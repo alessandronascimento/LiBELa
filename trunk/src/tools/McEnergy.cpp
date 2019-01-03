@@ -8,6 +8,7 @@
 #include <openbabel/mol.h>
 #include <openbabel/obconversion.h>
 #include <openbabel/rotor.h>
+#include <zlib.h>
 #include "../LiBELa/iMcLiBELa.h"
 #include "../LiBELa/main.h"
 #include "../LiBELa/Mol2.h"
@@ -84,7 +85,7 @@ double* copy_to_obmol(vector<vector<double> > vec_xyz){
 }
 
 double get_dihedral(vector<double> a, vector<double> b, vector<double> c, vector<double> d){
-// Calculando os vetores C,B,C
+// Computing vectors C,B,C
     double xij = a[0]-b[0];
     double yij = a[1]-b[1];
     double zij = a[2]-b[2];
@@ -174,13 +175,11 @@ double check_angle(double angle){
     return angle;
 }
 
-
-
 int main(int argc, char* argv[]){
 
     string trajfile;
     string ref_mol2;
-    int stride, c, nrot;
+    int c, nrot;
     double dx, dy, dz, dalpha, dbeta, dgamma, angle, rmsdi, rmsdf, T=300.0;
     double energy;
     vector<vector<int> > atoms_in_dihedrals;
@@ -190,24 +189,21 @@ int main(int argc, char* argv[]){
       exit(1);
     }
 
-    while ((c = getopt(argc, argv, "t:r:s:T:h")) != -1)
+    while ((c = getopt(argc, argv, "t:r:T:h")) != -1)
       switch (c){
       case 't':
           trajfile = string(optarg);
           break;
       case 'h':
-          printf("Usage %s -t <traj_file> -s <stride> -r <ref_mol2> -f <OB Force Field> -T <temperature> [-h]\n", argv[0]);
+          printf("Usage %s -t <traj_file> -r <ref_mol2> -f <OB Force Field> -T <temperature> [-h]\n", argv[0]);
           break;
           exit(1);
       case '?':
-          printf("Usage %s -t <traj_file> -s <stride> -r <ref_mol2> -f <OB Force Field> -T <temperature> [-h]\n", argv[0]);
+          printf("Usage %s -t <traj_file> -r <ref_mol2> -f <OB Force Field> -T <temperature> [-h]\n", argv[0]);
           break;
           exit(1);
       case 'r':
           ref_mol2 = string(optarg);
-          break;
-      case 's':
-          stride = atoi(optarg);
           break;
       case 'T':
           T = double(atof(optarg));
@@ -268,12 +264,10 @@ int main(int argc, char* argv[]){
 
     vector<double> torsions(nrot);
 
-    Mol2 TrajMol2;
-    TrajMol2.parse_gzipped_ensemble(Input, trajfile, stride);              // loads the trajectory at once;
+    Mol2* TrajMol2 = new Mol2(Input, ref_mol2);
     vector<double> com = Coord->compute_com(RefMol);
 
     unique_ptr<McEntropy> Entropy(new McEntropy(Input, Coord, com, nrot));
-//    McEntropy* Entropy = new McEntropy(Input, Coord, com, nrot);
 
     printf("#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s ", "Frame", "DX", "DY", "DZ", "DALPHA", "DBETA", "DGAMMA", "RMSDi", "RMSDf");
 
@@ -286,11 +280,22 @@ int main(int argc, char* argv[]){
     energy = 0.0;
     Optimizer::align_t align_data;
     align_data.ref_xyz = RefMol->xyz;
-    Optimizer opt(RefMol, RefMol, Input);
 
-    for (unsigned i=0; i< TrajMol2.mcoords.size(); i++){
+    gzFile trajectory = gzopen(trajfile.c_str(), "r");
+
+    if (trajectory == nullptr){
+        printf("# Could not open file %s...\n", trajfile.c_str());
+        exit(1);
+    }
+
+    int i=0;
+    int opt_status;
+    while (! gzeof(trajectory)){
+        i++;
+        Optimizer opt(RefMol, RefMol, Input);
         Optimizer::align_result_t opt_result;
-        align_data.current_xyz = TrajMol2.mcoords[i];
+        align_data.current_xyz = TrajMol2->get_next_xyz(Input, TrajMol2, trajectory);
+
         if (align_data.ref_xyz.size() != align_data.current_xyz.size()){
             printf("# Size of coordinate vector element %3lu differs from Reference Molecule (%3lu)!\n", align_data.current_xyz.size(), align_data.ref_xyz.size());
             exit(1);
@@ -304,19 +309,20 @@ int main(int argc, char* argv[]){
         dalpha = opt_result.rotation[0];
         dbeta = opt_result.rotation[1];
         dgamma = opt_result.rotation[2];
-        rmsdi = Coord->compute_rmsd(RefMol->xyz, TrajMol2.mcoords[i], RefMol->N);
+        rmsdi = Coord->compute_rmsd(align_data.ref_xyz, align_data.current_xyz, RefMol->N);
         rmsdf = opt_result.rmsd;
-        energy+= TrajMol2.ensemble_energies[i];
+        energy+= TrajMol2->ensemble_energies[i];
+
 
         for (unsigned j=0; j< unsigned(nrot); j++){
-            angle = get_dihedral(TrajMol2.mcoords[i][atoms_in_dihedrals[j][0]], TrajMol2.mcoords[i][atoms_in_dihedrals[j][1]], TrajMol2.mcoords[i][atoms_in_dihedrals[j][2]], TrajMol2.mcoords[i][atoms_in_dihedrals[j][3]]);
+            angle = get_dihedral(align_data.current_xyz[atoms_in_dihedrals[j][0]], align_data.current_xyz[atoms_in_dihedrals[j][1]], align_data.current_xyz[atoms_in_dihedrals[j][2]], align_data.current_xyz[atoms_in_dihedrals[j][3]]);
             angle = check_angle(angle);
             torsions[j] = (angle);
         }
 
         Entropy->update(dx, dy, dz, dalpha, dbeta, dgamma, torsions);
 
-        printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f ", i+1, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf);
+        printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10d", i, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf, opt_result.opt_status);
 
         for (unsigned j=0; j< RotorList.Size(); j++){
             printf("%10.4f ", torsions[j]);
@@ -329,9 +335,9 @@ int main(int argc, char* argv[]){
     McEntropy::entropy_t Max_Ent;
     McEnt.Srot = 0.0; McEnt.Storsion = 0.0; McEnt.Strans = 0.0;
 
-    Entropy->get_results(&McEnt, &Max_Ent, int(TrajMol2.mcoords.size()));
+    Entropy->get_results(&McEnt, &Max_Ent, i);
 
-    energy = energy / TrajMol2.mcoords.size();
+    energy = energy / i;
 
     printf("#*****************************************************************************************\n");
 
@@ -363,10 +369,10 @@ int main(int argc, char* argv[]){
 
     printf("#*****************************************************************************************\n");
 
-//    delete Entropy;
     delete RefMol;
     delete Coord;
     delete Input;
+    delete TrajMol2;
 
     return 0;
 }

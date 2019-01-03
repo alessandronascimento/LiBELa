@@ -642,7 +642,7 @@ bool Mol2::parse_gzipped_ensemble(PARSER* Input, string molfile, int skipper=1){
     this->initialize_gaff();
 
     gzFile mol2file = gzopen(molfile.c_str(), "r");
-    if (mol2file != NULL){
+    if (mol2file != nullptr){
         str[0]='#';
         while(str[0] !='@'){
             gzgets(mol2file, str, 100);
@@ -802,4 +802,61 @@ bool Mol2::parse_gzipped_ensemble(PARSER* Input, string molfile, int skipper=1){
     }
     gzclose(mol2file);
     return (bret);
+}
+
+vector<vector<double> > Mol2::get_next_xyz(PARSER* Input, Mol2* Mol, gzFile mol2file) {
+    char tstr[80];
+    bool bret = false;
+    int tint;
+    float tx, ty, tz;
+    vector<double> txyz;
+    int tres;
+    float tcharge;
+    int count=0;
+    char tatomtype[10];
+    char resname[20];
+    string cpstr;
+    vector<vector<double> > tcoord;
+    int trajsize=0;
+
+    if (mol2file != NULL){
+        str[0]='#';
+        while ((str[0] != 'E' or str[6] != ':') and (!gzeof(mol2file))){
+            gzgets(mol2file, str, 100);
+        }
+
+        if (!gzeof(mol2file)){
+            sscanf(str, "%s %f\n", tstr, &tx);
+            this->ensemble_energies.push_back(double(tx));
+        }
+
+        while ((str[0] != 'R' or str[12] != ':') and (!gzeof(mol2file))){
+            gzgets(mol2file, str, 100);
+        }
+
+        if (!gzeof(mol2file)){
+            sscanf(str, "%s %f\n", tstr, &tx);
+            this->ensemble_rmsd.push_back(double(tx));
+        }
+
+        while ((str[0] != '@' or str[9] != 'A') and (!gzeof(mol2file))){
+            gzgets(mol2file, str, 100);
+        }
+        if (!gzeof(mol2file)){
+            txyz.clear();
+            for (int i=0; i<this->N; i++){
+                gzgets(mol2file, str, 100);
+                sscanf(str, "%d %s %f %f %f %s %d %s %f\n", &tint, tstr, &tx, &ty, &tz, tatomtype, &tres, resname, &tcharge);
+                txyz.push_back(tx);
+                txyz.push_back(ty);
+                txyz.push_back(tz);
+                tcoord.push_back(txyz);
+                txyz.clear();
+            }
+        }
+    }
+    else {
+        printf("Skipping file ...\n");
+    }
+    return (tcoord);
 }

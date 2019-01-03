@@ -44,6 +44,7 @@ public:
         double rmsd;
         vector<double> translation;
         vector<double> rotation;
+        int opt_status;
     };
 
     struct align_t{

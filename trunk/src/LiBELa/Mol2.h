@@ -102,6 +102,7 @@ public:
     bool parse_gzipped_file(PARSER* Input, string molfile);
     bool parse_mol2file(PARSER* Input, string molfile);
     bool parse_gzipped_ensemble(PARSER *Input, string molfile, int skipper);
+    vector<vector<double> > get_next_xyz(PARSER* Input, Mol2* Mol, gzFile mol2file);
 
 	/*!
 	 *
