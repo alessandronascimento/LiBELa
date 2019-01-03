@@ -804,7 +804,7 @@ bool Mol2::parse_gzipped_ensemble(PARSER* Input, string molfile, int skipper=1){
     return (bret);
 }
 
-vector<vector<double> > Mol2::get_next_xyz(PARSER* Input, Mol2* Mol, gzFile mol2file) {
+vector<vector<double> > Mol2::get_next_xyz(PARSER* Input, gzFile mol2file) {
     char tstr[80];
     bool bret = false;
     int tint;
@@ -820,8 +820,11 @@ vector<vector<double> > Mol2::get_next_xyz(PARSER* Input, Mol2* Mol, gzFile mol2
     int trajsize=0;
     char str[100]; // making it local
 
+    for (unsigned i=0; i<10; i++){
+        str[i] = '#';
+    }
+
     if (mol2file != NULL){
-        str[0]='#';
         while ((str[0] != 'E' or str[6] != ':') and (!gzeof(mol2file))){
             gzgets(mol2file, str, 100);
         }

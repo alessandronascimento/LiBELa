@@ -264,18 +264,18 @@ int main(int argc, char* argv[]){
         tmp.clear();
     }
 
-    delete mol;
-
     printf("#*****************************************************************************************\n");
+
+    delete mol;
 
     vector<double> torsions(nrot);
 
-    Mol2* TrajMol2 = new Mol2(Input, ref_mol2);
+    unique_ptr<Mol2> TrajMol2(new Mol2(Input, ref_mol2));
     vector<double> com = Coord->compute_com(RefMol);
 
     unique_ptr<McEntropy> Entropy(new McEntropy(Input, Coord, com, nrot));
 
-    printf("#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s ", "Frame", "DX", "DY", "DZ", "DALPHA", "DBETA", "DGAMMA", "RMSDi", "RMSDf");
+    printf("#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s", "Frame", "DX", "DY", "DZ", "DALPHA", "DBETA", "DGAMMA", "RMSDi", "RMSDf", "OptStatus");
 
     for (int j=0; j< nrot; j++){
         printf(" ROT[%3d] ", j);
@@ -285,7 +285,6 @@ int main(int argc, char* argv[]){
 
     energy = 0.0;
     Optimizer::align_t align_data;
-//    align_data.ref_xyz = RefMol->xyz;
 
     gzFile trajectory = gzopen(trajfile.c_str(), "r");
 
@@ -293,9 +292,11 @@ int main(int argc, char* argv[]){
         printf("# Could not open file %s...\n", trajfile.c_str());
         exit(1);
     }
+
     int count=0;
     int opt_status;
     int i;
+
 #pragma omp parallel shared(Entropy, energy, RefMol, atoms_in_dihedrals) private(Coord, TrajMol2, i, align_data, rmsdi, rmsdf, torsions) num_threads(nthreads)
     {
 #pragma omp for schedule(dynamic) nowait
@@ -303,46 +304,43 @@ int main(int argc, char* argv[]){
             if (! gzeof(trajectory)){
                 Optimizer opt(RefMol, RefMol, Input);
                 Optimizer::align_result_t opt_result;
-                align_data.current_xyz = TrajMol2->get_next_xyz(Input, TrajMol2, trajectory);
+                align_data.current_xyz = TrajMol2->get_next_xyz(Input, trajectory);
                 align_data.ref_xyz = RefMol->xyz;
-                count++;
 
-                if (align_data.ref_xyz.size() != align_data.current_xyz.size()){
-                    printf("# Size of coordinate vector element %3lu differs from Reference Molecule (%3lu)!\n", align_data.current_xyz.size(), align_data.ref_xyz.size());
-                    exit(1);
+                if (align_data.ref_xyz.size() == align_data.current_xyz.size()){
+                    count++;
+
+                    opt.minimize_alignment_nlopt_simplex(&align_data, &opt_result);
+
+                    dx = opt_result.translation[0];
+                    dy = opt_result.translation[1];
+                    dz = opt_result.translation[2];
+                    dalpha = opt_result.rotation[0];
+                    dbeta = opt_result.rotation[1];
+                    dgamma = opt_result.rotation[2];
+                    rmsdi = Coord->compute_rmsd(align_data.ref_xyz, align_data.current_xyz, RefMol->N);
+                    rmsdf = opt_result.rmsd;
+                    energy+= TrajMol2->ensemble_energies[i];
+
+
+                    for (unsigned j=0; j< unsigned(nrot); j++){
+                        angle = get_dihedral(align_data.current_xyz[atoms_in_dihedrals[j][0]], align_data.current_xyz[atoms_in_dihedrals[j][1]], align_data.current_xyz[atoms_in_dihedrals[j][2]], align_data.current_xyz[atoms_in_dihedrals[j][3]]);
+                        angle = check_angle(angle);
+                        torsions[j] = (angle);
+                    }
+
+                    Entropy->update(dx, dy, dz, dalpha, dbeta, dgamma, torsions);
+
+                    printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10d", i+1, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf, opt_result.opt_status);
+
+                    for (unsigned j=0; j< RotorList.Size(); j++){
+                        printf("%10.4f ", torsions[j]);
+                    }
+                    printf("\n");
+
                 }
-
-                opt.minimize_alignment_nlopt_simplex(&align_data, &opt_result);
-
-                dx = opt_result.translation[0];
-                dy = opt_result.translation[1];
-                dz = opt_result.translation[2];
-                dalpha = opt_result.rotation[0];
-                dbeta = opt_result.rotation[1];
-                dgamma = opt_result.rotation[2];
-                rmsdi = Coord->compute_rmsd(align_data.ref_xyz, align_data.current_xyz, RefMol->N);
-                rmsdf = opt_result.rmsd;
-                energy+= TrajMol2->ensemble_energies[i];
-
-
-                for (unsigned j=0; j< unsigned(nrot); j++){
-                    angle = get_dihedral(align_data.current_xyz[atoms_in_dihedrals[j][0]], align_data.current_xyz[atoms_in_dihedrals[j][1]], align_data.current_xyz[atoms_in_dihedrals[j][2]], align_data.current_xyz[atoms_in_dihedrals[j][3]]);
-                    angle = check_angle(angle);
-                    torsions[j] = (angle);
-                }
-
-                Entropy->update(dx, dy, dz, dalpha, dbeta, dgamma, torsions);
-
-                printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10d", i+1, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf, opt_result.opt_status);
-
-                for (unsigned j=0; j< RotorList.Size(); j++){
-                    printf("%10.4f ", torsions[j]);
-                }
-                printf("\n");
-
             }
         }
-
     }                       // end of pragma
 
     gzclose(trajectory);
@@ -386,9 +384,8 @@ int main(int argc, char* argv[]){
     printf("#*****************************************************************************************\n");
 
     delete RefMol;
-    delete Coord;
     delete Input;
-    delete TrajMol2;
+    delete Coord;
 
     return 0;
 }
