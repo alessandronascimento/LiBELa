@@ -818,6 +818,7 @@ vector<vector<double> > Mol2::get_next_xyz(PARSER* Input, Mol2* Mol, gzFile mol2
     string cpstr;
     vector<vector<double> > tcoord;
     int trajsize=0;
+    char str[100]; // making it local
 
     if (mol2file != NULL){
         str[0]='#';
