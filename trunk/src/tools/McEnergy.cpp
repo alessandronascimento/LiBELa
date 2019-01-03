@@ -29,9 +29,9 @@ OBMol* GetMol(const string &molfile){
     OBConversion conv;
     OBFormat *format = conv.FormatFromExt(molfile.c_str());
     if (!format || !conv.SetInFormat(format)) {
-    printf("Could not find input format for file\n");
-    return mol;
-  }
+        printf("Could not find input format for file\n");
+        return mol;
+    }
 
     ifstream ifs(molfile.c_str());
     if (!ifs) {
@@ -85,7 +85,7 @@ double* copy_to_obmol(vector<vector<double> > vec_xyz){
 }
 
 double get_dihedral(vector<double> a, vector<double> b, vector<double> c, vector<double> d){
-// Computing vectors C,B,C
+    // Computing vectors C,B,C
     double xij = a[0]-b[0];
     double yij = a[1]-b[1];
     double zij = a[2]-b[2];
@@ -96,16 +96,16 @@ double get_dihedral(vector<double> a, vector<double> b, vector<double> c, vector
     double ykl = c[1]-d[1];
     double zkl = c[2]-d[2];
 
-//     Calculate the normals to the two planes n1 and n2
-//      this is given as the cross products:
-//       AB x BC
-//      --------- = n1
-//      |AB x BC|
-//
-//       BC x CD
-//      --------- = n2
-//      |BC x CD|
-//
+    //     Calculate the normals to the two planes n1 and n2
+    //      this is given as the cross products:
+    //       AB x BC
+    //      --------- = n1
+    //      |AB x BC|
+    //
+    //       BC x CD
+    //      --------- = n2
+    //      |BC x CD|
+    //
     double dxi = (yij * zkj) - (zij * ykj);     // Normal to plane 1
     double dyi = (zij * xkj) - (xij * zkj);
     double dzi = (xij * ykj) - (yij * xkj);
@@ -113,7 +113,7 @@ double get_dihedral(vector<double> a, vector<double> b, vector<double> c, vector
     double gyi = (xkj * zkl) - (zkj * xkl);
     double gzi = (ykj * xkl) - (xkj * ykl);
 
-//  Calculate the length of the two normals
+    //  Calculate the length of the two normals
 
     double bi = (dxi * dxi) + (dyi * dyi) + (dzi * dzi);
     double bk = (gxi * gxi) + (gyi * gyi) + (gzi * gzi);
@@ -144,14 +144,14 @@ double get_dihedral(vector<double> a, vector<double> b, vector<double> c, vector
     double s = xkj * (dzi * gyi - dyi * gzi) + ykj * (dxi * gzi - dzi * gxi) + zkj * (dyi * gxi - dxi * gyi);
 
     if (s < 0.0){
-           ap = -ap;
+        ap = -ap;
     }
 
     else if (ap > 0.0){
-           ap = PI - ap;
+        ap = PI - ap;
     }
     else{
-           ap = -(PI + ap);
+        ap = -(PI + ap);
     }
     ap = ap*180/PI;       // convert to degrees
     return (ap);
@@ -179,36 +179,42 @@ int main(int argc, char* argv[]){
 
     string trajfile;
     string ref_mol2;
-    int c, nrot;
+    int c, nrot, nframes=1E7, nthreads=1;
     double dx, dy, dz, dalpha, dbeta, dgamma, angle, rmsdi, rmsdf, T=300.0;
     double energy;
     vector<vector<int> > atoms_in_dihedrals;
 
     if (argc < 2){
-      printf("Usage %s -t <traj_file> -s <stride> -r <ref_mol2> -T <temperature> [-h]\n", argv[0]);
-      exit(1);
+        printf("Usage %s -t <traj_file> -n <number_of_frames> -r <ref_mol2> -T <temperature> -p <nthreads> [-h]\n", argv[0]);
+        exit(1);
     }
 
-    while ((c = getopt(argc, argv, "t:r:T:h")) != -1)
-      switch (c){
-      case 't':
-          trajfile = string(optarg);
-          break;
-      case 'h':
-          printf("Usage %s -t <traj_file> -r <ref_mol2> -f <OB Force Field> -T <temperature> [-h]\n", argv[0]);
-          break;
-          exit(1);
-      case '?':
-          printf("Usage %s -t <traj_file> -r <ref_mol2> -f <OB Force Field> -T <temperature> [-h]\n", argv[0]);
-          break;
-          exit(1);
-      case 'r':
-          ref_mol2 = string(optarg);
-          break;
-      case 'T':
-          T = double(atof(optarg));
-          break;
-      }
+    while ((c = getopt(argc, argv, "t:r:T:n:p:h")) != -1)
+        switch (c){
+        case 't':
+            trajfile = string(optarg);
+            break;
+        case 'h':
+            printf("Usage %s -t <traj_file> -n <number_of_frames> -r <ref_mol2> -T <temperature> -p <nthreads> [-h]\n", argv[0]);
+            exit(1);
+            break;
+        case '?':
+            printf("Usage %s -t <traj_file> -n <number_of_frames> -r <ref_mol2> -T <temperature> -p <nthreads> [-h]\n", argv[0]);
+            exit(1);
+            break;
+        case 'r':
+            ref_mol2 = string(optarg);
+            break;
+        case 'T':
+            T = double(atof(optarg));
+            break;
+        case 'n':
+            nframes = atoi(optarg);
+            break;
+        case 'p':
+            nthreads = atoi(optarg);
+            break;
+        }
 
     printf("#*****************************************************************************************\n");
     printf("#                                                                                        *\n");
@@ -287,57 +293,64 @@ int main(int argc, char* argv[]){
         printf("# Could not open file %s...\n", trajfile.c_str());
         exit(1);
     }
-
-    int i=0;
+    int count=0;
     int opt_status;
-    while (! gzeof(trajectory)){
-        i++;
-        Optimizer opt(RefMol, RefMol, Input);
-        Optimizer::align_result_t opt_result;
-        align_data.current_xyz = TrajMol2->get_next_xyz(Input, TrajMol2, trajectory);
+    int i;
+#pragma omp parallel shared(Entropy, energy) private (i, align_data, rmsdi, rmsdf) num_threads(nthreads)
+    {
+#pragma omp for schedule(dynamic) nowait
+        for (i=0; i< nframes; i++){
+            if (! gzeof(trajectory)){
+                Optimizer opt(RefMol, RefMol, Input);
+                Optimizer::align_result_t opt_result;
+                align_data.current_xyz = TrajMol2->get_next_xyz(Input, TrajMol2, trajectory);
+                count++;
 
-        if (align_data.ref_xyz.size() != align_data.current_xyz.size()){
-            printf("# Size of coordinate vector element %3lu differs from Reference Molecule (%3lu)!\n", align_data.current_xyz.size(), align_data.ref_xyz.size());
-            exit(1);
+                if (align_data.ref_xyz.size() != align_data.current_xyz.size()){
+                    printf("# Size of coordinate vector element %3lu differs from Reference Molecule (%3lu)!\n", align_data.current_xyz.size(), align_data.ref_xyz.size());
+                    exit(1);
+                }
+
+                opt.minimize_alignment_nlopt_simplex(&align_data, &opt_result);
+
+                dx = opt_result.translation[0];
+                dy = opt_result.translation[1];
+                dz = opt_result.translation[2];
+                dalpha = opt_result.rotation[0];
+                dbeta = opt_result.rotation[1];
+                dgamma = opt_result.rotation[2];
+                rmsdi = Coord->compute_rmsd(align_data.ref_xyz, align_data.current_xyz, RefMol->N);
+                rmsdf = opt_result.rmsd;
+                energy+= TrajMol2->ensemble_energies[i];
+
+
+                for (unsigned j=0; j< unsigned(nrot); j++){
+                    angle = get_dihedral(align_data.current_xyz[atoms_in_dihedrals[j][0]], align_data.current_xyz[atoms_in_dihedrals[j][1]], align_data.current_xyz[atoms_in_dihedrals[j][2]], align_data.current_xyz[atoms_in_dihedrals[j][3]]);
+                    angle = check_angle(angle);
+                    torsions[j] = (angle);
+                }
+
+                Entropy->update(dx, dy, dz, dalpha, dbeta, dgamma, torsions);
+
+                printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10d", i+1, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf, opt_result.opt_status);
+
+                for (unsigned j=0; j< RotorList.Size(); j++){
+                    printf("%10.4f ", torsions[j]);
+                }
+                printf("\n");
+
+            }
         }
 
-        opt.minimize_alignment_nlopt_simplex(&align_data, &opt_result);
-
-        dx = opt_result.translation[0];
-        dy = opt_result.translation[1];
-        dz = opt_result.translation[2];
-        dalpha = opt_result.rotation[0];
-        dbeta = opt_result.rotation[1];
-        dgamma = opt_result.rotation[2];
-        rmsdi = Coord->compute_rmsd(align_data.ref_xyz, align_data.current_xyz, RefMol->N);
-        rmsdf = opt_result.rmsd;
-        energy+= TrajMol2->ensemble_energies[i];
-
-
-        for (unsigned j=0; j< unsigned(nrot); j++){
-            angle = get_dihedral(align_data.current_xyz[atoms_in_dihedrals[j][0]], align_data.current_xyz[atoms_in_dihedrals[j][1]], align_data.current_xyz[atoms_in_dihedrals[j][2]], align_data.current_xyz[atoms_in_dihedrals[j][3]]);
-            angle = check_angle(angle);
-            torsions[j] = (angle);
-        }
-
-        Entropy->update(dx, dy, dz, dalpha, dbeta, dgamma, torsions);
-
-        printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10d", i, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf, opt_result.opt_status);
-
-        for (unsigned j=0; j< RotorList.Size(); j++){
-            printf("%10.4f ", torsions[j]);
-        }
-        printf("\n");
-
-    }
+    }                       // end of pragma
 
     McEntropy::entropy_t McEnt;
     McEntropy::entropy_t Max_Ent;
     McEnt.Srot = 0.0; McEnt.Storsion = 0.0; McEnt.Strans = 0.0;
 
-    Entropy->get_results(&McEnt, &Max_Ent, i);
+    Entropy->get_results(&McEnt, &Max_Ent, count);
 
-    energy = energy / i;
+    energy = energy / count;
 
     printf("#*****************************************************************************************\n");
 
