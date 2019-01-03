@@ -285,7 +285,7 @@ int main(int argc, char* argv[]){
 
     energy = 0.0;
     Optimizer::align_t align_data;
-    align_data.ref_xyz = RefMol->xyz;
+//    align_data.ref_xyz = RefMol->xyz;
 
     gzFile trajectory = gzopen(trajfile.c_str(), "r");
 
@@ -304,6 +304,7 @@ int main(int argc, char* argv[]){
                 Optimizer opt(RefMol, RefMol, Input);
                 Optimizer::align_result_t opt_result;
                 align_data.current_xyz = TrajMol2->get_next_xyz(Input, TrajMol2, trajectory);
+                align_data.ref_xyz = RefMol->xyz;
                 count++;
 
                 if (align_data.ref_xyz.size() != align_data.current_xyz.size()){
@@ -343,6 +344,8 @@ int main(int argc, char* argv[]){
         }
 
     }                       // end of pragma
+
+    gzclose(trajectory);
 
     McEntropy::entropy_t McEnt;
     McEntropy::entropy_t Max_Ent;
