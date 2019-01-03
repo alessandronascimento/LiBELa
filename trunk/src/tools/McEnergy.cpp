@@ -289,7 +289,7 @@ int main(int argc, char* argv[]){
 
     gzFile trajectory = gzopen(trajfile.c_str(), "r");
 
-    if (trajectory == nullptr){
+    if (trajectory == NULL){
         printf("# Could not open file %s...\n", trajfile.c_str());
         exit(1);
     }

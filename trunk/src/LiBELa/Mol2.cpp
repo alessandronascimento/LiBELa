@@ -642,7 +642,7 @@ bool Mol2::parse_gzipped_ensemble(PARSER* Input, string molfile, int skipper=1){
     this->initialize_gaff();
 
     gzFile mol2file = gzopen(molfile.c_str(), "r");
-    if (mol2file != nullptr){
+    if (mol2file != NULL){
         str[0]='#';
         while(str[0] !='@'){
             gzgets(mol2file, str, 100);
