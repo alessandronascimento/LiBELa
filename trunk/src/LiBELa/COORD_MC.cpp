@@ -116,7 +116,7 @@ vector<vector<double> >COORD_MC::rototranslate(vector<vector<double> >coordinate
 }
 
 vector<vector<double> >COORD_MC::rototranslate(vector<vector<double> >coordinates, Mol2* Lig, double alpha, double beta, double gamma, double transx, double transy, double transz){
-	vector<vector<double> >new_coordinates;
+    vector<vector<double> >new_coordinates(Lig->N);
 	vector<double> txyz(3);
 	vector<double> COM = this->compute_com(coordinates, Lig);
 	double x, y, z;
@@ -127,7 +127,7 @@ vector<vector<double> >COORD_MC::rototranslate(vector<vector<double> >coordinate
 		txyz[0] = ((((x)*(((cos(alpha*PI/180))*(cos(gamma*PI/180)))-((sin(alpha*PI/180))*(cos(beta*PI/180))*sin(gamma*PI/180)))) + ((y)*(((-cos(alpha*PI/180))*(sin(gamma*PI/180)))-(sin(alpha*PI/180)*cos(beta*PI/180)*cos(gamma*PI/180))))+ ((z)*(sin(beta*PI/180)*sin(alpha*PI/180))))+transx+COM[0]);
 		txyz[1] = ((((x)*((sin(alpha*PI/180)*cos(gamma*PI/180))+(cos(alpha*PI/180)*cos(beta*PI/180)*sin(gamma*PI/180)))) + ((y)*((-sin(alpha*PI/180)*sin(gamma*PI/180))+(cos(alpha*PI/180)*cos(beta*PI/180)*cos(gamma*PI/180)))) + ((z)*(-sin(beta*PI/180)*cos(alpha*PI/180))))+transy + COM[1]);
 		txyz[2] = ((((x)*(sin(beta*PI/180)*sin(gamma*PI/180))) + ((y)*sin(beta*PI/180)*cos(gamma*PI/180)) + ((z)*cos(beta*PI/180)))+transz + COM[2]);
-		new_coordinates.push_back(txyz);
+        new_coordinates[i] = txyz;
 	}
 	return(new_coordinates);
 }
