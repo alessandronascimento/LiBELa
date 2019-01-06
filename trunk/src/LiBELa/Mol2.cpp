@@ -809,14 +809,14 @@ vector<vector<double> > Mol2::get_next_xyz(PARSER* Input, gzFile mol2file) {
     bool bret = false;
     int tint;
     float tx, ty, tz;
-    vector<double> txyz;
+    vector<double> txyz(3);
     int tres;
     float tcharge;
     int count=0;
     char tatomtype[10];
     char resname[20];
     string cpstr;
-    vector<vector<double> > tcoord;
+    vector<vector<double> > tcoord(this->N);
     int trajsize=0;
     char str[100]; // making it local
 
@@ -847,15 +847,13 @@ vector<vector<double> > Mol2::get_next_xyz(PARSER* Input, gzFile mol2file) {
             gzgets(mol2file, str, 100);
         }
         if (!gzeof(mol2file)){
-            txyz.clear();
             for (int i=0; i<this->N; i++){
                 gzgets(mol2file, str, 100);
                 sscanf(str, "%d %s %f %f %f %s %d %s %f\n", &tint, tstr, &tx, &ty, &tz, tatomtype, &tres, resname, &tcharge);
-                txyz.push_back(tx);
-                txyz.push_back(ty);
-                txyz.push_back(tz);
-                tcoord.push_back(txyz);
-                txyz.clear();
+                txyz[0] = double(tx);
+                txyz[1] = double(ty);
+                txyz[2] = double(tz);
+                tcoord[i] = txyz;
             }
         }
     }
