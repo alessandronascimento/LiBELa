@@ -383,6 +383,13 @@ int main(int argc, char* argv[]){
 
     printf("#*****************************************************************************************\n");
 
+    printf("# Optimization Status:\n");
+    printf("# Failure = -1, Out of memory = -3, Roundoff limited = -4, Forced stop = -5,\n");
+    printf("# Reached Stopval = 2, Ftol = 3, Xtol = 4, Maxeval = 5, Maxtime =   6\n");
+
+    printf("#*****************************************************************************************\n");
+
+
     delete RefMol;
     delete Input;
     delete Coord;
