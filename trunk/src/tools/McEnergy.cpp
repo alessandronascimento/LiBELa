@@ -335,6 +335,11 @@ int main(int argc, char* argv[]){
                 printf("\n");
 
             }
+            else{
+                printf("Sizes of reference molecule (%3lu) and trajectory (%3lu) don't match. Please, check!",
+                align_data.ref_xyz.size(), align_data.current_xyz.size());
+                exit(1);
+            }
         }
     }
 

@@ -806,19 +806,16 @@ bool Mol2::parse_gzipped_ensemble(PARSER* Input, string molfile, int skipper=1){
 
 vector<vector<double> > Mol2::get_next_xyz(PARSER* Input, gzFile mol2file) {
     char tstr[80];
-    bool bret = false;
     int tint;
     float tx, ty, tz;
     vector<double> txyz(3);
     int tres;
     float tcharge;
-    int count=0;
     char tatomtype[10];
     char resname[20];
     string cpstr;
-    vector<vector<double> > tcoord(this->N);
-    int trajsize=0;
-    char str[100]; // making it local
+    vector<vector<double> > tcoord(unsigned(this->N));
+    char str[100];                          // making it local
 
     for (unsigned i=0; i<10; i++){
         str[i] = '#';
