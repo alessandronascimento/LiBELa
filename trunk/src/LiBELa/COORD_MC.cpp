@@ -118,7 +118,8 @@ vector<vector<double> >COORD_MC::rototranslate(vector<vector<double> >coordinate
 vector<vector<double> >COORD_MC::rototranslate(vector<vector<double> >coordinates, Mol2* Lig, double alpha, double beta, double gamma, double transx, double transy, double transz){
     vector<vector<double> >new_coordinates(Lig->N);
 	vector<double> txyz(3);
-	vector<double> COM = this->compute_com(coordinates, Lig);
+    vector<double> COM(3);
+    COM = this->compute_com(coordinates, Lig);
 	double x, y, z;
 	for(int i=0; i < Lig->N ; i++){
 		x=coordinates[i][0]-COM[0];
@@ -129,7 +130,7 @@ vector<vector<double> >COORD_MC::rototranslate(vector<vector<double> >coordinate
 		txyz[2] = ((((x)*(sin(beta*PI/180)*sin(gamma*PI/180))) + ((y)*sin(beta*PI/180)*cos(gamma*PI/180)) + ((z)*cos(beta*PI/180)))+transz + COM[2]);
         new_coordinates[i] = txyz;
 	}
-	return(new_coordinates);
+    return(new_coordinates);
 }
 
 void COORD_MC::rototranslate_all(Mol2 *Cmol, RAND *Rand){
