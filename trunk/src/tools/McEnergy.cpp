@@ -301,8 +301,8 @@ int main(int argc, char* argv[]){
             unique_ptr<Optimizer> opt(new Optimizer(RefMol, RefMol, Input));
             Optimizer::align_result_t  opt_result;
             for (unsigned a=0; a<3; a++){
-                opt_result.rotation[a] = 0.0;
-                opt_result.translation[a] = 0.0;
+                opt_result.rotation.push_back(0.0);
+                opt_result.translation.push_back(0.0);
             }
             align_data.current_xyz = TrajMol2->get_next_xyz(Input, trajectory);
             align_data.ref_xyz = RefMol->xyz;
