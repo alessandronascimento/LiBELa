@@ -1227,7 +1227,7 @@ void Optimizer::minimize_energy_adaptative(Mol2* Lig2, opt_result_t* opt_result)
 }
 
 double Optimizer::superpose_function(const std::vector<double> &x, std::vector<double> &grad, void *data){
-    COORD_MC* Coord = new COORD_MC;
+    unique_ptr<COORD_MC> Coord(new COORD_MC);
     vector<vector<double> > new_xyz;
     double f, f2;
     align_t* align_data= (align_t*) data;
@@ -1261,7 +1261,6 @@ double Optimizer::superpose_function(const std::vector<double> &x, std::vector<d
         f2 = Coord->compute_rmsd(align_data->ref_xyz, new_xyz, int(align_data->ref_xyz.size()));
         grad[5] = (f2-f)/Parser->min_delta;
     }
-    delete Coord;
     return (f);
 }
 
