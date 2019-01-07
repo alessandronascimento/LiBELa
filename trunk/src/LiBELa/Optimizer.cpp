@@ -1302,11 +1302,11 @@ void Optimizer::minimize_alignment_nlopt_simplex(align_t* align_data, align_resu
     nlopt::result nres = opt.optimize(x,fo);
 
     opt_result->rmsd = fo;
-    opt_result->translation.push_back(x[3]);
-    opt_result->translation.push_back(x[4]);
-    opt_result->translation.push_back(x[5]);
-    opt_result->rotation.push_back(x[0]);
-    opt_result->rotation.push_back(x[1]);
-    opt_result->rotation.push_back(x[2]);
+    opt_result->translation[0] = x[3];
+    opt_result->translation[1] = x[4];
+    opt_result->translation[2] = x[5];
+    opt_result->rotation[0] = x[0];
+    opt_result->rotation[1] = x[1];
+    opt_result->rotation[2] = x[2];
     opt_result->opt_status = nres;
 }

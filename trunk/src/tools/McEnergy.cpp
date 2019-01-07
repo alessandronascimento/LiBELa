@@ -298,15 +298,19 @@ int main(int argc, char* argv[]){
 
     for (int i=0; i< nframes; i++){
         if (! gzeof(trajectory)){
-            Optimizer opt(RefMol, RefMol, Input);
-            Optimizer::align_result_t opt_result;
+            unique_ptr<Optimizer> opt(new Optimizer(RefMol, RefMol, Input));
+            Optimizer::align_result_t  opt_result;
+            for (unsigned a=0; a<3; a++){
+                opt_result.rotation[a] = 0.0;
+                opt_result.translation[a] = 0.0;
+            }
             align_data.current_xyz = TrajMol2->get_next_xyz(Input, trajectory);
             align_data.ref_xyz = RefMol->xyz;
 
             if (align_data.ref_xyz.size() == align_data.current_xyz.size()){
                 count++;
 
-                opt.minimize_alignment_nlopt_simplex(&align_data, &opt_result);
+                opt->minimize_alignment_nlopt_simplex(&align_data, &opt_result);
 
                 dx = opt_result.translation[0];
                 dy = opt_result.translation[1];
