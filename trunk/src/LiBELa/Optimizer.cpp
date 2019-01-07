@@ -1265,7 +1265,7 @@ double Optimizer::superpose_function(const std::vector<double> &x, std::vector<d
 }
 
 void Optimizer::minimize_alignment_nlopt_simplex(align_t* align_data, align_result_t* opt_result){
-    nlopt::opt opt(nlopt::LN_NELDERMEAD,6);
+    unique_ptr<nlopt::opt> opt(new nlopt::opt(nlopt::LN_NELDERMEAD,6));
 
     vector<double> lb(6);
     lb[0] = -180.0;
@@ -1282,12 +1282,12 @@ void Optimizer::minimize_alignment_nlopt_simplex(align_t* align_data, align_resu
     ub[4] = Parser->search_box_y;
     ub[5] = Parser->search_box_z;
 
-    opt.set_lower_bounds(lb);
-    opt.set_upper_bounds(ub);
+    opt->set_lower_bounds(lb);
+    opt->set_upper_bounds(ub);
 
-    opt.set_min_objective(Optimizer::superpose_function, align_data);
-    opt.set_xtol_rel(Parser->min_tol);
-    opt.set_maxtime(Parser->min_timeout);
+    opt->set_min_objective(Optimizer::superpose_function, align_data);
+    opt->set_xtol_rel(Parser->min_tol);
+    opt->set_maxtime(Parser->min_timeout);
 
     vector<double> x(6);
     x[0] = 0.0;
@@ -1298,7 +1298,7 @@ void Optimizer::minimize_alignment_nlopt_simplex(align_t* align_data, align_resu
     x[5] = 0.0;
 
     double fo;
-    nlopt::result nres = opt.optimize(x,fo);
+    nlopt::result nres = opt->optimize(x,fo);
 
     opt_result->rmsd = fo;
     opt_result->translation[0] = x[3];

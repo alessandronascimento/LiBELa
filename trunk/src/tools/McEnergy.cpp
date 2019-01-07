@@ -231,27 +231,28 @@ int main(int argc, char* argv[]){
     printf("#*****************************************************************************************\n");
 
 
-    PARSER* Input = new PARSER;
+    unique_ptr<PARSER> Input(new PARSER);
     Input->temp = T;
     Input->sample_torsions = true;
-    COORD_MC* Coord = new COORD_MC;
+    unique_ptr<COORD_MC> Coord(new COORD_MC);
 
-    Mol2* RefMol = new Mol2(Input, ref_mol2);                   // read the initial coordinates of the ligand
+    unique_ptr<Mol2> RefMol(new Mol2(Input.get(), ref_mol2));                   // read the initial coordinates of the ligand
 
-    OBMol* mol = new OBMol;
+    OBMol* mol = new OBMol();
     mol = GetMol(ref_mol2);
+    unique_ptr<OBMol> obmol(mol);
 
     OBRotorList RotorList;
     OBRotorIterator RotorIterator;
     OBRotor *Rotor;
 
-    RotorList.Setup(*mol);
+    RotorList.Setup(*obmol.get());
     Rotor = RotorList.BeginRotor(RotorIterator);
-    mol->ToInertialFrame();
+    obmol->ToInertialFrame();
     vector<int> tmp(4);
 
     nrot = int(RotorList.Size());
-    printf("Found %d rotatable bonds in ligand %s.\n", nrot, RefMol->molname.c_str());
+    printf("# Found %d rotatable bonds in ligand %s.\n", nrot, RefMol->molname.c_str());
 
     for (unsigned i = 0; i < RotorList.Size(); ++i, Rotor = RotorList.NextRotor(RotorIterator)) {
         tmp = Rotor->GetDihedralAtoms();
@@ -259,21 +260,19 @@ int main(int argc, char* argv[]){
             tmp[j] = tmp[j]-1;      // now indexes start with 0 instead of the OB default 1.
         }
         angle = get_dihedral(RefMol->xyz[tmp[0]], RefMol->xyz[tmp[1]], RefMol->xyz[tmp[2]], RefMol->xyz[tmp[3]]);
-        printf("Torsion [%2d]: %2d %2d %2d %2d = %8.4f\n", i+1, tmp[0], tmp[1], tmp[2], tmp[3],angle);
+        printf("# Torsion [%2d]: %2d %2d %2d %2d = %8.4f\n", i+1, tmp[0], tmp[1], tmp[2], tmp[3],angle);
         atoms_in_dihedrals.push_back(tmp);
         tmp.clear();
     }
 
     printf("#*****************************************************************************************\n");
 
-    delete mol;
-
     vector<double> torsions(nrot);
 
-    unique_ptr<Mol2> TrajMol2(new Mol2(Input, ref_mol2));
-    vector<double> com = Coord->compute_com(RefMol);
+    unique_ptr<Mol2> TrajMol2(new Mol2(Input.get(), ref_mol2));
+    vector<double> com = Coord->compute_com(RefMol.get());
 
-    unique_ptr<McEntropy> Entropy(new McEntropy(Input, Coord, com, nrot));
+    unique_ptr<McEntropy> Entropy(new McEntropy(Input.get(), Coord.get(), com, nrot));
 
     printf("#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s", "Frame", "DX", "DY", "DZ", "DALPHA", "DBETA", "DGAMMA", "RMSDi", "RMSDf", "OptStatus");
 
@@ -299,28 +298,28 @@ int main(int argc, char* argv[]){
 
     for (int i=0; i< nframes; i++){
         if (! gzeof(trajectory)){
-            unique_ptr<Optimizer> opt(new Optimizer(RefMol, RefMol, Input));
-            Optimizer::align_result_t  opt_result;
+            unique_ptr<Optimizer> opt(new Optimizer(RefMol.get(), RefMol.get(), Input.get()));
+            unique_ptr<Optimizer::align_result_t> opt_result (new Optimizer::align_result_t);
             for (unsigned a=0; a<3; a++){
-                opt_result.rotation.push_back(0.0);
-                opt_result.translation.push_back(0.0);
+                opt_result->rotation.push_back(0.0);
+                opt_result->translation.push_back(0.0);
             }
             align_data.current_xyz.clear();
-            align_data.current_xyz = TrajMol2->get_next_xyz(Input, trajectory);
+            align_data.current_xyz = TrajMol2->get_next_xyz(Input.get(), trajectory);
 
             if (align_data.ref_xyz.size() == align_data.current_xyz.size()){
                 count++;
 
-                opt->minimize_alignment_nlopt_simplex(&align_data, &opt_result);
+                opt->minimize_alignment_nlopt_simplex(&align_data, opt_result.get());
 
-                dx = opt_result.translation[0];
-                dy = opt_result.translation[1];
-                dz = opt_result.translation[2];
-                dalpha = opt_result.rotation[0];
-                dbeta = opt_result.rotation[1];
-                dgamma = opt_result.rotation[2];
+                dx = opt_result->translation[0];
+                dy = opt_result->translation[1];
+                dz = opt_result->translation[2];
+                dalpha = opt_result->rotation[0];
+                dbeta = opt_result->rotation[1];
+                dgamma = opt_result->rotation[2];
                 rmsdi = Coord->compute_rmsd(align_data.ref_xyz, align_data.current_xyz, RefMol->N);
-                rmsdf = opt_result.rmsd;
+                rmsdf = opt_result->rmsd;
                 energy+= TrajMol2->ensemble_energies[i];
 
 
@@ -332,7 +331,7 @@ int main(int argc, char* argv[]){
 
                 Entropy->update(dx, dy, dz, dalpha, dbeta, dgamma, torsions);
 
-                printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10d", i+1, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf, opt_result.opt_status);
+                printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10d", i+1, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf, opt_result->opt_status);
 
                 for (unsigned j=0; j< RotorList.Size(); j++){
                     printf("%10.4f ", torsions[j]);
@@ -350,41 +349,41 @@ int main(int argc, char* argv[]){
 
     gzclose(trajectory);
 
-    McEntropy::entropy_t McEnt;
-    McEntropy::entropy_t Max_Ent;
-    McEnt.Srot = 0.0; McEnt.Storsion = 0.0; McEnt.Strans = 0.0;
+    unique_ptr<McEntropy::entropy_t> McEnt(new McEntropy::entropy_t);
+    unique_ptr<McEntropy::entropy_t> Max_Ent(new McEntropy::entropy_t);
+    McEnt->Srot = 0.0; McEnt->Storsion = 0.0; McEnt->Strans = 0.0;
 
-    Entropy->get_results(&McEnt, &Max_Ent, count);
+    Entropy->get_results(McEnt.get(), Max_Ent.get(), count);
 
     energy = energy / count;
 
     printf("#*****************************************************************************************\n");
 
-    printf("First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K\n", McEnt.Strans*T, T);
-    printf("First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K\n", McEnt.Srot*T, T);
-    printf("First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K\n", McEnt.Storsion*T, T);
-    printf("First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K\n", McEnt.S, T);
-    printf("First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K\n", -McEnt.TS, T);
-    printf("First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K\n", -McEnt.S*300., 300.);
+    printf("# First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K\n", McEnt->Strans*T, T);
+    printf("# First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K\n", McEnt->Srot*T, T);
+    printf("# First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K\n", McEnt->Storsion*T, T);
+    printf("# First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K\n", McEnt->S, T);
+    printf("# First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K\n", -McEnt->TS, T);
+    printf("# First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K\n", -McEnt->S*300., 300.);
 
     printf("#*****************************************************************************************\n");
 
-    printf("Maximal Entropies Computed for this System:\n");
-    printf("First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K\n", Max_Ent.Strans*T, T);
-    printf("First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K\n", Max_Ent.Srot*T, T);
-    printf("First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K\n", Max_Ent.Storsion*T, T);
-    printf("First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K\n", Max_Ent.S, T);
-    printf("First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K\n", -Max_Ent.TS, T);
-    printf("First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K\n", -Max_Ent.S*300., 300.);
+    printf("# Maximal Entropies Computed for this System:\n");
+    printf("# First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K\n", Max_Ent->Strans*T, T);
+    printf("# First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K\n", Max_Ent->Srot*T, T);
+    printf("# First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K\n", Max_Ent->Storsion*T, T);
+    printf("# First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K\n", Max_Ent->S, T);
+    printf("# First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K\n", -Max_Ent->TS, T);
+    printf("# First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K\n", -Max_Ent->S*300., 300.);
 
     printf("#*****************************************************************************************\n");
 
-    printf("Entropy loss (-TdS): %10.4g kcal/mol (%10.4f %s) @ %7.2f K\n", (-McEnt.TS - (-Max_Ent.TS)), ((-McEnt.TS/-Max_Ent.TS)*100), "%", T);
+    printf("# Entropy loss (-TdS): %10.4g kcal/mol (%10.4f %s) @ %7.2f K\n", (-McEnt->TS - (-Max_Ent->TS)), ((-McEnt->TS/-Max_Ent->TS)*100), "%", T);
 
     printf("#*****************************************************************************************\n");
 
-    printf("Ebind = <E> -TS\n");
-    printf("Ebind = %8.4f - %8.4f = %8.4f kcal/mol\n", energy, McEnt.TS, (energy-McEnt.TS));
+    printf("# Ebind = <E> -TS\n");
+    printf("# Ebind = %8.4f - %8.4f = %8.4f kcal/mol\n", energy, McEnt->TS, (energy-McEnt->TS));
 
     printf("#*****************************************************************************************\n");
 
@@ -393,11 +392,6 @@ int main(int argc, char* argv[]){
     printf("# Reached Stopval = 2, Ftol = 3, Xtol = 4, Maxeval = 5, Maxtime =   6\n");
 
     printf("#*****************************************************************************************\n");
-
-
-    delete RefMol;
-    delete Input;
-    delete Coord;
 
     return 0;
 }

@@ -19,6 +19,7 @@
 #include "WRITER.h"
 #include<gsl/gsl_rng.h>
 #include<time.h>
+#include <memory>
 #include<vector>
 #include "SA.h"
 #include "MC.h"
