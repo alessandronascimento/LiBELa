@@ -285,6 +285,7 @@ int main(int argc, char* argv[]){
 
     energy = 0.0;
     Optimizer::align_t align_data;
+    align_data.ref_xyz = RefMol->xyz;
 
     gzFile trajectory = gzopen(trajfile.c_str(), "r");
 
@@ -304,8 +305,8 @@ int main(int argc, char* argv[]){
                 opt_result.rotation.push_back(0.0);
                 opt_result.translation.push_back(0.0);
             }
+            align_data.current_xyz.clear();
             align_data.current_xyz = TrajMol2->get_next_xyz(Input, trajectory);
-            align_data.ref_xyz = RefMol->xyz;
 
             if (align_data.ref_xyz.size() == align_data.current_xyz.size()){
                 count++;
