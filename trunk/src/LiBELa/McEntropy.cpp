@@ -13,23 +13,23 @@ McEntropy::McEntropy(PARSER* _Input, COORD_MC* _Coord, vector<double> _com, int 
     translation_step = translation_window*1.0/trans_bins;
     rotation_step = 360.0/rot_bins;
 
-    for (unsigned i=0; i< trans_bins; i++){
+    for (int i=0; i< this->trans_bins; i++){
         hist_x.push_back(0.0);
         hist_y.push_back(0.0);
         hist_z.push_back(0.0);
     }
 
-    for (int i=0; i< rot_bins; i++){
+    for (int i=0; i< this->rot_bins; i++){
         hist_alpha.push_back(0.0);
         hist_gamma.push_back(0.0);
     }
 
-    for (int i=0; i<(rot_bins/2); i++){
+    for (int i=0; i<(this->rot_bins/2); i++){
         hist_beta.push_back(0.0);
     }
 
-    for (int i=0; i<n_rot; i++){
-        vector<double> vtmp(rot_bins);
+    for (int i=0; i<this->n_rot; i++){
+        vector<double> vtmp(unsigned(this->rot_bins));
         hist_torsions.push_back(vtmp);
     }
 }
@@ -48,17 +48,9 @@ void McEntropy::update(double x, double y, double z, double alpha, double beta, 
     //    hist_beta[int(round(beta/(rotation_step/2.0)))] += 1.0;
 
     if (Input->sample_torsions){
-        for (int i=0; i< n_rot; i++){
-            int angle = round(torsion[i]/rotation_step);
-
-            if (angle < 0 or angle > rot_bins){
-                printf("ANGLE OFFSET: %d!\n", angle);
-                printf("Check McEntropy.cpp file.\n");
-                exit(1);
-            }
-            else{
-                hist_torsions[i][angle] += 1.0;
-            }
+        for (unsigned i=0; i< unsigned(this->n_rot); i++){
+            unsigned angle = unsigned(round(torsion[i]/rotation_step));
+            hist_torsions[i][angle] += 1.0;
         }
     }
 }
@@ -113,7 +105,7 @@ void McEntropy::get_results(entropy_t* entropy, entropy_t* max_entropy, int coun
     entropy->S = entropy->Strans + entropy->Srot + entropy->Storsion;
     entropy->TS = Input->temp*entropy->S;
 
-// Computing results for maximal entropy
+    // Computing results for maximal entropy
 
     max_entropy->Srot = 0.0;
     double rot_bin_prob = 1.0/rot_bins;
