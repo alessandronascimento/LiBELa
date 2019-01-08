@@ -234,6 +234,8 @@ int main(int argc, char* argv[]){
     unique_ptr<PARSER> Input(new PARSER);
     Input->temp = T;
     Input->sample_torsions = true;
+    Input->entropy_rotation_bins = 720;
+    Input->x_dim = 8.0;
     unique_ptr<COORD_MC> Coord(new COORD_MC);
 
     unique_ptr<Mol2> RefMol(new Mol2(Input.get(), ref_mol2));                   // read the initial coordinates of the ligand
