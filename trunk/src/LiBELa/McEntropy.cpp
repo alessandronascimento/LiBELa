@@ -9,7 +9,7 @@ McEntropy::McEntropy(PARSER* _Input, COORD_MC* _Coord, vector<double> _com, int 
     this->com = _com;
     this->rot_bins = Input->entropy_rotation_bins;
     this->trans_bins = Input->entropy_translation_bins;
-    this->translation_window = Input->x_dim*2;
+    this->translation_window = int(round(Input->x_dim*2));
     translation_step = translation_window*1.0/trans_bins;
     rotation_step = 360.0/rot_bins;
     vector<double> vtmp;
@@ -226,4 +226,15 @@ void McEntropy::get_results(entropy_t* entropy, int count){
 }
 
 McEntropy::~McEntropy(){
+
+    this->hist_x.clear();
+    this->hist_y.clear();
+    this->hist_z.clear();
+
+    this->hist_alpha.clear();
+    this->hist_beta.clear();
+    this->hist_gamma.clear();
+
+    this->hist_torsions.clear();
+
 }

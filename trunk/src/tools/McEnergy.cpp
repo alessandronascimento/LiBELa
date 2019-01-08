@@ -179,27 +179,27 @@ int main(int argc, char* argv[]){
 
     string trajfile;
     string ref_mol2;
-    int c, nrot, nframes=1E7, nthreads=1;
+    int c, nrot, nframes=1E7, nthreads=1, stride=1;
     double dx, dy, dz, dalpha, dbeta, dgamma, angle, rmsdi, rmsdf, T=300.0;
     double energy;
     vector<vector<int> > atoms_in_dihedrals;
 
     if (argc < 2){
-        printf("Usage %s -t <traj_file> -n <number_of_frames> -r <ref_mol2> -T <temperature> -p <nthreads> [-h]\n", argv[0]);
+        printf("Usage %s -t <traj_file> -n <number_of_frames> -r <ref_mol2> -T <temperature> -p <nthreads> -s <stride> [-h]\n", argv[0]);
         exit(1);
     }
 
-    while ((c = getopt(argc, argv, "t:r:T:n:p:h")) != -1)
+    while ((c = getopt(argc, argv, "t:r:T:n:p:s:h")) != -1)
         switch (c){
         case 't':
             trajfile = string(optarg);
             break;
         case 'h':
-            printf("Usage %s -t <traj_file> -n <number_of_frames> -r <ref_mol2> -T <temperature> -p <nthreads> [-h]\n", argv[0]);
+            printf("Usage %s -t <traj_file> -n <number_of_frames> -r <ref_mol2> -T <temperature> -p <nthreads> -s <stride> [-h]\n", argv[0]);
             exit(1);
             break;
         case '?':
-            printf("Usage %s -t <traj_file> -n <number_of_frames> -r <ref_mol2> -T <temperature> -p <nthreads> [-h]\n", argv[0]);
+            printf("Usage %s -t <traj_file> -n <number_of_frames> -r <ref_mol2> -T <temperature> -p <nthreads> -s <stride> [-h]\n", argv[0]);
             exit(1);
             break;
         case 'r':
@@ -213,6 +213,9 @@ int main(int argc, char* argv[]){
             break;
         case 'p':
             nthreads = atoi(optarg);
+            break;
+        case 's':
+            stride = atoi(optarg);
             break;
         }
 
@@ -332,13 +335,13 @@ int main(int argc, char* argv[]){
 
                 Entropy->update_trajectory(dx, dy, dz, dalpha, dbeta, dgamma, torsions);
 
-                printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10d", i+1, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf, opt_result->opt_status);
-
-                for (unsigned j=0; j< RotorList.Size(); j++){
-                    printf("%10.4f ", torsions[j]);
+                if (i % stride == 0 ){
+                    printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10d", i+1, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf, opt_result->opt_status);
+                    for (unsigned j=0; j< RotorList.Size(); j++){
+                        printf("%10.4f ", torsions[j]);
+                    }
+                    printf("\n");
                 }
-                printf("\n");
-
             }
             else{
                 printf("Sizes of reference molecule (%3lu) and trajectory (%3lu) don't match. Please, check!",
