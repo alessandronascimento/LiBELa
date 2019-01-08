@@ -1268,16 +1268,16 @@ void Optimizer::minimize_alignment_nlopt_simplex(align_t* align_data, align_resu
     unique_ptr<nlopt::opt> opt(new nlopt::opt(nlopt::LN_NELDERMEAD,6));
 
     vector<double> lb(6);
-    lb[0] = -180.0;
-    lb[1] = -90.0;
-    lb[2] = -180.0;
+    lb[0] = 0.0;
+    lb[1] = 0.0;
+    lb[2] = 0.0;
     lb[3] = -(Parser->search_box_x);
     lb[4] = -(Parser->search_box_y);
     lb[5] = -(Parser->search_box_z);
     vector<double> ub(6);
-    ub[0] = 180.0;
-    ub[1] = 90.0;
-    ub[2] = 180.0;
+    ub[0] = 360.0;
+    ub[1] = 180.0;
+    ub[2] = 360.0;
     ub[3] = Parser->search_box_x;
     ub[4] = Parser->search_box_y;
     ub[5] = Parser->search_box_z;

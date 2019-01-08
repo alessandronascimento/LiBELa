@@ -37,20 +37,53 @@ McEntropy::McEntropy(PARSER* _Input, COORD_MC* _Coord, vector<double> _com, int 
 
 void McEntropy::update(double x, double y, double z, double alpha, double beta, double gamma, vector<double> torsion){
 
-    hist_x[int(round((x-com[0]+(translation_window*1.0/2.))/(translation_step)))] += 1.0;
-    hist_y[int(round((y-com[1]+(translation_window*1.0/2.))/(translation_step)))] += 1.0;
-    hist_z[int(round((z-com[2]+(translation_window*1.0/2.))/(translation_step)))] += 1.0;
+    unsigned dx, dy, dz, a, b, g, angle;
+    dx = unsigned(round((x-com[0]+(translation_window*1.0/2.))/(translation_step)));
+    dy = unsigned(round((y-com[1]+(translation_window*1.0/2.))/(translation_step)));
+    dz = unsigned(round((z-com[2]+(translation_window*1.0/2.))/(translation_step)));
+    hist_x[dx] += 1.0;
+    hist_y[dy] += 1.0;
+    hist_z[dz] += 1.0;
 
-
-    hist_alpha[int(round(alpha/rotation_step))] += 1.0;
-    hist_beta[int(round(beta/rotation_step))] += 1.0;
-    hist_gamma[int(round(gamma/rotation_step))] += 1.0;
+    a = unsigned(round(alpha/rotation_step));
+    hist_alpha[a] += 1.0;
+    b = unsigned(round(beta/rotation_step));
+    hist_beta[b] += 1.0;
+    g = unsigned(round(gamma/rotation_step));
+    hist_gamma[g] += 1.0;
 
     //    hist_beta[int(round(beta/(rotation_step/2.0)))] += 1.0;
 
     if (Input->sample_torsions){
         for (unsigned i=0; i< unsigned(this->n_rot); i++){
-            int angle = int(round(torsion[i]/rotation_step));
+            angle = unsigned(round(torsion[i]/rotation_step));
+            hist_torsions[i][angle] += 1.0;
+        }
+    }
+}
+
+void McEntropy::update_trajectory(double x, double y, double z, double alpha, double beta, double gamma, vector<double> torsion){
+
+    unsigned dx, dy, dz, a, b, g, angle;
+    dx = unsigned(round((x+(translation_window*1.0/2.))/(translation_step)));
+    dy = unsigned(round((y+(translation_window*1.0/2.))/(translation_step)));
+    dz = unsigned(round((z+(translation_window*1.0/2.))/(translation_step)));
+    hist_x[dx] += 1.0;
+    hist_y[dy] += 1.0;
+    hist_z[dz] += 1.0;
+
+    a = unsigned(round(alpha/rotation_step));
+    hist_alpha[a] += 1.0;
+    b = unsigned(round(beta/rotation_step));
+    hist_beta[b] += 1.0;
+    g = unsigned(round(gamma/rotation_step));
+    hist_gamma[g] += 1.0;
+
+    //    hist_beta[int(round(beta/(rotation_step/2.0)))] += 1.0;
+
+    if (Input->sample_torsions){
+        for (unsigned i=0; i< unsigned(this->n_rot); i++){
+            angle = unsigned(round(torsion[i]/rotation_step));
             hist_torsions[i][angle] += 1.0;
         }
     }

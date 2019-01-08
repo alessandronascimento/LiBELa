@@ -23,8 +23,8 @@
 using namespace std;
 using namespace OpenBabel;
 
-OBMol* GetMol(const string &molfile){
-    OBMol* mol = new OBMol;
+unique_ptr<OBMol> GetMol(const string &molfile){
+    unique_ptr<OBMol> mol(new OBMol);
 
     OBConversion conv;
     OBFormat *format = conv.FormatFromExt(molfile.c_str());
@@ -39,7 +39,7 @@ OBMol* GetMol(const string &molfile){
         return mol;
     }
 
-    if (!conv.Read(mol, &ifs)) {
+    if (!conv.Read(mol.get(), &ifs)) {
         printf("Could not read molecule from file\n");
         return mol;
     }
@@ -240,9 +240,8 @@ int main(int argc, char* argv[]){
 
     unique_ptr<Mol2> RefMol(new Mol2(Input.get(), ref_mol2));                   // read the initial coordinates of the ligand
 
-    OBMol* mol = new OBMol();
-    mol = GetMol(ref_mol2);
-    unique_ptr<OBMol> obmol(mol);
+    unique_ptr<OBMol> obmol(new OBMol);
+    obmol = GetMol(ref_mol2);
 
     OBRotorList RotorList;
     OBRotorIterator RotorIterator;
@@ -331,7 +330,7 @@ int main(int argc, char* argv[]){
                     torsions[j] = (angle);
                 }
 
-                Entropy->update(dx, dy, dz, dalpha, dbeta, dgamma, torsions);
+                Entropy->update_trajectory(dx, dy, dz, dalpha, dbeta, dgamma, torsions);
 
                 printf("%10d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10d", i+1, dx, dy, dz, dalpha, dbeta, dgamma, rmsdi, rmsdf, opt_result->opt_status);
 
@@ -366,7 +365,6 @@ int main(int argc, char* argv[]){
     printf("# First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K\n", McEnt->Storsion*T, T);
     printf("# First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K\n", McEnt->S, T);
     printf("# First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K\n", -McEnt->TS, T);
-    printf("# First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K\n", -McEnt->S*300., 300.);
 
     printf("#*****************************************************************************************\n");
 
@@ -376,7 +374,6 @@ int main(int argc, char* argv[]){
     printf("# First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K\n", Max_Ent->Storsion*T, T);
     printf("# First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K\n", Max_Ent->S, T);
     printf("# First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K\n", -Max_Ent->TS, T);
-    printf("# First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K\n", -Max_Ent->S*300., 300.);
 
     printf("#*****************************************************************************************\n");
 

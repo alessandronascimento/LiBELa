@@ -48,6 +48,7 @@ public:
     McEntropy(PARSER* _Input, COORD_MC* _Coord, vector<double> _com, int _n_rot);
     ~McEntropy();
     void update(double x, double y, double z, double alpha, double beta, double gamma, vector<double> torsion);
+    void update_trajectory(double x, double y, double z, double alpha, double beta, double gamma, vector<double> torsion);
     void get_results(entropy_t* entropy, entropy_t *max_entropy, int count);
     void get_results(entropy_t* entropy, int count);
 };
