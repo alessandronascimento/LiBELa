@@ -12,6 +12,7 @@ McEntropy::McEntropy(PARSER* _Input, COORD_MC* _Coord, vector<double> _com, int 
     this->translation_window = Input->x_dim*2;
     translation_step = translation_window*1.0/trans_bins;
     rotation_step = 360.0/rot_bins;
+    vector<double> vtmp;
 
     for (int i=0; i< this->trans_bins; i++){
         hist_x.push_back(0.0);
@@ -22,6 +23,7 @@ McEntropy::McEntropy(PARSER* _Input, COORD_MC* _Coord, vector<double> _com, int 
     for (int i=0; i< this->rot_bins; i++){
         hist_alpha.push_back(0.0);
         hist_gamma.push_back(0.0);
+        vtmp.push_back(0.0);
     }
 
     for (int i=0; i<(this->rot_bins/2); i++){
@@ -29,8 +31,7 @@ McEntropy::McEntropy(PARSER* _Input, COORD_MC* _Coord, vector<double> _com, int 
     }
 
     for (int i=0; i<this->n_rot; i++){
-        vector<double> vtmp(unsigned(this->rot_bins));
-        hist_torsions.push_back(vtmp);
+          hist_torsions.push_back(vtmp);
     }
 }
 
@@ -49,7 +50,7 @@ void McEntropy::update(double x, double y, double z, double alpha, double beta, 
 
     if (Input->sample_torsions){
         for (unsigned i=0; i< unsigned(this->n_rot); i++){
-            unsigned angle = unsigned(round(torsion[i]/rotation_step));
+            int angle = int(round(torsion[i]/rotation_step));
             hist_torsions[i][angle] += 1.0;
         }
     }

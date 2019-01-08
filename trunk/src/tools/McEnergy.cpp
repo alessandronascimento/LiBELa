@@ -322,7 +322,7 @@ int main(int argc, char* argv[]){
                 dgamma = opt_result->rotation[2];
                 rmsdi = Coord->compute_rmsd(align_data.ref_xyz, align_data.current_xyz, RefMol->N);
                 rmsdf = opt_result->rmsd;
-                energy+= TrajMol2->ensemble_energies[i];
+                energy+= TrajMol2->energy;
 
 
                 for (unsigned j=0; j< unsigned(nrot); j++){

@@ -90,6 +90,10 @@ public:
 	string atm;
     //! Energies evaluated for the conformers generated. Uses GAFF.
     vector<double> conformer_energies;
+    //! energy used when parsing a trajectory ensemble
+    double energy;
+    //! RMSD used when parsing a trajectory ensemble
+    double rmsd;
 
 	/*!
 	 * Initializer. This class has, as arguments, a pointer to the class PARSER.

@@ -828,7 +828,7 @@ vector<vector<double> > Mol2::get_next_xyz(PARSER* Input, gzFile mol2file) {
 
         if (!gzeof(mol2file)){
             sscanf(str, "%s %f\n", tstr, &tx);
-            this->ensemble_energies.push_back(double(tx));
+            this->energy = double(tx);
         }
 
         while ((str[0] != 'R' or str[12] != ':') and (!gzeof(mol2file))){
@@ -837,7 +837,7 @@ vector<vector<double> > Mol2::get_next_xyz(PARSER* Input, gzFile mol2file) {
 
         if (!gzeof(mol2file)){
             sscanf(str, "%s %f\n", tstr, &tx);
-            this->ensemble_rmsd.push_back(double(tx));
+            this->rmsd = double(tx);
         }
 
         while ((str[0] != '@' or str[9] != 'A') and (!gzeof(mol2file))){
