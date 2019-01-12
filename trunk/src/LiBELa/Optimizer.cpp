@@ -1276,16 +1276,16 @@ void Optimizer::minimize_alignment_nlopt_simplex(align_t* align_data, align_resu
     double dz = original_com[2] - current_com[2];
 
     vector<double> lb(6);
-    lb[0] = 0.0;
+    lb[0] = -180.0;
     lb[1] = 0.0;
-    lb[2] = 0.0;
+    lb[2] = -180.0;
     lb[3] = -(Parser->search_box_x);
     lb[4] = -(Parser->search_box_y);
     lb[5] = -(Parser->search_box_z);
     vector<double> ub(6);
-    ub[0] = 360.0;
+    ub[0] = 180.0;
     ub[1] = 180.0;
-    ub[2] = 360.0;
+    ub[2] = 180.0;
     ub[3] = Parser->search_box_x;
     ub[4] = Parser->search_box_y;
     ub[5] = Parser->search_box_z;
@@ -1307,6 +1307,14 @@ void Optimizer::minimize_alignment_nlopt_simplex(align_t* align_data, align_resu
 
     double fo;
     nlopt::result nres = opt->optimize(x,fo);
+
+    if (x[0] < 0.0){
+        x[0] = x[0] + 360.0;
+    }
+
+    if (x[2] < 0.0 ){
+        x[2] = x[2] + 360.0;
+    }
 
     opt_result->rmsd = fo;
     opt_result->translation[0] = x[3];
