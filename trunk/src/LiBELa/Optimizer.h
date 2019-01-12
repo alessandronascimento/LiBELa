@@ -94,7 +94,7 @@ public:
 	static void minimize_overlay_nlopt_crs(Mol2* Lig2, opt_result_t* opt_result);
     static void minimize_overlay_nlopt_direct(Mol2* Lig2, opt_result_t* opt_result);
 
-    static void minimize_alignment_nlopt_simplex(align_t* align_data, align_result_t* opt_result);
+    static void minimize_alignment_nlopt_simplex(align_t* align_data, align_result_t* opt_result, vector<double> current_com);
 };
 
 #endif /* OPTIMIZER_H_ */

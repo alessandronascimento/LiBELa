@@ -1236,8 +1236,10 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step, bool fit){
 
         Optimizer::align_result_t* opt_result = new Optimizer::align_result_t;
 
+        vector<double> curr_com = Coord->compute_com(align_data->current_xyz, Lig);
+
         Optimizer* opt = new Optimizer(Lig, Lig, Input);
-        opt->minimize_alignment_nlopt_simplex(align_data, opt_result);
+        opt->minimize_alignment_nlopt_simplex(align_data, opt_result, curr_com);
         step->dx = opt_result->translation[0];
         step->dy = opt_result->translation[1];
         step->dz = opt_result->translation[2];

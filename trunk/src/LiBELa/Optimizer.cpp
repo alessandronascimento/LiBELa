@@ -1264,8 +1264,16 @@ double Optimizer::superpose_function(const std::vector<double> &x, std::vector<d
     return (f);
 }
 
-void Optimizer::minimize_alignment_nlopt_simplex(align_t* align_data, align_result_t* opt_result){
+void Optimizer::minimize_alignment_nlopt_simplex(align_t* align_data, align_result_t* opt_result, vector<double> current_com){
     unique_ptr<nlopt::opt> opt(new nlopt::opt(nlopt::LN_NELDERMEAD,6));
+
+    unique_ptr<COORD_MC> Coord(new COORD_MC);
+
+    vector<double> original_com = Coord->compute_com(RefLig);
+
+    double dx = original_com[0] - current_com[0];
+    double dy = original_com[1] - current_com[1];
+    double dz = original_com[2] - current_com[2];
 
     vector<double> lb(6);
     lb[0] = 0.0;
@@ -1290,9 +1298,9 @@ void Optimizer::minimize_alignment_nlopt_simplex(align_t* align_data, align_resu
     opt->set_maxtime(Parser->min_timeout);
 
     vector<double> x(6);
-    x[0] = 0.0;
-    x[1] = 0.0;
-    x[2] = 0.0;
+    x[0] = dx;
+    x[1] = dy;
+    x[2] = dz;
     x[3] = 0.0;
     x[4] = 0.0;
     x[5] = 0.0;

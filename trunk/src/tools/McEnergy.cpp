@@ -314,7 +314,9 @@ int main(int argc, char* argv[]){
             if (align_data.ref_xyz.size() == align_data.current_xyz.size()){
                 count++;
 
-                opt->minimize_alignment_nlopt_simplex(&align_data, opt_result.get());
+                vector<double> curr_com = Coord->compute_com(align_data.current_xyz, RefMol.get());
+
+                opt->minimize_alignment_nlopt_simplex(&align_data, opt_result.get(), curr_com);
 
                 dx = opt_result->translation[0];
                 dy = opt_result->translation[1];
