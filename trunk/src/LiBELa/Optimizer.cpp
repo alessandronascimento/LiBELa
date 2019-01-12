@@ -1298,12 +1298,12 @@ void Optimizer::minimize_alignment_nlopt_simplex(align_t* align_data, align_resu
     opt->set_maxtime(Parser->min_timeout);
 
     vector<double> x(6);
-    x[0] = dx;
-    x[1] = dy;
-    x[2] = dz;
-    x[3] = 0.0;
-    x[4] = 0.0;
-    x[5] = 0.0;
+    x[0] = 0.0;
+    x[1] = 0.0;
+    x[2] = 0.0;
+    x[3] = dx;
+    x[4] = dy;
+    x[5] = dz;
 
     double fo;
     nlopt::result nres = opt->optimize(x,fo);
