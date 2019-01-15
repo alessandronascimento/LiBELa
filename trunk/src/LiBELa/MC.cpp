@@ -1232,11 +1232,11 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
     double dx, dy, dz;
     for (int i=0; i< Lig->N; i++){
         rnumber = gsl_rng_uniform(r);
-        dx = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion/15.0)));
+        dx = -(Input->cushion/15.0) + (1.0 * (rnumber*(2*Input->cushion/15.0)));
         rnumber = gsl_rng_uniform(r);
-        dy = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion/15.0)));
+        dy = -(Input->cushion/15.0) + (1.0 * (rnumber*(2*Input->cushion/15.0)));
         rnumber = gsl_rng_uniform(r);
-        dz = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion/15.0)));
+        dz = -(Input->cushion/15.0) + (1.0 * (rnumber*(2*Input->cushion/15.0)));
         rnumber = gsl_rng_uniform(r);
 
         step->xyz[i][0] = xyz[i][0] + dx;
