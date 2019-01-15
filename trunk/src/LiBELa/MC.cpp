@@ -141,7 +141,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             this->take_step_torsion(Input, Lig, step);
         }
         else if (Input->mc_full_flex){
-            this->take_step_full_flex(Input, Lig, step, false);
+            this->take_step_full_flex(Input, Lig, step);
         }
         else {
             this->take_step(Input, Lig, step);
@@ -187,7 +187,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 this->take_step_torsion(Input, Lig, step);
             }
             else if (Input->mc_full_flex){
-                this->take_step_full_flex(Input, Lig, step, false);
+                this->take_step_full_flex(Input, Lig, step);
             }
             else {
                 this->take_step(Input, Lig, step);
@@ -241,7 +241,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 this->take_step_torsion(Input, Lig, step);
             }
             else if (Input->mc_full_flex){
-                this->take_step_full_flex(Input, Lig, step, Input->compute_rotation_entropy);
+                this->take_step_full_flex(Input, Lig, step);
             }
             else {
                 this->take_step(Input, Lig, step);
@@ -534,7 +534,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                     this->take_step_torsion(Input, Lig, step);
                 }
                 else if (Input->mc_full_flex){
-                    this->take_step_full_flex(Input, Lig, step, Input->compute_rotation_entropy);
+                    this->take_step_full_flex(Input, Lig, step);
                 }
                 else {
                     this->take_step(Input, Lig, step);
@@ -1202,62 +1202,46 @@ bool MC::ligand_is_inside_box(PARSER* Input, step_t* step, vector<double> origin
     return ret;
 }
 
-void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step, bool fit){
-
+void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
     COORD_MC* Coord = new COORD_MC;
     double rnumber;
     double current_angle;
     step->torsion_angles.clear();
     vector<vector<double> > ref_xyz = this->xyz;
-    step->xyz = this->xyz;
+
+    // Do rigid body rotation and translation
+
+    rnumber = gsl_rng_uniform(r);
+    step->dx = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
+    rnumber = gsl_rng_uniform(r);
+    step->dy = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
+    rnumber = gsl_rng_uniform(r);
+    step->dz = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
+
+    rnumber = gsl_rng_uniform(r);
+    step->dalpha = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
+    rnumber = gsl_rng_uniform(r);
+    step->dbeta = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
+    rnumber = gsl_rng_uniform(r);
+    step->dgamma = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
+
+    step->xyz = Coord->rototranslate(this->xyz, Lig, step->dalpha, step->dbeta,step->dgamma, step->dx, step->dy, step->dz);
+
+    // Now, let's do a random shift in the internal atomic coordinates
+
+    double dx, dy, dz;
     for (int i=0; i< Lig->N; i++){
-
-// Do rigid body rotation and translation
-
         rnumber = gsl_rng_uniform(r);
-        step->dx = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
+        dx = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion/15.0)));
         rnumber = gsl_rng_uniform(r);
-        step->dy = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
+        dy = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion/15.0)));
         rnumber = gsl_rng_uniform(r);
-        step->dz = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
+        dz = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion/15.0)));
         rnumber = gsl_rng_uniform(r);
 
-        step->xyz[i][0] = xyz[i][0] + step->dx;
-        step->xyz[i][1] = xyz[i][1] + step->dy;
-        step->xyz[i][2] = xyz[i][2] + step->dz;
-    }
-
-// Simplex fitting of new coordinates to original coordinates to find optimal dx, dy dz, da, db and dg
-
-    if (fit){
-        Optimizer::align_t* align_data = new Optimizer::align_t;
-        align_data->ref_xyz = ref_xyz;
-        align_data->current_xyz = step->xyz;
-
-        Optimizer::align_result_t* opt_result = new Optimizer::align_result_t;
-
-        vector<double> curr_com = Coord->compute_com(align_data->current_xyz, Lig);
-
-        Optimizer* opt = new Optimizer(Lig, Lig, Input);
-        opt->minimize_alignment_nlopt_simplex(align_data, opt_result, curr_com);
-        step->dx = opt_result->translation[0];
-        step->dy = opt_result->translation[1];
-        step->dz = opt_result->translation[2];
-        step->dalpha = opt_result->rotation[0];
-        step->dbeta = opt_result->rotation[1];
-        step->dgamma = opt_result->rotation[2];
-
-        delete align_data;
-        delete opt_result;
-        delete opt;
-    }
-    else {
-        step->dx = 0.0;
-        step->dy = 0.0;
-        step->dz = 0.0;
-        step->dalpha = 0.0;
-        step->dbeta = 0.0;
-        step->dgamma = 0.0;
+        step->xyz[i][0] = xyz[i][0] + dx;
+        step->xyz[i][1] = xyz[i][1] + dy;
+        step->xyz[i][2] = xyz[i][2] + dz;
     }
 
 // copy coordinates and internal energy to type step_t
@@ -1281,5 +1265,3 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step, bool fit){
     }
     step->nconf = 0;
 }
-
-
