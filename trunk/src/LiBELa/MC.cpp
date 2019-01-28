@@ -1239,9 +1239,9 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
         dz = -(Input->cushion/15.0) + (1.0 * (rnumber*(2*Input->cushion/15.0)));
         rnumber = gsl_rng_uniform(r);
 
-        step->xyz[i][0] = xyz[i][0] + dx;
-        step->xyz[i][1] = xyz[i][1] + dy;
-        step->xyz[i][2] = xyz[i][2] + dz;
+        step->xyz[i][0] = step->xyz[i][0] + dx;
+        step->xyz[i][1] = step->xyz[i][1] + dy;
+        step->xyz[i][2] = step->xyz[i][2] + dz;
     }
 
 // copy coordinates and internal energy to type step_t
