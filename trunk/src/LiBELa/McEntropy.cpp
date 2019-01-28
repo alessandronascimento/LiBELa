@@ -54,11 +54,9 @@ void McEntropy::update(double x, double y, double z, double alpha, double beta, 
 
     //    hist_beta[int(round(beta/(rotation_step/2.0)))] += 1.0;
 
-    if (Input->sample_torsions){
-        for (unsigned i=0; i< unsigned(this->n_rot); i++){
-            angle = unsigned(round(torsion[i]/rotation_step));
-            hist_torsions[i][angle] += 1.0;
-        }
+    for (unsigned i=0; i< unsigned(this->n_rot); i++){
+        angle = unsigned(round(torsion[i]/rotation_step));
+        hist_torsions[i][angle] += 1.0;
     }
 }
 
@@ -81,11 +79,9 @@ void McEntropy::update_trajectory(double x, double y, double z, double alpha, do
 
     //    hist_beta[int(round(beta/(rotation_step/2.0)))] += 1.0;
 
-    if (Input->sample_torsions){
-        for (unsigned i=0; i< unsigned(this->n_rot); i++){
-            angle = unsigned(round(torsion[i]/rotation_step));
-            hist_torsions[i][angle] += 1.0;
-        }
+    for (unsigned i=0; i< unsigned(this->n_rot); i++){
+        angle = unsigned(round(torsion[i]/rotation_step));
+        hist_torsions[i][angle] += 1.0;
     }
 }
 
