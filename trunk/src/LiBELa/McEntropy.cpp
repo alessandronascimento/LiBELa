@@ -62,25 +62,25 @@ void McEntropy::update(double x, double y, double z, double alpha, double beta, 
 
 void McEntropy::update_trajectory(double x, double y, double z, double alpha, double beta, double gamma, vector<double> torsion){
 
-    unsigned dx, dy, dz, a, b, g, angle;
-    dx = unsigned(round((x+(translation_window*1.0/2.))/(translation_step)));
-    dy = unsigned(round((y+(translation_window*1.0/2.))/(translation_step)));
-    dz = unsigned(round((z+(translation_window*1.0/2.))/(translation_step)));
+    int dx, dy, dz, a, b, g, angle;
+    dx = int(round((x+(translation_window*1.0/2.))/(translation_step)));
+    dy = int(round((y+(translation_window*1.0/2.))/(translation_step)));
+    dz = int(round((z+(translation_window*1.0/2.))/(translation_step)));
     hist_x[dx] += 1.0;
     hist_y[dy] += 1.0;
     hist_z[dz] += 1.0;
 
-    a = unsigned(round(alpha/rotation_step));
+    a = int(round(alpha/rotation_step));
     hist_alpha[a] += 1.0;
-    b = unsigned(round(beta/rotation_step));
+    b = int(round(beta/rotation_step));
     hist_beta[b] += 1.0;
-    g = unsigned(round(gamma/rotation_step));
+    g = int(round(gamma/rotation_step));
     hist_gamma[g] += 1.0;
 
     //    hist_beta[int(round(beta/(rotation_step/2.0)))] += 1.0;
 
-    for (unsigned i=0; i< unsigned(this->n_rot); i++){
-        angle = unsigned(round(torsion[i]/rotation_step));
+    for (int i=0; i< this->n_rot; i++){
+        angle = int(round(torsion[i]/rotation_step));
         hist_torsions[i][angle] += 1.0;
     }
 }

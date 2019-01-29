@@ -1229,14 +1229,14 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
 
     // Now, let's do a random shift in the internal atomic coordinates
 
-    double dx, dy, dz;
+    double dx, dy, dz, sampling_factor = Input->cushion/30.0;
     for (int i=0; i< Lig->N; i++){
         rnumber = gsl_rng_uniform(r);
-        dx = -(Input->cushion/15.0) + (1.0 * (rnumber*(2*Input->cushion/15.0)));
+        dx = -(sampling_factor) + (1.0 * (rnumber*(2*sampling_factor)));
         rnumber = gsl_rng_uniform(r);
-        dy = -(Input->cushion/15.0) + (1.0 * (rnumber*(2*Input->cushion/15.0)));
+        dy = -(sampling_factor) + (1.0 * (rnumber*(2*sampling_factor)));
         rnumber = gsl_rng_uniform(r);
-        dz = -(Input->cushion/15.0) + (1.0 * (rnumber*(2*Input->cushion/15.0)));
+        dz = -(sampling_factor) + (1.0 * (rnumber*(2*sampling_factor)));
         rnumber = gsl_rng_uniform(r);
 
         step->xyz[i][0] = step->xyz[i][0] + dx;
@@ -1252,6 +1252,7 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
 
     for (unsigned i=0; i< RotorList.Size(); i++){
             current_angle = mol.GetTorsion(mol.GetAtom(atoms_in_dihedrals[i][0]), mol.GetAtom(atoms_in_dihedrals[i][1]), mol.GetAtom(atoms_in_dihedrals[i][2]), mol.GetAtom(atoms_in_dihedrals[i][3]));
+            current_angle = this->check_angle(current_angle);
             step->torsion_angles.push_back(current_angle);
     }
 

@@ -702,6 +702,11 @@ void Grid::load_phimap_from_file(int gsize){
 
     phimap = fopen(Input->delphi_grid.c_str(), "rb");
 
+    if (phimap == NULL){
+        printf("Could not open file %s. Please check!\n", Input->delphi_grid.c_str());
+        exit(1);
+    }
+
     fread(&tmpi, sizeof(int), 1, phimap);
 
     uplbl = (char *) malloc(sizeof(char) * 22);
