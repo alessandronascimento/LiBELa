@@ -126,7 +126,9 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
         rot_angles[i]= 0.0;
     }
 
-    McEntropy* Entropy = new McEntropy(Input, Coord, original_com, int(RotorList.Size()));
+    int n_rot = int(RotorList.Size());
+
+    McEntropy* Entropy = new McEntropy(Input, Coord, original_com, n_rot);
 
     energy_result_t* energy_t = new energy_result_t;
 
@@ -159,7 +161,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     gzprintf(mc_output,"#BoxsideX= %10.4f BoxsideY= %10.4f BoxsideY= %10.4f Temperature= %10.4f \n", Input->x_dim, Input->y_dim, Input->z_dim, Input->temp);
     gzprintf(mc_output,"#NROT = %10.10d\n", int(RotorList.Size()));
     gzprintf(mc_output,"###################################################################################################################################################################\n");
-    if (! Input->sample_torsions){
+    if (n_rot == 0){
         gzprintf(mc_output, "#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s\n", "Step", "Energy", "RMSD", "DX", "DY", "DZ", "ALPHA", "BETA", "GAMMA", "NCONF", "ConfEnergy", "Elec", "VDW", "SOLV");
     }
     else {
@@ -279,7 +281,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                     Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
                 }
 
-                if (! Input->sample_torsions){
+                if (n_rot == 0){
                     gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f %10.6f %10.6f %10.6f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy, energy_t->elec, energy_t->vdw, (energy_t->lig_solv+energy_t->rec_solv));
                 }
 
@@ -319,7 +321,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                     if (Input->write_mol2){
                         Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
                     }
-                    if (! Input->sample_torsions){
+                    if (n_rot == 0){
                         gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f %10.6f %10.6f %10.6f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy, energy_t->elec, energy_t->vdw, (energy_t->lig_solv+energy_t->rec_solv));
                     }
                     else {
@@ -481,6 +483,8 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
 
         McEntropy* Entropy = new McEntropy(Input, Coord, original_com, int(RotorList.Size()));
 
+        int n_rot = int(RotorList.Size());
+
         double energy, new_energy, p, rnumber, rmsd;
         step_t* step = new step_t;
 
@@ -507,7 +511,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         gzprintf(mc_output_lig,"#BoxsideX= %10.4f BoxsideY= %10.4f BoxsideY= %10.4f Temperature= %10.4f \n", Input->x_dim, Input->y_dim, Input->z_dim, Input->temp);
         gzprintf(mc_output_lig,"#NROT = %10.10d\n", int(RotorList.Size()));
         gzprintf(mc_output_lig,"###################################################################################################################################################################\n");
-        if (! Input->sample_torsions){
+        if (n_rot == 0){
             gzprintf(mc_output_lig, "#%10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s\n", "Step", "Energy", "RMSD", "DX", "DY", "DZ", "ALPHA", "BETA", "GAMMA", "NCONF", "ConfEnergy");
         }
         else {
@@ -518,7 +522,6 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
             }
             gzprintf(mc_output_lig, "\n");
         }
-
 
         Writer->print_line();
         sprintf(info, "%10s %10s %10s", "Step", "Energy", "RMSD");
@@ -570,7 +573,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                     if (Input->write_mol2){
                         Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC.ligsim");
                     }
-                    if (! Input->sample_torsions){
+                    if (n_rot == 0 ){
                         gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
                     }
                     else {
@@ -611,7 +614,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                             Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC.ligsim");
                         }
 
-                        if (! Input->sample_torsions){
+                        if (n_rot == 0){
                             gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
                         }
                         else {
@@ -712,7 +715,8 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
 
         Writer->print_line();
 
-        delete McEnt, Max_Ent;
+        delete McEnt;
+        delete Max_Ent;
         delete Entropy;
     }
 }
@@ -1229,7 +1233,7 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
 
     // Now, let's do a random shift in the internal atomic coordinates
 
-    double dx, dy, dz, sampling_factor = Input->cushion/30.0;
+    double dx, dy, dz, sampling_factor = 0.0001;
     for (int i=0; i< Lig->N; i++){
         rnumber = gsl_rng_uniform(r);
         dx = -(sampling_factor) + (1.0 * (rnumber*(2*sampling_factor)));
@@ -1237,7 +1241,6 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
         dy = -(sampling_factor) + (1.0 * (rnumber*(2*sampling_factor)));
         rnumber = gsl_rng_uniform(r);
         dz = -(sampling_factor) + (1.0 * (rnumber*(2*sampling_factor)));
-        rnumber = gsl_rng_uniform(r);
 
         step->xyz[i][0] = step->xyz[i][0] + dx;
         step->xyz[i][1] = step->xyz[i][1] + dy;
