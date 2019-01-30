@@ -240,6 +240,7 @@ public:
     //! An "stride" parameter for writing trajectory file. Coordinates are written at mc_stride intervals.
     int mc_stride;
 
+
     /*!
      * \brief dielectric_model This keyword brings the model for dieletric constant usage
      * in electrostatic evaluation within the code. There are three available models:
@@ -291,6 +292,8 @@ public:
     bool mc_full_flex;
     //!
     bool compute_rotation_entropy;
+    //! Maximal atomic displacement in MC full flex
+    double max_atom_displacement;
 
 #ifdef HAS_GUI
 	QStringList docking_molecules;

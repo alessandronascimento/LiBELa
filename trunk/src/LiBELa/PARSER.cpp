@@ -91,6 +91,7 @@ PARSER::PARSER(){
     this->delphi_gsize = 121;
     this->mc_full_flex = false;
     this->compute_rotation_entropy = false;
+    this->max_atom_displacement = 0.00005;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -451,6 +452,9 @@ void PARSER::comparing (string param, ifstream &input) {
         if (tmp == "yes" or tmp == "Yes" or tmp == "YES"){
             this->compute_rotation_entropy = true;
         }
+    }
+    else if (param == "max_atom_displacement"){
+        input >> this->max_atom_displacement;
     }
 	else {
 		cout << "Unknown parameter: " << param << endl;

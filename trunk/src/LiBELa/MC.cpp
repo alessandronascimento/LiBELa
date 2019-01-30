@@ -1233,14 +1233,14 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
 
     // Now, let's do a random shift in the internal atomic coordinates
 
-    double dx, dy, dz, sampling_factor = 0.0001;
+    double dx, dy, dz;
     for (int i=0; i< Lig->N; i++){
         rnumber = gsl_rng_uniform(r);
-        dx = -(sampling_factor) + (1.0 * (rnumber*(2*sampling_factor)));
+        dx = -(Input->max_atom_displacement) + (1.0 * (rnumber*(2*Input->max_atom_displacement)));
         rnumber = gsl_rng_uniform(r);
-        dy = -(sampling_factor) + (1.0 * (rnumber*(2*sampling_factor)));
+        dy = -(Input->max_atom_displacement) + (1.0 * (rnumber*(2*Input->max_atom_displacement)));
         rnumber = gsl_rng_uniform(r);
-        dz = -(sampling_factor) + (1.0 * (rnumber*(2*sampling_factor)));
+        dz = -(Input->max_atom_displacement) + (1.0 * (rnumber*(2*Input->max_atom_displacement)));
 
         step->xyz[i][0] = step->xyz[i][0] + dx;
         step->xyz[i][1] = step->xyz[i][1] + dy;
