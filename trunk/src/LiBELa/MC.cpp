@@ -481,9 +481,9 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         }
         com = Coord->compute_com(Lig);
 
-        McEntropy* Entropy = new McEntropy(Input, Coord, original_com, int(RotorList.Size()));
-
         int n_rot = int(RotorList.Size());
+
+        McEntropy* Entropy = new McEntropy(Input, Coord, original_com, n_rot);
 
         double energy, new_energy, p, rnumber, rmsd;
         step_t* step = new step_t;

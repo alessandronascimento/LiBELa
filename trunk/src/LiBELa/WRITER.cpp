@@ -118,8 +118,18 @@ void WRITER::print_params(){
         }
     }
     printf("* %-30s %-66d*\n", "use PBSA grids?", Input->use_pbsa);
-    if (Input->pbsa_grid != ""){
-        printf("* %-30s %-66.66s*\n", "load PBSA grid", Input->pbsa_grid.c_str());
+    if (Input->use_pbsa){
+        printf("* %-30s %-66.66s*\n", "Electrostatic model", "PBSA");
+        printf("* %-30s %-66.66s*\n", "PBSA grid", Input->pbsa_grid.c_str());
+    }
+    else if (Input->use_delphi){
+        printf("* %-30s %-66.66s*\n", "Electrostatic model", "DelPhi");
+        printf("* %-30s %-66.66s*\n", "DelPhi grid", Input->delphi_grid.c_str());
+        printf("* %-30s %-66d*\n", "Delphi grid gsize", Input->delphi_gsize);
+
+    }
+    else{
+        printf("* %-30s %-66.66s*\n", "Electrostatic model", "Coulomb");
     }
     printf("*                                                                                                  *\n");
     printf("* %-30s %-66d*\n", "only_score", Input->only_score);
@@ -151,7 +161,18 @@ void WRITER::print_params(){
 	printf("*                                                                                                  *\n");
     printf("* %-30s %-66.66s*\n", "Ligand energy model", Input->ligand_energy_model.c_str());
     printf("* %-30s %-66.66s*\n", "Atomic FF model", Input->atomic_model_ff.c_str());
-
+    printf("*                                                                                                  *\n");
+    if (Input->eq_mode){
+        printf("* %-30s %-66d*\n", "MC Sampling of Torsions", Input->sample_torsions);
+        printf("* %-30s %-66.10f*\n", "MC Maximal COM Translation", Input->cushion);
+        printf("* %-30s %-66.10f*\n", "MC Maximal COM Rotation", Input->rotation_step);
+        if (Input->mc_full_flex){
+            printf("* %-30s %-66d*\n", "MC Fully Flexible Sampling", Input->mc_full_flex);
+            printf("* %-30s %-66.10f*\n", "MC atomic displacement", Input->max_atom_displacement);
+        }
+        printf("* %-30s %-66d*\n", "Entropy bins for rotation", Input->entropy_rotation_bins);
+        printf("* %-30s %-66d*\n", "Entropy bins for translation", Input->entropy_translation_bins);
+    }
 	printf("****************************************************************************************************\n");
 	printf("****************************************************************************************************\n");
 
@@ -189,6 +210,19 @@ void WRITER::print_params(){
     case 3:
         fprintf(output, "* %-30s %-66.66s*\n", "scoring function", "Amber FF");
         break;
+    }
+    if (Input->use_pbsa){
+        fprintf(output, "* %-30s %-66.66s*\n", "Electrostatic model", "PBSA");
+        fprintf(output, "* %-30s %-66.66s*\n", "PBSA grid", Input->pbsa_grid.c_str());
+    }
+    else if (Input->use_delphi){
+        fprintf(output, "* %-30s %-66.66s*\n", "Electrostatic model", "DelPhi");
+        fprintf(output, "* %-30s %-66.66s*\n", "DelPhi grid", Input->delphi_grid.c_str());
+        fprintf(output, "* %-30s %-66d*\n", "Delphi grid gsize", Input->delphi_gsize);
+
+    }
+    else{
+        fprintf(output, "* %-30s %-66.66s*\n", "Electrostatic model", "Coulomb");
     }
     fprintf(output, "* %-30s %-66.66s*\n", "dielectric_model", Input->dielectric_model.c_str());
     fprintf(output, "* %-30s %-66.3f*\n", "diel", Input->diel);
@@ -234,6 +268,21 @@ void WRITER::print_params(){
     fprintf(output, "* %-30s %-66.66s*\n", "output_prefix", Input->output.c_str());
     fprintf(output, "* %-30s %-66d*\n", "write_mol2", Input->write_mol2);
 	fprintf(output, "*                                                                                                  *\n");
+    fprintf(output, "* %-30s %-66.66s*\n", "Ligand energy model", Input->ligand_energy_model.c_str());
+    fprintf(output, "* %-30s %-66.66s*\n", "Atomic FF model", Input->atomic_model_ff.c_str());
+    fprintf(output, "*                                                                                                  *\n");
+    if (Input->eq_mode){
+        fprintf(output, "* %-30s %-66d*\n", "MC Sampling of Torsions", Input->sample_torsions);
+        fprintf(output, "* %-30s %-66.10f*\n", "MC Maximal COM Translation", Input->cushion);
+        fprintf(output, "* %-30s %-66.10f*\n", "MC Maximal COM Rotation", Input->rotation_step);
+        if (Input->mc_full_flex){
+            fprintf(output, "* %-30s %-66d*\n", "MC Fully Flexible Sampling", Input->mc_full_flex);
+            fprintf(output, "* %-30s %-66.10f*\n", "MC atomic displacement", Input->max_atom_displacement);
+        }
+        fprintf(output, "* %-30s %-66d*\n", "Entropy bins for rotation", Input->entropy_rotation_bins);
+        fprintf(output, "* %-30s %-66d*\n", "Entropy bins for translation", Input->entropy_translation_bins);
+    }
+
 	fprintf(output, "****************************************************************************************************\n");
 	fprintf(output, "****************************************************************************************************\n");
 
