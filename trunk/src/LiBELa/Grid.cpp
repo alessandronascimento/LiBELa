@@ -707,17 +707,17 @@ void Grid::load_phimap_from_file(int gsize){
         exit(1);
     }
 
-    fread(&tmpi, sizeof(int), 1, phimap);
+//    fread(&tmpi, sizeof(int), 1, phimap);
 
-    uplbl = (char *) malloc(sizeof(char) * 22);
-    for (int i=0; i<20; i++) {
+    uplbl = (char *) malloc(sizeof(char) * 23);
+    for (int i=0; i<21; i++) {
         uplbl[i] = fgetc(phimap);
     }
-    uplbl[20] = '\n';
-    uplbl[21] = (char) 0;
+    uplbl[21] = '\n';
+    uplbl[22] = (char) 0;
 
-    fread(&tmpi, sizeof(int), 1, phimap);
-    fread(&tmpi, sizeof(int), 1, phimap);
+//    fread(&tmpi, sizeof(int), 1, phimap);
+//    fread(&tmpi, sizeof(int), 1, phimap);
 
     nxtlbl = (char *) malloc(sizeof(char) * 12);
     for (int i=0; i<10; i++) {
@@ -726,12 +726,12 @@ void Grid::load_phimap_from_file(int gsize){
     nxtlbl[10] = '\n';
     nxtlbl[11] = (char) 0;
 
-    toplbl = (char *) malloc(sizeof(char) * 62);
-    for (int i=0; i<60; i++) {
+    toplbl = (char *) malloc(sizeof(char) * 56);
+    for (int i=0; i<54; i++) {
         toplbl[i] = fgetc(phimap);
     }
-    toplbl[60] = '\n';
-    toplbl[61] = (char) 0;
+    toplbl[54] = '\n';
+    toplbl[55] = (char) 0;
 
 
 #ifdef DEBUG
