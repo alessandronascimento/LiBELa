@@ -750,8 +750,8 @@ void Grid::load_phimap_from_file(int gsize){
         this->delphi_grid.push_back(vtmp);
     }
 
-    fread(&tmpi, sizeof(int), 1, phimap);
-    fread(&tmpi, sizeof(int), 1, phimap);
+//    fread(&tmpi, sizeof(int), 1, phimap);
+//    fread(&tmpi, sizeof(int), 1, phimap);
 
     double kt_phi;
     for (int nz=0; nz < gsize; nz++){
@@ -763,8 +763,8 @@ void Grid::load_phimap_from_file(int gsize){
         }
     }
 
-    fread(&tmpi, sizeof(int), 1, phimap);
-    fread(&tmpi, sizeof(int), 1, phimap);
+//    fread(&tmpi, sizeof(int), 1, phimap);
+//    fread(&tmpi, sizeof(int), 1, phimap);
 
     botlbl = (char *) malloc(sizeof(char) * 18);
     for (int i=0; i<16; i++) {
@@ -777,8 +777,8 @@ void Grid::load_phimap_from_file(int gsize){
     printf("%s\n", botlbl);
 #endif
 
-    fread(&tmpi, sizeof(int), 1, phimap);
-    fread(&tmpi, sizeof(int), 1, phimap);
+//    fread(&tmpi, sizeof(int), 1, phimap);
+//    fread(&tmpi, sizeof(int), 1, phimap);
 
     fread(&scale, sizeof(double), 1, phimap);
     fread(&oldmid_x, sizeof(double), 1, phimap);
