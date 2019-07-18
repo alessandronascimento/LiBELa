@@ -632,8 +632,8 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                             }
                             gzprintf(mc_output_lig, "\n");
                         }
+                        independent_average += long(energy);
                     }
-                    independent_average += long(energy);
                 }
                 else{
                     nReject++;
