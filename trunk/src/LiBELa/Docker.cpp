@@ -350,8 +350,6 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 	Writer->print_info(info);
 
     if (Input->write_mol2){
-#pragma omp critical
-        {
             bool will_write = true;
             if (Input->use_writeMol2_score_cutoff){
                 if (si < Input->writeMol2_score_cutoff){
@@ -364,6 +362,8 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
                 }
             }
             if (will_write){
+#pragma omp critical
+            {
                 Writer->writeMol2(Lig, opt_result2->optimized_xyz, opt_result2->energy_result->total, overlay_fmax);
             }
         }
@@ -476,8 +476,6 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
             best_energy_t->elec, best_energy_t->vdw, best_energy_t->rec_solv, best_energy_t->lig_solv, best_energy_t->total, best_conf, overlay_status[best_conf], energy_status, si);
     Writer->print_info(info);
     if (Input->write_mol2){
-#pragma omp critical
-        {
             bool will_write = true;
             if (Input->use_writeMol2_score_cutoff){
                 if (si < Input->writeMol2_score_cutoff){
@@ -490,6 +488,8 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
                 }
             }
             if (will_write){
+#pragma omp critical
+            {
                 Writer->writeMol2(Lig, opt_result2->optimized_xyz, opt_result2->energy_result->total, overlay_fmax);
             }
         }
