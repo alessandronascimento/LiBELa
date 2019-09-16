@@ -357,14 +357,14 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
                 }
             }
             if (Input->use_writeMol2_energy_cutoff){
-                if (opt_result2->energy_result->total > Input->writeMol2_energy_cutoff){
+                if (best_energy_t->total > Input->writeMol2_energy_cutoff){
                     will_write = false;
                 }
             }
             if (will_write){
 #pragma omp critical
             {
-                Writer->writeMol2(Lig, opt_result2->optimized_xyz, opt_result2->energy_result->total, overlay_fmax);
+                Writer->writeMol2(Lig, new_xyz, best_ene, si);
             }
         }
     }
@@ -483,14 +483,14 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
                 }
             }
             if (Input->use_writeMol2_energy_cutoff){
-                if (opt_result2->energy_result->total > Input->writeMol2_energy_cutoff){
+                if (best_energy_t->energy_result->total > Input->writeMol2_energy_cutoff){
                     will_write = false;
                 }
             }
             if (will_write){
 #pragma omp critical
             {
-                Writer->writeMol2(Lig, opt_result2->optimized_xyz, opt_result2->energy_result->total, overlay_fmax);
+                Writer->writeMol2(Lig, new_xyz, best_ene, si);
             }
         }
     }
