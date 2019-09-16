@@ -302,6 +302,7 @@ public:
     double writeMol2_score_cutoff;
     //!
     double writeMol2_energy_cutoff;
+    double LJ_sigma;
 
 #ifdef HAS_GUI
 	QStringList docking_molecules;

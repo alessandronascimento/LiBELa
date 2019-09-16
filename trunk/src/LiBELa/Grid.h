@@ -73,6 +73,7 @@ public:
     void compute_grid_softcore(Mol2* Lig);
 
 	void compute_grid_hardcore(Mol2* Lig);
+    void compute_grid_hardcore_Gaussian(Mol2* Lig);
     /**
      * @brief write_grids_to_file This function writes a computed potential grid to a file
      */
@@ -111,6 +112,7 @@ public:
      * @param Rec class Mol2 object with receptor description
      */
     void compute_grid_hardcore_omp(Mol2* Rec);
+    void compute_grid_hardcore_omp_Gaussian(Mol2* Rec);
 
     /**
      * @brief load_delphi_cube This function loads a DelPhi potential in

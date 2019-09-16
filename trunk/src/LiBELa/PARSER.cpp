@@ -478,6 +478,9 @@ void PARSER::comparing (string param, ifstream &input) {
     else if (param == "writeMol2_energy_cutoff"){
         input >> this->writeMol2_energy_cutoff;
     }
+    else if (param == "LJ_sigma"){
+        input >> this->LJ_sigma;
+    }
 	else {
 		cout << "Unknown parameter: " << param << endl;
 		exit(1);

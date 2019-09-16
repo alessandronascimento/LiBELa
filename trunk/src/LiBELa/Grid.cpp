@@ -71,10 +71,10 @@ Grid::Grid(PARSER* _Input, WRITER* _Writer, Mol2* Rec, vector<double> com){
         break;
     case 4:
         if (Input->parallel_jobs > 1){
-            this->compute_grid_hardcore_omp(Rec);
+            this->compute_grid_hardcore_omp_Gaussian(Rec);
         }
         else{
-            this->compute_grid_hardcore(Rec);
+            this->compute_grid_hardcore_Gaussian(Rec);
         }
         break;
     }
@@ -884,4 +884,163 @@ void Grid::load_delphi_cube(){
     sprintf(info, "DelPhi Grid file %s read!", Input->delphi_cube_grid.c_str());
     Writer->print_info(info);
     this->delphi_loaded = true;
+}
+
+void Grid::compute_grid_hardcore_Gaussian(Mol2* Rec){
+    vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz);
+    vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2;
+
+    double elec, d, d2, d6, x, y, z, vdwA, vdwB, solv, rec_solv, deff, gauss_weight;
+    double sqrt2 = sqrt(2.0);
+
+    for(int a=0; a< this->npointsx; a++){
+        x = (a*this->grid_spacing) + this->xbegin;
+
+        for (int b=0; b< this->npointsy; b++){
+            y = (b*this->grid_spacing) + this->ybegin;
+
+            for (int c=0; c<this->npointsz; c++){
+                z = (c*this->grid_spacing) + this->zbegin;
+                elec = 0.0;
+                vdwA = 0.0;
+                vdwB = 0.0;
+                solv=0.0;
+                rec_solv=0.0;
+
+                for (int i=0; i< Rec->N; i++){
+                    d2 = this->distance_squared(x, Rec->xyz[i][0], y,Rec->xyz[i][1], z, Rec->xyz[i][2]);
+                    d = sqrt(d2);
+                    d6 = d2 * d2 * d2;
+                    if (Input->dielectric_model == "constant"){
+                        d = sqrt(d2);
+                        elec += 332.0*((Rec->charges[i])/(d*Input->diel));
+                    }
+                    else if (Input->dielectric_model == "4r") {     // epsilon = 4r
+                        elec += 332.0 * (Rec->charges[i]/(4*d2));
+                    }
+                    else {                                          // Input->dielectric_model = "r"
+                        elec += 332.0 * (Rec->charges[i]/d2);
+                    }
+
+                    gauss_weight = exp(-((d-(2*Rec->radii[i]))/2*Input->LJ_sigma)*((d-(2*Rec->radii[i]))/2*Input->LJ_sigma));
+                    vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6))*gauss_weight;
+                    vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6)*gauss_weight;
+
+                    deff = (d2);
+
+                    solv += ((Input->solvation_alpha * Rec->charges[i] * Rec->charges[i])+ Input->solvation_beta) *  exp((-(deff)/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
+                    rec_solv += (4.0/3.0) * PI * pow(Rec->radii[i], 3) * exp((-(deff)/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
+                }
+                elec_t1[c] = (elec);
+                vdwA_t1[c] = (vdwA);
+                vdwB_t1[c] = (vdwB);
+                solv_t1[c] = (solv);
+                rec_solv_t1[c] = (rec_solv);
+            }
+            elec_t2.push_back(elec_t1);
+            vdwA_t2.push_back(vdwA_t1);
+            vdwB_t2.push_back(vdwB_t1);
+            solv_t2.push_back(solv_t1);
+            rec_solv_t2.push_back(rec_solv_t1);
+
+        }
+        this->elec_grid.push_back(elec_t2);
+        this->vdwA_grid.push_back(vdwA_t2);
+        this->vdwB_grid.push_back(vdwB_t2);
+        this->solv_gauss.push_back(solv_t2);
+        this->rec_solv_gauss.push_back(rec_solv_t2);
+        elec_t2.clear();
+        vdwA_t2.clear();
+        vdwB_t2.clear();
+        solv_t2.clear();
+        rec_solv_t2.clear();
+    }
+    this->rec_si = 0.00;
+    for(int i=0; i<Rec->N; i++){
+        this->rec_si += (Input->solvation_alpha*Rec->charges[i]*Rec->charges[i]) + Input->solvation_beta;
+    }
+}
+
+void Grid::compute_grid_hardcore_omp_Gaussian(Mol2* Rec){
+    vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz);
+    vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2;
+
+//    double elec, d, d2, d6, x, y, z, vdwA, vdwB, solv, rec_solv, deff;
+    double sqrt2 = sqrt(2.0);
+
+// initializing the vectors;
+
+    for (unsigned i=0; i<this->npointsy; i++){
+        elec_t2.push_back(elec_t1);
+        vdwA_t2.push_back(vdwA_t1);
+        vdwB_t2.push_back(vdwB_t1);
+        solv_t2.push_back(solv_t1);
+        rec_solv_t2.push_back(rec_solv_t1);
+    }
+
+    for (unsigned i=0; i<this->npointsx; i++){
+        this->elec_grid.push_back(elec_t2);
+        this->vdwA_grid.push_back(vdwA_t2);
+        this->vdwB_grid.push_back(vdwB_t2);
+        this->solv_gauss.push_back(solv_t2);
+        this->rec_solv_gauss.push_back(rec_solv_t2);
+    }
+
+// Now, starting OMP...
+
+#pragma omp parallel num_threads(Input->parallel_jobs)
+{
+#pragma omp for schedule(static, 1)
+    for(int a=0; a< this->npointsx; a++){
+
+        double x = (a*this->grid_spacing) + this->xbegin;
+
+        for (int b=0; b< this->npointsy; b++){
+            double y = (b*this->grid_spacing) + this->ybegin;
+
+            for (int c=0; c<this->npointsz; c++){
+                double z = (c*this->grid_spacing) + this->zbegin;
+                double elec = 0.0;
+                double vdwA = 0.0;
+                double vdwB = 0.0;
+                double solv=0.0;
+                double rec_solv=0.0;
+
+                for (int i=0; i< Rec->N; i++){
+                    double d2 = this->distance_squared(x, Rec->xyz[i][0], y,Rec->xyz[i][1], z, Rec->xyz[i][2]);
+                    double d6 = d2 * d2 * d2;
+                    double d = sqrt(d2);
+                    if (Input->dielectric_model == "constant"){
+                        double d = sqrt(d2);
+                        elec += 332.0*((Rec->charges[i])/(d*Input->diel));
+                    }
+                    else if (Input->dielectric_model == "4r") {     // epsilon = 4r
+                        elec += 332.0 * (Rec->charges[i]/(4*d2));
+                    }
+                    else {                                          // Input->dielectric_model = "r"
+                        elec += 332.0 * (Rec->charges[i]/d2);
+                    }
+
+                    double gauss_weight = exp(-((d-(2*Rec->radii[i]))/2*Input->LJ_sigma)*((d-(2*Rec->radii[i]))/2*Input->LJ_sigma));
+                    vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6))*gauss_weight;
+                    vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6)*gauss_weight;
+
+                    double deff = (d2);
+
+                    solv += ((Input->solvation_alpha * Rec->charges[i] * Rec->charges[i])+ Input->solvation_beta) *  exp((-(deff)/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
+                    rec_solv += (4.0/3.0) * PI * pow(Rec->radii[i], 3) * exp((-(deff)/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
+                }
+                this->elec_grid[a][b][c] = elec;
+                this->vdwA_grid[a][b][c] = vdwA;
+                this->vdwB_grid[a][b][c] = vdwB;
+                this->solv_gauss[a][b][c] = solv;
+                this->rec_solv_gauss[a][b][c] = rec_solv;
+            }
+        }
+    }
+}                       // end of pragma
+    this->rec_si = 0.00;
+    for(int i=0; i<Rec->N; i++){
+        this->rec_si += (Input->solvation_alpha*Rec->charges[i]*Rec->charges[i]) + Input->solvation_beta;
+    }
 }
