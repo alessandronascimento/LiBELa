@@ -294,6 +294,14 @@ public:
     bool compute_rotation_entropy;
     //! Maximal atomic displacement in MC full flex
     double max_atom_displacement;
+    //!
+    bool use_writeMol2_score_cutoff;
+    //!
+    bool use_writeMol2_energy_cutoff;
+    //!
+    double writeMol2_score_cutoff;
+    //!
+    double writeMol2_energy_cutoff;
 
 #ifdef HAS_GUI
 	QStringList docking_molecules;

@@ -118,6 +118,7 @@ public:
      */
     void load_delphi_cube(void);
 	virtual ~Grid();
+
 };
 
 #endif /* GRID_H_ */

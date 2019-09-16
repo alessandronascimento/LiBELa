@@ -46,17 +46,39 @@ Grid::Grid(PARSER* _Input, WRITER* _Writer, Mol2* Rec, vector<double> com){
         this->generate_points(com);
     }
 
-    if (Input->scoring_function < 2){
+    switch (Input->scoring_function) {
+    case 0:
         this->compute_grid_softcore(Rec);
+        break;
+    case 1:
+        this->compute_grid_softcore(Rec);
+        break;
+    case 2:
+        if (Input->parallel_jobs > 1){
+            this->compute_grid_hardcore_omp(Rec);
+        }
+        else{
+            this->compute_grid_hardcore(Rec);
+        }
+        break;
+    case 3:
+        if (Input->parallel_jobs > 1){
+            this->compute_grid_hardcore_omp(Rec);
+        }
+        else{
+            this->compute_grid_hardcore(Rec);
+        }
+        break;
+    case 4:
+        if (Input->parallel_jobs > 1){
+            this->compute_grid_hardcore_omp(Rec);
+        }
+        else{
+            this->compute_grid_hardcore(Rec);
+        }
+        break;
     }
-    else {
-            if (Input->parallel_jobs > 1){
-                this->compute_grid_hardcore_omp(Rec);
-            }
-            else{
-                this->compute_grid_hardcore(Rec);
-            }
-    }
+
 	if (Input->write_grids){
 		this->write_grids_to_file();
 	}

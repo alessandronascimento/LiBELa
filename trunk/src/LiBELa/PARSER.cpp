@@ -92,6 +92,10 @@ PARSER::PARSER(){
     this->mc_full_flex = false;
     this->compute_rotation_entropy = false;
     this->max_atom_displacement = 0.00005;
+    this->use_writeMol2_score_cutoff = false;
+    this->use_writeMol2_energy_cutoff = false;
+    this->writeMol2_score_cutoff = 0.7;
+    this->writeMol2_energy_cutoff = 20.0;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -455,6 +459,24 @@ void PARSER::comparing (string param, ifstream &input) {
     }
     else if (param == "max_atom_displacement"){
         input >> this->max_atom_displacement;
+    }
+    else if (param == "use_writeMol2_score_cutoff"){
+        input >> tmp;
+        if (tmp == "yes" or tmp == "Yes" or tmp == "YES"){
+            use_writeMol2_score_cutoff = true;
+        }
+    }
+    else if (param == "use_writeMol2_energy_cutoff"){
+        input >> tmp;
+        if (tmp == "yes" or tmp == "Yes" or tmp == "YES"){
+            use_writeMol2_energy_cutoff = true;
+        }
+    }
+    else if (param == "writeMol2_score_cutoff"){
+        input >> this->writeMol2_score_cutoff;
+    }
+    else if (param == "writeMol2_energy_cutoff"){
+        input >> this->writeMol2_energy_cutoff;
     }
 	else {
 		cout << "Unknown parameter: " << param << endl;
