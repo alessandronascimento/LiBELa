@@ -483,7 +483,7 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
                 }
             }
             if (Input->use_writeMol2_energy_cutoff){
-                if (best_energy_t->energy_result->total > Input->writeMol2_energy_cutoff){
+                if (best_energy_t->total > Input->writeMol2_energy_cutoff){
                     will_write = false;
                 }
             }
