@@ -77,6 +77,14 @@ Grid::Grid(PARSER* _Input, WRITER* _Writer, Mol2* Rec, vector<double> com){
             this->compute_grid_hardcore_Gaussian(Rec);
         }
         break;
+    case 5:
+        if (Input->parallel_jobs > 1){
+            this->compute_grid_hardcore_omp_Gaussian(Rec);
+        }
+        else{
+            this->compute_grid_hardcore_Gaussian(Rec);
+        }
+        break;
     }
 
 	if (Input->write_grids){
