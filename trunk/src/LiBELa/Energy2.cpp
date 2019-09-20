@@ -1018,7 +1018,7 @@ void Energy2::trilinear_interpolation(Grid* Grids, double x, double y, double z,
     GI->vdwB=(c0*(1-zd))+(c1*zd);
 
 
-    if ((Input->scoring_function == 0) or (Input->scoring_function == 2)){
+    if ((Input->scoring_function == 0) or (Input->scoring_function == 2) or (Input->scoring_function == 4)){
 
         //Receptor Desolvation
         c00=(Grids->rec_solv_gauss[x0][y0][z0]*(1-xd)) + (Grids->rec_solv_gauss[x1][y0][z0]*xd);
