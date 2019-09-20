@@ -53,17 +53,17 @@ double Energy2::compute_ene(Grid* Grids, Mol2* Lig, vector<vector<double> > lig_
         ene = this->compute_ene_from_grids_hardcore(Grids, Lig, lig_xyz);
         break;
     case 4:
-        ene = this->compute_ene_from_grids_hardcore(Grids, Lig, lig_xyz);
+        ene = this->compute_ene_from_grids_hardcore_solvation(Grids, Lig, lig_xyz);
         break;
     case 5:
-        ene = this->compute_ene_from_grids_hardcore_solvation(Grids, Lig, lig_xyz);
+        ene = this->compute_ene_from_grids_hardcore(Grids, Lig, lig_xyz);
         break;
     }
     return(ene);
 }
 
 double Energy2::compute_ene(Grid* Grids, Mol2* Lig, vector<vector<double> > lig_xyz, energy_result_t* energy_result){
-    double e;
+    double e=0.0;
     switch(Input->scoring_function){
     case 0:
         e = this->compute_ene_from_grids_softcore_solvation(Grids, Lig, lig_xyz, energy_result);
@@ -78,10 +78,10 @@ double Energy2::compute_ene(Grid* Grids, Mol2* Lig, vector<vector<double> > lig_
         e = this->compute_ene_from_grids_hardcore(Grids, Lig, lig_xyz, energy_result);
         break;
     case 4:
-        e = this->compute_ene_from_grids_hardcore(Grids, Lig, lig_xyz, energy_result);
+        e = this->compute_ene_from_grids_hardcore_solvation(Grids, Lig, lig_xyz, energy_result);
         break;
     case 5:
-        e = this->compute_ene_from_grids_hardcore_solvation(Grids, Lig, lig_xyz, energy_result);
+        e = this->compute_ene_from_grids_hardcore(Grids, Lig, lig_xyz, energy_result);
         break;
     }
     return (e);
