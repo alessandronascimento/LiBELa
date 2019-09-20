@@ -225,12 +225,12 @@ void WRITER::print_params(){
         fprintf(output, "* %-30s %-66.66s*\n", "scoring function", "Amber FF");
         break;
     case 4:
-        printf("* %-30s %-66.66s*\n", "scoring function", "Amber FF with Gaussian Weighted LJ Potential");
-        printf("* %-30s %-66.2f*\n", "LJ_sigma", Input->LJ_sigma);
+        fprintf(output, "* %-30s %-66.66s*\n", "scoring function", "Amber FF with Gaussian Weighted LJ Potential");
+        fprintf(output, "* %-30s %-66.2f*\n", "LJ_sigma", Input->LJ_sigma);
         break;
     case 5:
-        printf("* %-30s %-66.66s*\n", "scoring function", "Amber FF with Gaussian Weighted LJ Potential + Desolvation");
-        printf("* %-30s %-66.2f*\n", "LJ_sigma", Input->LJ_sigma);
+        fprintf(output, "* %-30s %-66.66s*\n", "scoring function", "Amber FF with Gaussian Weighted LJ Potential + Desolvation");
+        fprintf(output, "* %-30s %-66.2f*\n", "LJ_sigma", Input->LJ_sigma);
         break;
     }
     if (Input->use_pbsa){
