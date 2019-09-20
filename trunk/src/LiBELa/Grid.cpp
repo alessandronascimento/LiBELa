@@ -930,7 +930,7 @@ void Grid::compute_grid_hardcore_Gaussian(Mol2* Rec){
                         elec += 332.0 * (Rec->charges[i]/d2);
                     }
 
-                    gauss_weight = exp(-((d-(2*Rec->radii[i]))/2*Input->LJ_sigma)*((d-(2*Rec->radii[i]))/2*Input->LJ_sigma));
+                    gauss_weight = exp(-( (d-(Rec->radii[i]+Rec->radii[i])) * (d-(Rec->radii[i]+Rec->radii[i])) ) /(2.0*Input->LJ_sigma*Input->LJ_sigma));
                     vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6))*gauss_weight;
                     vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6)*gauss_weight;
 

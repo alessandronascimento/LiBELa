@@ -99,6 +99,14 @@ void WRITER::print_params(){
     case 3:
         printf("* %-30s %-66.66s*\n", "scoring function", "Amber FF");
         break;
+    case 4:
+        printf("* %-30s %-66.66s*\n", "scoring function", "Amber FF with Gaussian Weighted LJ Potential");
+        printf("* %-30s %-66.2f*\n", "LJ_sigma", Input->LJ_sigma);
+        break;
+    case 5:
+        printf("* %-30s %-66.66s*\n", "scoring function", "Amber FF with Gaussian Weighted LJ Potential + Desolvation");
+        printf("* %-30s %-66.2f*\n", "LJ_sigma", Input->LJ_sigma);
+        break;
     }
     printf("* %-30s %-66.66s*\n", "dielectric_model", Input->dielectric_model.c_str());
     printf("* %-30s %-66.3f*\n", "diel", Input->diel);
@@ -158,6 +166,12 @@ void WRITER::print_params(){
     printf("*                                                                                                  *\n");
     printf("* %-30s %-66.66s*\n", "output_prefix", Input->output.c_str());
     printf("* %-30s %-66d*\n", "write_mol2", Input->write_mol2);
+    if (Input->use_writeMol2_score_cutoff){
+        printf("* %-30s %-66.2f*\n", "Cutoff in Overlay Score for Writting Mol2 files", Input->writeMol2_score_cutoff);
+    }
+    if (Input->use_writeMol2_energy_cutoff){
+        printf("* %-30s %-66.2f*\n", "Cutoff in Binding Energy for Writting Mol2 files", Input->writeMol2_energy_cutoff);
+    }
 	printf("*                                                                                                  *\n");
     printf("* %-30s %-66.66s*\n", "Ligand energy model", Input->ligand_energy_model.c_str());
     printf("* %-30s %-66.66s*\n", "Atomic FF model", Input->atomic_model_ff.c_str());
@@ -209,6 +223,14 @@ void WRITER::print_params(){
         break;
     case 3:
         fprintf(output, "* %-30s %-66.66s*\n", "scoring function", "Amber FF");
+        break;
+    case 4:
+        printf("* %-30s %-66.66s*\n", "scoring function", "Amber FF with Gaussian Weighted LJ Potential");
+        printf("* %-30s %-66.2f*\n", "LJ_sigma", Input->LJ_sigma);
+        break;
+    case 5:
+        printf("* %-30s %-66.66s*\n", "scoring function", "Amber FF with Gaussian Weighted LJ Potential + Desolvation");
+        printf("* %-30s %-66.2f*\n", "LJ_sigma", Input->LJ_sigma);
         break;
     }
     if (Input->use_pbsa){
@@ -267,6 +289,12 @@ void WRITER::print_params(){
     fprintf(output, "*                                                                                                  *\n");
     fprintf(output, "* %-30s %-66.66s*\n", "output_prefix", Input->output.c_str());
     fprintf(output, "* %-30s %-66d*\n", "write_mol2", Input->write_mol2);
+    if (Input->use_writeMol2_score_cutoff){
+        printf("* %-30s %-66.2f*\n", "Cutoff in Overlay Score for Writting Mol2 files", Input->writeMol2_score_cutoff);
+    }
+    if (Input->use_writeMol2_energy_cutoff){
+        printf("* %-30s %-66.2f*\n", "Cutoff in Binding Energy for Writting Mol2 files", Input->writeMol2_energy_cutoff);
+    }
 	fprintf(output, "*                                                                                                  *\n");
     fprintf(output, "* %-30s %-66.66s*\n", "Ligand energy model", Input->ligand_energy_model.c_str());
     fprintf(output, "* %-30s %-66.66s*\n", "Atomic FF model", Input->atomic_model_ff.c_str());
