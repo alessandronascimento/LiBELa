@@ -999,7 +999,7 @@ void TEMP_SCHEME::mcr_run(){
         for (int i=0; i<Input->mcr_size; i++){
             Input->bi = Input->mcr_coefficients[i];
             bt = Input->temp;
-            for (int j=0; j < i; j++){
+            for (int j=0; j <= i; j++){
                 bt = bt*Input->mcr_coefficients[j];
             }
 
@@ -1043,10 +1043,10 @@ void TEMP_SCHEME::mcr_run(){
         bt = Input->temp;
 
         if (Input->ligsim){
-            for (int i=0; i<Input->mcr_size; i++){
+            for (unsigned i=0; i<Input->mcr_size; i++){
                 Input->bi = Input->mcr_coefficients[i];
                 bt = Input->temp;
-                for (int j=0; j < i; j++){
+                for (unsigned j=0; j <= i; j++){
                     bt = bt*Input->mcr_coefficients[j];
                 }
                 EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, bt);
