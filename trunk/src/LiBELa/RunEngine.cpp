@@ -996,12 +996,41 @@ void TEMP_SCHEME::mcr_run(){
         double max_vol=0.0;
         double volume;
 
+        // Doing a equilibrium simulation at the default temperature
+        // before starting the recursion.
+
+        Input->bi = 1.0;
+        if (Input->use_grids){
+            EqMC->run(Grids, RefLig , LIG, LIG->xyz, Input, Input->temp);
+        }
+        else {
+            EqMC->run(REC, RefLig , LIG, LIG->xyz, Input, Input->temp);
+        }
+
+        volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
+
+        Writer->print_line();
+        sprintf(info, "%s", "Starting equilibrium simulation before recursion");
+        Writer->print_info(info);
+        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.4g", 0, 1.0, bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                EqMC->MCR_Boltzmann_weighted_stdev, log(double(EqMC->MCR_Boltzmann_weighted_average)), volume);
+        Writer->print_info(info);
+        Writer->print_line();
+
+
+        // Now starting the MC recursion...
+        //
+
         for (int i=0; i<Input->mcr_size; i++){
             Input->bi = Input->mcr_coefficients[i];
             bt = Input->temp;
             for (int j=0; j <= i; j++){
                 bt = bt*Input->mcr_coefficients[j];
             }
+
+            char buffer_output [Input->output.size()+10];
+            sprintf(buffer_output, "%s_MCR_%d", Input->output.c_str(), i);
+            Input->output = string(buffer_output);
 
             if (Input->use_grids){
                 EqMC->run(Grids, RefLig , LIG, LIG->xyz, Input, bt);
@@ -1039,8 +1068,23 @@ void TEMP_SCHEME::mcr_run(){
         double lig_max_vol = 0.0;
         double lig_volume = 0.0;
 
+        // Equilibration before recursion
 
-        bt = Input->temp;
+        Input->bi = 1.0;
+        Writer->print_line();
+        sprintf(info, "%s", "Starting equilibrium simulation before recursion");
+        Writer->print_info(info);
+
+        EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, Input->temp);
+
+        lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
+        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                EqMC->MCR_Boltzmann_weighted_stdev, log(double(EqMC->MCR_Boltzmann_weighted_average)), lig_volume);
+        Writer->print_info(info);
+        Writer->print_line();
+
+        // Now, starting the MC recursion
+        //
 
         if (Input->ligsim){
             for (unsigned i=0; i<Input->mcr_size; i++){
@@ -1049,11 +1093,15 @@ void TEMP_SCHEME::mcr_run(){
                 for (unsigned j=0; j <= i; j++){
                     bt = bt*Input->mcr_coefficients[j];
                 }
+
                 EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, bt);
+
                 lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
+
                 sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.4g", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
                         EqMC->MCR_Boltzmann_weighted_stdev, log(double(EqMC->MCR_Boltzmann_weighted_average)), lig_volume);
                 Writer->print_info(info);
+                Writer->print_line();
 
                 cum_W_lig += (log(double(EqMC->MCR_Boltzmann_weighted_average)));
                 cum_W_lig_err += double((1.0/double(EqMC->MCR_Boltzmann_weighted_average))*EqMC->MCR_Boltzmann_weighted_stdev);
