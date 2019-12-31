@@ -1012,7 +1012,7 @@ void TEMP_SCHEME::mcr_run(){
         Writer->print_line();
         sprintf(info, "%s", "Starting equilibrium simulation before recursion");
         Writer->print_info(info);
-        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.4g", 0, 1.0, bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
                 EqMC->MCR_Boltzmann_weighted_stdev, log(double(EqMC->MCR_Boltzmann_weighted_average)), volume);
         Writer->print_info(info);
         Writer->print_line();
