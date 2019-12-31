@@ -987,6 +987,7 @@ void TEMP_SCHEME::mcr_run(){
 
         sprintf(info, "MCR %7.7s %7.7s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "W(bt)" , "SD(exp)" ,"ln(W)", "Vol(A3)");
         Writer->print_info(info);
+        Writer->print_line();
 
         double bt;                          // MC Recursion "effective" temperature (bt) fot ith evaluation;
         double k = 0.0019858775203792202;   // Boltzmann constant in kcal/(mol.K)
@@ -1043,6 +1044,7 @@ void TEMP_SCHEME::mcr_run(){
 
             volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
 
+            Writer->print_line();
             sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.4g", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
                     EqMC->MCR_Boltzmann_weighted_stdev, log(double(EqMC->MCR_Boltzmann_weighted_average)), volume);
             Writer->print_info(info);
