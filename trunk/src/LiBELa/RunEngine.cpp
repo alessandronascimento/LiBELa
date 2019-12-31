@@ -1021,6 +1021,8 @@ void TEMP_SCHEME::mcr_run(){
         // Now starting the MC recursion...
         //
 
+        string mcr_output_prefix = Input->output;
+
         for (int i=0; i<Input->mcr_size; i++){
             Input->bi = Input->mcr_coefficients[i];
             bt = Input->temp;
@@ -1028,8 +1030,8 @@ void TEMP_SCHEME::mcr_run(){
                 bt = bt*Input->mcr_coefficients[j];
             }
 
-            char buffer_output [Input->output.size()+10];
-            sprintf(buffer_output, "%s_MCR_%d", Input->output.c_str(), i);
+            char buffer_output [mcr_output_prefix.size()+10];
+            sprintf(buffer_output, "%s_MCR_%d", mcr_output_prefix.c_str(), i);
             Input->output = string(buffer_output);
 
             if (Input->use_grids){
