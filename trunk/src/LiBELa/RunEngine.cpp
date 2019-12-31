@@ -985,11 +985,11 @@ void TEMP_SCHEME::mcr_run(){
             }
         }
 
-        sprintf(info, "MCR %7.7s %7.7s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "e(-(b-1)U/kT)" , "SD(exp)" ,"ln(W)", "Vol(A3)");
+        sprintf(info, "MCR %7.7s %7.7s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "W(bt)" , "SD(exp)" ,"ln(W)", "Vol(A3)");
         Writer->print_info(info);
 
-        double bt;                      // MC Recursion "effective" temperature (bt) fot ith evaluation;
-        double k = 0.0019858775203792202;
+        double bt;                          // MC Recursion "effective" temperature (bt) fot ith evaluation;
+        double k = 0.0019858775203792202;   // Boltzmann constant in kcal/(mol.K)
 
         double cum_W = 0.0;
         double cum_W_err = 0.0;
@@ -999,7 +999,7 @@ void TEMP_SCHEME::mcr_run(){
         // Doing a equilibrium simulation at the default temperature
         // before starting the recursion.
 
-        Input->bi = 1.0;
+        Input->bi = 2.0;
         if (Input->use_grids){
             EqMC->run(Grids, RefLig , LIG, LIG->xyz, Input, Input->temp);
         }
