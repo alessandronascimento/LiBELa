@@ -985,7 +985,7 @@ void TEMP_SCHEME::mcr_run(){
             }
         }
 
-        sprintf(info, "MCR %7.7s %7.7s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "W(bt)" , "SD(exp)" ,"ln(W)", "Vol(A3)");
+        sprintf(info, "MCR %7.7s %7.7s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "W(bt)" , "SD(exp)" ,"-kTln(W)", "Vol(A3)");
         Writer->print_info(info);
         Writer->print_line();
 
@@ -1014,7 +1014,7 @@ void TEMP_SCHEME::mcr_run(){
         sprintf(info, "%s", "Starting equilibrium simulation before recursion");
         Writer->print_info(info);
         sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
-                EqMC->MCR_Boltzmann_weighted_stdev, log(double(EqMC->MCR_Boltzmann_weighted_average)), volume);
+                EqMC->MCR_Boltzmann_weighted_stdev, -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), volume);
         Writer->print_info(info);
         Writer->print_line();
 
@@ -1046,7 +1046,7 @@ void TEMP_SCHEME::mcr_run(){
 
             Writer->print_line();
             sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.4g", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
-                    EqMC->MCR_Boltzmann_weighted_stdev, log(double(EqMC->MCR_Boltzmann_weighted_average)), volume);
+                    EqMC->MCR_Boltzmann_weighted_stdev, -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), volume);
             Writer->print_info(info);
             Writer->print_line();
 
@@ -1058,7 +1058,7 @@ void TEMP_SCHEME::mcr_run(){
         }
 
         Writer->print_line();
-        sprintf(info, "MCR: SUM of { ln [ <e^([-(b-1)]*U/kT)> ] } = %10.4g +/- %10.4g",  cum_W, cum_W_err);
+        sprintf(info, "MCR: SUM of { ln [ <e^([-(b-1)]*U/kT)> ] } * -kT = %10.4g +/- %10.4g",  -k*Input->temp*cum_W, k*Input->temp*cum_W_err);
         Writer->print_info(info);
 
         sprintf(info, "MCR: Volume: %10.4g.  ln(volume) = %10.4g",  volume, log(volume));
@@ -1083,7 +1083,7 @@ void TEMP_SCHEME::mcr_run(){
 
         lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
         sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
-                EqMC->MCR_Boltzmann_weighted_stdev, log(double(EqMC->MCR_Boltzmann_weighted_average)), lig_volume);
+                EqMC->MCR_Boltzmann_weighted_stdev, -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), lig_volume);
         Writer->print_info(info);
         Writer->print_line();
 
@@ -1103,7 +1103,7 @@ void TEMP_SCHEME::mcr_run(){
                 lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
 
                 sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.4g", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
-                        EqMC->MCR_Boltzmann_weighted_stdev, log(double(EqMC->MCR_Boltzmann_weighted_average)), lig_volume);
+                        EqMC->MCR_Boltzmann_weighted_stdev, -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), lig_volume);
                 Writer->print_info(info);
                 Writer->print_line();
 
@@ -1115,7 +1115,7 @@ void TEMP_SCHEME::mcr_run(){
             }
 
             Writer->print_line();
-            sprintf(info, "MCR: SUM of { ln [ <e^([-(b-1)]*U/kT)> ] } for the ligand = %10.4g +/- %10.4g",  cum_W_lig, cum_W_lig_err);
+            sprintf(info, "MCR: SUM of { ln [ <e^([-(b-1)]*U/kT)> ] } * -kT for the ligand = %10.4g +/- %10.4g",  -k*Input->temp*cum_W_lig, k*Input->temp*cum_W_lig_err);
             Writer->print_info(info);
 
             sprintf(info, "MCR: Ligand Volume: %10.4g.  ln(volume) = %10.4g",  lig_volume, log(lig_volume));
