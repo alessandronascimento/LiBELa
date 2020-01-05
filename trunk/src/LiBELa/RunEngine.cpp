@@ -985,7 +985,7 @@ void TEMP_SCHEME::mcr_run(){
             }
         }
 
-        sprintf(info, "MCR %7.7s %7.7s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %7.7s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "W(b,bt)" , "SD(W)" ,"-kTln(W)", "A_ex" , "Vol(A3)");
+        sprintf(info, "MCR %7.7s %7.7s %10.10s %10.10s %10.10s %10.10s %10.10s %7.7s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "W(b,bt)" , "-kTln(W)", "A_ex" , "Vol(A3)");
         Writer->print_info(info);
         Writer->print_line();
 
@@ -1014,8 +1014,8 @@ void TEMP_SCHEME::mcr_run(){
         Writer->print_line();
         sprintf(info, "%s", "Starting equilibrium simulation before recursion");
         Writer->print_info(info);
-        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.3f %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
-                EqMC->MCR_Boltzmann_weighted_stdev, -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W, volume);
+        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g %7.3f %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W, volume);
         Writer->print_info(info);
         Writer->print_line();
 
@@ -1048,8 +1048,8 @@ void TEMP_SCHEME::mcr_run(){
             cum_Ln_W += -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average));
 
             Writer->print_line();
-            sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.3f %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
-                    EqMC->MCR_Boltzmann_weighted_stdev, -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W, volume);
+            sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g %7.3f %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                    -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W, volume);
             Writer->print_info(info);
             Writer->print_line();
 
@@ -1086,8 +1086,8 @@ void TEMP_SCHEME::mcr_run(){
         EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, Input->temp);
 
         lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
-        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.7f %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
-                EqMC->MCR_Boltzmann_weighted_stdev, -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W_lig, lig_volume);
+        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g %7.7f %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W_lig, lig_volume);
         Writer->print_info(info);
         Writer->print_line();
 
@@ -1107,8 +1107,8 @@ void TEMP_SCHEME::mcr_run(){
                 lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
                 cum_Ln_W_lig += -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average));
 
-                sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.7f %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
-                        EqMC->MCR_Boltzmann_weighted_stdev, -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W_lig, lig_volume);
+                sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g %7.7f %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                        -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W_lig, lig_volume);
                 Writer->print_info(info);
                 Writer->print_line();
 
