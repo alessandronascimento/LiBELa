@@ -985,7 +985,7 @@ void TEMP_SCHEME::mcr_run(){
             }
         }
 
-        sprintf(info, "MCR %7.7s %7.7s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "W(bt)" , "SD(exp)" ,"-kTln(W)", "Vol(A3)");
+        sprintf(info, "MCR %7.7s %7.7s %10.10s %10.10s %10.10s %10.10s %10.10s %10.10s %7.7s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "W(b,bt)" , "SD(W)" ,"-kTln(W)", "A_ex" , "Vol(A3)");
         Writer->print_info(info);
         Writer->print_line();
 
@@ -996,6 +996,7 @@ void TEMP_SCHEME::mcr_run(){
         double cum_W_err = 0.0;
         double max_vol=0.0;
         double volume;
+        double cum_Ln_W = 0.0;
 
         // Doing a equilibrium simulation at the default temperature
         // before starting the recursion.
@@ -1013,8 +1014,8 @@ void TEMP_SCHEME::mcr_run(){
         Writer->print_line();
         sprintf(info, "%s", "Starting equilibrium simulation before recursion");
         Writer->print_info(info);
-        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
-                EqMC->MCR_Boltzmann_weighted_stdev, -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), volume);
+        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.3f %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                EqMC->MCR_Boltzmann_weighted_stdev, -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W, volume);
         Writer->print_info(info);
         Writer->print_line();
 
@@ -1044,9 +1045,11 @@ void TEMP_SCHEME::mcr_run(){
 
             volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
 
+            cum_Ln_W += -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average));
+
             Writer->print_line();
-            sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.4g", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
-                    EqMC->MCR_Boltzmann_weighted_stdev, -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), volume);
+            sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.3f %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                    EqMC->MCR_Boltzmann_weighted_stdev, -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W, volume);
             Writer->print_info(info);
             Writer->print_line();
 
@@ -1058,7 +1061,7 @@ void TEMP_SCHEME::mcr_run(){
         }
 
         Writer->print_line();
-        sprintf(info, "MCR: SUM of { ln [ <e^([-(b-1)]*U/kT)> ] } * -kT = %10.4g +/- %10.4g",  -k*Input->temp*cum_W, k*Input->temp*cum_W_err);
+        sprintf(info, "MCR: A_excess = %10.4g +/- %10.4g",  -k*Input->temp*cum_W, k*Input->temp*cum_W_err);
         Writer->print_info(info);
 
         sprintf(info, "MCR: Volume: %10.4g.  ln(volume) = %10.4g",  volume, log(volume));
@@ -1071,6 +1074,7 @@ void TEMP_SCHEME::mcr_run(){
         double cum_W_lig_err = 0.0;
         double lig_max_vol = 0.0;
         double lig_volume = 0.0;
+        double cum_Ln_W_lig = 0.0;
 
         // Equilibration before recursion
 
@@ -1082,8 +1086,8 @@ void TEMP_SCHEME::mcr_run(){
         EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, Input->temp);
 
         lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
-        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
-                EqMC->MCR_Boltzmann_weighted_stdev, -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), lig_volume);
+        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.7f %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                EqMC->MCR_Boltzmann_weighted_stdev, -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W_lig, lig_volume);
         Writer->print_info(info);
         Writer->print_line();
 
@@ -1101,9 +1105,10 @@ void TEMP_SCHEME::mcr_run(){
                 EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, bt);
 
                 lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
+                cum_Ln_W_lig += -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average));
 
-                sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.4g", i+1, Input->mcr_coefficients[i], bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
-                        EqMC->MCR_Boltzmann_weighted_stdev, -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), lig_volume);
+                sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %10.4g %7.7f %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                        EqMC->MCR_Boltzmann_weighted_stdev, -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W_lig, lig_volume);
                 Writer->print_info(info);
                 Writer->print_line();
 
@@ -1115,7 +1120,7 @@ void TEMP_SCHEME::mcr_run(){
             }
 
             Writer->print_line();
-            sprintf(info, "MCR: SUM of { ln [ <e^([-(b-1)]*U/kT)> ] } * -kT for the ligand = %10.4g +/- %10.4g",  -k*Input->temp*cum_W_lig, k*Input->temp*cum_W_lig_err);
+            sprintf(info, "MCR: A_excess for the ligand = %10.4g +/- %10.4g",  -k*Input->temp*cum_W_lig, k*Input->temp*cum_W_lig_err);
             Writer->print_info(info);
 
             sprintf(info, "MCR: Ligand Volume: %10.4g.  ln(volume) = %10.4g",  lig_volume, log(lig_volume));
