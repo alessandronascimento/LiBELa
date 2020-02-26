@@ -8,65 +8,11 @@
 #include "../LiBELa/COORD_MC.cpp"
 #include <openbabel/mol.h>
 #include <openbabel/obconversion.h>
-#include <openbabel/rotor.h>
-#include <openbabel/conformersearch.h>
-#include <openbabel/shared_ptr.h>
 #include <openbabel/forcefield.h>
 #include <openbabel/math/vector3.h>
 
 
 using namespace std;
-
-
-double* copy_to_obmol(vector<vector<double> > vec_xyz){
-    double *myxyz = new double[vec_xyz.size()*3];
-    for (unsigned i=0; i<vec_xyz.size(); i++){
-        myxyz[3*i] = vec_xyz[i][0];
-        myxyz[(3*i)+1] = vec_xyz[i][1];
-        myxyz[(3*i)+2] = vec_xyz[i][2];
-    }
-    return myxyz;
-}
-
-vector<vector<double> > copy_from_obmol(shared_ptr<OBMol> mymol){
-    vector<vector<double > > vec_xyz;
-    vector<double> tmp(3);
-    double *myxyz = new double[mymol->NumAtoms()*3];
-    myxyz = mymol->GetCoordinates();
-    for (unsigned i=0; i < mymol->NumAtoms(); i++){
-        tmp[0] = (myxyz[3*i]);
-        tmp[1] = (myxyz[(3*i)+1]);
-        tmp[2] = (myxyz[(3*i)+2]);
-        vec_xyz.push_back(tmp);
-    }
-
-    tmp.clear();
-//    delete[] myxyz;
-    return vec_xyz;
-}
-
-shared_ptr<OBMol> GetMol(const std::string &molfile){
-    shared_ptr<OBMol> mol(new OBMol);
-
-    OBConversion conv;
-    OBFormat *format = conv.FormatFromExt(molfile.c_str());
-    if (!format || !conv.SetInFormat(format)) {
-    std::cout << "Could not find input format for file " << molfile << endl;
-    return mol;
-  }
-
-    ifstream ifs(molfile.c_str());
-    if (!ifs) {
-        std::cout << "Could not open " << molfile << " for reading." << endl;
-        return mol;
-    }
-
-    if (!conv.Read(mol.get(), &ifs)) {
-        std::cout << "Could not read molecule from file " << molfile << endl;
-        return mol;
-    }
-    return mol;
-}
 
 int main(int argc, char* argv[]) {
 
@@ -83,11 +29,13 @@ int main(int argc, char* argv[]) {
 
 
     if (argc < 2){
-            printf("Usage: %s file.mol2 [input_file]\n", argv[0]);
-            exit(1);
+        printf("Usage: %s file.mol2 [input_file]\n", argv[0]);
+        exit(1);
     }
 
     PARSER* Input = new PARSER;
+    Mol2* Mol = new Mol2(Input, string(argv[1]));
+    WRITER* Writer = new WRITER("McConf", Input);
 
     if (argc > 2){
         Input->set_parameters(argv[2]);
@@ -96,74 +44,107 @@ int main(int argc, char* argv[]) {
     Input->write_mol2 = true;
     Input->dock_mode = true;
 
-    Mol2* Mol = new Mol2(Input, string(argv[1]));
 
-    WRITER* Writer = new WRITER("McConf", Input);
-
-    shared_ptr<OBMol> mol;
-    OBForceField* OBff;
-    OBRotorList RotorList;
-    OBRotorIterator RotorIterator;
-    OBRotor *Rotor;
-    vector<vector<int> > atoms_in_dihedrals;
-    mol = GetMol(string(argv[1]));
-    OBff = OBForceField::FindForceField("GAFF");
-
-
-    if (!OBff){
-        cout << "Could not find FF GAFF!" << endl;
+    bool file_read;
+    OBMol mol;
+    OBConversion* conv = new OBConversion;
+    OBFormat *format = conv->FormatFromExt(argv[1]);
+    if (!format || !conv->SetInFormat(format)) {
+        printf("Could not find input format for file\n");
         exit(1);
     }
 
-    OBff->Setup(*mol);
-    OBff->GetCoordinates(*mol);
-    OBff->SteepestDescent(100, 1.0e-10);
-    OBff->GetCoordinates(*mol);
-    Mol->xyz = copy_from_obmol(mol);
-    RotorList.Setup(*mol);
-    Rotor = RotorList.BeginRotor(RotorIterator);
-    mol->ToInertialFrame();
-
-
-    vector<int> tmp(4);
-    char info[98];
-    sprintf(info, "Found %d rotatable bonds in ligand %s.", int(RotorList.Size()), Mol->molname.c_str());
-    Writer->print_info(info);
-    Writer->print_line();
-
-    for (unsigned i = 0; i < RotorList.Size() ; ++i, Rotor = RotorList.NextRotor(RotorIterator)) {
-        tmp = Rotor->GetDihedralAtoms();
-        printf("%d %d %d %d\n", tmp[0], tmp[1], tmp[2], tmp[3]);
-        atoms_in_dihedrals.push_back(tmp);
-        tmp.clear();
+    ifstream ifs(argv[1]);
+    if (!ifs) {
+        printf("Could not open %s for reading\n", argv[1]);
+        exit(1);
     }
 
-// End of file parsing
+    if (!conv->Read(&mol, &ifs)) {
+        printf("Could not read molecule from file\n");
+        exit(1);
+    }
 
-    double* myxyz = new double[mol->NumAtoms()*3];
+    OBMol* ref_mol = new OBMol;
+    ifstream ifs2(argv[1]);
+    conv->Read(ref_mol, &ifs2);
 
-    myxyz = copy_to_obmol(Mol->xyz);
-    mol->SetCoordinates(myxyz);
-    vector<vector<double> > new_xyz;
+    delete conv;
+    format->~OBFormat();
 
-    double ene;
+    OBForceField* OBff = OBForceField::FindForceField("GAFF");
 
-    double current_angle, new_angle;
-    for (unsigned i=0; i< RotorList.Size(); i++){
-        for (int j=0; j<360; j=j+10){
-            current_angle = mol->GetTorsion(mol->GetAtom(atoms_in_dihedrals[i][0]), mol->GetAtom(atoms_in_dihedrals[i][1]), mol->GetAtom(atoms_in_dihedrals[i][2]), mol->GetAtom(atoms_in_dihedrals[i][3]));
-            new_angle = current_angle + (j*1.0) ;
-            mol->SetTorsion(mol->GetAtom(atoms_in_dihedrals[i][0]), mol->GetAtom(atoms_in_dihedrals[i][1]), mol->GetAtom(atoms_in_dihedrals[i][2]), mol->GetAtom(atoms_in_dihedrals[i][3]), new_angle*PI/180.);
-            OBff->Setup(*mol);
-            ene = OBff->Energy();
-            new_xyz = copy_from_obmol(mol);
-            Writer->writeMol2(Mol, new_xyz, ene, 0.0);
+    if (!OBff){
+        printf("Could not find OpenBabel FF parameters!\n");
+        exit(1);
+    }
+
+    // Original conformation energy
+    OBff->Setup(mol);
+    mol.SetTotalCharge(mol.GetTotalCharge());
+    double energy = OBff->Energy();
+    if (OBff->GetUnit() == "kJ/mol"){       // Converting to kcal/mol, if needed.
+        energy = energy/4.18;
+    }
+
+    printf("Original energy for molecule %s: %10.4f\n", argv[1], energy);
+
+    // Conformer Search
+    OBff->DiverseConfGen(0.5, 1000, 50.0, false);
+    OBff->GetConformers(mol);
+
+    double rmsd;
+
+    if (mol.NumConformers() > 0){
+        for (int i=0; i<mol.NumConformers(); i++){
+            double *xyz = new double [mol.NumAtoms()*3];
+            vector<double> v3;
+            vector<vector<double> > xyz_tmp;
+            mol.SetConformer(i);
+            OBff->Setup(mol);
+            OBff->GetCoordinates(mol);
+            energy = OBff->Energy();
+            if (OBff->GetUnit() == "kJ/mol"){       // Converting to kcal/mol, if needed.
+                energy = energy/4.18;
+            }
+
+            OBAlign* align = new OBAlign;
+            align->SetRefMol(*ref_mol);
+            align->SetTargetMol(mol);
+            align->Align();
+            rmsd = align->GetRMSD();
+            align->UpdateCoords(&mol);
+
+            printf("Energy/RMSD for conformer [%3d]: %10.4f kcal/mol / %10.4f Ang\n", i, energy, rmsd);
+
+            delete align;
+
+            xyz = mol.GetCoordinates();
+            for (unsigned j=0; j<mol.NumAtoms(); j++){
+                v3.push_back(xyz[3*j]);
+                v3.push_back(xyz[(3*j)+1]);
+                v3.push_back(xyz[(3*j)+2]);
+                xyz_tmp.push_back(v3);
+                v3.clear();
+            }
+
+            Writer->writeMol2(Mol,xyz_tmp, energy, rmsd, "McConf");
+            xyz_tmp.clear();
+            delete[] xyz;
         }
+        file_read = true;
     }
+    else {
+        file_read = false;
+    }
+
+    printf("Number of conformers: %4d\n", mol.NumConformers());
+
+    delete ref_mol;
 
     delete Writer;
     delete Mol;
     delete Input;
 
-    return 0;
+    return (file_read);
 }
