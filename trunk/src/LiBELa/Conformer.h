@@ -10,8 +10,6 @@
 
 #include <openbabel/mol.h>
 #include <openbabel/obconversion.h>
-#include <openbabel/conformersearch.h>
-#include <openbabel/shared_ptr.h>
 #include <openbabel/forcefield.h>
 #include <openbabel/math/align.h>
 #include <vector>
@@ -48,26 +46,15 @@ public:
      * @return a OBMol type with the molecule characteristics.
      */
     OBMol GetMol(const string &molfile);
-//    shared_ptr<OBMol> GetMol(const string &molfile);
     //!
     /**
-     * @brief generate_conformers_GA Generates molecule conformers using Genetic Algorithm, as implemented in OpenBabel
+     * @brief generate_conformers_confab Generates molecule conformers using confab, as implemented in OpenBabel 3.0
      * @param Input Pointer to the PARSER object
      * @param Lig Pointer to the Mol2 object
      * @param molfile C++ string with the MOL2 file to be processed.
      * @return true if generations successeds or false elsewhere
      */
-    bool generate_conformers_GA(PARSER* Input, Mol2* Lig, string molfile);
-
-    /**
-     * @brief generate_conformers_WRS Generates molecule conformers using the weighted rotor search, as implemented in OpenBabel
-     * @param Input Pointer to the PARSER object
-     * @param Lig Pointer to the Mol2 object
-     * @param molfile C++ string with the MOL2 file to be processed.
-     * @return true if generations successeds or false elsewhere
-     */
-    bool generate_conformers_WRS(PARSER* Input, Mol2* Lig, string molfile);
-
+    bool generate_conformers_confab(PARSER* Input, Mol2* Lig, string molfile);
 };
 
 #endif /* CONFORMER_H_ */

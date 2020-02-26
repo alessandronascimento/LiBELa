@@ -24,7 +24,7 @@ TEMP_SCHEME::TEMP_SCHEME(int ac, char *av[]){
     LIG = new Mol2(Input, Input->lig_mol2);
     RefLig = new Mol2(Input, Input->reflig_mol2);
 
-//    RAND Rand;
+    //    RAND Rand;
 
     Ene = new Energy2(Input);
 }
@@ -538,41 +538,27 @@ void TEMP_SCHEME::dock_run(){
                     counter++;
                     if (Input->generate_conformers){
                         Conformer* Conf = new Conformer;
-                        if (Input->conformer_generator == "GA"){
-                            if (Conf->generate_conformers_GA(Input, Lig2, ligand)){
-                                if (Input->use_grids){
-                                    Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, Grids, counter);
-                                    delete Dock;
-                                }
-                                else {
-                                    Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, counter);
-                                    delete Dock;
-                                }
+                        if (Conf->generate_conformers_confab(Input, Lig2, ligand)){
+                            if (Input->use_grids){
+                                Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, Grids, counter);
+                                delete Dock;
                             }
-                            else{ 																//test: in case generate_conformers does not succeed.
-                                Lig2->mcoords.push_back(Lig2->xyz);
-                                if (Input->use_grids){
-                                    Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, Grids, counter);
-                                    delete Dock;
-                                }
-                                else {
-                                    Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, counter);
-                                    delete Dock;
-                                }
-
+                            else {
+                                Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, counter);
+                                delete Dock;
                             }
                         }
-                        else {
-                            if(Conf->generate_conformers_WRS(Input, Lig2, ligand)){
-                                if (Input->use_grids){
-                                    Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, Grids, counter);
-                                    delete Dock;
-                                }
-                                else {
-                                    Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, counter);
-                                    delete Dock;
-                                }
+                        else{ 																//test: in case generate_conformers does not succeed.
+                            Lig2->mcoords.push_back(Lig2->xyz);
+                            if (Input->use_grids){
+                                Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, Grids, counter);
+                                delete Dock;
                             }
+                            else {
+                                Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, counter);
+                                delete Dock;
+                            }
+
                         }
                         Conf->~Conformer();
                         delete Conf;
@@ -601,27 +587,14 @@ void TEMP_SCHEME::dock_run(){
             counter=1; 														// just one ligand
             if (Input->generate_conformers){
                 Conformer* Conf = new Conformer;
-                if (Input->conformer_generator == "GA"){
-                    Conf->generate_conformers_GA(Input, LIG, Input->lig_mol2);
-                    if (Input->use_grids){
-                        Docker* Dock = new Docker(REC, LIG, RefLig, center, Input, Writer, Grids, counter);
-                        delete Dock;
-                    }
-                    else {
-                        Docker* Dock = new Docker(REC, LIG, RefLig, center, Input, Writer, counter);
-                        delete Dock;
-                    }
+                Conf->generate_conformers_confab(Input, LIG, Input->lig_mol2);
+                if (Input->use_grids){
+                    Docker* Dock = new Docker(REC, LIG, RefLig, center, Input, Writer, Grids, counter);
+                    delete Dock;
                 }
                 else {
-                    Conf->generate_conformers_WRS(Input, LIG, Input->lig_mol2);
-                    if (Input->use_grids){
-                        Docker* Dock = new Docker(REC, LIG, RefLig, center, Input, Writer, Grids, counter);
-                        delete Dock;
-                    }
-                    else {
-                        Docker* Dock = new Docker(REC, LIG, RefLig, center, Input, Writer, counter);
-                        delete Dock;
-                    }
+                    Docker* Dock = new Docker(REC, LIG, RefLig, center, Input, Writer, counter);
+                    delete Dock;
                 }
                 delete Conf;
             }
@@ -684,12 +657,7 @@ int TEMP_SCHEME::dock_serial(vector<string> ligand_list, int count, int chunck_s
         if (lig_is_opened){
             if (Input->generate_conformers){
                 Conformer* Conf = new Conformer;
-                if (Input->conformer_generator == "GA"){
-                    Conf->generate_conformers_GA(Input, Lig2, ligand_list[i]);
-                }
-                else {
-                    Conf->generate_conformers_WRS(Input, Lig2, ligand_list[i]);
-                }
+                Conf->generate_conformers_confab(Input, Lig2, ligand_list[i]);
                 delete Conf;
             }
             if (Input->use_grids){
@@ -710,11 +678,11 @@ int TEMP_SCHEME::dock_serial(vector<string> ligand_list, int count, int chunck_s
 int TEMP_SCHEME::dock_concurrent_function(string mylig){
     Mol2* Lig2 = new Mol2(Input, mylig);
 
-    if (Input->generate_conformers and Input->conformer_generator == "GA"){
+    if (Input->generate_conformers){
         Conformer* Conf = new Conformer;
 #pragma omp critical
         {
-            Conf->generate_conformers_GA(Input, Lig2, mylig);
+            Conf->generate_conformers_confab(Input, Lig2, mylig);
         }
         delete Conf;
     }
@@ -744,7 +712,7 @@ void TEMP_SCHEME::dock_parallel(){
     vector<string> ligand_list;
 
 
-/* Here, we read the multifile file and parse the files of the molecules
+    /* Here, we read the multifile file and parse the files of the molecules
  * to be docked into a std::vector named ligand_list.
  */
 
@@ -765,7 +733,7 @@ void TEMP_SCHEME::dock_parallel(){
 
         multifile.close();
 
-/*
+        /*
  * Here the parallel processing begins. Firstly, a parallel section is created with a pragma
  * indicating the number of parallel threads as defined in the input file.
  * After, the molecule objects are created and conformers are calculated using OpenBabel.
@@ -794,12 +762,7 @@ void TEMP_SCHEME::dock_parallel(){
                         Conformer* Conf = new Conformer;
 #pragma omp critical
                         {
-                            if (Input->conformer_generator == "GA"){
-                                Conf->generate_conformers_GA(Input, Lig2, ligand_list[i]);
-                            }
-                            else {
-                                Conf->generate_conformers_WRS(Input, Lig2, ligand_list[i]);
-                            }
+                            Conf->generate_conformers_confab(Input, Lig2, ligand_list[i]);
                         }
                         delete Conf;
                         if (Input->use_grids){
@@ -934,16 +897,9 @@ void TEMP_SCHEME::eq_run(){
     if (Input->eq_mode){
         MC* EqMC = new MC(LIG, Input, Writer);
         if (Input->generate_conformers){
-            if (Input->conformer_generator == "GA"){
-                Conformer* Conf = new Conformer;
-                Conf->generate_conformers_GA(Input, LIG, Input->lig_mol2);
-                delete Conf;
-            }
-            else {
-                Conformer* Conf = new Conformer;
-                Conf->generate_conformers_WRS(Input, LIG, Input->lig_mol2);
-                delete Conf;
-            }
+            Conformer* Conf = new Conformer;
+            Conf->generate_conformers_confab(Input, LIG, Input->lig_mol2);
+            delete Conf;
         }
 
         if (Input->use_grids){
@@ -973,16 +929,9 @@ void TEMP_SCHEME::mcr_run(){
 
         MC* EqMC = new MC(LIG, Input, Writer);
         if (Input->generate_conformers){
-            if (Input->conformer_generator == "GA"){
-                Conformer* Conf = new Conformer;
-                Conf->generate_conformers_GA(Input, LIG, Input->lig_mol2);
-                delete Conf;
-            }
-            else {
-                Conformer* Conf = new Conformer;
-                Conf->generate_conformers_WRS(Input, LIG, Input->lig_mol2);
-                delete Conf;
-            }
+            Conformer* Conf = new Conformer;
+            Conf->generate_conformers_confab(Input, LIG, Input->lig_mol2);
+            delete Conf;
         }
 
         sprintf(info, "MCR %7.7s %7.7s %10.10s %10.10s %10.10s %10.10s %10.10s %7.7s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "W(b,bt)" , "-kTln(W)", "A_ex" , "Vol(A3)");
@@ -1166,78 +1115,65 @@ void TEMP_SCHEME::run_dock_gui(PARSER* Input, QProgressBar* progressbar){
                 counter++;
                 if (Input->generate_conformers){                             // has conformers
                     Conformer* Conf = new Conformer;
-                    if (Input->conformer_generator == "GA"){
-                        if (Conf->generate_conformers_GA(Input, Lig2, ligand)){
-                            if (Input->use_grids){
-                                Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, Grids, i);
-                                delete Dock;
-                            }
-                            else {
-                                Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, i);
-                                delete Dock;
-                            }
+                    if (Conf->generate_conformers_confab(Input, Lig2, ligand)){
+                        if (Input->use_grids){
+                            Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, Grids, i);
+                            delete Dock;
                         }
-                        else{ 																//test: in case generate_conformers does not succeed.
-                            Lig2->mcoords.push_back(Lig2->xyz);
-                            if (Input->use_grids){
-                                Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, Grids, i);
-                                delete Dock;
-                            }
-                            else {
-                                Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, i);
-                                delete Dock;
-                            }
+                        else {
+                            Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, i);
+                            delete Dock;
+                        }
+                    }
+                    else{ 																//test: in case generate_conformers does not succeed.
+                        Lig2->mcoords.push_back(Lig2->xyz);
+                        if (Input->use_grids){
+                            Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, Grids, i);
+                            delete Dock;
+                        }
+                        else {
+                            Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, i);
+                            delete Dock;
+                        }
 
-                        }
                     }
-                    else {
-                        if(Conf->generate_conformers_WRS(Input, Lig2, ligand)){
-                            if (Input->use_grids){
-                                Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, Grids, i);
-                                delete Dock;
-                            }
-                            else {
-                                Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, i);
-                                delete Dock;
-                            }
-                        }
-                    }
-                    Conf->~Conformer();
-                    delete Conf;
                 }
-                else {                                            // single conformation
-                    if (Input->use_grids){
-                        Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, Grids, i);
-                        delete Dock;
-                    }
-                    else {
-                        Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, i);
-                        delete Dock;
-                    }
-
-                }
-                delete Lig2;
-                progressbar->setValue(int(((i+1)*100)/Input->docking_molecules.size()));
+                Conf->~Conformer();
+                delete Conf;
             }
-        }
-        else {
-            this->dock_parallel_gui(Input, progressbar);
-        }
+            else {                                            // single conformation
+                if (Input->use_grids){
+                    Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, Grids, i);
+                    delete Dock;
+                }
+                else {
+                    Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, i);
+                    delete Dock;
+                }
 
-
-        QWriter->print_line();
-        sprintf(info, "Min Status:");
-        QWriter->print_info(info);
-        sprintf(info, "    Failure = -1, Out of memory = -3, Roundoff limited = -4, Forced stop = -5,");
-        QWriter->print_info(info);
-        sprintf(info, "    Stopval reached = 2, Ftol reached = 3, Xtol reached = 4, Maxeval reached=5, Maxtime reached=6");
-        QWriter->print_info(info);
-        QWriter->print_line();
-        tf = clock()-ti;
-        sprintf(info, " Docking computations took %d minute(s)", int((tf/CLOCKS_PER_SEC)/60));
-        QWriter->print_info(info);
-        QWriter->print_line();
+            }
+            delete Lig2;
+            progressbar->setValue(int(((i+1)*100)/Input->docking_molecules.size()));
+        }
     }
+    else {
+        this->dock_parallel_gui(Input, progressbar);
+    }
+
+
+    QWriter->print_line();
+    sprintf(info, "Min Status:");
+    QWriter->print_info(info);
+    sprintf(info, "    Failure = -1, Out of memory = -3, Roundoff limited = -4, Forced stop = -5,");
+    QWriter->print_info(info);
+    sprintf(info, "    Stopval reached = 2, Ftol reached = 3, Xtol reached = 4, Maxeval reached=5, Maxtime reached=6");
+    QWriter->print_info(info);
+    QWriter->print_line();
+    tf = clock()-ti;
+    sprintf(info, " Docking computations took %d minute(s)", int((tf/CLOCKS_PER_SEC)/60));
+    QWriter->print_info(info);
+    QWriter->print_line();
+}
 }
 
 void TEMP_SCHEME::dock_parallel_gui(PARSER* Input, QProgressBar *progressbar){
@@ -1267,12 +1203,7 @@ void TEMP_SCHEME::dock_parallel_gui(PARSER* Input, QProgressBar *progressbar){
                     Conformer* Conf = new Conformer;
 #pragma omp critical
                     {
-                        if (Input->conformer_generator == "GA"){
-                            Conf->generate_conformers_GA(Input, Lig2, Input->docking_molecules[i].toStdString());
-                        }
-                        else {
-                            Conf->generate_conformers_WRS(Input, Lig2, Input->docking_molecules[i].toStdString());
-                        }
+                        Conf->generate_conformers_confab(Input, Lig2, Input->docking_molecules[i].toStdString());
                     }
                     delete Conf;
                     if (Input->use_grids){

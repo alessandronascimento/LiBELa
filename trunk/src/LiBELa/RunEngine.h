@@ -35,6 +35,7 @@
 
 #ifdef HAS_MPI
 #include <boost/mpi.hpp>
+#include <boost/serialization/vector.hpp>
 using namespace boost;
 #endif
 
