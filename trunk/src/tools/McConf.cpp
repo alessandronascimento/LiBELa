@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
 
 
     bool file_read;
-    OBMol mol;
+    OBMol* mol = new OBMol;
     OBConversion* conv = new OBConversion;
     OBFormat *format = conv->FormatFromExt(argv[1]);
     if (!format || !conv->SetInFormat(format)) {
@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
 
-    if (!conv->Read(&mol, &ifs)) {
+    if (!conv->Read(mol, &ifs)) {
         printf("Could not read molecule from file\n");
         exit(1);
     }
@@ -80,8 +80,8 @@ int main(int argc, char* argv[]) {
     }
 
     // Original conformation energy
-    OBff->Setup(mol);
-    mol.SetTotalCharge(mol.GetTotalCharge());
+    OBff->Setup(*mol);
+    mol->SetTotalCharge(mol->GetTotalCharge());
     double energy = OBff->Energy();
     if (OBff->GetUnit() == "kJ/mol"){       // Converting to kcal/mol, if needed.
         energy = energy/4.18;
@@ -91,18 +91,25 @@ int main(int argc, char* argv[]) {
 
     // Conformer Search
     OBff->DiverseConfGen(0.5, 1000, 50.0, false);
-    OBff->GetConformers(mol);
+    OBff->GetConformers(*mol);
 
     double rmsd;
+    int generated_conformers=0;
+    if (mol->NumConformers() > Input->lig_conformers){
+        generated_conformers = Input->lig_conformers;
+    }
+    else {
+        generated_conformers = mol->NumConformers();
+    }
 
-    if (mol.NumConformers() > 0){
-        for (int i=0; i<mol.NumConformers(); i++){
-            double *xyz = new double [mol.NumAtoms()*3];
+    if (mol->NumConformers() > 0){
+        for (int i=0; i<generated_conformers; i++){
+            double *xyz = new double [mol->NumAtoms()*3];
             vector<double> v3;
             vector<vector<double> > xyz_tmp;
-            mol.SetConformer(i);
-            OBff->Setup(mol);
-            OBff->GetCoordinates(mol);
+            mol->SetConformer(i);
+            OBff->Setup(*mol);
+            OBff->GetCoordinates(*mol);
             energy = OBff->Energy();
             if (OBff->GetUnit() == "kJ/mol"){       // Converting to kcal/mol, if needed.
                 energy = energy/4.18;
@@ -110,17 +117,17 @@ int main(int argc, char* argv[]) {
 
             OBAlign* align = new OBAlign;
             align->SetRefMol(*ref_mol);
-            align->SetTargetMol(mol);
+            align->SetTargetMol(*mol);
             align->Align();
             rmsd = align->GetRMSD();
-            align->UpdateCoords(&mol);
+            align->UpdateCoords(mol);
 
             printf("Energy/RMSD for conformer [%3d]: %10.4f kcal/mol / %10.4f Ang\n", i, energy, rmsd);
 
             delete align;
 
-            xyz = mol.GetCoordinates();
-            for (unsigned j=0; j<mol.NumAtoms(); j++){
+            xyz = mol->GetCoordinates();
+            for (unsigned j=0; j<mol->NumAtoms(); j++){
                 v3.push_back(xyz[3*j]);
                 v3.push_back(xyz[(3*j)+1]);
                 v3.push_back(xyz[(3*j)+2]);
@@ -138,7 +145,7 @@ int main(int argc, char* argv[]) {
         file_read = false;
     }
 
-    printf("Number of conformers: %4d\n", mol.NumConformers());
+    printf("Number of conformers: %4d\n", generated_conformers);
 
     delete ref_mol;
 

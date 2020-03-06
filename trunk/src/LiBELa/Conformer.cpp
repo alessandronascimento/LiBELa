@@ -29,9 +29,9 @@ OBMol Conformer::GetMol(const std::string &molfile){
     OBMol mol;
 
     // Create the OBConversion object.
-    OBConversion conv;
-    OBFormat *format = conv.FormatFromExt(molfile.c_str());
-    if (!format || !conv.SetInFormat(format)) {
+    OBConversion* conv = new OBConversion;
+    OBFormat *format = conv->FormatFromExt(molfile.c_str());
+    if (!format || !conv->SetInFormat(format)) {
     printf("Could not find input format for file\n");
     return mol;
   }
@@ -43,19 +43,22 @@ OBMol Conformer::GetMol(const std::string &molfile){
         return mol;
     }
     // Read the molecule.
-    if (!conv.Read(&mol, &ifs)) {
+    if (!conv->Read(&mol, &ifs)) {
         printf("Could not read molecule from file\n");
         return mol;
     }
+
+    delete conv;
+
     return mol;
 }
 
 bool Conformer::generate_conformers_confab(PARSER* Input, Mol2* Lig, string molfile){
     bool file_read;
     OBMol* mol = new OBMol;
-    OBConversion conv;
-    OBFormat *format = conv.FormatFromExt(molfile.c_str());
-    if (!format || !conv.SetInFormat(format)) {
+    OBConversion* conv = new OBConversion;
+    OBFormat *format = conv->FormatFromExt(molfile.c_str());
+    if (!format || !conv->SetInFormat(format)) {
     printf("Could not find input format for file\n");
     exit(1);
   }
@@ -66,13 +69,15 @@ bool Conformer::generate_conformers_confab(PARSER* Input, Mol2* Lig, string molf
         exit(1);
     }
 
-    if (!conv.Read(mol, &ifs)) {
+    if (!conv->Read(mol, &ifs)) {
         printf("Could not read molecule from file\n");
         exit(1);
     }
 
     OBMol* ref_mol = new OBMol;
     ref_mol = mol;
+
+    delete conv;
 
     OBForceField* OBff;
     if (Input->ligand_energy_model == "GAFF" or Input->ligand_energy_model == "gaff"){
@@ -103,11 +108,19 @@ bool Conformer::generate_conformers_confab(PARSER* Input, Mol2* Lig, string molf
     Lig->mcoords.push_back(Lig->xyz);
 
 // Conformer Search
-    OBff->DiverseConfGen(0.5, Input->lig_conformers, 50.0, false);
+    OBff->DiverseConfGen(0.5, 1000, 50.0, false);
     OBff->GetConformers(*mol);
 
+    int generated_conformers=0;
+    if (mol->NumConformers() > Input->lig_conformers){
+        generated_conformers = Input->lig_conformers;
+    }
+    else {
+        generated_conformers = mol->NumConformers();
+    }
+
     if (mol->NumConformers() > 0){
-        for (int i=0; i<mol->NumConformers(); i++){
+        for (int i=0; i<generated_conformers; i++){
             double* xyz = new double[mol->NumAtoms()*3];
             vector<double> v3;
             vector<vector<double> > xyz_tmp;
@@ -146,6 +159,5 @@ bool Conformer::generate_conformers_confab(PARSER* Input, Mol2* Lig, string molf
         file_read = false;
     }
     delete ref_mol;
-    delete mol;
     return file_read;
  }
