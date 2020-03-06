@@ -1137,43 +1137,42 @@ void TEMP_SCHEME::run_dock_gui(PARSER* Input, QProgressBar* progressbar){
                         }
 
                     }
+                    Conf->~Conformer();
+                    delete Conf;
                 }
-                Conf->~Conformer();
-                delete Conf;
-            }
-            else {                                            // single conformation
-                if (Input->use_grids){
-                    Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, Grids, i);
-                    delete Dock;
-                }
-                else {
-                    Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, i);
-                    delete Dock;
-                }
+                else {                                            // single conformation
+                    if (Input->use_grids){
+                        Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, Grids, i);
+                        delete Dock;
+                    }
+                    else {
+                        Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, i);
+                        delete Dock;
+                    }
 
+                }
+                delete Lig2;
+                progressbar->setValue(int(((i+1)*100)/Input->docking_molecules.size()));
             }
-            delete Lig2;
-            progressbar->setValue(int(((i+1)*100)/Input->docking_molecules.size()));
         }
-    }
-    else {
-        this->dock_parallel_gui(Input, progressbar);
-    }
+        else {
+            this->dock_parallel_gui(Input, progressbar);
+        }
 
 
-    QWriter->print_line();
-    sprintf(info, "Min Status:");
-    QWriter->print_info(info);
-    sprintf(info, "    Failure = -1, Out of memory = -3, Roundoff limited = -4, Forced stop = -5,");
-    QWriter->print_info(info);
-    sprintf(info, "    Stopval reached = 2, Ftol reached = 3, Xtol reached = 4, Maxeval reached=5, Maxtime reached=6");
-    QWriter->print_info(info);
-    QWriter->print_line();
-    tf = clock()-ti;
-    sprintf(info, " Docking computations took %d minute(s)", int((tf/CLOCKS_PER_SEC)/60));
-    QWriter->print_info(info);
-    QWriter->print_line();
-}
+        QWriter->print_line();
+        sprintf(info, "Min Status:");
+        QWriter->print_info(info);
+        sprintf(info, "    Failure = -1, Out of memory = -3, Roundoff limited = -4, Forced stop = -5,");
+        QWriter->print_info(info);
+        sprintf(info, "    Stopval reached = 2, Ftol reached = 3, Xtol reached = 4, Maxeval reached=5, Maxtime reached=6");
+        QWriter->print_info(info);
+        QWriter->print_line();
+        tf = clock()-ti;
+        sprintf(info, " Docking computations took %d minute(s)", int((tf/CLOCKS_PER_SEC)/60));
+        QWriter->print_info(info);
+        QWriter->print_line();
+    }
 }
 
 void TEMP_SCHEME::dock_parallel_gui(PARSER* Input, QProgressBar *progressbar){

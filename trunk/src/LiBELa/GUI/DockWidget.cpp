@@ -40,6 +40,8 @@ DockWidget::DockWidget(PARSER *Input, QTextEdit* Ed)
     scoring_function->addItem("Amber Softcore");                      //1
     scoring_function->addItem("Amber FF + Desolvation");              //2
     scoring_function->addItem("Amber FF");                            //3
+    scoring_function->addItem("GaussSmooth Amber FF + Desolvation");  //4
+    scoring_function->addItem("GaussSmooth Amber FF");                //5
     scoring_function->setCurrentIndex(2);
 	scoring_function_lab = new QLabel(tr("Scoring function: "));
 

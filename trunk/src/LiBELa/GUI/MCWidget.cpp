@@ -43,7 +43,7 @@ MCWidget::MCWidget(PARSER* Input, QTextEdit* Editor)
 	temperature->setSingleStep(10.0);
 	temperature->setValue(Inp->temp);
 	temperature->setDecimals(1);
-	temperature_lab = new QLabel(tr("Temperature: "));
+    temperature_lab = new QLabel(tr("MC Temperature: "));
 
 	nsteps = new QSpinBox;
 	nsteps->setMinimum(0);
@@ -56,6 +56,8 @@ MCWidget::MCWidget(PARSER* Input, QTextEdit* Editor)
 	scoring_function->addItem("Amber Softcore");
 	scoring_function->addItem("Amber FF + Desolvation");
 	scoring_function->addItem("Amber FF");
+    scoring_function->addItem("Gaussian Smoothed Amber FF + Desolvation");
+    scoring_function->addItem("Gaussian Smoothed Amber FF");
 	scoring_function->setCurrentIndex(Inp->scoring_function);
 	scoring_function_lab = new QLabel(tr("Scoring function: "));
 
