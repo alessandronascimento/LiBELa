@@ -75,7 +75,8 @@ bool Conformer::generate_conformers_confab(PARSER* Input, Mol2* Lig, string molf
     }
 
     OBMol* ref_mol = new OBMol;
-    ref_mol = mol;
+    ifstream ifs2(molfile.c_str());
+    conv->Read(ref_mol, &ifs2);
 
     delete conv;
 
