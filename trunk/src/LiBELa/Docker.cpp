@@ -7,7 +7,17 @@
 
 #include "Docker.h"
 
-Docker::Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, unsigned counter) {
+Docker::Docker(WRITER* _Writer){
+    this->Writer = _Writer;
+}
+
+#ifdef HAS_GUI
+Docker::Docker(QtWriter* _QWriter){
+    this->QWriter = _QWriter;
+}
+#endif
+
+void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, unsigned counter) {
 
 	if (!Input->generate_conformers){
 
@@ -47,12 +57,12 @@ Docker::Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* I
 
 		if (Input->deal){
 			sprintf(info, "Entering Deal....");
-			Writer->print_info(info);
+            this->print_info(info);
 #ifdef HAS_GUI
 			Deal* DEAl = new Deal(Rec, Lig, Input);
 			sprintf(info, "%-20.20s %-20.20s %-7.3e % -7.3f kcal/mol", Lig->molname.c_str(), Lig->resnames[0].c_str(), fo, DEAl->energies[0]);
-			Writer->print_info(info);
-			Writer->writeMol2(Lig, DEAl->final_coords, DEAl->energies[0], fo);
+            this->print_info(info);
+            QWriter->writeMol2(Lig, DEAl->final_coords, DEAl->energies[0], fo);
 			delete DEAl;
 #endif
 		}
@@ -64,7 +74,7 @@ Docker::Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* I
             sprintf(info, "%5d %-10.10s %-10.10s %-11.3e %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %-3d %-2d %-2d", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlay_fmax,
                     opt_result2->energy_result->elec, opt_result2->energy_result->vdw, opt_result2->energy_result->rec_solv, opt_result2->energy_result->lig_solv,
                     opt_result2->energy_result->total, 0, overlay_status, opt_result2->optimization_status);
-			Writer->print_info(info);
+            this->print_info(info);
 			if (Input->write_mol2){
                 Writer->writeMol2(Lig, opt_result2->optimized_xyz, opt_result2->energy_result->total, overlay_fmax);
 			}
@@ -74,11 +84,11 @@ Docker::Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* I
 		delete Opt;
 	}
 	else {
-		this->Dock_conformers(Rec, Lig, RefLig, com, Input, Writer, counter);
+        this->Dock_conformers(Rec, Lig, RefLig, com, Input, counter);
 	}
 }
 
-Docker::Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, Grid* Grids, unsigned counter) {
+void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, Grid* Grids, unsigned counter) {
 
 	if (!Input->generate_conformers){
 
@@ -118,16 +128,16 @@ Docker::Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* I
 
 #ifdef DEBUG
 		sprintf(info, "Starting Binding Energy Minimization...");
-		Writer->print_info(info);
+        THIS_->print_info(info);
 #endif
 
 		if (Input->deal){
 			sprintf(info, "Entering Deal....");
-			Writer->print_info(info);
+            this->print_info(info);
 #ifdef HAS_GUI
 			Deal* DEAl = new Deal(Rec, Lig, Input);
 			sprintf(info, "%-20.20s %-20.20s %-7.3e % -7.3f kcal/mol", Lig->molname.c_str(), Lig->resnames[0].c_str(), fo, DEAl->energies[0]);
-			Writer->print_info(info);
+            this->print_info(info);
 			Writer->writeMol2(Lig, DEAl->final_coords, DEAl->energies[0], fo);
 			delete DEAl;
 #endif
@@ -150,7 +160,7 @@ Docker::Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* I
             sprintf(info, "%5d %-12.12s %-4.4s %-10.3e  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlay_fmax,
                     opt_result2->energy_result->elec, opt_result2->energy_result->vdw, opt_result2->energy_result->rec_solv, opt_result2->energy_result->lig_solv, opt_result2->energy_result->total, 0, overlay_status, opt_result2->optimization_status, si);
 
-			Writer->print_info(info);
+            this->print_info(info);
 			if (Input->write_mol2){
                 bool will_write = true;
                 if (Input->use_writeMol2_score_cutoff){
@@ -173,7 +183,7 @@ Docker::Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* I
 		delete Opt;
 	}
 	else {
-		this->Dock_conformers(Rec, Lig, RefLig, com, Input, Writer, Grids, counter);
+        this->Dock_conformers(Rec, Lig, RefLig, com, Input, Grids, counter);
 	}
 }
 
@@ -254,7 +264,7 @@ Docker::Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* I
 #endif
 */
 
-void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, unsigned counter){
+void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, unsigned counter){
 	COORD_MC* Coord = new COORD_MC;
 	double best_ene=0.00;
     int best_conf=0, energy_status=0;
@@ -276,6 +286,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 
             if (! this->minimize_overlay(Input, Opt, Lig, opt_result)){
                 sprintf(info, "Overlay optimizer %s is not defined. Exiting...\n", Input->overlay_optimizer.c_str());
+                this->print_info(info);
             }
 
 			overlays.push_back(opt_result->f_min);
@@ -323,6 +334,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 
             if (! this->minimize_energy(Input, Opt, Rec, Lig, opt_result)){
                 sprintf(info, "Energy optimizer %s is not defined. Exiting...\n", Input->energy_optimizer.c_str());
+                this->print_info(info);
             }
 
             if (opt_result->energy_result->total < best_ene){
@@ -347,7 +359,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 
     sprintf(info, "%5d %-12.12s %-4.4s %-10.3e  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlays[best_conf],
             best_energy_t->elec, best_energy_t->vdw, best_energy_t->rec_solv, best_energy_t->lig_solv, best_energy_t->total, best_conf, overlay_status[best_conf], energy_status, si);
-	Writer->print_info(info);
+    this->print_info(info);
 
     if (Input->write_mol2){
             bool will_write = true;
@@ -364,7 +376,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
             if (will_write){
 #pragma omp critical
             {
-                Writer->writeMol2(Lig, new_xyz, best_ene, si);
+                this->write_mol2(Lig, new_xyz, best_ene, si);
             }
         }
     }
@@ -372,13 +384,13 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 	if (Input->show_rmsd){
 		double rmsd = Coord->compute_rmsd(RefLig->xyz, new_xyz, RefLig->N);
 		sprintf(info, "RMSD: %7.3f", rmsd);
-		Writer->print_info(info);
+        this->print_info(info);
 	}
     new_mcoords.clear();
     new_xyz.clear();
 }
 
-void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, Grid* Grids, unsigned counter){
+void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, Grid* Grids, unsigned counter){
 	COORD_MC* Coord = new COORD_MC;
 	double best_ene=0.00;
 	int best_conf=0;
@@ -400,6 +412,7 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
 
             if (! this->minimize_overlay(Input, Opt, Lig, opt_result)){
                 sprintf(info, "Overlay optimizer %s is not defined. Exiting...\n", Input->overlay_optimizer.c_str());
+                this->print_info(info);
             }
 
 			overlays.push_back(opt_result->f_min);
@@ -474,7 +487,7 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
 
     sprintf(info, "%5d %-12.12s %-4.4s %-10.3e  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlays[best_conf],
             best_energy_t->elec, best_energy_t->vdw, best_energy_t->rec_solv, best_energy_t->lig_solv, best_energy_t->total, best_conf, overlay_status[best_conf], energy_status, si);
-    Writer->print_info(info);
+    this->print_info(info);
     if (Input->write_mol2){
             bool will_write = true;
             if (Input->use_writeMol2_score_cutoff){
@@ -490,7 +503,7 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
             if (will_write){
 #pragma omp critical
             {
-                Writer->writeMol2(Lig, new_xyz, best_ene, si);
+                this->write_mol2(Lig, new_xyz, best_ene, si);
             }
         }
     }
@@ -1068,3 +1081,28 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 }
 
 #endif
+
+void Docker::print_info(char info[98]){
+#ifdef HAS_GUI
+    QWriter->print_info(info);
+#else
+    Writer->print_info(info);
+#endif
+}
+
+void Docker::print_line(){
+#ifdef HAS_GUI
+    QWriter->print_line();
+#else
+    Writer->print_line();
+#endif
+}
+
+
+void Docker::write_mol2(Mol2* Lig, vector<vector<double> > new_xyz, double ene, double si){
+#ifdef HAS_GUI
+    QWriter->writeMol2(Lig, new_xyz, ene, si);
+#else
+    Writer->writeMol2(Lig, new_xyz, ene, si);
+#endif
+}

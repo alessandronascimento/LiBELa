@@ -131,9 +131,6 @@ public:
     QSpinBox* conformers_to_evaluate;
     QLabel* conformers_to_evaluate_lab;
 
-    QComboBox* conformer_generator;
-    QLabel* conformer_generator_lab;
-
     QDoubleSpinBox* dock_min_tol;
     QLabel* dock_min_tol_lab;
 
@@ -168,6 +165,13 @@ public:
     QLabel* search_box_lab;
     QDoubleSpinBox* search_box;
 
+    QCheckBox* use_cutoff_score;
+    QCheckBox* use_cutoff_energy;
+    QDoubleSpinBox* cutoff_score;
+    QDoubleSpinBox* cutoff_energy;
+    QLabel* use_cutoff_score_lab;
+    QLabel* use_cutoff_energy_lab;
+
 
     TEMP_SCHEME* RunEngine;
 
@@ -183,6 +187,8 @@ public slots:
     void slot_ignore_h(int state);
     void slot_generate_conformers(int state);
     void slot_parallel(int state);
+    void slot_use_cutoff_score(int state);
+    void slot_use_cutoff_energy(int state);
 	void Start();
 	void set_parameters();
 	void write_parameters();

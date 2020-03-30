@@ -10,6 +10,10 @@
 
 using namespace std;
 
+/*
+ * Constructor for McLIBELa compilation without GUI
+*/
+
 TEMP_SCHEME::TEMP_SCHEME(int ac, char *av[]){
 
     this->argc = ac;
@@ -23,15 +27,20 @@ TEMP_SCHEME::TEMP_SCHEME(int ac, char *av[]){
     REC = new Mol2(Input, Input->rec_mol2);
     LIG = new Mol2(Input, Input->lig_mol2);
     RefLig = new Mol2(Input, Input->reflig_mol2);
-
-    //    RAND Rand;
-
     Ene = new Energy2(Input);
+
 }
 
-#ifdef HAS_GUI
-TEMP_SCHEME::TEMP_SCHEME(PARSER* Input, QTextEdit* Editor){
+/*
+ * Costructor for compilation with GUI. In this case
+ * the compile definition HAS_GUI has to to be set.
+ */
 
+#ifdef HAS_GUI
+TEMP_SCHEME::TEMP_SCHEME(PARSER* _Input, QTextEdit* Editor, QProgressBar* _progressbar){
+
+    this->Input = _Input;
+    this->progressbar = _progressbar;
     QWriter = new QtWriter(Input, Editor);
 
     // Reading Receptor files
@@ -44,18 +53,17 @@ TEMP_SCHEME::TEMP_SCHEME(PARSER* Input, QTextEdit* Editor){
 #endif
 
 void TEMP_SCHEME::evaluation(){
-
     if ((REC->N != int(REC->charges.size())) or (REC->N != int(REC->radii.size())) or (REC->N != int(REC->epsilons.size()))){
         cout <<"The number of atomic parameters and the number of atoms doesn't match!" << endl;
         cout << "Exiting..." << endl;
         exit(1);
     }
 
-
     //! Evaluation of the original binding energy
     start_energy = Ene->compute_ene(REC, LIG, LIG->xyz);
     sprintf(info,"Original Binding Energy: %.4f kcal/mol", start_energy);
-    Writer->print_info(info);
+    this->print_info(info);
+
     if (Input->reflig_mol2 == ""){
         center = COORD.compute_com(LIG);
     }
@@ -64,55 +72,55 @@ void TEMP_SCHEME::evaluation(){
     }
 
     sprintf(info, "Center of computation box: %.2f %.2f %.2f", center[0], center[1], center[2]);
-    Writer->print_info(info);
+    this->print_info(info);
 
     if (Input->use_grids){
         if (Input->load_grid_from_file){
             sprintf(info,"Loading grids from file %s.grid...", Input->grid_prefix.c_str());
-            Writer->print_info(info);
+            this->print_info(info);
             Grids = new Grid(Input, Writer);
             Grids->load_grids_from_file();
             sprintf(info, "Loaded energy grids with %d x %d x %d points spaced by %5.3f Angstroms in each directon.", Grids->npointsx, Grids->npointsy, Grids->npointsz, Grids->grid_spacing);
-            Writer->print_info(info);
+            this->print_info(info);
             sprintf(info, "Grid Origin: %10.5f %10.5f %10.5f.", Grids->xbegin, Grids->ybegin, Grids->zbegin);
-            Writer->print_info(info);
+            this->print_info(info);
             if (Grids->pbsa_loaded){
                 sprintf(info, "Electrostatic Potencial computed with PBSA.");
-                Writer->print_info(info);
+                this->print_info(info);
             }
             else if (Grids->delphi_loaded){
                 sprintf(info, "Electrostatic Potencial computed with DelPhi.");
-                Writer->print_info(info);
+                this->print_info(info);
             }
             else {
                 sprintf(info, "Electrostatic Potencial computed with Coulomb model.");
-                Writer->print_info(info);
+                this->print_info(info);
             }
         }
         else{
             sprintf(info,"Generating energy grids. It can take a couple of minutes. Coffee time maybe ?");
-            Writer->print_info(info);
+            this->print_info(info);
             start = clock();
             Grids = new Grid(Input, Writer, REC, center);
             end = clock();
             sprintf(info, "Computed energy grids with %d x %d x %d points spaced by %5.3f Angstroms in each directon.", Grids->npointsx, Grids->npointsy, Grids->npointsz, Grids->grid_spacing);
-            Writer->print_info(info);
+            this->print_info(info);
             sprintf(info, "Grid Origin: %10.5f %10.5f %10.5f.", Grids->xbegin, Grids->ybegin, Grids->zbegin);
-            Writer->print_info(info);
+            this->print_info(info);
             sprintf(info, "Grid computation took %d seconds.", int((end-start)/CLOCKS_PER_SEC));
-            Writer->print_info(info);
+            this->print_info(info);
 
-            Writer->write_box(center, Grids->xbegin, Grids->ybegin, Grids->zbegin, Grids->xend, Grids->yend, Grids->zend);
+            this->write_box(center, Grids->xbegin, Grids->ybegin, Grids->zbegin, Grids->xend, Grids->yend, Grids->zend);
 
         }
         double grid_energy = Ene->compute_ene(Grids, LIG, LIG->xyz);
         sprintf(info,"Original Grid energy: %.4f kcal/mol.", grid_energy);
-        Writer->print_info(info);
+        this->print_info(info);
         sprintf(info, "Energy error = %.4f%s.", fabs((grid_energy-start_energy)/start_energy)*100., "%");
-        Writer->print_info(info);
+        this->print_info(info);
     }
 
-    Writer->print_line();
+    this->print_line();
 
     this->dock_run();
     this->sa_run();
@@ -120,11 +128,12 @@ void TEMP_SCHEME::evaluation(){
     this->mcr_run();
 
     sprintf(info, "Finishing McLibela...");
-    Writer->print_info(info);
-    Writer->print_line();
-    delete Writer;
+    this->print_info(info);
+    this->print_line();
 }
 
+
+/*
 #ifdef HAS_GUI
 
 void TEMP_SCHEME::evaluation(PARSER* Input, QProgressBar* progressbar){
@@ -193,17 +202,18 @@ void TEMP_SCHEME::evaluation(PARSER* Input, QProgressBar* progressbar){
 }
 #endif
 
+*/
 
 void TEMP_SCHEME::sa_run(){
 
     if (Input->sa_mode == true){
         sprintf(info,"%s", "Entering SA Scheme....");
-        Writer->print_info(info);
+        this->print_info(info);
         srand(rand());
         gsl_rng * r = gsl_rng_alloc (gsl_rng_ranlxs2);
         int seed = (rand() % 101);
         sprintf(info, "Seed: %d", seed);
-        Writer->print_info(info);
+        this->print_info(info);
         gsl_rng_set(r, seed);
 
         //! rmsd_energy is defined as an output file to keep the trial number, the rmsd and the evaluated energy.
@@ -213,7 +223,7 @@ void TEMP_SCHEME::sa_run(){
 
 
 
-        if ((Input->flex_lig == true)){
+        if ((Input->flex_lig = true)){
             Rand.random(Input->cushion, Input->rotation_step, REC, LIG);
         }
         else {
@@ -232,17 +242,17 @@ void TEMP_SCHEME::sa_run(){
         }
 
         sprintf(info, "Start energy: %.4f kcal/mol", start_energy);
-        Writer->print_info(info);
+        this->print_info(info);
 
         rmsd = COORD.compute_rmsd(LIG->xyz, old_coord, LIG->N);
         fprintf(rmsd_energy, "%6d % 7.3f % 7.3f % 7.3f\n", -1, rmsd, start_energy, 0.00);
 
-        if( (Input->flex_lig == true)){
+        if( (Input->flex_lig = true)){
 
             for(double t=Input->sa_start_temp; t>= Input->temp; t-=10*log(t)){
 
                 sprintf(info, "SA Temperature: %.2f", t);
-                Writer->print_info(info);
+                this->print_info(info);
 
                 for (int i=1; i<=Input->sa_steps; i++){
                     Rand.random(Input->cushion, Input->rotation_step, REC, LIG);
@@ -264,7 +274,7 @@ void TEMP_SCHEME::sa_run(){
 
                         if (new_energy <= start_energy){
                             sprintf(info, "Trial: %5d New energy: % 7.2f RMSD: %6.2f Temp: %6.2f Conf: %4d", i, new_energy, rmsd, t, Rand.lign);
-                            Writer->print_info(info);
+                            this->print_info(info);
                             fprintf(rmsd_energy, "%6d % 7.3f % 7.3f % 7.3f\n", i, rmsd, new_energy, t);
                             start_energy=new_energy;
                             LIG->mcoords=LIG->new_mcoords;
@@ -280,7 +290,7 @@ void TEMP_SCHEME::sa_run(){
                             if (prob > rnumber ) {
                                 fprintf(rmsd_energy, "%6d % 7.3f % 7.3f % 7.3f\n", i, rmsd, new_energy, t);
                                 sprintf(info, "Trial: %5d New energy: % 7.2f RMSD: %6.2f Temp: %6.2f Conf: %4d", i, new_energy, rmsd, t, Rand.lign);
-                                Writer->print_info(info);
+                                this->print_info(info);
                                 start_energy=new_energy;
                                 LIG->mcoords = LIG->new_mcoords;
                                 Writer->writeMol2(LIG, LIG->mcoords[Rand.lign], new_energy, rmsd, Input->output);
@@ -295,7 +305,7 @@ void TEMP_SCHEME::sa_run(){
 
             for(double t=Input->sa_start_temp; t>= Input->temp; t-=10*log(t)){
                 sprintf(info, "SA Temperature: %.2f", t);
-                Writer->print_info(info);
+                this->print_info(info);
                 for (int i=1; i<= Input->sa_steps; i++){
                     Rand.random(Input->cushion, Input->rotation_step, REC, LIG);
                     new_coord = COORD.rototranslate(old_coord, LIG, &Rand);
@@ -321,7 +331,7 @@ void TEMP_SCHEME::sa_run(){
                         if (new_energy <= start_energy){
                             fprintf(rmsd_energy, "%6d % 7.3f % 7.3f % 7.3f\n", i, rmsd, new_energy, t);
                             sprintf(info, "Trial: %5d New energy: % 9.4f RMSD: %7.3f Temp: %7.3f", i, new_energy, rmsd, t);
-                            Writer->print_info(info);
+                            this->print_info(info);
                             start_energy=new_energy;
                             old_coord=new_coord;
                             Writer->writeMol2(LIG, new_coord, new_energy, rmsd, Input->output);
@@ -333,7 +343,7 @@ void TEMP_SCHEME::sa_run(){
                             if (prob > rnumber ) {
                                 fprintf(rmsd_energy, "%6d % 7.3f % 7.3f % 7.3f\n", i, rmsd, new_energy, t);
                                 sprintf(info, "Trial: %5d New energy: % 9.4f RMSD: %7.3f Temp: %7.3f", i, new_energy, rmsd, t);
-                                Writer->print_info(info);
+                                this->print_info(info);
                                 start_energy=new_energy;
                                 old_coord=new_coord;
                                 Writer->writeMol2(LIG, new_coord, new_energy, rmsd, Input->output);
@@ -344,10 +354,11 @@ void TEMP_SCHEME::sa_run(){
             }
         }
         fclose(rmsd_energy);
-        Writer->print_line();
+        this->print_line();
     }
 }
 
+/*
 #ifdef HAS_GUI
 
 void TEMP_SCHEME::sa_run(PARSER* Input){
@@ -509,15 +520,22 @@ void TEMP_SCHEME::sa_run(PARSER* Input){
 
 #endif
 
+*/
 void TEMP_SCHEME::dock_run(){
     clock_t ti, tf;
     if(Input->dock_mode == true){
 
         ti = clock();
 
+#ifdef HAS_GUI
+        Docker* Dock = new Docker(QWriter);
+#else
+        Docker* Dock = new Docker(Writer);
+#endif
+
         sprintf(info, "%5s %-12.12s %-4.4s %-10.10s %-8.8s %-8.8s %-8.8s %-8.8s %-8.8s %3.3s %-5.5s %2.2s", "#", "Ligand", "Resi", "Overlay", "Elec", "VDW", "Rec_Solv", "Lig_Solv", "Energy", "Conf", "MS", "SI");
-        Writer->print_info(info);
-        Writer->print_line();
+        this->print_info(info);
+        this->print_line();
 
 
         center = COORD.compute_com(RefLig);
@@ -529,7 +547,7 @@ void TEMP_SCHEME::dock_run(){
                 ifstream multifile(Input->multifile.c_str());
                 if (! multifile.is_open()){
                     sprintf(info, "Could not open file %s. Exiting...\n", Input->multifile.c_str());
-                    Writer->print_info(info);
+                    this->print_info(info);
                     exit(1);
                 }
                 multifile >> ligand;
@@ -540,42 +558,38 @@ void TEMP_SCHEME::dock_run(){
                         Conformer* Conf = new Conformer;
                         if (Conf->generate_conformers_confab(Input, Lig2, ligand)){
                             if (Input->use_grids){
-                                Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, Grids, counter);
-                                delete Dock;
+                                Dock->run(REC, Lig2, RefLig, center, Input, Grids, counter);
                             }
                             else {
-                                Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, counter);
-                                delete Dock;
+                                Dock->run(REC, Lig2, RefLig, center, Input, counter);
                             }
                         }
                         else{ 																//test: in case generate_conformers does not succeed.
                             Lig2->mcoords.push_back(Lig2->xyz);
                             if (Input->use_grids){
-                                Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, Grids, counter);
-                                delete Dock;
+                                Dock->run(REC, Lig2, RefLig, center, Input, Grids, counter);
                             }
                             else {
-                                Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, counter);
-                                delete Dock;
+                                Dock->run(REC, Lig2, RefLig, center, Input, counter);
                             }
-
                         }
                         Conf->~Conformer();
                         delete Conf;
                     }
                     else {
                         if (Input->use_grids){
-                            Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, Grids, counter);
-                            delete Dock;
+                            Dock->run(REC, Lig2, RefLig, center, Input, Grids, counter);
                         }
                         else {
-                            Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, counter);
-                            delete Dock;
+                            Dock->run(REC, Lig2, RefLig, center, Input, counter);
                         }
 
                     }
                     delete Lig2;
                     multifile >> ligand;
+#ifdef HAS_GUI
+                    progressbar->setValue((counter*100)/Input->docking_molecules.size());
+#endif
                 }
                 multifile.close();
             }
@@ -589,52 +603,52 @@ void TEMP_SCHEME::dock_run(){
                 Conformer* Conf = new Conformer;
                 Conf->generate_conformers_confab(Input, LIG, Input->lig_mol2);
                 if (Input->use_grids){
-                    Docker* Dock = new Docker(REC, LIG, RefLig, center, Input, Writer, Grids, counter);
-                    delete Dock;
+                    Dock->run(REC, LIG, RefLig, center, Input, Grids, counter);
                 }
                 else {
-                    Docker* Dock = new Docker(REC, LIG, RefLig, center, Input, Writer, counter);
-                    delete Dock;
+                    Dock->run(REC, LIG, RefLig, center, Input, counter);
                 }
                 delete Conf;
             }
             else {
                 if (Input->use_grids){
-                    Docker* Dock = new Docker(REC, LIG, RefLig, center, Input, Writer, Grids, counter);
-                    delete Dock;
+                    Dock->run(REC, LIG, RefLig, center, Input, Grids, counter);
                 }
                 else {
-                    Docker* Dock = new Docker(REC, LIG, RefLig, center, Input, Writer, counter);
-                    delete Dock;
+                    Dock->run(REC, LIG, RefLig, center, Input, counter);
                 }
             }
         }
 
-        Writer->print_line();
+        this->print_line();
         sprintf(info, "Min Status:");
-        Writer->print_info(info);
+        this->print_info(info);
         sprintf(info, "    Failure = -1, Out of memory = -3, Roundoff limited = -4, Forced stop = -5,");
-        Writer->print_info(info);
+        this->print_info(info);
         sprintf(info, "    Stopval reached = 2, Ftol reached = 3, Xtol reached = 4, Maxeval reached=5, Maxtime reached=6");
-        Writer->print_info(info);
-        Writer->print_line();
+        this->print_info(info);
+        this->print_line();
         tf = clock()-ti;
+        delete Dock;
         sprintf(info, " Docking computations took %d minute(s)", int((tf/CLOCKS_PER_SEC)/60));
-        Writer->print_info(info);
-        Writer->print_line();
+        this->print_info(info);
+        this->print_line();
     }
 }
 
 int TEMP_SCHEME::dock_parallel_function(Mol2* Lig2){
+#ifdef HAS_GUI
+    Docker* Dock = new Docker(QWriter);
+#else
+    Docker* Dock = new Docker(Writer);
+#endif
     if (Input->use_grids){
-        Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, Grids, 0);
-        delete Dock;
+        Dock->run(REC, Lig2, RefLig, center, Input, Grids, 0);
     }
     else {
-        Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, 0);
-        delete Dock;
+        Dock->run(REC, Lig2, RefLig, center, Input, 0);
     }
-
+    delete Dock;
     return 0;
 }
 
@@ -642,6 +656,12 @@ int TEMP_SCHEME::dock_serial(vector<string> ligand_list, int count, int chunck_s
     stringstream buffer;
     buffer << (count+1);
     WRITER* Write_lig = new WRITER(Input->output + "_" + buffer.str(), Input);
+#ifdef HAS_GUI
+    Docker* Dock = new Docker(QWriter);
+#else
+    Docker* Dock = new Docker(Write_lig);
+#endif
+
     count = atoi(ligand_list[ligand_list.size()-1].c_str());
     for (unsigned i=0; i< ligand_list.size()-1; i++){
         Mol2* Lig2 = new Mol2;
@@ -661,11 +681,11 @@ int TEMP_SCHEME::dock_serial(vector<string> ligand_list, int count, int chunck_s
                 delete Conf;
             }
             if (Input->use_grids){
-                Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Write_lig, Grids, ((count*chunck_size))+i+1);
+                Dock->run(REC, Lig2, RefLig, center, Input, Grids, ((count*chunck_size))+i+1);
                 delete Dock;
             }
             else {
-                Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Write_lig, ((count*chunck_size))+i+1);
+                Dock->run(REC, Lig2, RefLig, center, Input, ((count*chunck_size))+i+1);
                 delete Dock;
             }
         }
@@ -686,16 +706,18 @@ int TEMP_SCHEME::dock_concurrent_function(string mylig){
         }
         delete Conf;
     }
-
+#ifdef HAS_GUI
+    Docker* Dock = new Docker(QWriter);
+#else
+    Docker* Dock = new Docker(Writer);
+#endif
     if (Input->use_grids){
-        Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, Grids, 0);
-        delete Dock;
+        Dock->run(REC, Lig2, RefLig, center, Input, Grids, 0);
     }
     else {
-        Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, 0);
-        delete Dock;
+        Dock->run(REC, Lig2, RefLig, center, Input, 0);
     }
-
+    delete Dock;
     return 0;
 }
 
@@ -708,7 +730,7 @@ void TEMP_SCHEME::dock_parallel(){
 #else
 
     sprintf(info, "Running Dock mode in parallel with up to %d threads...", int(Input->parallel_jobs));
-    Writer->print_info(info);
+    this->print_info(info);
     vector<string> ligand_list;
 
 
@@ -720,7 +742,7 @@ void TEMP_SCHEME::dock_parallel(){
         ifstream multifile(Input->multifile.c_str());
         if (! multifile.is_open()){
             sprintf(info, "Could not open file %s. Exiting...\n", Input->multifile.c_str());
-            Writer->print_info(info);
+            this->print_info(info);
             exit(1);
         }
         string ligand;
@@ -765,17 +787,24 @@ void TEMP_SCHEME::dock_parallel(){
                             Conf->generate_conformers_confab(Input, Lig2, ligand_list[i]);
                         }
                         delete Conf;
+#ifdef HAS_GUI
+                        Docker* Dock = new Docker(QWriter);
+#else
+                        Docker* Dock = new Docker(Writer);
+#endif
                         if (Input->use_grids){
-                            Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, Grids, i+1);
-                            delete Dock;
+                            Dock->run(REC, Lig2, RefLig, center, Input, Grids, i+1);
                         }
                         else {
-                            Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, Writer, i+1);
-                            delete Dock;
+                            Dock->run(REC, Lig2, RefLig, center, Input, i+1);
                         }
+                        delete Dock;
                     }
                 }
                 delete Lig2;
+#ifdef HAS_GUI
+                    progressbar->setValue(((i+1)*100)/Input->docking_molecules.size());
+#endif
             }
         }
         ligand_list.clear();
@@ -785,7 +814,7 @@ void TEMP_SCHEME::dock_parallel(){
 #ifdef HAS_GUI
 void TEMP_SCHEME::dock_concurrent(){
     sprintf(info, "Running Dock mode in parallel with up to %d threads...", int(Input->parallel_jobs));
-    Writer->print_info(info);
+    this->print_info(info);
     QVector<string> ligand_list;
 
     /* Here we read the multifile file and parse the files of the molecules
@@ -796,7 +825,7 @@ void TEMP_SCHEME::dock_concurrent(){
         ifstream multifile(Input->multifile.c_str());
         if (! multifile.is_open()){
             sprintf(info, "Could not open file %s. Exiting...\n", Input->multifile.c_str());
-            Writer->print_info(info);
+            this->print_info(info);
             exit(1);
         }
         string ligand;
@@ -825,18 +854,18 @@ void TEMP_SCHEME::dock_mpi(){
 
     if (world.rank() == 0 ){                       // Running only on the *master* job;
         sprintf(info, "Running Dock mode over MPI with up to %d parallel jobs...", world.size());
-        Writer->print_info(info);
+        this->print_info(info);
 
         if (Input->multifile == ""){
             sprintf(info, "Cannot run single molecule docking in parallel");
-            Writer->print_info(info);
+            this->print_info(info);
             exit(1);
         }
 
         ifstream multifile(Input->multifile.c_str());
         if (! multifile.is_open()){
             sprintf(info, "Could not open file %s. Exiting...\n", Input->multifile.c_str());
-            Writer->print_info(info);
+            this->print_info(info);
             exit(1);
         }
         string ligand;
@@ -923,7 +952,7 @@ void TEMP_SCHEME::mcr_run(){
         // checking consistency
         if (int(Input->mcr_coefficients.size()) != Input->mcr_size){
             sprintf(info, "Inconsistency found in MCR coefficients. Please check!\n");
-            Writer->print_info(info);
+            this->print_info(info);
             exit(1);
         }
 
@@ -935,8 +964,8 @@ void TEMP_SCHEME::mcr_run(){
         }
 
         sprintf(info, "MCR %7.7s %7.7s %10.10s %10.10s %10.10s %10.10s %10.10s %7.7s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "W(b,bt)" , "-kTln(W)", "A_ex" , "Vol(A3)");
-        Writer->print_info(info);
-        Writer->print_line();
+        this->print_info(info);
+        this->print_line();
 
         double bt;                          // MC Recursion "effective" temperature (bt) fot ith evaluation;
         double k = 0.0019858775203792202;   // Boltzmann constant in kcal/(mol.K)
@@ -960,13 +989,13 @@ void TEMP_SCHEME::mcr_run(){
 
         volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
 
-        Writer->print_line();
+        this->print_line();
         sprintf(info, "%s", "Starting equilibrium simulation before recursion");
-        Writer->print_info(info);
+        this->print_info(info);
         sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g %7.3f %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
                 -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W, volume);
-        Writer->print_info(info);
-        Writer->print_line();
+        this->print_info(info);
+        this->print_line();
 
 
         // Now starting the MC recursion...
@@ -996,11 +1025,11 @@ void TEMP_SCHEME::mcr_run(){
 
             cum_Ln_W += -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average));
 
-            Writer->print_line();
+            this->print_line();
             sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g %7.3f %7.4g", i+1, Input->bi, bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
                     -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W, volume);
-            Writer->print_info(info);
-            Writer->print_line();
+            this->print_info(info);
+            this->print_line();
 
             cum_W += (log(double(EqMC->MCR_Boltzmann_weighted_average)));
             cum_W_err += double((1.0/double(EqMC->MCR_Boltzmann_weighted_average))*EqMC->MCR_Boltzmann_weighted_stdev);
@@ -1009,14 +1038,14 @@ void TEMP_SCHEME::mcr_run(){
             }
         }
 
-        Writer->print_line();
+        this->print_line();
         sprintf(info, "MCR: A_excess = %10.4g +/- %10.4g",  -k*Input->temp*cum_W, k*Input->temp*cum_W_err);
-        Writer->print_info(info);
+        this->print_info(info);
 
         sprintf(info, "MCR: Volume: %10.4g.  ln(volume) = %10.4g",  volume, log(volume));
-        Writer->print_info(info);
+        this->print_info(info);
 
-        Writer->print_line();
+        this->print_line();
 
 
         double cum_W_lig = 0.0;
@@ -1028,17 +1057,17 @@ void TEMP_SCHEME::mcr_run(){
         // Equilibration before recursion
 
         Input->bi = 1.0;
-        Writer->print_line();
+        this->print_line();
         sprintf(info, "%s", "Starting equilibrium simulation before recursion");
-        Writer->print_info(info);
+        this->print_info(info);
 
         EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, Input->temp);
 
         lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
         sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g %7.7f %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
                 -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W_lig, lig_volume);
-        Writer->print_info(info);
-        Writer->print_line();
+        this->print_info(info);
+        this->print_line();
 
         // Now, starting the MC recursion
         //
@@ -1058,8 +1087,8 @@ void TEMP_SCHEME::mcr_run(){
 
                 sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g %7.7f %7.4g", i+1, Input->bi, bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
                         -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W_lig, lig_volume);
-                Writer->print_info(info);
-                Writer->print_line();
+                this->print_info(info);
+                this->print_line();
 
                 cum_W_lig += (log(double(EqMC->MCR_Boltzmann_weighted_average)));
                 cum_W_lig_err += double((1.0/double(EqMC->MCR_Boltzmann_weighted_average))*EqMC->MCR_Boltzmann_weighted_stdev);
@@ -1068,30 +1097,31 @@ void TEMP_SCHEME::mcr_run(){
                 }
             }
 
-            Writer->print_line();
+            this->print_line();
             sprintf(info, "MCR: A_excess for the ligand = %10.4g +/- %10.4g",  -k*Input->temp*cum_W_lig, k*Input->temp*cum_W_lig_err);
-            Writer->print_info(info);
+            this->print_info(info);
 
             sprintf(info, "MCR: Ligand Volume: %10.4g.  ln(volume) = %10.4g",  lig_volume, log(lig_volume));
-            Writer->print_info(info);
-            Writer->print_line();
+            this->print_info(info);
+            this->print_line();
 
             double complex_A = (-k*Input->temp)*(log(volume)+(cum_W));
             double ligand_A = (-k*Input->temp)*(log(lig_volume)+(cum_W_lig));
             double Delta_A = complex_A - ligand_A;
 
             sprintf(info, "MCR: Complex Free Energy = %10.4g +/- %10.4g", complex_A, (k*Input->temp*cum_W_err));
-            Writer->print_info(info);
+            this->print_info(info);
             sprintf(info, "MCR: Ligand Free Energy = %10.4g +/- %10.4g", ligand_A, (k*Input->temp*cum_W_lig_err));
-            Writer->print_info(info);
+            this->print_info(info);
             sprintf(info, "MCR: Binding Free Energy = %10.4g +/- %10.4g", Delta_A, (k*Input->temp*(cum_W_err+cum_W_lig_err)));
-            Writer->print_info(info);
-            Writer->print_line();
+            this->print_info(info);
+            this->print_line();
         }
         delete EqMC;
     }
 }
 
+/*
 #ifdef HAS_GUI
 void TEMP_SCHEME::run_dock_gui(PARSER* Input, QProgressBar* progressbar){
     clock_t ti, tf;
@@ -1174,7 +1204,9 @@ void TEMP_SCHEME::run_dock_gui(PARSER* Input, QProgressBar* progressbar){
         QWriter->print_line();
     }
 }
+*/
 
+/*
 void TEMP_SCHEME::dock_parallel_gui(PARSER* Input, QProgressBar *progressbar){
     sprintf(info, "Running Dock mode in parallel with up to %d threads...", int(Input->parallel_jobs));
     QWriter->print_info(info);
@@ -1222,3 +1254,43 @@ void TEMP_SCHEME::dock_parallel_gui(PARSER* Input, QProgressBar *progressbar){
 }
 
 #endif
+*/
+
+void TEMP_SCHEME::print_info(char info[98]){
+#ifdef HAS_GUI
+    QWriter->print_info(info);
+#else
+    Writer->print_info(info);
+#endif
+}
+
+void TEMP_SCHEME::print_line(){
+#ifdef HAS_GUI
+    QWriter->print_line();
+#else
+    Writer->print_line();
+#endif
+}
+
+void TEMP_SCHEME::write_box(vector<double>center, double min_x, double min_y, double min_z, double max_x, double max_y, double max_z){
+#ifdef HAS_GUI
+    QWriter->write_box(center, min_x, min_y, min_z, max_x, max_y, max_z);
+#else
+    Writer->write_box(center, min_x, min_y, min_z, max_x, max_y, max_z);
+#endif;
+}
+
+
+TEMP_SCHEME::~TEMP_SCHEME(){
+    delete Ene;
+    delete RefLig;
+    delete LIG;
+    delete REC;
+#ifdef HAS_GUI
+    delete QWriter;
+#else
+    delete Writer;
+    delete Input;
+#endif
+}
+

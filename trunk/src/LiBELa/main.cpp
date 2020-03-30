@@ -2,15 +2,15 @@
 
 
 /*********************************************************************************************
- *           iMcLiBELa - Monte Carlo - Based Ligand Biding Energy Landscape                  *
+ *           iMcLiBELa - Monte Carlo - Based Ligand Binding Energy Landscape                 *
  *                                                                                           *
- *               This program was written by Alessandro Nascimento - March/2012              *
- * 					ABC Federal University - Santo Andre, SP. Brazil                         *
- *                    Engineering, Modeling and Social Sciences Center                       *
- *                          alessandro.nascimento@ufabc.edu.br                               *
+ *               This program was written by Alessandro Nascimento - 2012-2020               *
+ * 					University of Sao Paulo - Sao Carlos, SP. Brazil                         *
+ *                      Sao Carlos Institute of Physics - IFSC/USP                           *
+ *                                asnascimento@ifsc.usp.br                                   *
  *                                                                                           *
  *           Please visit http://nascimento.ifsc.usp.br/  for detailed instructions          *
- *                  Distributed under the terms of GNU GPLv3 license                         *
+ *                  Distributed under the terms of GNU LGPLv3 license                        *
  *********************************************************************************************/
 
 
@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
     	else {
             TEMP_SCHEME* RunEngine = new TEMP_SCHEME(argc, argv);
     		RunEngine->evaluation();
+            delete RunEngine;
     		return(0);
     	}
     }

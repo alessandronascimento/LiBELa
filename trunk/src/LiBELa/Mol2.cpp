@@ -13,11 +13,20 @@ Mol2::Mol2(){
 }
 
 Mol2::Mol2(PARSER *Input, string molfile) {
+    bool ok;
     if ((molfile.substr(molfile.size()-3, 3) == ".gz") or (molfile.substr(molfile.size()-2, 2) == ".z")){
-        this->parse_gzipped_file(Input, molfile);
+        ok = this->parse_gzipped_file(Input, molfile);
+        if (! ok){
+            printf("Could not correctly parse mol2 file %s. Please check.\n", molfile.c_str());
+            exit(1);
+        }
     }
     else {
-        this->parse_mol2file(Input, molfile);
+        ok = this->parse_mol2file(Input, molfile);
+        if (! ok){
+            printf("Could not correctly parse mol2 file %s. Please check.\n", molfile.c_str());
+            exit(1);
+        }
     }
 }
 

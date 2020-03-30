@@ -26,6 +26,7 @@ public:
 	QTextEdit* Editor;
 	//! Mol2 Object.
 	Mol2 *Cmol;
+    PARSER* Input;
 
     gzFile outmol2;
 
@@ -37,7 +38,7 @@ public:
 
 	//! This function writes down the parameters given by the user as input.
 	//! @param Pointer to the Parser class
-	void write_params(PARSER *Input);
+    void write_params();
 	void print_param(string p1, double p2, string p3);
 	void print_param(string p1, int p2, string p3);
 	void print_param(string p1, string p2, string p3);

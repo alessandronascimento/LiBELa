@@ -7,17 +7,21 @@
 
 #include "QtWriter.h"
 
-QtWriter::QtWriter(PARSER *Input, QTextEdit* Ed) {
+QtWriter::QtWriter(PARSER *_Input, QTextEdit* Ed) {
 	Editor = Ed;
+    Input = _Input;
 	logfile= fopen((Input->output+".log").c_str(), "w");
 	Editor->ensureCursorVisible();
 
-    if (Input->write_mol2){
+    if (Input->write_mol2 and Input->dock_mode){
         outmol2 = gzopen((Input->output+"_dock.mol2.gz").c_str(), "w");
     }
+
+    this->write_welcome();
+    this->write_params();
 }
 
-void QtWriter::write_params(PARSER *Input){
+void QtWriter::write_params(){
     fprintf(logfile,"****************************************************************************************************\n");
     fprintf(logfile, "* %-98s *\n", "Parsed parameters:");
 
@@ -72,7 +76,6 @@ void QtWriter::write_params(PARSER *Input){
     if (Input->generate_conformers){
         this->print_param("number_of_conformers", Input->lig_conformers, "");
         this->print_param("conformers_to_rank", Input->conformers_to_evaluate, "");
-        this->print_param("conformer_generator", Input->conformer_generator, "");
     }
 
     this->print_param();
@@ -268,10 +271,10 @@ void QtWriter::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, 
     while(resn < Cmol->residue_pointer.size()-1){
         while(i < Cmol->residue_pointer[resn+1]-1){
             if (int(Cmol->sybyl_atoms.size()) == Cmol->N){
-                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %5d %5s %8.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s%4d %18.18s %9.4f \n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
             }
             else {
-                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %5d %5s %8.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s%4d %18.18s %9.4f \n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
             }
             i++;
         }
@@ -279,10 +282,10 @@ void QtWriter::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, 
     }
     while(i < Cmol->N){
         if (int(Cmol->sybyl_atoms.size()) == Cmol->N){
-            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %5d %5s %8.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s%4d %18.18s %9.4f \n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
         }
         else{
-            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s %5d %5s %8.4f\n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s%4d %18.18s %9.4f \n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
         }
         i++;
     }
@@ -296,6 +299,10 @@ void QtWriter::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, 
 
 QtWriter::~QtWriter(void){
 	fprintf(logfile,"**************************************************************************************\n");
+    if (Input->write_mol2 and Input->dock_mode){
+        gzclose(outmol2);
+    }
+    fclose(logfile);
 	QApplication::processEvents();
 }
 

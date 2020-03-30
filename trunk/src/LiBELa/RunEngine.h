@@ -113,13 +113,19 @@ public:
     //!
     char** argv;
 
+
+    ~TEMP_SCHEME();
+
 #ifdef HAS_GUI
-	QtWriter* QWriter;
-	TEMP_SCHEME(PARSER* Input, QTextEdit* Editor);
-	void evaluation(PARSER* Input, QProgressBar* progressbar);
+    QtWriter* QWriter;
+    QProgressBar* progressbar;
+
+    TEMP_SCHEME(PARSER* Input, QTextEdit* Editor, QProgressBar* _progressbar );
+
+//	void evaluation(PARSER* Input, QProgressBar* progressbar);
 	void sa_run(PARSER* Input);
-    void run_dock_gui(PARSER *Input, QProgressBar *progressbar);
-    void dock_parallel_gui(PARSER *Input, QProgressBar *progressbar);
+//    void run_dock_gui(PARSER *Input, QProgressBar *progressbar);
+//    void dock_parallel_gui(PARSER *Input, QProgressBar *progressbar);
 #endif
 
 /*!
@@ -128,34 +134,32 @@ public:
  * required to McLibela to run.
  *
  */
-
 	PARSER* Input;
 
 
-/*! REC is defined as a PRMTOP class to include parameters and
+/*! REC is defined as a Mol2 class to include parameters and
  * coordinates of the receptor atoms.
  */
-
 	Mol2 *REC;
 
 
 /*!
- *  LIG is defined as a PRMTOP class to include parameters and
+ *  LIG is defined as a Mol2* class to include parameters and
  * coordinates of the ligand atoms.
  *
  */
-
-
 	Mol2 *LIG;
+
+/*!
+ * \brief RefLig is defined as a Mol2* class to include parameters and
+ * coordinates of the ligand atoms.
+ */
 	Mol2 *RefLig;
 
 /*!
- * Ene is defined as a ENERGY class to include methods for binding
+ * Ene is defined as a Energy2 class to include methods for binding
  * energy computation
- *
  */
-
-    //ENERGY Ene;
     Energy2* Ene;
 
 
@@ -165,34 +169,29 @@ public:
  * and rmsd).
  *
  */
-
-	COORD_MC COORD;
+    COORD_MC COORD;
 
 /*!
  * Rand is defined as a RAND class used in McLibela to generate random
  * numbers that define random walks (movements) of the ligand in the
  * binding site
  */
-
 	RAND Rand;
 
-	/*!
-	 *
-	 */
-
+/*! The Class Writer has the methods for writing output files, including
+ * log files and coordinate files.
+ */
 	WRITER* Writer;
 
 /*!
  * The constructor defines the Input object and parses the input file
  */
-
     TEMP_SCHEME(int ac, char* av[]);
 
 /*!
  * The evaluation method evaluates the initial state of ligand and protein
  * and generates the first random movement of the ligand to start the simulation
  */
-
 	void evaluation();
 
 
@@ -203,23 +202,94 @@ public:
  * in McLibela. Rather than linearly, the temperature is decreased by 10*log(t)
  * in each SA step.
  */
-
 	void sa_run();
-	/*!
-	 *
-	 */
-	void dock_run();
+
+/*!
+ * \brief dock_run is a general method to start the docking engine within LiBELa.
+ * From this general method, other methods are called to allow parallel docking,
+ * and docking of multiple conformers.
+ */
+
+    void dock_run();
+/*!
+ * \brief dock_parallel_function is a general function to dock a molecule using a
+ * parallel implementation. It is called from the current MPI implementation to
+ * allow docking of a single molecule by a MPI job.
+ * \param Lig2 is a Mol2 object containing the molecule to be docked
+ * \return zero if docking is performed.
+ */
 	int dock_parallel_function(Mol2* Lig2);
-	int dock_concurrent_function(string mylig);
+
+/*!
+ * \brief dock_concurrent_function Legacy method. Not used anymore
+ * \param mylig
+ * \return
+ */
+    int dock_concurrent_function(string mylig);
+
+/*!
+ * \brief dock_serial This method used to dock a list of ligands in a serial fashion.
+ * \param ligand_list vector with the list of ligands to be docked
+ * \param count number of ligands that will be docked
+ * \param chunck_size Chunck size.
+ * \return
+ */
+
     int dock_serial(vector<string> ligand_list, int count, int chunck_size);
-	void dock_parallel(void);
+
+/*!
+ * \brief dock_parallel Implementation of the parallel execution for docking.
+ */
+    void dock_parallel(void);
+
+/*!
+ * \brief dock_mpi Implementation of docking via MPI. Called by dock_parallel method.
+ */
     void dock_mpi();
 
+
+/*!
+ * \brief eq_run General method for the Monte Carlo Simulation of the Ligand-Receptor
+ * complex.
+ */
     void eq_run();
+
+/*!
+ * \brief mcr_run Recursive Monte Carlo method as, described by Scheraga.
+ */
     void mcr_run();
+
+
 #ifdef HAS_GUI
+/*!
+ * \brief dock_concurrent Legacy method.
+ */
 	void dock_concurrent(void);
 #endif
+
+    /*!
+     * \brief print_info Acessory method to print information using Writer class or Qwriter class.
+     * \param info Array of char with info to be printed
+     */
+    void print_info(char info[98]);
+
+/*!
+ * \brief print_line Displays a line
+ */
+    void print_line();
+
+/*!
+ * \brief write_box Writes a box used for computing the grid
+ * \param center C++ vector with the coordinates for the center of the box
+ * \param min_x Lower limit for x-coordinate
+ * \param min_y Lower limit for y-coordinate
+ * \param min_z Lower limit for z-coordinate
+ * \param max_x Upper limit for x-coordinate
+ * \param max_y Upper limit for y-coordinate
+ * \param max_z Upper limit for z-coordinate
+ */
+    void write_box(vector<double>center, double min_x, double min_y, double min_z, double max_x, double max_y, double max_z);
+
 };
 
 #endif

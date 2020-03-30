@@ -158,19 +158,15 @@ void WRITER::print_params(){
     if (Input->generate_conformers){
         printf("* %-30s %-66d*\n", "number_of_conformers", Input->lig_conformers);
         printf("* %-30s %-66d*\n", "conformers_to_rank", Input->conformers_to_evaluate);
-        printf("* %-30s %-66.66s*\n", "conformer_generator", Input->conformer_generator.c_str());
-        if (Input->conformer_generator == "WRS"){
-            printf("* %-30s %-66d*\n", "conformer_min_steps", Input->conformer_min_steps);
-        }
     }
     printf("*                                                                                                  *\n");
     printf("* %-30s %-66.66s*\n", "output_prefix", Input->output.c_str());
     printf("* %-30s %-66d*\n", "write_mol2", Input->write_mol2);
     if (Input->use_writeMol2_score_cutoff){
-        printf("* %-30s %-66.2f*\n", "Cutoff in Overlay Score for Writting Mol2 files", Input->writeMol2_score_cutoff);
+        printf("* %-30s %-66.2f*\n", "Cutoff in Overlay for Mol2", Input->writeMol2_score_cutoff);
     }
     if (Input->use_writeMol2_energy_cutoff){
-        printf("* %-30s %-66.2f*\n", "Cutoff in Binding Energy for Writting Mol2 files", Input->writeMol2_energy_cutoff);
+        printf("* %-30s %-66.2f*\n", "Cutoff in Energy for Mol2", Input->writeMol2_energy_cutoff);
     }
 	printf("*                                                                                                  *\n");
     printf("* %-30s %-66.66s*\n", "Ligand energy model", Input->ligand_energy_model.c_str());
@@ -281,19 +277,15 @@ void WRITER::print_params(){
     if (Input->generate_conformers){
         fprintf(output, "* %-30s %-66d*\n", "number_of_conformers", Input->lig_conformers);
         fprintf(output, "* %-30s %-66d*\n", "conformers_to_rank", Input->conformers_to_evaluate);
-        fprintf(output, "* %-30s %-66.66s*\n", "conformer_generator", Input->conformer_generator.c_str());
-        if (Input->conformer_generator == "WRS"){
-            fprintf(output, "* %-30s %-66d*\n", "conformer_min_steps", Input->conformer_min_steps);
-        }
     }
     fprintf(output, "*                                                                                                  *\n");
     fprintf(output, "* %-30s %-66.66s*\n", "output_prefix", Input->output.c_str());
     fprintf(output, "* %-30s %-66d*\n", "write_mol2", Input->write_mol2);
     if (Input->use_writeMol2_score_cutoff){
-        printf("* %-30s %-66.2f*\n", "Cutoff in Overlay Score for Writting Mol2 files", Input->writeMol2_score_cutoff);
+        printf("* %-30s %-66.2f*\n", "Cutoff in Overlay for Writting Mol2", Input->writeMol2_score_cutoff);
     }
     if (Input->use_writeMol2_energy_cutoff){
-        printf("* %-30s %-66.2f*\n", "Cutoff in Binding Energy for Writting Mol2 files", Input->writeMol2_energy_cutoff);
+        printf("* %-30s %-66.2f*\n", "Cutoff in Energy for Writting Mol2", Input->writeMol2_energy_cutoff);
     }
 	fprintf(output, "*                                                                                                  *\n");
     fprintf(output, "* %-30s %-66.66s*\n", "Ligand energy model", Input->ligand_energy_model.c_str());
@@ -313,7 +305,6 @@ void WRITER::print_params(){
 
 	fprintf(output, "****************************************************************************************************\n");
 	fprintf(output, "****************************************************************************************************\n");
-
 }
 
 void WRITER::write_box(vector<double>center, double min_x, double min_y, double min_z, double max_x, double max_y, double max_z){

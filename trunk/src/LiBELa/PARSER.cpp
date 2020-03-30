@@ -50,7 +50,6 @@ PARSER::PARSER(){
 	this->lig_conformers = 10;
 	this->conformers_to_evaluate = 1;
 	this->mol2_aa = false;
-	this->conformer_generator = "GA";
     this->conformer_min_steps = 1000;
 	this->dock_min_tol = 0.001;
 	this->sa_mode = false;
@@ -94,8 +93,8 @@ PARSER::PARSER(){
     this->max_atom_displacement = 0.00005;
     this->use_writeMol2_score_cutoff = false;
     this->use_writeMol2_energy_cutoff = false;
-    this->writeMol2_score_cutoff = 0.7;
-    this->writeMol2_energy_cutoff = 20.0;
+    this->writeMol2_score_cutoff = 0.75;
+    this->writeMol2_energy_cutoff = 10.0;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -291,29 +290,15 @@ void PARSER::comparing (string param, ifstream &input) {
 		input >> this->lig_conformers;
 	}
 
-	else if (param == "conformers_to_rank"){
-		input >> this->conformers_to_evaluate;
-	}
-
-	else if (param == "conformer_generator"){
-		input >> tmp;
-		if (tmp == "GA" or tmp == "ga" or tmp == "Ga"){
-			this->conformer_generator = "GA";
-		}
-		else {
-			this->conformer_generator = "WRS";
-		}
-	}
+    else if (param == "conformers_to_rank"){
+        input >> this->conformers_to_evaluate;
+    }
 
     else if (param == "conformer_min_steps"){
         input >> this->conformer_min_steps;
 	}
 
-	else if (param == "WRS_geom_steps"){
-		input >> this->WRS_geom_steps;
-	}
-
-	else if (param == "dock_min_tol"){
+    else if (param == "dock_min_tol"){
 		input >> this->dock_min_tol;
 	}
 	else if (param == "dock_parallel"){

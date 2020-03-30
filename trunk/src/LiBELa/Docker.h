@@ -35,17 +35,27 @@ public:
 	double best_ene;
 	//!
 	int best_conf;
+    //!
+    WRITER* Writer;
+#ifdef HAS_GUI
+    QtWriter* QWriter;
+    Docker(QtWriter* _QWriter);
+#endif
 
+    Docker(WRITER* _Writer);
+    void print_line();
+    void print_info(char info[98]);
+    void write_mol2(Mol2* Lig, vector<vector<double> > new_xyz, double ene, double si);
 	//! Optimizer class
 	//! Class constructor. Automatically starts the docking procedure.
-	Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, unsigned counter);
+    void run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, unsigned counter);
     //! Class constructor. Automatically starts the docking procedure.
-    Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, Grid* Grids, unsigned counter);
+    void run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, Grid* Grids, unsigned counter);
 
 	//! Method for docking a set of conformers of a molecule. All the conformers are docked and a selected number are optimized in the active site.
-	void Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, unsigned counter);
+    void Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, unsigned counter);
     //! Method for docking a set of conformers of a molecule. All the conformers are docked and a selected number are optimized in the active site.
-    void Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, WRITER* Writer, Grid* Grids, unsigned counter);
+    void Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, Grid* Grids, unsigned counter);
 
 #ifdef HAS_GUI
 	//! Constructor for docking. Automatically starts the docking procedure. Used in the Qt GUI.

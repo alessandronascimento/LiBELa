@@ -164,7 +164,7 @@ DockWidget::DockWidget(PARSER *Input, QTextEdit* Ed)
     energy_optimizer->addItem("SIMPLEX");                   //6
     energy_optimizer->addItem("DIRECT");                    //7
     energy_optimizer->addItem("CRS");                       //8
-	energy_optimizer->addItem("NONE");
+    energy_optimizer->addItem("NONE");                      //9
     energy_optimizer->setCurrentIndex(7);
 	energy_optimizer_lab = new QLabel(tr("Binding energy optimizer: "));
 
@@ -224,12 +224,6 @@ DockWidget::DockWidget(PARSER *Input, QTextEdit* Ed)
     conformers_to_evaluate->setValue(Inp->conformers_to_evaluate);
     conformers_to_evaluate->setMinimum(1);
 
-    conformer_generator_lab = new QLabel(tr("Conformer Generator: "));
-    conformer_generator = new QComboBox;
-    conformer_generator->addItem("GA");
-    conformer_generator->addItem("WRS");
-    conformer_generator->setCurrentIndex(0);
-
     dock_min_tol_lab = new QLabel(tr("Docking tolerance: "));
     dock_min_tol = new QDoubleSpinBox;
     dock_min_tol->setDecimals(10);
@@ -246,6 +240,22 @@ DockWidget::DockWidget(PARSER *Input, QTextEdit* Ed)
     parallel_jobs = new QSpinBox;
     parallel_jobs->setValue(1);
     parallel_jobs->setMinimum(1);
+
+    use_cutoff_score = new QCheckBox(tr("Use cutoff Score?"));
+    use_cutoff_score_lab = new QLabel(tr("Use cutoff for similarity?"));
+    cutoff_score = new QDoubleSpinBox;
+    cutoff_score->setValue(Inp->writeMol2_score_cutoff);
+    cutoff_score->setMaximum(1.0);
+    cutoff_score->setMinimum(0.0);
+    cutoff_score->setSingleStep(0.05);
+
+    use_cutoff_energy = new QCheckBox(tr("Use cutoff energy"));
+    use_cutoff_energy_lab = new QLabel(tr("Use cutoff for binding energy?"));
+    cutoff_energy = new QDoubleSpinBox;
+    cutoff_energy->setValue(Inp->writeMol2_energy_cutoff);
+    cutoff_energy->setSingleStep(0.01);
+
+
 
     files_label = new QLabel(tr("<h2>Input Files</h2>"));
     editLayout->addWidget(files_label, 0, 0);
@@ -270,106 +280,111 @@ DockWidget::DockWidget(PARSER *Input, QTextEdit* Ed)
 
     editLayout->addWidget(write_mol2, 7,0);
 
+    editLayout->addWidget(use_cutoff_score_lab, 8, 0);
+    editLayout->addWidget(use_cutoff_score, 8, 1);
+    editLayout->addWidget(cutoff_score, 8, 2);
+
+    editLayout->addWidget(use_cutoff_energy_lab, 9, 0);
+    editLayout->addWidget(use_cutoff_energy, 9, 1);
+    editLayout->addWidget(cutoff_energy, 9, 2);
+
     sf_input = new QLabel(tr("<h2>Scoring options</h2>"));
-    editLayout->addWidget(sf_input, 8, 0);
+    editLayout->addWidget(sf_input, 10, 0);
 
-    editLayout->addWidget(scoring_function_lab, 9, 0);
-    editLayout->addWidget(scoring_function, 9, 1);
+    editLayout->addWidget(scoring_function_lab, 11, 0);
+    editLayout->addWidget(scoring_function, 11, 1);
 
-    editLayout->addWidget(box_size_lab, 10, 0);
-    editLayout->addWidget(box_size, 10, 1);
+    editLayout->addWidget(box_size_lab, 12, 0);
+    editLayout->addWidget(box_size, 12, 1);
 
-    editLayout->addWidget(diel_lab, 11, 0);
-    editLayout->addWidget(diel, 11, 1);
+    editLayout->addWidget(diel_lab, 13, 0);
+    editLayout->addWidget(diel, 13, 1);
 
-    editLayout->addWidget(dielectric_model_lab, 12, 0);
-    editLayout->addWidget(dielectric_model, 12, 1);
+    editLayout->addWidget(dielectric_model_lab, 14, 0);
+    editLayout->addWidget(dielectric_model, 14, 1);
 
-    editLayout->addWidget(sigma_lab, 13, 0);
-    editLayout->addWidget(sigma, 13, 1);
+    editLayout->addWidget(sigma_lab, 15, 0);
+    editLayout->addWidget(sigma, 15, 1);
 
-    editLayout->addWidget(alpha_lab, 14, 0);
-    editLayout->addWidget(alpha, 14, 1);
+    editLayout->addWidget(alpha_lab, 16, 0);
+    editLayout->addWidget(alpha, 16, 1);
 
-    editLayout->addWidget(beta_lab, 15, 0);
-    editLayout->addWidget(beta, 15, 1);
+    editLayout->addWidget(beta_lab, 17, 0);
+    editLayout->addWidget(beta, 17, 1);
 
-    editLayout->addWidget(deltaij_vdw_lab, 16, 0);
-    editLayout->addWidget(deltaij_vdw, 16, 1);
+    editLayout->addWidget(deltaij_vdw_lab, 18, 0);
+    editLayout->addWidget(deltaij_vdw, 18, 1);
 
-    editLayout->addWidget(deltaij_elec_lab, 17, 0);
-    editLayout->addWidget(deltaij_elec, 17, 1);
+    editLayout->addWidget(deltaij_elec_lab, 19, 0);
+    editLayout->addWidget(deltaij_elec, 19, 1);
 
-    editLayout->addWidget(vdw_scale_lab, 18, 0);
-    editLayout->addWidget(vdw_scale, 18, 1);
+    editLayout->addWidget(vdw_scale_lab, 20, 0);
+    editLayout->addWidget(vdw_scale, 20, 1);
 
-    editLayout->addWidget(elec_scale_lab, 19, 0);
-    editLayout->addWidget(elec_scale, 19, 1);
+    editLayout->addWidget(elec_scale_lab, 21, 0);
+    editLayout->addWidget(elec_scale, 21, 1);
 
     opt_input = new QLabel(tr("<h2>Optimization options</h2>"));
-    editLayout->addWidget(opt_input, 20, 0);
+    editLayout->addWidget(opt_input, 22, 0);
 
-    editLayout->addWidget(min_delta_lab, 21, 0);
-    editLayout->addWidget(min_delta, 21, 1);
+    editLayout->addWidget(min_delta_lab, 23, 0);
+    editLayout->addWidget(min_delta, 23, 1);
 
-    editLayout->addWidget(min_tol_lab, 22, 0);
-    editLayout->addWidget(min_tol, 22, 1);
+    editLayout->addWidget(min_tol_lab, 24, 0);
+    editLayout->addWidget(min_tol, 24, 1);
 
-    editLayout->addWidget(dock_min_tol_lab, 23, 0);
-    editLayout->addWidget(dock_min_tol, 23, 1);
+    editLayout->addWidget(dock_min_tol_lab, 25, 0);
+    editLayout->addWidget(dock_min_tol, 25, 1);
 
-    editLayout->addWidget(min_timeout_lab, 24, 0);
-    editLayout->addWidget(min_timeout, 24, 1);
+    editLayout->addWidget(min_timeout_lab, 26, 0);
+    editLayout->addWidget(min_timeout, 26, 1);
 
-    editLayout->addWidget(dock_timeout_lab, 25, 0);
-    editLayout->addWidget(dock_timeout, 25, 1);
+    editLayout->addWidget(dock_timeout_lab, 27, 0);
+    editLayout->addWidget(dock_timeout, 27, 1);
 
-    editLayout->addWidget(overlay_optimizer_lab, 26, 0);
-    editLayout->addWidget(overlay_optimizer, 26, 1);
+    editLayout->addWidget(overlay_optimizer_lab, 28, 0);
+    editLayout->addWidget(overlay_optimizer, 28, 1);
 
-    editLayout->addWidget(energy_optimizer_lab, 27, 0);
-    editLayout->addWidget(energy_optimizer, 27, 1);
+    editLayout->addWidget(energy_optimizer_lab, 29, 0);
+    editLayout->addWidget(energy_optimizer, 29, 1);
 
-    editLayout->addWidget(box_size_lab, 28, 0);
-    editLayout->addWidget(box_size, 28, 1);
+    editLayout->addWidget(box_size_lab, 30, 0);
+    editLayout->addWidget(box_size, 30, 1);
 
-    editLayout->addWidget(dock_no_h, 29, 0);
+    editLayout->addWidget(dock_no_h, 31, 0);
 
     conf_input = new QLabel(tr("<h2>Conformer options</h2>"));
-    editLayout->addWidget(conf_input, 30, 0);
+    editLayout->addWidget(conf_input, 32, 0);
 
-    editLayout->addWidget(generate_conformers, 31, 0);
+    editLayout->addWidget(generate_conformers, 33, 0);
 
-    editLayout->addWidget(conformers_lab, 32, 0);
-    editLayout->addWidget(conformers, 32, 1);
+    editLayout->addWidget(conformers_lab, 34, 0);
+    editLayout->addWidget(conformers, 34, 1);
 
-    editLayout->addWidget(conformers_to_evaluate_lab, 33, 0);
-    editLayout->addWidget(conformers_to_evaluate, 33, 1);
-
-    editLayout->addWidget(conformer_generator_lab, 34, 0);
-    editLayout->addWidget(conformer_generator, 34, 1);
+    editLayout->addWidget(conformers_to_evaluate_lab, 35, 0);
+    editLayout->addWidget(conformers_to_evaluate, 35, 1);
 
     parallel_label = new QLabel(tr("<h2>Parallel execution</h2>"));
-    editLayout->addWidget(parallel_label, 35, 0);
+    editLayout->addWidget(parallel_label, 36, 0);
 
-    editLayout->addWidget(parallel, 36, 0);
+    editLayout->addWidget(parallel, 37, 0);
 
-    editLayout->addWidget(parallel_jobs_lab, 37, 0);
-    editLayout->addWidget(parallel_jobs, 37, 1);
+    editLayout->addWidget(parallel_jobs_lab, 38, 0);
+    editLayout->addWidget(parallel_jobs, 38, 1);
 
     grid_label = new QLabel(tr("<h2>Grid Potentials</h2>"));
-    editLayout->addWidget(grid_label, 38, 0);
+    editLayout->addWidget(grid_label, 39, 0);
 
-    editLayout->addWidget(use_grids, 39,0);
+    editLayout->addWidget(use_grids, 40,0);
 
-    editLayout->addWidget(grid_spacing_lab, 40,0);
-    editLayout->addWidget(grid_spacing, 40,1);
+    editLayout->addWidget(grid_spacing_lab, 41, 0);
+    editLayout->addWidget(grid_spacing, 41, 1);
 
-    editLayout->addWidget(load_write_file, 41, 0);
-    editLayout->addWidget(grid_file, 41, 1);
+    editLayout->addWidget(load_write_file, 42, 0);
+    editLayout->addWidget(grid_file, 42, 1);
 
-    editLayout->addWidget(grid_box_lab, 42, 0);
-    editLayout->addWidget(grid_box, 42, 1);
+    editLayout->addWidget(grid_box_lab, 43, 0);
+    editLayout->addWidget(grid_box, 43, 1);
 
 	progress_layout->addWidget(advanced_settings);
 	progress_layout->addWidget(progress_label, Qt::AlignCenter);
@@ -399,8 +414,10 @@ DockWidget::DockWidget(PARSER *Input, QTextEdit* Ed)
 
     connect(write_mol2, SIGNAL(stateChanged(int)), this, SLOT(slot_write_mol2(int)));
     connect(dock_no_h, SIGNAL(stateChanged(int)), this, SLOT(slot_ignore_h(int)));
+    connect(use_cutoff_score, SIGNAL(stateChanged(int)), this, SLOT(slot_use_cutoff_score(int)));
+    connect(use_cutoff_energy, SIGNAL(stateChanged(int)), this, SLOT(slot_use_cutoff_energy(int)));
     connect(generate_conformers, SIGNAL(stateChanged(int)), this, SLOT(slot_generate_conformers(int)));
-//    connect(parallel, SIGNAL(stateChanged(int)), this, SLOT(slot_parallel(int)));
+    connect(parallel, SIGNAL(stateChanged(int)), this, SLOT(slot_parallel(int)));
     connect(parallel_jobs, SIGNAL(valueChanged(int)), this, SLOT(slot_parallel(int)));
 
     connect(load_write_file, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_grid_file(int)));
@@ -413,14 +430,14 @@ DockWidget::DockWidget(PARSER *Input, QTextEdit* Ed)
 void DockWidget::choose_rec_file(){
     QString filename = QFileDialog::getOpenFileName(this, tr("Choose a File"), "", tr("MOL2 Files (*.mol2 *.mol2.gz)"));
 	choose_rec_mol2->setText(filename.toUtf8());
-	Inp->rec_mol2 = filename.toStdString();
+    Inp->rec_mol2 = string(filename.toStdString());
 }
 
 void DockWidget::choose_reflig_file(){
     QString filename = QFileDialog::getOpenFileName(this, tr("Choose a File"), "", tr("MOL2 Files (*.mol2 *.mol2.gz)"));
 	choose_reflig_mol2->setText(filename.toUtf8());
-	Inp->reflig_mol2 = filename.toStdString();
-	Inp->lig_mol2 = Inp->reflig_mol2;
+    Inp->reflig_mol2 = string(filename.toUtf8().toStdString());
+    Inp->lig_mol2 = Inp->reflig_mol2;
 }
 
 void DockWidget::choose_docking_mol2_files(){
@@ -486,6 +503,28 @@ void DockWidget::slot_write_mol2(int state){
     }
 }
 
+void DockWidget::slot_use_cutoff_score(int state){
+    switch(state){
+    case Qt::Checked:
+        Inp->use_writeMol2_score_cutoff = true;
+        break;
+    case Qt::Unchecked:
+        Inp->use_writeMol2_score_cutoff = false;
+        break;
+    }
+}
+
+void DockWidget::slot_use_cutoff_energy(int state){
+    switch(state){
+    case Qt::Checked:
+        Inp->use_writeMol2_energy_cutoff = true;
+        break;
+    case Qt::Unchecked:
+        Inp->use_writeMol2_energy_cutoff = false;
+        break;
+    }
+}
+
 void DockWidget::slot_ignore_h(int state){
     switch(state){
     case Qt::Checked:
@@ -502,14 +541,12 @@ void DockWidget::slot_generate_conformers(int state){
     case Qt::Unchecked:
         Inp->generate_conformers = false;
         this->conformers_to_evaluate->setDisabled(true);
-        this->conformer_generator->setDisabled(true);
         this->conformers->setDisabled(true);
         this->conformers_lab->setDisabled(true);
         break;
     case Qt::Checked:
         Inp->generate_conformers = true;
         this->conformers_to_evaluate->setDisabled(false);
-        this->conformer_generator->setDisabled(false);
         this->conformers->setDisabled(false);
         this->conformers_lab->setDisabled(false);
         break;
@@ -552,8 +589,9 @@ void DockWidget::slot_use_grids(int state){
 
 void DockWidget::Start(){
 	this->set_parameters();
-	RunEngine = new TEMP_SCHEME(Inp, Editor);
-	RunEngine->evaluation(Inp, progressbar);
+    RunEngine = new TEMP_SCHEME(Inp, Editor, this->progressbar);
+    RunEngine->evaluation();
+    delete RunEngine;
 }
 
 void DockWidget::set_parameters(){
@@ -685,15 +723,27 @@ void DockWidget::set_parameters(){
     if (Inp->generate_conformers){
         Inp->lig_conformers = this->conformers->value();
         Inp->conformers_to_evaluate = this->conformers_to_evaluate->value();
-        switch (this->conformer_generator->currentIndex()){
-        case 0:
-            Inp->conformer_generator = "GA";
-            break;
-        case 1:
-            Inp->conformer_generator == "WRS";
-            break;
-        }
     }
+
+    if (this->use_cutoff_score->isChecked()){
+        Inp->use_writeMol2_score_cutoff = true;
+    }
+
+    if (this->use_cutoff_energy->isChecked()){
+        Inp->use_writeMol2_energy_cutoff = true;
+    }
+
+    Inp->writeMol2_score_cutoff = this->cutoff_score->value();
+    Inp->writeMol2_energy_cutoff = this->cutoff_energy->value();
+
+    // writing the list of molecules do dock
+
+    FILE* multifile = fopen("multimol.dat", "w");
+    for (int i=0; i< Inp->docking_molecules.size(); i++){
+        fprintf(multifile, "%s\n", Inp->docking_molecules[i].toUtf8().toStdString().c_str());
+    }
+    fclose(multifile);
+    Inp->multifile = "multimol.dat";
 }
 
 void DockWidget::write_parameters(){
@@ -798,7 +848,7 @@ void DockWidget::write_parameters(){
     line = ("dock_min_tol " + QString::number(this->dock_min_tol->value()) + "\n");
     input_params.write(line.toUtf8());
 
-    line = ("mininimization_timeout " + QString::number(this->min_timeout->value()) + "\n");
+    line = ("minimization_timeout " + QString::number(this->min_timeout->value()) + "\n");
     input_params.write(line.toUtf8());
 
 	line = ("overlay_optimizer " + QString::fromStdString(Inp->overlay_optimizer) + "\n");
@@ -832,21 +882,6 @@ void DockWidget::write_parameters(){
 
     line = ("number_of_conformers " + QString::number(this->conformers->value()) + "\n");
     input_params.write(line.toUtf8());
-
-    switch (this->conformer_generator->currentIndex()){
-    case 0:
-        line=("conformer_generator GA\n");
-        input_params.write(line.toUtf8());
-        break;
-    case 1:
-        line=("conformer_generator WRS\n");
-        input_params.write(line.toUtf8());
-        break;
-    default:
-        line=("conformer_generator GA\n");
-        input_params.write(line.toUtf8());
-        break;
-    }
 
     /*
      * GRIDS
@@ -940,8 +975,6 @@ void DockWidget::hide_advanced_options(){
 
     conformers_to_evaluate->hide();
     conformers_to_evaluate_lab->hide();
-    conformer_generator->hide();
-    conformer_generator_lab->hide();
 
     dock_min_tol->hide();
     dock_min_tol_lab->hide();
@@ -1002,8 +1035,6 @@ void DockWidget::show_advanced_options(){
     conformers_lab->show();
     conformers_to_evaluate->show();
     conformers_to_evaluate_lab->show();
-    conformer_generator->show();
-    conformer_generator_lab->show();
     dock_min_tol->show();
     dock_min_tol_lab->show();
     dock_timeout->show();

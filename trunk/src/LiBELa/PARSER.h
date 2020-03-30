@@ -188,12 +188,8 @@ public:
 	int lig_conformers;
     //! Number of conformers that should be optimized
 	int conformers_to_evaluate;
-    //! Algorithm to be used for conformer generation: WRS or GA.
-	string conformer_generator;
     //! Number of minimization steps before conformer generation, when using WRS.
     int conformer_min_steps;
-    //! Geometric steps for WRS
-	int WRS_geom_steps;
     //! Tolerance for binding energy optimization
 	double dock_min_tol;
     //! Turns on the equilibrium mode

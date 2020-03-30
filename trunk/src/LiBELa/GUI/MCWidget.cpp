@@ -342,8 +342,8 @@ void MCWidget::write_parameters(){
 
 void MCWidget::RunEng(){
 	this->set_parameters();
-	RunEngine = new TEMP_SCHEME(Inp, Edit);
-	RunEngine->evaluation(Inp, progressbar);
+    RunEngine = new TEMP_SCHEME(Inp, Edit, progressbar);
+    RunEngine->evaluation();
 }
 
 MCWidget::~MCWidget()
