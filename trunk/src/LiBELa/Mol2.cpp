@@ -281,7 +281,9 @@ void Mol2::initialize_gaff(){
     char* dir_path = getenv("LIBELA");
     if (dir_path== NULL){
         printf("Environment variable LIBELA is not set.\n");
-        exit(1);
+        printf("Trying to use local folder as LIBELA folder...\n");
+        strcpy(filename, "");
+        strcat(filename, "param/LJ_parm.dat");
     }
     else {
         strcpy(filename, dir_path);
