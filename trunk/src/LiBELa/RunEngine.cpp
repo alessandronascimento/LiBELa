@@ -665,6 +665,7 @@ int TEMP_SCHEME::dock_serial(vector<string> ligand_list, int count, int chunck_s
     count = atoi(ligand_list[ligand_list.size()-1].c_str());
     for (unsigned i=0; i< ligand_list.size()-1; i++){
         Mol2* Lig2 = new Mol2;
+
         bool lig_is_opened = false;
 
         if (ligand_list[i].substr(ligand_list[i].size()-3, 3) == ".gz"){

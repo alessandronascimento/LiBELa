@@ -174,7 +174,7 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
                     }
                 }
                 if (will_write){
-                    Writer->writeMol2(Lig, opt_result2->optimized_xyz, opt_result2->energy_result->total, overlay_fmax);
+                    this->write_mol2(Lig, opt_result2->optimized_xyz, opt_result2->energy_result->total, overlay_fmax);
                 }
 			}
 		}
@@ -463,6 +463,7 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
 
             if (! this->minimize_energy(Input, Opt2, Rec, Lig, opt_result2)){
                 sprintf(info, "Energy optimizer %s is not defined. Exiting...\n", Input->energy_optimizer.c_str());
+                this->print_info(info);
             }
 
             if (opt_result2->energy_result->total < best_ene){
