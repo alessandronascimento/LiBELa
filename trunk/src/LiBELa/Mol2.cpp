@@ -263,8 +263,8 @@ Mol2::~Mol2(){
 	this->resnames.clear();
 	this->bonds.clear();
 	this->sybyl_atoms.clear();
-	this->mcoords.clear();
-	this->new_mcoords.clear();
+//	this->mcoords.clear();
+//	this->new_mcoords.clear();
 	this->new_xyz.clear();
 	this->atomnames.clear();
 	this->masses.clear();
