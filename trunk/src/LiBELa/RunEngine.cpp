@@ -683,15 +683,14 @@ int TEMP_SCHEME::dock_serial(vector<string> ligand_list, int count, int chunck_s
             }
             if (Input->use_grids){
                 Dock->run(REC, Lig2, RefLig, center, Input, Grids, ((count*chunck_size))+i+1);
-                delete Dock;
             }
             else {
                 Dock->run(REC, Lig2, RefLig, center, Input, ((count*chunck_size))+i+1);
-                delete Dock;
             }
         }
         delete Lig2;
     }
+    delete Dock;
     delete Write_lig;
     return 0;
 }

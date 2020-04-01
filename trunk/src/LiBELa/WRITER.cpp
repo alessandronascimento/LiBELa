@@ -538,12 +538,10 @@ void WRITER::print_line(void){
 }
 
 WRITER::~WRITER(){
-/*
     if ((Input->write_mol2) and Input->dock_mode){
         gzclose(outmol2);
     }
 	fclose(output);
-*/
 }
 
 void WRITER::print_dock_params(){
