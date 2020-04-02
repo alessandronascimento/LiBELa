@@ -111,11 +111,11 @@ bool Mol2::parse_mol2file(PARSER *Input, string molfile) {
 		}
 
 		fscanf(mol2file, "%s\n", str);
-		if (str[0] != '@'){
-			while (str[0] != '@'){
-				fgets(str, 80, mol2file);
-			}
-		}
+        cpstr = string(str);
+        while (cpstr.substr(0,13) != "@<TRIPOS>BOND"){
+            fgets(str, 80, mol2file);
+            cpstr = string(str);
+        }
 
 		vector<string> bond;
 		char s1[6], s2[6], s3[5];
@@ -221,10 +221,10 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
         }
 
         gzgets(mol2file, str, 100);
-        if (str[0] != '@'){
-            while (str[0] != '@'){
-                gzgets(mol2file, str, 100);
-            }
+        cpstr = string(str);
+        while (cpstr.substr(0,13) != "@<TRIPOS>BOND"){
+            gzgets(mol2file, str, 100);
+            cpstr = string(str);
         }
 
         vector<string> bond;
