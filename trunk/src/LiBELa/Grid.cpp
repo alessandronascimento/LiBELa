@@ -546,12 +546,11 @@ void Grid::compute_grid_hardcore_omp(Mol2* Rec){
     vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz);
     vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2;
 
-//    double elec, d, d2, d6, x, y, z, vdwA, vdwB, solv, rec_solv, deff;
     double sqrt2 = sqrt(2.0);
 
 // initializing the vectors;
 
-    for (unsigned i=0; i<this->npointsy; i++){
+    for (int i=0; i<this->npointsy; i++){
         elec_t2.push_back(elec_t1);
         vdwA_t2.push_back(vdwA_t1);
         vdwB_t2.push_back(vdwB_t1);
@@ -559,7 +558,7 @@ void Grid::compute_grid_hardcore_omp(Mol2* Rec){
         rec_solv_t2.push_back(rec_solv_t1);
     }
 
-    for (unsigned i=0; i<this->npointsx; i++){
+    for (int i=0; i<this->npointsx; i++){
         this->elec_grid.push_back(elec_t2);
         this->vdwA_grid.push_back(vdwA_t2);
         this->vdwB_grid.push_back(vdwB_t2);
@@ -725,7 +724,6 @@ void Grid::load_Delphi_Grid_from_file(){
 }
 
 void Grid::load_phimap_from_file(int gsize){
-    int tmpi;
     FILE *phimap;
     char *uplbl, *nxtlbl, *toplbl, *botlbl;
     double scale, oldmid_x, oldmid_y, oldmid_z;
@@ -737,17 +735,12 @@ void Grid::load_phimap_from_file(int gsize){
         exit(1);
     }
 
-//    fread(&tmpi, sizeof(int), 1, phimap);
-
     uplbl = (char *) malloc(sizeof(char) * 23);
     for (int i=0; i<21; i++) {
         uplbl[i] = fgetc(phimap);
     }
     uplbl[21] = '\n';
     uplbl[22] = (char) 0;
-
-//    fread(&tmpi, sizeof(int), 1, phimap);
-//    fread(&tmpi, sizeof(int), 1, phimap);
 
     nxtlbl = (char *) malloc(sizeof(char) * 12);
     for (int i=0; i<10; i++) {
@@ -780,9 +773,6 @@ void Grid::load_phimap_from_file(int gsize){
         this->delphi_grid.push_back(vtmp);
     }
 
-//    fread(&tmpi, sizeof(int), 1, phimap);
-//    fread(&tmpi, sizeof(int), 1, phimap);
-
     double kt_phi;
     for (int nz=0; nz < gsize; nz++){
         for (int ny=0; ny < gsize; ny++){
@@ -792,9 +782,6 @@ void Grid::load_phimap_from_file(int gsize){
             }
         }
     }
-
-//    fread(&tmpi, sizeof(int), 1, phimap);
-//    fread(&tmpi, sizeof(int), 1, phimap);
 
     botlbl = (char *) malloc(sizeof(char) * 18);
     for (int i=0; i<16; i++) {
@@ -806,9 +793,6 @@ void Grid::load_phimap_from_file(int gsize){
 #ifdef DEBUG
     printf("%s\n", botlbl);
 #endif
-
-//    fread(&tmpi, sizeof(int), 1, phimap);
-//    fread(&tmpi, sizeof(int), 1, phimap);
 
     fread(&scale, sizeof(double), 1, phimap);
     fread(&oldmid_x, sizeof(double), 1, phimap);
