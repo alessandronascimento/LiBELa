@@ -2,7 +2,7 @@
 
 LiBELa is an acronim for Ligand Binding Energy Landscape. It was originally designed to sample the Binding Energy of a ligand whithin a protein binding pocket. During the time the program was largelly modified to become a framework dedicate to two major purposes:
 
-- [x] [Ligand- and Receptor-Based Ligand Docking](Docking.md)
+- [x] [Ligand- and Receptor-Based Ligand Docking](Docking)
 
 and 
 
