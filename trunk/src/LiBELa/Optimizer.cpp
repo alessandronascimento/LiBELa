@@ -71,7 +71,7 @@ double Optimizer::objective_energy_function(const std::vector<double> &x, std::v
 	Mol2* Lig2 = (Mol2*) data;
 	new_xyz = Coord->rototranslate(Lig2->xyz, Lig2, x[0], x[1], x[2], x[3], x[4], x[5]);
 	f = evaluate_energy(Lig2, new_xyz);
-
+/*
     Gaussian* Gauss = new Gaussian;
     double t1, t2, t3, si;
     t1 = Gauss->compute_shape_and_charge_density(Parser, RefLig, Lig2, RefLig->xyz, new_xyz);
@@ -79,7 +79,7 @@ double Optimizer::objective_energy_function(const std::vector<double> &x, std::v
     t3 = Gauss->compute_shape_and_charge_density(Parser, Lig2, Lig2, new_xyz,new_xyz);
     si = (2*t1) / (t2+t3);
     delete Gauss;
-
+*/
     if(!grad.empty()){
 		new_xyz = Coord->rototranslate(Lig2->xyz, Lig2, x[0]+Parser->min_delta, x[1], x[2], x[3], x[4], x[5]);
 		f2 = evaluate_energy(Lig2, new_xyz);
