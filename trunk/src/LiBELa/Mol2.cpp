@@ -276,7 +276,7 @@ void Mol2::initialize_gaff(){
     char str[80];
     char at[3];
     float r, e, m;
-    char filename[80];
+    char filename[150];
 
     char* dir_path = getenv("LIBELA");
     if (dir_path== NULL){

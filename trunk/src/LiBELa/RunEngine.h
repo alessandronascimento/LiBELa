@@ -19,6 +19,7 @@
 #include<time.h>
 #include<cstdio>
 #include<ctime>
+#include<unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include<gsl/gsl_rng.h>

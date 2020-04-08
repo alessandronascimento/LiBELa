@@ -56,6 +56,11 @@ void TEMP_SCHEME::evaluation(){
     if ((REC->N != int(REC->charges.size())) or (REC->N != int(REC->radii.size())) or (REC->N != int(REC->epsilons.size()))){
         cout <<"The number of atomic parameters and the number of atoms doesn't match!" << endl;
         cout << "Exiting..." << endl;
+        sprintf(info, "Number of atomic parameters and the number of atoms doesn't match!");
+        this->print_info(info);
+        sprintf(info, "Exiting...");
+        this->print_info(info);
+        usleep(2000);
         exit(1);
     }
 
@@ -1073,10 +1078,10 @@ void TEMP_SCHEME::mcr_run(){
         //
 
         if (Input->ligsim){
-            for (unsigned i=0; i<Input->mcr_size; i++){
+            for (int i=0; i<Input->mcr_size; i++){
                 Input->bi = Input->mcr_coefficients[i];
                 bt = Input->temp;
-                for (unsigned j=0; j <= i; j++){
+                for (int j=0; j <= i; j++){
                     bt = bt*Input->mcr_coefficients[j];
                 }
 
@@ -1277,7 +1282,7 @@ void TEMP_SCHEME::write_box(vector<double>center, double min_x, double min_y, do
     QWriter->write_box(center, min_x, min_y, min_z, max_x, max_y, max_z);
 #else
     Writer->write_box(center, min_x, min_y, min_z, max_x, max_y, max_z);
-#endif;
+#endif
 }
 
 

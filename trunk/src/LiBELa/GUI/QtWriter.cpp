@@ -117,14 +117,17 @@ void QtWriter::print_param(void){
 
 void QtWriter::write_welcome(void){
 	Editor->clear();
-	Editor->append("****************************************************************************************************************");
-    Editor->append("                                                   iMcLiBELa v. 1.0                                             ");
-	Editor->append("                                 Monte Carlo-Based Ligand Binding Energy Landscape                              ");
-    Editor->append("                                 Written by Alessandro S. Nascimento - asnascimento@ifsc.usp.br                 ");
-    Editor->append("                                           University of Sao Paulo, Brazil                                      ");
-    Editor->append("                                          http://www.biotechmol.ifsc.usp.br/                                    ");
-	Editor->append("                                                                                                                ");
-	Editor->append("****************************************************************************************************************");
+    Editor->append("****************************************************************************************************");
+    Editor->append("****************************************************************************************************");
+    Editor->append("*                  MCLiBELa - Monte Carlo-based Ligand Binding Energy Landscape");
+    Editor->append(QString("*                                      Version 0.1  - Build %1").arg(BUILD));
+    Editor->append("*                                                                                                  ");
+    Editor->append("* University of Sao Paulo                                                                          ");
+    Editor->append("* More Info:                                                                                       ");
+    Editor->append("*      http://www.biotechmol.ifsc.usp.br/                                                          ");
+    Editor->append("*                                                                                                  ");
+    Editor->append("****************************************************************************************************");
+    Editor->append("****************************************************************************************************");
 	Editor->append("");
 
 	fprintf(logfile, "**************************************************************************************\n");
