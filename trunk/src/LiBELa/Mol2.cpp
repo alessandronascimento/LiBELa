@@ -66,7 +66,7 @@ bool Mol2::parse_mol2file(PARSER *Input, string molfile) {
 		}
 
 		for (int i=0; i<this->N; i++){
-            fscanf(mol2file, "%d %s %f %f %f %5s%d %s %f\n", &tint, str, &tx, &ty, &tz, tatomtype, &tres, resname, &tcharge);
+            fscanf(mol2file, "%d %s %f %f %f %s %d %s %f\n", &tint, str, &tx, &ty, &tz, tatomtype, &tres, resname, &tcharge);
 			txyz.push_back(tx);
 			txyz.push_back(ty);
 			txyz.push_back(tz);
@@ -110,7 +110,7 @@ bool Mol2::parse_mol2file(PARSER *Input, string molfile) {
 			}
 		}
 
-		fscanf(mol2file, "%s\n", str);
+//		fscanf(mol2file, "%s\n", str);
         cpstr = string(str);
         while (cpstr.substr(0,13) != "@<TRIPOS>BOND"){
             fgets(str, 80, mol2file);
@@ -176,7 +176,7 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
 
         for (int i=0; i<this->N; i++){
             gzgets(mol2file, str, 100);
-            sscanf(str, "%d %s %f %f %f %5s%d %s %f\n", &tint, str, &tx, &ty, &tz, tatomtype, &tres, resname, &tcharge);
+            sscanf(str, "%d %s %f %f %f %s %d %s %f\n", &tint, str, &tx, &ty, &tz, tatomtype, &tres, resname, &tcharge);
             txyz.push_back(tx);
             txyz.push_back(ty);
             txyz.push_back(tz);
@@ -220,7 +220,7 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
             }
         }
 
-        gzgets(mol2file, str, 100);
+//        gzgets(mol2file, str, 100);
         cpstr = string(str);
         while (cpstr.substr(0,13) != "@<TRIPOS>BOND"){
             gzgets(mol2file, str, 100);
