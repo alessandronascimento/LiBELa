@@ -817,6 +817,14 @@ void Grid::load_phimap_from_file(int gsize){
     fclose(phimap);
     sprintf(info, "DelPhi Grid file %s read!", Input->delphi_grid.c_str());
     Writer->print_info(info);
+    sprintf(info, "DelPhi Grid Scale / Spacing: %7.4f %7.4f", scale, this->grid_spacing);
+    Writer->print_info(info);
+    sprintf(info, "DelPhi Grid GSIZE: %5d. Mid XYZ: %7.4f %7.4f %7.4f", gsize, oldmid_x, oldmid_y, oldmid_z);
+    Writer->print_info(info);
+    sprintf(info, "Grid Dimensions XYZ: %7.4f - %7.4f %7.4f - %7.4f %7.4f - %7.4f", this->xbegin, this->xend, this->ybegin, this->yend,
+            this->zbegin, this->zend);
+    Writer->print_info(info);
+
     this->delphi_loaded = true;
 }
 
