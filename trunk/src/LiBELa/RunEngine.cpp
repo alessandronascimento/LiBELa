@@ -532,22 +532,26 @@ void TEMP_SCHEME::dock_run(){
 
         ti = clock();
 
-#ifdef HAS_GUI
-        Docker* Dock = new Docker(QWriter);
-#else
-        Docker* Dock = new Docker(Writer);
-#endif
-
         sprintf(info, "%5s %-12.12s %-4.4s %-10.10s %-8.8s %-8.8s %-8.8s %-8.8s %-8.8s %3.3s %-5.5s %2.2s", "#", "Ligand", "Resi", "Overlay", "Elec", "VDW", "Rec_Solv", "Lig_Solv", "Energy", "Conf", "MS", "SI");
         this->print_info(info);
         this->print_line();
 
 
-        center = COORD.compute_com(RefLig);
+        if (Input->dock_parallel){
+            this->dock_parallel();
+        }
+        else {
 
-        unsigned counter=0;
-        if (Input->multifile != ""){
-            if (!Input->dock_parallel){
+#ifdef HAS_GUI
+            Docker* Dock = new Docker(QWriter);
+#else
+            Docker* Dock = new Docker(Writer);
+#endif
+
+            center = COORD.compute_com(RefLig);
+
+            unsigned counter=0;
+            if (Input->multifile != ""){
                 string ligand = "";
                 ifstream multifile(Input->multifile.c_str());
                 if (! multifile.is_open()){
@@ -599,30 +603,28 @@ void TEMP_SCHEME::dock_run(){
                 multifile.close();
             }
             else {
-                this->dock_parallel();
-            }
-        }
-        else {
-            counter=1; 														// just one ligand
-            if (Input->generate_conformers){
-                Conformer* Conf = new Conformer;
-                Conf->generate_conformers_confab(Input, LIG, Input->lig_mol2);
-                if (Input->use_grids){
-                    Dock->run(REC, LIG, RefLig, center, Input, Grids, counter);
+                counter=1; 														// just one ligand
+                if (Input->generate_conformers){
+                    Conformer* Conf = new Conformer;
+                    Conf->generate_conformers_confab(Input, LIG, Input->lig_mol2);
+                    if (Input->use_grids){
+                        Dock->run(REC, LIG, RefLig, center, Input, Grids, counter);
+                    }
+                    else {
+                        Dock->run(REC, LIG, RefLig, center, Input, counter);
+                    }
+                    delete Conf;
                 }
                 else {
-                    Dock->run(REC, LIG, RefLig, center, Input, counter);
-                }
-                delete Conf;
-            }
-            else {
-                if (Input->use_grids){
-                    Dock->run(REC, LIG, RefLig, center, Input, Grids, counter);
-                }
-                else {
-                    Dock->run(REC, LIG, RefLig, center, Input, counter);
+                    if (Input->use_grids){
+                        Dock->run(REC, LIG, RefLig, center, Input, Grids, counter);
+                    }
+                    else {
+                        Dock->run(REC, LIG, RefLig, center, Input, counter);
+                    }
                 }
             }
+            delete Dock;
         }
 
         this->print_line();
@@ -634,7 +636,6 @@ void TEMP_SCHEME::dock_run(){
         this->print_info(info);
         this->print_line();
         tf = clock()-ti;
-        delete Dock;
         sprintf(info, " Docking computations took %d minute(s)", int((tf/CLOCKS_PER_SEC)/60));
         this->print_info(info);
         this->print_line();

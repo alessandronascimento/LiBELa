@@ -151,7 +151,7 @@ DockWidget::DockWidget(PARSER *Input, QTextEdit* Ed)
     overlay_optimizer->addItem("MMA");						//4
     overlay_optimizer->addItem("SUBPLEX");                  //5
     overlay_optimizer->addItem("DIRECT");                   //6
-	overlay_optimizer->setCurrentIndex(1);
+    overlay_optimizer->setCurrentIndex(4);
 	overlay_optimizer_lab = new QLabel(tr("Overlay optimizer: "));
 
 	energy_optimizer = new QComboBox;
@@ -742,6 +742,7 @@ void DockWidget::set_parameters(){
     for (int i=0; i< Inp->docking_molecules.size(); i++){
         fprintf(multifile, "%s\n", Inp->docking_molecules[i].toUtf8().toStdString().c_str());
     }
+    fprintf(multifile, "%s\n", "EOF");
     fclose(multifile);
     Inp->multifile = "multimol.dat";
 }
