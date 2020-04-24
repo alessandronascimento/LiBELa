@@ -43,7 +43,7 @@ void WRITER::print_welcome(void){
 	printf("****************************************************************************************************\n");
 	printf("****************************************************************************************************\n");
 	printf("*                  MCLiBELa - Monte Carlo-based Ligand Binding Energy Landscape                    *\n");
-    printf("*                                      Version 0.1  - Build %5d                                  *\n", BUILD);
+    printf("*                                      Version 1.0  - Build %5d                                  *\n", BUILD);
 	printf("*                                                                                                  *\n");
     printf("* University of Sao Paulo                                                                          *\n");
 	printf("* More Info:                                                                                       *\n");
@@ -55,7 +55,7 @@ void WRITER::print_welcome(void){
 	fprintf(output, "****************************************************************************************************\n");
 	fprintf(output, "****************************************************************************************************\n");
 	fprintf(output, "*                  MCLiBELa - Monte Carlo-based Ligand Binding Energy Landscape                    *\n");
-    fprintf(output, "*                                      Version 0.1  - Build %5d                                  *\n", BUILD);
+    fprintf(output, "*                                      Version 1.0  - Build %5d                                  *\n", BUILD);
 	fprintf(output, "*                                                                                                  *\n");
     fprintf(output, "* University of Sao Paulo                                                                          *\n");
 	fprintf(output, "* More Info:                                                                                       *\n");

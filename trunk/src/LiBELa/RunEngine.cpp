@@ -37,7 +37,7 @@ TEMP_SCHEME::TEMP_SCHEME(int ac, char *av[]){
  */
 
 #ifdef HAS_GUI
-TEMP_SCHEME::TEMP_SCHEME(PARSER* _Input, QTextEdit* Editor, QProgressBar* _progressbar){
+TEMP_SCHEME::TEMP_SCHEME(PARSER* _Input, QPlainTextEdit* Editor, QProgressBar* _progressbar){
 
     this->Input = _Input;
     this->progressbar = _progressbar;
@@ -528,20 +528,25 @@ void TEMP_SCHEME::sa_run(PARSER* Input){
 */
 void TEMP_SCHEME::dock_run(){
     clock_t ti, tf;
+    int time_elapsed;
     if(Input->dock_mode == true){
-
         ti = clock();
-
         sprintf(info, "%5s %-12.12s %-4.4s %-10.10s %-8.8s %-8.8s %-8.8s %-8.8s %-8.8s %3.3s %-5.5s %2.2s", "#", "Ligand", "Resi", "Overlay", "Elec", "VDW", "Rec_Solv", "Lig_Solv", "Energy", "Conf", "MS", "SI");
         this->print_info(info);
         this->print_line();
 
 
         if (Input->dock_parallel){
+#ifdef HAS_GUI
+            QElapsedTimer timer;
+            timer.start();
             this->dock_parallel();
+            time_elapsed = round((timer.elapsed()/1000)/60);
+#else
+            this->dock_parallel();
+#endif
         }
-        else {
-
+        else{
 #ifdef HAS_GUI
             Docker* Dock = new Docker(QWriter);
 #else
@@ -630,14 +635,19 @@ void TEMP_SCHEME::dock_run(){
         this->print_line();
         sprintf(info, "Min Status:");
         this->print_info(info);
-        sprintf(info, "    Failure = -1, Out of memory = -3, Roundoff limited = -4, Forced stop = -5,");
+        sprintf(info, "  Failure = -1, Out of memory = -3, Roundoff limited = -4, Forced stop = -5,");
         this->print_info(info);
-        sprintf(info, "    Stopval reached = 2, Ftol reached = 3, Xtol reached = 4, Maxeval reached=5, Maxtime reached=6");
+        sprintf(info, "  Stopval reached = 2, Ftol reached = 3, Xtol reached = 4, Maxeval reached=5, Maxtime reached=6");
         this->print_info(info);
         this->print_line();
-        tf = clock()-ti;
-        sprintf(info, " Docking computations took %d minute(s)", int((tf/CLOCKS_PER_SEC)/60));
+#ifdef HAS_GUI
+        sprintf(info, " Docking computations took %4d minute(s)", time_elapsed);
         this->print_info(info);
+#else
+        tf = clock()-ti;
+        sprintf(info, " Docking computations took %d minute(s)", round((tf/CLOCKS_PER_SEC)/60.));
+        this->print_info(info);
+#endif
         this->print_line();
     }
 }
@@ -740,7 +750,7 @@ void TEMP_SCHEME::dock_parallel(){
     vector<string> ligand_list;
 
 
-    /* Here, we read the multifile file and parse the files of the molecules
+/* Here, we read the multifile file and parse the files of the molecules
  * to be docked into a std::vector named ligand_list.
  */
 
@@ -761,7 +771,7 @@ void TEMP_SCHEME::dock_parallel(){
 
         multifile.close();
 
-        /*
+/*
  * Here the parallel processing begins. Firstly, a parallel section is created with a pragma
  * indicating the number of parallel threads as defined in the input file.
  * After, the molecule objects are created and conformers are calculated using OpenBabel.
@@ -769,6 +779,7 @@ void TEMP_SCHEME::dock_parallel(){
  * the sync directive #pragma critical. Finally, the docking objects are created and the molecules
  * are actually docked.
  */
+
 
 #pragma omp parallel num_threads(Input->parallel_jobs)
         {
@@ -809,21 +820,26 @@ void TEMP_SCHEME::dock_parallel(){
                 }
                 delete Lig2;
 #ifdef HAS_GUI
-                    progressbar->setValue(((i+1)*100)/Input->docking_molecules.size());
+                if (omp_get_thread_num() ==0) {
+                    progressbar->setValue(round((i+1)*100/int(ligand_list.size())));
+                    QApplication::processEvents();
+                }
 #endif
             }
         }
         ligand_list.clear();
+        progressbar->setValue(100);
     }
 #endif
 }
+
 #ifdef HAS_GUI
 void TEMP_SCHEME::dock_concurrent(){
     sprintf(info, "Running Dock mode in parallel with up to %d threads...", int(Input->parallel_jobs));
     this->print_info(info);
     QVector<string> ligand_list;
 
-    /* Here we read the multifile file and parse the files of the molecules
+/* Here we read the multifile file and parse the files of the molecules
  * to be docked into a std::vector named ligand_list.
  */
 

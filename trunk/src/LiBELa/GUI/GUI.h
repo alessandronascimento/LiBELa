@@ -11,6 +11,7 @@
 #include <QFile>
 #include <QStatusBar>
 #include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QMenuBar>
 #include <QTabWidget>
 #include "plotter.h"
@@ -36,7 +37,7 @@ public:
     void createActions();
 		PARSER *Input;
 
-		QTextEdit* Editor;
+        QPlainTextEdit* Editor;
 
         QMenu *InputFile;
         QAction *DockAction;

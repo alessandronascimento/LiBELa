@@ -105,7 +105,7 @@ void GUI::openMCInputWidget(){
 }
 
 void GUI::openLogArea(){
-	Editor = new QTextEdit;
+    Editor = new QPlainTextEdit;
 	DockEditor = new QDockWidget;
 	DockEditor->setAllowedAreas(Qt::RightDockWidgetArea);
 	DockEditor->setObjectName("Log Area");

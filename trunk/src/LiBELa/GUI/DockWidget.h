@@ -13,7 +13,7 @@
 #include<QSpinBox>
 #include<iostream>
 #include<QFileDialog>
-#include<QTextEdit>
+#include<QPlainTextEdit>
 #include<QStringList>
 #include<QProgressBar>
 #include <QCheckBox>
@@ -30,7 +30,7 @@ class DockWidget : public QWidget
 
 public:
 //    DockWidget(QWidget *parent = 0);
-    DockWidget(PARSER *Input, QTextEdit* Ed);
+    DockWidget(PARSER *Input, QPlainTextEdit* Ed);
     void hide_advanced_options();
     void show_advanced_options();
     void set_initial_parameters();
@@ -39,7 +39,7 @@ public:
     QScrollArea* scrollarea;
 
     PARSER* Inp;
-    QTextEdit* Editor;
+    QPlainTextEdit* Editor;
 
     QGridLayout* editLayout;
     QVBoxLayout* mainLayout;

@@ -26,9 +26,10 @@
 
 #ifdef HAS_GUI
 #include "GUI/QtWriter.h"
+#include <QElapsedTimer>
 #include <QProgressBar>
 #include <QVector>
-#include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QThread>
 #include <QtGui>
 #include <QtConcurrent>
@@ -121,7 +122,7 @@ public:
     QtWriter* QWriter;
     QProgressBar* progressbar;
 
-    TEMP_SCHEME(PARSER* Input, QTextEdit* Editor, QProgressBar* _progressbar );
+    TEMP_SCHEME(PARSER* Input, QPlainTextEdit* Editor, QProgressBar* _progressbar );
 
 //	void evaluation(PARSER* Input, QProgressBar* progressbar);
 	void sa_run(PARSER* Input);

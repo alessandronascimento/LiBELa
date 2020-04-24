@@ -11,7 +11,7 @@
 #include "../PARSER.h"
 #include "../Mol2.h"
 #include "../Mol2.h"
-#include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QString>
 #include<QApplication>
 #include"zlib.h"
@@ -23,7 +23,7 @@ public:
 	//! logfile is defined as a C file to generate a written report (log) of the program run.
 	FILE *logfile;
 	//! Qt TextEdit widget;
-	QTextEdit* Editor;
+    QPlainTextEdit* Editor;
 	//! Mol2 Object.
 	Mol2 *Cmol;
     PARSER* Input;
@@ -34,11 +34,12 @@ public:
 
 	//! Class constructor. Opens the logfile with the "output" name defined in the input file.
 	//! @param Input Pointer to the Parser class.
-	QtWriter(PARSER *Input, QTextEdit* Ed);
+    QtWriter(PARSER *Input, QPlainTextEdit* Ed);
 
 	//! This function writes down the parameters given by the user as input.
 	//! @param Pointer to the Parser class
     void write_params();
+    void print_new_params();
 	void print_param(string p1, double p2, string p3);
 	void print_param(string p1, int p2, string p3);
 	void print_param(string p1, string p2, string p3);

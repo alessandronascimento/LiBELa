@@ -7,10 +7,10 @@
 
 #include "QtWriter.h"
 
-QtWriter::QtWriter(PARSER *_Input, QTextEdit* Ed) {
+QtWriter::QtWriter(PARSER *_Input, QPlainTextEdit* Ed) {
 	Editor = Ed;
     Input = _Input;
-	logfile= fopen((Input->output+".log").c_str(), "w");
+    logfile= fopen((Input->output+".log").c_str(), "w");
 	Editor->ensureCursorVisible();
 
     if (Input->write_mol2 and Input->dock_mode){
@@ -19,14 +19,11 @@ QtWriter::QtWriter(PARSER *_Input, QTextEdit* Ed) {
 
     this->write_welcome();
     this->write_params();
+    this->print_new_params();
 }
 
 void QtWriter::write_params(){
-    fprintf(logfile,"****************************************************************************************************\n");
-    fprintf(logfile, "* %-98s *\n", "Parsed parameters:");
-
-	Editor->append(QString("%1\n").arg("Parsed parameters:"));
-    fprintf(logfile,"* %98s *\n", "");
+    Editor->appendPlainText(QString("%1\n").arg("Parsed parameters:"));
 
     if (Input->dock_mode){
         this->print_param("Mode", "dock", "");
@@ -80,7 +77,7 @@ void QtWriter::write_params(){
 
     this->print_param();
 
-    this->print_param("output_prefix", Input->output, "");
+    this->print_param("logfile_prefix", Input->output, "");
     this->print_param("write_mol2", Input->write_mol2, "");
 
     this->print_param();
@@ -89,27 +86,26 @@ void QtWriter::write_params(){
 	QApplication::processEvents();
 }
 
+
+
+
 void QtWriter::print_param(string p1, double p2, string p3){
-    Editor->append(QString("%1: %2 %3").arg(QString::fromStdString(p1)).arg(QString::number(p2)).arg(QString::fromStdString(p3)));
-    fprintf(logfile, "* %-30s %-46.2f %20.20s*\n", p1.c_str(), p2, p3.c_str());
+    Editor->appendPlainText(QString("%1: %2 %3").arg(QString::fromStdString(p1)).arg(QString::number(p2)).arg(QString::fromStdString(p3)));
 	QApplication::processEvents();
 }
 
 void QtWriter::print_param(string p1, int p2, string p3){
-    Editor->append(QString("%1: %2 %3").arg(QString::fromStdString(p1)).arg(QString::number(p2)).arg(QString::fromStdString(p3)));
-    fprintf(logfile, "* %-30s %-46d %20s*\n", p1.c_str(), p2, p3.c_str());
+    Editor->appendPlainText(QString("%1: %2 %3").arg(QString::fromStdString(p1)).arg(QString::number(p2)).arg(QString::fromStdString(p3)));
 	QApplication::processEvents();
 }
 
 void QtWriter::print_param(string p1, string p2, string p3){
-    Editor->append(QString("%1: %2 %3").arg(QString::fromStdString(p1)).arg(QString::fromStdString(p2)).arg(QString::fromStdString(p3)));
-    fprintf(logfile, "* %-30s %-46s %20s*\n", p1.c_str(), p2.c_str(), p3.c_str());
+    Editor->appendPlainText(QString("%1: %2 %3").arg(QString::fromStdString(p1)).arg(QString::fromStdString(p2)).arg(QString::fromStdString(p3)));
 	QApplication::processEvents();
 }
 
 void QtWriter::print_param(void){
-    Editor->append("");
-    fprintf(logfile, "* %-30s %-46s %20s*\n", "", "", "");
+    Editor->appendPlainText("");
     QApplication::processEvents();
 }
 
@@ -117,59 +113,45 @@ void QtWriter::print_param(void){
 
 void QtWriter::write_welcome(void){
 	Editor->clear();
-    Editor->append("****************************************************************************************************");
-    Editor->append("****************************************************************************************************");
-    Editor->append("*                  MCLiBELa - Monte Carlo-based Ligand Binding Energy Landscape");
-    Editor->append(QString("*                                      Version 0.1  - Build %1").arg(BUILD));
-    Editor->append("*                                                                                                  ");
-    Editor->append("* University of Sao Paulo                                                                          ");
-    Editor->append("* More Info:                                                                                       ");
-    Editor->append("*      http://www.biotechmol.ifsc.usp.br/                                                          ");
-    Editor->append("*                                                                                                  ");
-    Editor->append("****************************************************************************************************");
-    Editor->append("****************************************************************************************************");
-	Editor->append("");
-
-	fprintf(logfile, "**************************************************************************************\n");
-	fprintf(logfile, "                                                                                      \n");
-	fprintf(logfile, "                                  iMcLiBELa v. 1.0                                    \n");
-	fprintf(logfile, "                    Monte Carlo-Based Ligand Binding Energy Landscape                 \n");
-	fprintf(logfile, "                                                                                      \n");
-    fprintf(logfile, "                Written by Alessandro S. Nascimento - asnascimento@ifsc.usp.br        \n");
-	fprintf(logfile, "                                                                                      \n");
-    fprintf(logfile, "                              University of Sao Paulo, Brazil                         \n");
-	fprintf(logfile, "                                                                                      \n");
-    fprintf(logfile, "                           http://www.biotechmol.ifsc.usp.br/                         \n");
-	fprintf(logfile, "                                                                                      \n");
-	fprintf(logfile, "**************************************************************************************\n");
-
+    Editor->appendPlainText("****************************************************************************************************");
+    Editor->appendPlainText("****************************************************************************************************");
+    Editor->appendPlainText("*                  MCLiBELa - Monte Carlo-based Ligand Binding Energy Landscape");
+    Editor->appendPlainText(QString("*                                      Version 0.1  - Build %1").arg(BUILD));
+    Editor->appendPlainText("*                                                                                                  ");
+    Editor->appendPlainText("* University of Sao Paulo                                                                          ");
+    Editor->appendPlainText("* More Info:                                                                                       ");
+    Editor->appendPlainText("*      http://www.biotechmol.ifsc.usp.br/                                                          ");
+    Editor->appendPlainText("*                                                                                                  ");
+    Editor->appendPlainText("****************************************************************************************************");
+    Editor->appendPlainText("****************************************************************************************************");
+    Editor->appendPlainText("");
 	Editor->update();
 	QApplication::processEvents();
 }
 
 void QtWriter::write_to_log(char info[98]){
-	Editor->append(QString("* %1 *").arg(info, -98));
+    Editor->appendPlainText(QString("* %1 *").arg(info, -98));
 	Editor->update();
     fprintf(logfile, "* %-98.98s *\n", info);
 	QApplication::processEvents();
 }
 
 void QtWriter::write_to_log(void){
-	Editor->append(QString("* %1 *").arg("", -98));
+    Editor->appendPlainText(QString("* %1 *").arg("", -98));
     Editor->update();
     fprintf(logfile, "* %-98.s *\n", "");
 	QApplication::processEvents();
 }
 
 void QtWriter::print_info(char info[98]){
-	Editor->append(QString("* %1").arg(info, -98));
+    Editor->appendPlainText(QString("* %1").arg(info, -98));
 	Editor->update();
     fprintf(logfile, "* %-98.98s *\n", info);
 	QApplication::processEvents();
 }
 
 void QtWriter::print_line(void){
-	Editor->append("****************************************************************************************************************");
+    Editor->appendPlainText("****************************************************************************************************************");
 	Editor->update();
 	fprintf(logfile, "* %-98s *\n", "**************************************************************************************");
 	QApplication::processEvents();
@@ -332,4 +314,137 @@ void QtWriter::write_box(vector<double>center, double min_x, double min_y, doubl
     fprintf (box, "END\n");
 
     fclose(box);
+}
+
+
+void QtWriter::print_new_params(){
+    fprintf(logfile, "****************************************************************************************************\n");
+    fprintf(logfile, "****************************************************************************************************\n");
+    fprintf(logfile, "*                  MCLiBELa - Monte Carlo-based Ligand Binding Energy Landscape                    *\n");
+    fprintf(logfile, "*                                      Version 1.0  - Build %5d                                  *\n", BUILD);
+    fprintf(logfile, "*                                                                                                  *\n");
+    fprintf(logfile, "* University of Sao Paulo                                                                          *\n");
+    fprintf(logfile, "* More Info:                                                                                       *\n");
+    fprintf(logfile, "*      http://www.biotechmol.ifsc.usp.br                                                           *\n");
+    fprintf(logfile, "*                                                                                                  *\n");
+    fprintf(logfile, "****************************************************************************************************\n");
+    fprintf(logfile, "****************************************************************************************************\n");
+    fprintf(logfile, "*                                                                                                  *\n");
+
+    if (Input->dock_mode){
+        fprintf(logfile, "* %-30s %-66.66s*\n", "mode", "Docking");
+    }
+    fprintf(logfile, "* %-30s %-66d*\n", "dock_parallel", Input->dock_parallel);
+    if (Input->dock_parallel){
+        fprintf(logfile, "* %-30s %-66d*\n", "parallel_jobs", Input->parallel_jobs);
+    }
+    fprintf(logfile, "*                                                                                                  *\n");
+    fprintf(logfile, "* %-30s %-66.66s*\n", "rec_mol2", Input->rec_mol2.c_str());
+    fprintf(logfile, "* %-30s %-66.66s*\n", "lig_mol2", Input->lig_mol2.c_str());
+    fprintf(logfile, "* %-30s %-66.66s*\n", "reflig_mol2", Input->reflig_mol2.c_str());
+    fprintf(logfile, "* %-30s %-66.66s*\n", "multifile", Input->multifile.c_str());
+    fprintf(logfile, "* %-30s %-66d*\n", "mol2_aa", Input->mol2_aa);
+    fprintf(logfile, "*                                                                                                  *\n");
+    switch (Input->scoring_function){
+    case 0:
+        fprintf(logfile, "* %-30s %-66.66s*\n", "scoring function", "Amber Softcore + Dessolvation");
+        fprintf(logfile, "* %-30s %-66.2f*\n", "deltaij6", Input->deltaij6);
+        fprintf(logfile, "* %-30s %-66.2f*\n", "deltaij_es6", Input->deltaij_es6);
+        break;
+    case 1:
+        fprintf(logfile, "* %-30s %-66.66s*\n", "scoring function", "Amber Softcore");
+        fprintf(logfile, "* %-30s %-66.2f*\n", "deltaij6", Input->deltaij6);
+        fprintf(logfile, "* %-30s %-66.2f*\n", "deltaij_es6", Input->deltaij_es6);
+        break;
+    case 2:
+        fprintf(logfile, "* %-30s %-66.66s*\n", "scoring function", "Amber FF + Dessolvation");
+        break;
+    case 3:
+        fprintf(logfile, "* %-30s %-66.66s*\n", "scoring function", "Amber FF");
+        break;
+    case 4:
+        fprintf(logfile, "* %-30s %-66.66s*\n", "scoring function", "Amber FF with Gaussian Weighted LJ Potential + Desolvation");
+        fprintf(logfile, "* %-30s %-66.2f*\n", "LJ_sigma", Input->LJ_sigma);
+        break;
+    case 5:
+        fprintf(logfile, "* %-30s %-66.66s*\n", "scoring function", "Amber FF with Gaussian Weighted LJ Potential");
+        fprintf(logfile, "* %-30s %-66.2f*\n", "LJ_sigma", Input->LJ_sigma);
+        break;
+    }
+    if (Input->use_pbsa){
+        fprintf(logfile, "* %-30s %-66.66s*\n", "Electrostatic model", "PBSA");
+        fprintf(logfile, "* %-30s %-66.66s*\n", "PBSA grid", Input->pbsa_grid.c_str());
+    }
+    else if (Input->use_delphi){
+        fprintf(logfile, "* %-30s %-66.66s*\n", "Electrostatic model", "DelPhi");
+        fprintf(logfile, "* %-30s %-66.66s*\n", "DelPhi grid", Input->delphi_grid.c_str());
+        fprintf(logfile, "* %-30s %-66d*\n", "Delphi grid gsize", Input->delphi_gsize);
+
+    }
+    else{
+        fprintf(logfile, "* %-30s %-66.66s*\n", "Electrostatic model", "Coulomb");
+    }
+    fprintf(logfile, "* %-30s %-66.66s*\n", "dielectric_model", Input->dielectric_model.c_str());
+    fprintf(logfile, "* %-30s %-66.3f*\n", "diel", Input->diel);
+    fprintf(logfile, "* %-30s %-66.3f*\n", "sigma", Input->sigma);
+    fprintf(logfile, "* %-30s %-66.3f*\n", "solvation_alpha", Input->solvation_alpha);
+    fprintf(logfile, "* %-30s %-66.3f*\n", "solvation_beta", Input->solvation_beta);
+    fprintf(logfile, "* %-30s %-66d*\n", "use grids?", Input->use_grids);
+    if (Input->use_grids){
+        fprintf(logfile, "* %-30s %-66.2f*\n", "grid spacing", Input->grid_spacing);
+        fprintf(logfile, "* %-30s %-22.2f%-22.2f%-22.2f*\n", "grid box", Input->x_dim, Input->y_dim, Input->z_dim);
+        if (Input->write_grids){
+            fprintf(logfile, "* %-30s %-66.66s*\n", "write grids", Input->grid_prefix.c_str());
+        }
+        else {
+            fprintf(logfile, "* %-30s %-66.66s*\n", "load grids", Input->grid_prefix.c_str());
+        }
+    }
+    fprintf(logfile, "*                                                                                                  *\n");
+    fprintf(logfile, "* %-30s %-66d*\n", "only_score", Input->only_score);
+    fprintf(logfile, "* %-30s %-22.2f%-22.2f%-22.2f*\n", "search_box", Input->search_box_x, Input->search_box_y, Input->search_box_z);
+    fprintf(logfile, "* %-30s %-66.10f*\n", "minimization_tolerance", Input->min_tol);
+    fprintf(logfile, "* %-30s %-66.10f*\n", "minimization_delta", Input->min_delta);
+    fprintf(logfile, "* %-30s %-66.10f*\n", "dock_min_tol", Input->dock_min_tol);
+    fprintf(logfile, "* %-30s %-66d*\n", "minimization_timeout", Input->min_timeout);
+    fprintf(logfile, "* %-30s %-66d*\n", "sort_by_energy", Input->sort_by_energy);
+    fprintf(logfile, "* %-30s %-66.2f*\n", "elec_scale", Input->elec_scale);
+    fprintf(logfile, "* %-30s %-66.2f*\n", "vdw_scale", Input->vdw_scale);
+    fprintf(logfile, "* %-30s %-66.66s*\n", "overlay_optimizer", Input->overlay_optimizer.c_str());
+    fprintf(logfile, "* %-30s %-66.66s*\n", "energy_optimizer", Input->energy_optimizer.c_str());
+    fprintf(logfile, "* %-30s %-66d*\n", "ignore_h", Input->dock_no_h);
+    fprintf(logfile, "* %-30s %-66d*\n", "deal", Input->deal);
+    fprintf(logfile, "*                                                                                                  *\n");
+    fprintf(logfile, "* %-30s %-66d*\n", "generate_conformers", Input->generate_conformers);
+    if (Input->generate_conformers){
+        fprintf(logfile, "* %-30s %-66d*\n", "number_of_conformers", Input->lig_conformers);
+        fprintf(logfile, "* %-30s %-66d*\n", "conformers_to_rank", Input->conformers_to_evaluate);
+    }
+    fprintf(logfile, "*                                                                                                  *\n");
+    fprintf(logfile, "* %-30s %-66.66s*\n", "logfile_prefix", Input->output.c_str());
+    fprintf(logfile, "* %-30s %-66d*\n", "write_mol2", Input->write_mol2);
+    if (Input->use_writeMol2_score_cutoff){
+        fprintf(logfile, "* %-30s %-66.2f*\n", "Cutoff in Overlay for Writting Mol2", Input->writeMol2_score_cutoff);
+    }
+    if (Input->use_writeMol2_energy_cutoff){
+        fprintf(logfile, "* %-30s %-66.2f*\n", "Cutoff in Energy for Writting Mol2", Input->writeMol2_energy_cutoff);
+    }
+    fprintf(logfile, "*                                                                                                  *\n");
+    fprintf(logfile, "* %-30s %-66.66s*\n", "Ligand energy model", Input->ligand_energy_model.c_str());
+    fprintf(logfile, "* %-30s %-66.66s*\n", "Atomic FF model", Input->atomic_model_ff.c_str());
+    fprintf(logfile, "*                                                                                                  *\n");
+    if (Input->eq_mode){
+        fprintf(logfile, "* %-30s %-66d*\n", "MC Sampling of Torsions", Input->sample_torsions);
+        fprintf(logfile, "* %-30s %-66.10f*\n", "MC Maximal COM Translation", Input->cushion);
+        fprintf(logfile, "* %-30s %-66.10f*\n", "MC Maximal COM Rotation", Input->rotation_step);
+        if (Input->mc_full_flex){
+            fprintf(logfile, "* %-30s %-66d*\n", "MC Fully Flexible Sampling", Input->mc_full_flex);
+            fprintf(logfile, "* %-30s %-66.10f*\n", "MC atomic displacement", Input->max_atom_displacement);
+        }
+        fprintf(logfile, "* %-30s %-66d*\n", "Entropy bins for rotation", Input->entropy_rotation_bins);
+        fprintf(logfile, "* %-30s %-66d*\n", "Entropy bins for translation", Input->entropy_translation_bins);
+    }
+
+    fprintf(logfile, "****************************************************************************************************\n");
+    fprintf(logfile, "****************************************************************************************************\n");
 }

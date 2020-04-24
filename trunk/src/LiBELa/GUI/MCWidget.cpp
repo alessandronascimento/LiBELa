@@ -1,6 +1,6 @@
 #include "MCWidget.h"
 
-MCWidget::MCWidget(PARSER* Input, QTextEdit* Editor)
+MCWidget::MCWidget(PARSER* Input, QPlainTextEdit* Editor)
 {
 	this->Inp = Input;
 	this->Edit = Editor;

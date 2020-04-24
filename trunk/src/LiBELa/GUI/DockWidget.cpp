@@ -1,6 +1,6 @@
 #include "DockWidget.h"
 
-DockWidget::DockWidget(PARSER *Input, QTextEdit* Ed)
+DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
 {
 
 	this->Inp = Input;
@@ -597,7 +597,7 @@ void DockWidget::Start(){
 void DockWidget::set_parameters(){
 	Inp->mode = "dock";
     Inp->dock_mode = true;
-    Editor->append("mode dock\n");
+    Editor->appendPlainText("mode dock\n");
 
 	if (mol2_aa->currentIndex() == 0){
 		Inp->mol2_aa = false;

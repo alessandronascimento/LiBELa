@@ -13,7 +13,7 @@
 #include<QGridLayout>
 #include<QComboBox>
 #include<QFileDialog>
-#include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QLineEdit>
 #include <QFile>
@@ -29,11 +29,11 @@ class MCWidget : public QWidget
     Q_OBJECT
 
 public:
-    MCWidget(PARSER* Input, QTextEdit* Editor);
+    MCWidget(PARSER* Input, QPlainTextEdit* Editor);
     ~MCWidget();
 
     PARSER* Inp;
-    QTextEdit* Edit;
+    QPlainTextEdit* Edit;
 
     QGridLayout* editLayout;
 	QVBoxLayout* mainLayout;
