@@ -567,7 +567,7 @@ void WRITER::write_pqr(Mol2 *Cmol, string outname){
 
     while (resn < int(Cmol->residue_pointer.size()-1)){
         while(i < Cmol->residue_pointer[resn+1]-1){
-            gzprintf(outpdb, "ATOM %6d%3.3s %5.5s%2.2s%4d    % 8.3f% 8.3f% 8.3f% 8.4f% 7.4f\n", i+1, Cmol->amberatoms[i].c_str(), Cmol->resnames[resn].c_str(), "A" ,resn+1, Cmol->xyz[i][0], Cmol->xyz[i][1], Cmol->xyz[i][2], Cmol->charges[i], Cmol->radii[i]);
+            gzprintf(outpdb, "ATOM %6d%3.3s %3.3s  %2.2s%4d    % 8.3f% 8.3f% 8.3f% 8.4f% 7.4f\n", i+1, Cmol->amberatoms[i].c_str(), Cmol->resnames[resn].c_str(), "A" ,resn+1, Cmol->xyz[i][0], Cmol->xyz[i][1], Cmol->xyz[i][2], Cmol->charges[i], Cmol->radii[i]);
             i++;
         }
         resn++;
