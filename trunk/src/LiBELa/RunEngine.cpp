@@ -828,9 +828,17 @@ void TEMP_SCHEME::dock_parallel(){
             }
         }
         ligand_list.clear();
+
+#ifdef HAS_GUI
+
         progressbar->setValue(100);
-    }
+
 #endif
+
+    }
+
+#endif
+
 }
 
 #ifdef HAS_GUI
