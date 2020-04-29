@@ -911,18 +911,20 @@ void Grid::compute_grid_hardcore_Gaussian(Mol2* Rec){
                     d2 = this->distance_squared(x, Rec->xyz[i][0], y,Rec->xyz[i][1], z, Rec->xyz[i][2]);
                     d = sqrt(d2);
                     d6 = d2 * d2 * d2;
-                    if (Input->dielectric_model == "constant"){
-                        d = sqrt(d2);
-                        elec += 332.0*((Rec->charges[i])/(d*Input->diel));
-                    }
-                    else if (Input->dielectric_model == "4r") {     // epsilon = 4r
-                        elec += 332.0 * (Rec->charges[i]/(4*d2));
-                    }
-                    else {                                          // Input->dielectric_model = "r"
-                        elec += 332.0 * (Rec->charges[i]/d2);
-                    }
 
                     gauss_weight = exp(-( (d-(Rec->radii[i]+Rec->radii[i])) * (d-(Rec->radii[i]+Rec->radii[i])) ) /(2.0*Input->LJ_sigma*Input->LJ_sigma));
+
+                    if (Input->dielectric_model == "constant"){
+                        d = sqrt(d2);
+                        elec += (332.0*((Rec->charges[i])/(d*Input->diel)))*gauss_weight;
+                    }
+                    else if (Input->dielectric_model == "4r") {     // epsilon = 4r
+                        elec += (332.0 * (Rec->charges[i]/(4*d2)))*gauss_weight;
+                    }
+                    else {                                          // Input->dielectric_model = "r"
+                        elec += (332.0 * (Rec->charges[i]/d2))*gauss_weight;
+                    }
+
                     vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6))*gauss_weight;
                     vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6)*gauss_weight;
 
@@ -1010,18 +1012,21 @@ void Grid::compute_grid_hardcore_omp_Gaussian(Mol2* Rec){
                     double d2 = this->distance_squared(x, Rec->xyz[i][0], y,Rec->xyz[i][1], z, Rec->xyz[i][2]);
                     double d6 = d2 * d2 * d2;
                     double d = sqrt(d2);
-                    if (Input->dielectric_model == "constant"){
-                        double d = sqrt(d2);
-                        elec += 332.0*((Rec->charges[i])/(d*Input->diel));
-                    }
-                    else if (Input->dielectric_model == "4r") {     // epsilon = 4r
-                        elec += 332.0 * (Rec->charges[i]/(4*d2));
-                    }
-                    else {                                          // Input->dielectric_model = "r"
-                        elec += 332.0 * (Rec->charges[i]/d2);
-                    }
 
                     double gauss_weight = exp(-( (d-(Rec->radii[i]+Rec->radii[i])) * (d-(Rec->radii[i]+Rec->radii[i])) ) /(2.0*Input->LJ_sigma*Input->LJ_sigma));
+
+                    if (Input->dielectric_model == "constant"){
+                        double d = sqrt(d2);
+                        elec += (332.0*((Rec->charges[i])/(d*Input->diel)))*gauss_weight;
+                    }
+                    else if (Input->dielectric_model == "4r") {     // epsilon = 4r
+                        elec += (332.0 * (Rec->charges[i]/(4*d2)))*gauss_weight;
+                    }
+                    else {                                          // Input->dielectric_model = "r"
+                        elec += (332.0 * (Rec->charges[i]/d2))*gauss_weight;
+                    }
+
+
                     vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6))*gauss_weight;
                     vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6)*gauss_weight;
 
