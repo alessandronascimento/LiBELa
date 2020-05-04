@@ -95,6 +95,9 @@ PARSER::PARSER(){
     this->use_writeMol2_energy_cutoff = false;
     this->writeMol2_score_cutoff = 0.75;
     this->writeMol2_energy_cutoff = 10.0;
+    this->use_GW_LJ6 = false;
+    this->use_GW_LJ12 = false;
+    this->use_GW_Coulomb = false;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -465,6 +468,24 @@ void PARSER::comparing (string param, ifstream &input) {
     }
     else if (param == "LJ_sigma"){
         input >> this->LJ_sigma;
+    }
+    else if (param == "use_GW_LJ6"){
+        input >> tmp;
+        if (tmp == "yes" or tmp == "Yes" or tmp == "YES"){
+            this->use_GW_LJ6 = true;
+        }
+    }
+    else if (param == "use_GW_LJ12"){
+        input >> tmp;
+        if (tmp == "yes" or tmp == "Yes" or tmp == "YES"){
+            this->use_GW_LJ12 = true;
+        }
+    }
+    else if (param == "use_GW_Coulomb"){
+        input >> tmp;
+        if (tmp == "yes" or tmp == "Yes" or tmp == "YES"){
+            this->use_GW_Coulomb = true;
+        }
     }
 	else {
 		cout << "Unknown parameter: " << param << endl;

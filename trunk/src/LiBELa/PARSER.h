@@ -298,7 +298,14 @@ public:
     double writeMol2_score_cutoff;
     //!
     double writeMol2_energy_cutoff;
+    //! Sigma parameter for Gaussian-Weight in Lennard-Jones scaling
     double LJ_sigma;
+    //! Use Gaussian-weighting for attractive LJ potential
+    bool use_GW_LJ6;
+    //! Use Gaussian-weighting for repulsive LJ potential
+    bool use_GW_LJ12;
+    //! Use Gaussian-weighting for Coulomb potential
+    bool use_GW_Coulomb;
 
 #ifdef HAS_GUI
 	QStringList docking_molecules;
