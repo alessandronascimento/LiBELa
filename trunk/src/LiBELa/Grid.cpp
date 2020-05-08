@@ -890,7 +890,7 @@ void Grid::compute_grid_hardcore_Gaussian(Mol2* Rec){
     vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz);
     vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2;
 
-    double elec, d, d2, d6, x, y, z, vdwA, vdwB, solv, rec_solv, deff, gauss_weight;
+    double elec, d, d2, d6, x, y, z, vdwA, vdwB, solv, rec_solv, deff, LJ_gauss_weight, Coulomb_gauss_weight;
     double sqrt2 = sqrt(2.0);
 
     for(int a=0; a< this->npointsx; a++){
@@ -912,14 +912,15 @@ void Grid::compute_grid_hardcore_Gaussian(Mol2* Rec){
                     d = sqrt(d2);
                     d6 = d2 * d2 * d2;
 
-                    gauss_weight = exp(-( (d-(Rec->radii[i]+Rec->radii[i])) * (d-(Rec->radii[i]+Rec->radii[i])) ) /(2.0*Input->LJ_sigma*Input->LJ_sigma));
+                    LJ_gauss_weight = exp(-( (d-(Rec->radii[i]+Rec->radii[i])) * (d-(Rec->radii[i]+Rec->radii[i])) ) /(2.0*Input->LJ_sigma*Input->LJ_sigma));
+                    Coulomb_gauss_weight = exp(-( (d-(Rec->radii[i]+Rec->radii[i])) * (d-(Rec->radii[i]+Rec->radii[i])) ) /(2.0*Input->coulomb_sigma*Input->coulomb_sigma));
 
                     // Electrostatic Potential..
 
                     if (Input->dielectric_model == "constant"){
                         d = sqrt(d2);
                         if (Input->use_GW_Coulomb){
-                            elec += (332.0*((Rec->charges[i])/(d*Input->diel)))*gauss_weight;
+                            elec += (332.0*((Rec->charges[i])/(d*Input->diel)))*Coulomb_gauss_weight;
                         }
                         else {
                             elec += (332.0*((Rec->charges[i])/(d*Input->diel)));
@@ -927,7 +928,7 @@ void Grid::compute_grid_hardcore_Gaussian(Mol2* Rec){
                     }
                     else if (Input->dielectric_model == "4r") {     // epsilon = 4r
                         if (Input->use_GW_Coulomb){
-                            elec += (332.0 * (Rec->charges[i]/(4*d2)))*gauss_weight;
+                            elec += (332.0 * (Rec->charges[i]/(4*d2)))*Coulomb_gauss_weight;
                         }
                         else {
                             elec += (332.0 * (Rec->charges[i]/(4*d2)));
@@ -935,7 +936,7 @@ void Grid::compute_grid_hardcore_Gaussian(Mol2* Rec){
                     }
                     else {                                          // Input->dielectric_model = "r"
                         if (Input->use_GW_Coulomb){
-                            elec += (332.0 * (Rec->charges[i]/d2))*gauss_weight;
+                            elec += (332.0 * (Rec->charges[i]/d2))*Coulomb_gauss_weight;
                         }
                         else{
                             elec += (332.0 * (Rec->charges[i]/d2));
@@ -945,7 +946,7 @@ void Grid::compute_grid_hardcore_Gaussian(Mol2* Rec){
                     // VDW Repulsive Potential
 
                     if (Input->use_GW_LJ12){
-                        vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6))*gauss_weight;
+                        vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6))*LJ_gauss_weight;
                     }
                     else {
                         vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6));
@@ -955,7 +956,7 @@ void Grid::compute_grid_hardcore_Gaussian(Mol2* Rec){
                     // VDW Attractive Potential
 
                     if (Input->use_GW_LJ6){
-                        vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6)*gauss_weight;
+                        vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6)*LJ_gauss_weight;
                     }
                     else {
                         vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6);

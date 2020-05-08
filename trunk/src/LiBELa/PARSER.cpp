@@ -469,6 +469,9 @@ void PARSER::comparing (string param, ifstream &input) {
     else if (param == "LJ_sigma"){
         input >> this->LJ_sigma;
     }
+    else if (param == "Coulomb_sigma"){
+        input >> this->coulomb_sigma;
+    }
     else if (param == "use_GW_LJ6"){
         input >> tmp;
         if (tmp == "yes" or tmp == "Yes" or tmp == "YES"){

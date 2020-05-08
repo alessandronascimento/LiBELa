@@ -298,6 +298,8 @@ public:
     double writeMol2_score_cutoff;
     //!
     double writeMol2_energy_cutoff;
+    //! Sigma parameter for Gaussian-Weight in Coulomb potential scaling
+    double coulomb_sigma;
     //! Sigma parameter for Gaussian-Weight in Lennard-Jones scaling
     double LJ_sigma;
     //! Use Gaussian-weighting for attractive LJ potential
