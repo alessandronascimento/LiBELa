@@ -1047,22 +1047,23 @@ void Grid::compute_grid_hardcore_omp_Gaussian(Mol2* Rec){
                     double d6 = d2 * d2 * d2;
                     double d = sqrt(d2);
 
-                    double gauss_weight = exp(-( (d-(Rec->radii[i]+Rec->radii[i])) * (d-(Rec->radii[i]+Rec->radii[i])) ) /(2.0*Input->LJ_sigma*Input->LJ_sigma));
+                    double LJ_gauss_weight = exp(-( (d-(Rec->radii[i]+Rec->radii[i])) * (d-(Rec->radii[i]+Rec->radii[i])) ) /(2.0*Input->LJ_sigma*Input->LJ_sigma));
+                    double Coulomb_gauss_weight = exp(-( (d-(Rec->radii[i]+Rec->radii[i])) * (d-(Rec->radii[i]+Rec->radii[i])) ) /(2.0*Input->coulomb_sigma*Input->coulomb_sigma));
 
                     if (Input->dielectric_model == "constant"){
                         double d = sqrt(d2);
-                        elec += (332.0*((Rec->charges[i])/(d*Input->diel)))*gauss_weight;
+                        elec += (332.0*((Rec->charges[i])/(d*Input->diel)))*Coulomb_gauss_weight;
                     }
                     else if (Input->dielectric_model == "4r") {     // epsilon = 4r
-                        elec += (332.0 * (Rec->charges[i]/(4*d2)))*gauss_weight;
+                        elec += (332.0 * (Rec->charges[i]/(4*d2)))*Coulomb_gauss_weight;
                     }
                     else {                                          // Input->dielectric_model = "r"
-                        elec += (332.0 * (Rec->charges[i]/d2))*gauss_weight;
+                        elec += (332.0 * (Rec->charges[i]/d2))*Coulomb_gauss_weight;
                     }
 
 
-                    vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6))*gauss_weight;
-                    vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6)*gauss_weight;
+                    vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6))*LJ_gauss_weight;
+                    vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6)*LJ_gauss_weight;
 
                     double deff = (d2);
 
