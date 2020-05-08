@@ -72,13 +72,10 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
                 sprintf(info, "Energy optimizer %s is not defined. Exiting...\n", Input->energy_optimizer.c_str());
             }            
 
-//#ifndef HAS_GUI
             sprintf(info, "%5d %-10.10s %-10.10s %-11.3e %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %-3d %-2d %-2d", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlay_fmax,
                     opt_result2->energy_result->elec, opt_result2->energy_result->vdw, opt_result2->energy_result->rec_solv, opt_result2->energy_result->lig_solv,
                     opt_result2->energy_result->total, 0, overlay_status, opt_result2->optimization_status);
             this->print_info(info);
-
-//#endif
 
 			if (Input->write_mol2){
 
@@ -166,12 +163,10 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
             si = (2*t1) / (t2+t3);
             delete Gauss;
 
-//#ifndef HAS_GUI
-
             sprintf(info, "%5d %-12.12s %-4.4s %-10.3e  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlay_fmax,
                     opt_result2->energy_result->elec, opt_result2->energy_result->vdw, opt_result2->energy_result->rec_solv, opt_result2->energy_result->lig_solv, opt_result2->energy_result->total, 0, overlay_status, opt_result2->optimization_status, si);
             this->print_info(info);
-//#endif
+
 			if (Input->write_mol2){
                 bool will_write = true;
                 if (Input->use_writeMol2_score_cutoff){
@@ -200,80 +195,6 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
 
 Docker::~Docker() {
 }
-
-/*
-#ifdef HAS_GUI
-Docker::Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, QtWriter* Writer) {
-
-	COORD_MC* Coord = new COORD_MC;
-	double overlay_fmax;
-    int overlay_status=0;
-
-	vector<double> com_lig = Coord->compute_com(Lig);
-	Lig->xyz = Coord->translate(Lig->xyz, Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
-	Optimizer* Opt = new Optimizer(Rec, RefLig, Input);
-	Optimizer::opt_result_t* opt_result = new Optimizer::opt_result_t;
-    opt_result->energy_result = new energy_result_t;
-
-// Optimizing overlay....
-
-    qWarning() << "Optimizing overlay...";
-
-    if (! this->minimize_overlay(Input, Opt, Lig, opt_result)){
-        sprintf(info, "Overlay optimizer %s is not defined. Exiting...\n", Input->overlay_optimizer.c_str());
-    }
-
-
-//Copying new coordinates.
-	Lig->xyz = opt_result->optimized_xyz;
-	overlay_status = opt_result->optimization_status;
-	overlay_fmax = opt_result->f_min;
-
-    delete opt_result;
-
-    //Optimizing Energy...
-
-    qWarning() << "Optimizing energy...";
-
-    Optimizer::opt_result_t* opt_result2 = new Optimizer::opt_result_t;
-    opt_result2->energy_result = new energy_result_t;
-
-	if (Input->deal){
-		Deal* DEAl = new Deal(Rec, Lig, Input);
-		sprintf(info, "%-20.20s %-20.20s %-7.3e % -7.3f kcal/mol", Lig->molname.c_str(), Lig->resnames[0].c_str(), overlay_fmax, DEAl->energies[0]);
-		Writer->print_info(info);
-		Writer->writeMol2(Lig, DEAl->final_coords, DEAl->energies[0], fo, Input->output + "_dock");
-		delete DEAl;
-	}
-
-	else {
-        if (! this->minimize_energy(Input, Opt, Rec, Lig, opt_result2)){
-            sprintf(info, "Energy optimizer %s is not defined. Exiting...\n", Input->energy_optimizer.c_str());
-        }
-
-        qWarning() << "Writing results...";
-
-        sprintf(info, "%5d %-10.10s %-10.10s %-11.3e %-8.3g %-8.3g %-8.3g %8.3g %8.3g %-3d %-2d %-2d", 0, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlay_fmax,
-                opt_result2->energy_result->elec, opt_result2->energy_result->vdw, opt_result2->energy_result->rec_solv, opt_result2->energy_result->lig_solv,
-                opt_result2->energy_result->total, 0, overlay_status, opt_result2->optimization_status);
-        Writer->print_info(info);
-
-
-        qWarning() << "Writing mol2 file set to " << Input->write_mol2;
-
-
-        if (Input->write_mol2){
-            Writer->writeMol2(Lig, opt_result2->optimized_xyz, opt_result2->energy_result->total, overlay_fmax,Input->output + "_dock");
-        }
-	}
-
-    delete Coord;
-    delete opt_result2;
-    delete Opt;
-}
-
-#endif
-*/
 
 void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, unsigned counter){
 	COORD_MC* Coord = new COORD_MC;
@@ -368,13 +289,9 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
     si = (2*t1) / (t2+t3);
     delete Gauss;
 
-//#ifndef HAS_GUI
-
     sprintf(info, "%5d %-12.12s %-4.4s %-10.3e  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlays[best_conf],
                 best_energy_t->elec, best_energy_t->vdw, best_energy_t->rec_solv, best_energy_t->lig_solv, best_energy_t->total, best_conf, overlay_status[best_conf], energy_status, si);
     this->print_info(info);
-
-//#endif
 
     if (Input->write_mol2){
             bool will_write = true;
@@ -523,6 +440,12 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
                 this->write_mol2(Lig, new_xyz, best_ene, si);
             }
         }
+    }
+
+    if (Input->show_rmsd){
+        double rmsd = Coord->compute_rmsd(RefLig->xyz, new_xyz, RefLig->N);
+        sprintf(info, "RMSD: %7.3f", rmsd);
+        this->print_info(info);
     }
 }
 
