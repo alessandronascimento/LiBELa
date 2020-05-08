@@ -363,169 +363,7 @@ void TEMP_SCHEME::sa_run(){
     }
 }
 
-/*
-#ifdef HAS_GUI
 
-void TEMP_SCHEME::sa_run(PARSER* Input){
-    if (Input->sa_mode == true){
-        sprintf(info,"%s", "Entering SA Scheme....");
-        QWriter->print_info(info);
-        sprintf(rmsd_ene, "%s_sa.dat", Input->output.c_str());
-        rmsd_energy = fopen(rmsd_ene, "w" );
-
-        srand(rand());
-        gsl_rng * r = gsl_rng_alloc (gsl_rng_ranlxs2);
-        int seed = (rand() % 101);
-        sprintf(info, "Seed: %d", seed);
-        QWriter->print_info(info);
-        gsl_rng_set(r, seed);
-
-
-        if ((Input->flex_lig == true)){
-            Rand.random(Input->cushion, Input->rotation_step, REC, LIG);
-        }
-        else {
-            Rand.random(Input->cushion, Input->rotation_step);
-        }
-
-        Rand.print();
-        old_coord = COORD.rototranslate(LIG->xyz, LIG, &Rand);
-
-        if (Input->use_grids){
-            start_energy = Ene->compute_ene(Grids, LIG, old_coord);
-        }
-        else {
-            start_energy = Ene->compute_ene(REC, LIG, old_coord);
-        }
-
-        sprintf(info, "Start energy: %.4f kcal/mol", start_energy);
-        QWriter->print_info(info);
-
-        rmsd = COORD.compute_rmsd(LIG->xyz, old_coord, LIG->N);
-        fprintf(rmsd_energy, "%6d % 7.3f % 7.3f % 7.3f\n", -1, rmsd, start_energy, 0.00);
-
-        if( (Input->flex_lig == true)){
-
-            for(double t=Input->sa_start_temp; t>= Input->temp; t-=10*log(t)){
-
-                sprintf(info, "SA Temperature: %.2f", t);
-                QWriter->print_info(info);
-
-                for (int i=1; i<=Input->sa_steps; i++){
-                    Rand.random(Input->cushion, Input->rotation_step, REC, LIG);
-                    COORD.rototranslate_all(LIG, &Rand);
-
-                    com = COORD.compute_com(LIG->new_mcoords[Rand.lign], LIG);
-
-                    if ( (com[0] >= center[0]-Input->x_dim/2) and (com[0] <= center[0]+Input->x_dim/2) and (com[1] >= center[1]-Input->y_dim/2) and
-                         (com[1] <= center[1]+Input->y_dim/2) and (com[2] >= center[2]-Input->z_dim/2) and (com[2] <= center[2]+Input->z_dim/2) ) {
-
-                        if (Input->use_grids){
-                            new_energy = Ene->compute_ene(Grids, LIG,LIG->new_mcoords[Rand.lign]);
-                        }
-                        else {
-                            new_energy = Ene->compute_ene(REC, LIG,LIG->new_mcoords[Rand.lign]);
-                        }
-
-                        rmsd = COORD.compute_rmsd(LIG->xyz, LIG->new_mcoords[Rand.lign],LIG->N);
-
-                        if (new_energy <= start_energy){
-                            sprintf(info, "Trial: %5d New energy: % 7.2f RMSD: %6.2f Temp: %6.2f Conf: %4d", i, new_energy, rmsd, t, Rand.lign);
-                            QWriter->print_info(info);
-                            fprintf(rmsd_energy, "%6d % 7.3f % 7.3f % 7.3f\n", i, rmsd, new_energy, t);
-                            start_energy=new_energy;
-                            LIG->mcoords=LIG->new_mcoords;
-
-                            QWriter->writeMol2(LIG, LIG->mcoords[Rand.lign], new_energy, rmsd, Input->output);
-                            if (Input->flex_rec ==true){
-                                QWriter->writeMol2(REC, REC->mcoords[Rand.recn], 0.00, 0.00, Input->output+"_rec");
-                            }
-                        }
-
-                        else { //energy isn't <= start_energy
-
-                            prob = COORD.compute_prob(start_energy, new_energy, Input->temp);
-                            rnumber = gsl_rng_uniform(r);
-
-                            if (prob > rnumber ) {
-                                fprintf(rmsd_energy, "%6d % 7.3f % 7.3f % 7.3f\n", i, rmsd, new_energy, t);
-                                sprintf(info, "Trial: %5d New energy: % 7.2f RMSD: %6.2f Temp: %6.2f Conf: %4d", i, new_energy, rmsd, t, Rand.lign);
-                                QWriter->print_info(info);
-                                start_energy=new_energy;
-                                LIG->mcoords = LIG->new_mcoords;
-                                QWriter->writeMol2(LIG, LIG->mcoords[Rand.lign], new_energy, rmsd, Input->output);
-                                if (Input->flex_rec ==true){
-                                    QWriter->writeMol2(REC, REC->mcoords[Rand.recn], 0.00, 0.00, Input->output+"_rec");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        else {
-
-            for(double t=Input->sa_start_temp; t>= Input->temp; t-=10*log(t)){
-                sprintf(info, "SA Temperature: %.2f", t);
-                QWriter->print_info(info);
-                for (int i=1; i<= Input->sa_steps; i++){
-                    Rand.random(Input->cushion, Input->rotation_step, REC, LIG);
-                    new_coord = COORD.rototranslate(old_coord, LIG, &Rand);
-
-                    com = COORD.compute_com(new_coord, LIG);
-
-                    if ( (com[0] >= center[0]-Input->x_dim/2) and (com[0] <= center[0]+Input->x_dim/2) and (com[1] >= center[1]-Input->y_dim/2) and
-                         (com[1] <= center[1]+Input->y_dim/2) and (com[2] >= center[2]-Input->z_dim/2) and (com[2] <= center[2]+Input->z_dim/2) ) {
-
-                        if (Input->use_grids){
-                            new_energy = Ene->compute_ene(Grids, LIG, new_coord);
-                        }
-                        else{
-                            new_energy = Ene->compute_ene(REC, LIG, new_coord);
-                        }
-
-                        rmsd = COORD.compute_rmsd(LIG->xyz, new_coord, LIG->N);
-
-                        if (new_energy <= start_energy){
-                            fprintf(rmsd_energy, "%6d % 7.3f % 7.3f % 7.3f\n", i, rmsd, new_energy, t);
-                            sprintf(info, "Trial: %5d New energy: % 9.4f RMSD: %7.3f Temp: %7.3f", i, new_energy, rmsd, t);
-                            QWriter->print_info(info);
-                            start_energy=new_energy;
-                            old_coord=new_coord;
-                            QWriter->writeMol2(LIG, new_coord, new_energy, rmsd, Input->output);
-                            if (Input->flex_rec ==true){
-                                QWriter->writeMol2(REC, REC->mcoords[Rand.recn], 0.00, 0.00, Input->output + "_rec");
-                            }
-                        }
-
-                        else {
-                            prob = COORD.compute_prob(start_energy, new_energy, t);
-                            rnumber = gsl_rng_uniform(r);
-                            if (prob > rnumber ) {
-                                fprintf(rmsd_energy, "%6d % 7.3f % 7.3f % 7.3f\n", i, rmsd, new_energy, t);
-                                sprintf(info, "Trial: %5d New energy: % 9.4f RMSD: %7.3f Temp: %7.3f", i, new_energy, rmsd, t);
-                                QWriter->print_info(info);
-                                start_energy=new_energy;
-                                old_coord=new_coord;
-                                QWriter->writeMol2(LIG, new_coord, new_energy, rmsd, Input->output);
-                                if (Input->flex_rec ==true){
-                                    QWriter->writeMol2(REC, REC->mcoords[Rand.recn], 0.00, 0.00, Input->output + "_rec");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    fclose(rmsd_energy);
-    QWriter->print_line();
-}
-
-#endif
-
-*/
 void TEMP_SCHEME::dock_run(){
     clock_t ti, tf;
     int time_elapsed;
@@ -597,7 +435,6 @@ void TEMP_SCHEME::dock_run(){
                         else {
                             Dock->run(REC, Lig2, RefLig, center, Input, counter);
                         }
-
                     }
                     delete Lig2;
                     multifile >> ligand;
@@ -645,7 +482,7 @@ void TEMP_SCHEME::dock_run(){
         this->print_info(info);
 #else
         tf = clock()-ti;
-        sprintf(info, " Docking computations took %d minute(s)", round((tf/CLOCKS_PER_SEC)/60.));
+        sprintf(info, "Docking computations took %d minute(s)", round((tf/CLOCKS_PER_SEC)/60.));
         this->print_info(info);
 #endif
         this->print_line();
