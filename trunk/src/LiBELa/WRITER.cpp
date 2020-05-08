@@ -13,6 +13,7 @@ WRITER::WRITER(string prefix){
 	output = fopen(outputfile.c_str(), "w");
     if ((Input->write_mol2) and (Input->dock_mode)){
         outmol2 = gzopen((prefix+"_dock.mol2.gz").c_str(), "w");
+        gzclose(outmol2);
     }
 }
 
@@ -24,6 +25,7 @@ WRITER::WRITER(string prefix, PARSER* _Input){
     output = fopen(outputfile.c_str(), "w");
     if ((Input->write_mol2) and (Input->dock_mode)){
         outmol2 = gzopen((prefix+"_dock.mol2.gz").c_str(), "w");
+        gzclose(outmol2);
     }
 }
 
@@ -33,8 +35,9 @@ WRITER::WRITER(PARSER* _Input){
 	outputfile=WRITER::output_prefix+".log";
 	output = fopen(outputfile.c_str(), "w");
     if ((Input->write_mol2) and Input->dock_mode){
-		outmol2 = gzopen((Input->output+"_dock.mol2.gz").c_str(), "w");
-	}
+        outmol2 = gzopen((Input->output+"_dock.mol2.gz").c_str(), "w");
+        gzclose(outmol2);
+    }
 	this->print_welcome();
     this->print_params();
 }
@@ -423,6 +426,7 @@ void WRITER::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, do
 }
 
 void WRITER::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, double rmsd){
+    outmol2 = gzopen((Input->output+"_dock.mol2.gz").c_str(), "a");
 	gzprintf(outmol2, "\n");
 	gzprintf(outmol2, "########## %15.15s: %19.19s\n", "Name", Cmol->molname.c_str());
 	gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Energy Score", energy);
@@ -472,9 +476,11 @@ void WRITER::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, do
 	for (unsigned j=0; j<Cmol->bonds.size(); j++){
 		gzprintf(outmol2, "%6d%6.6s%6.6s%5.5s\n", j+1, Cmol->bonds[j][0].c_str(), Cmol->bonds[j][1].c_str(),Cmol->bonds[j][2].c_str());
 	}
+    gzclose(outmol2);
 }
 
 void WRITER::writeMol2_Mol_new_xyz(Mol2* Cmol, double energy, double rmsd){
+    outmol2 = gzopen((Input->output+"_dock.mol2.gz").c_str(), "a");
 	gzprintf(outmol2, "\n");
 	gzprintf(outmol2, "########## %15.15s: %19.19s\n", "Name", Cmol->molname.c_str());
 	gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Energy Score", energy);
@@ -518,6 +524,7 @@ void WRITER::writeMol2_Mol_new_xyz(Mol2* Cmol, double energy, double rmsd){
 	for (unsigned j=0; j<Cmol->bonds.size(); j++){
 		gzprintf(outmol2, "%6d%6.6s%6.6s%5.5s\n", j+1, Cmol->bonds[j][0].c_str(), Cmol->bonds[j][1].c_str(),Cmol->bonds[j][2].c_str());
 	}
+    gzclose(outmol2);
 }
 
 void WRITER::print_info(char info[98]){
@@ -538,9 +545,11 @@ void WRITER::print_line(void){
 }
 
 WRITER::~WRITER(){
+/*
     if ((Input->write_mol2) and Input->dock_mode){
         gzclose(outmol2);
     }
+*/
 	fclose(output);
 }
 
