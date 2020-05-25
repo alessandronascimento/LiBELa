@@ -1001,12 +1001,11 @@ void Grid::compute_grid_hardcore_omp_Gaussian(Mol2* Rec){
     vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz);
     vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2;
 
-//    double elec, d, d2, d6, x, y, z, vdwA, vdwB, solv, rec_solv, deff;
     double sqrt2 = sqrt(2.0);
 
 // initializing the vectors;
 
-    for (unsigned i=0; i<this->npointsy; i++){
+    for (int i=0; i<this->npointsy; i++){
         elec_t2.push_back(elec_t1);
         vdwA_t2.push_back(vdwA_t1);
         vdwB_t2.push_back(vdwB_t1);
@@ -1014,7 +1013,7 @@ void Grid::compute_grid_hardcore_omp_Gaussian(Mol2* Rec){
         rec_solv_t2.push_back(rec_solv_t1);
     }
 
-    for (unsigned i=0; i<this->npointsx; i++){
+    for (int i=0; i<this->npointsx; i++){
         this->elec_grid.push_back(elec_t2);
         this->vdwA_grid.push_back(vdwA_t2);
         this->vdwB_grid.push_back(vdwB_t2);
@@ -1052,18 +1051,44 @@ void Grid::compute_grid_hardcore_omp_Gaussian(Mol2* Rec){
 
                     if (Input->dielectric_model == "constant"){
                         double d = sqrt(d2);
-                        elec += (332.0*((Rec->charges[i])/(d*Input->diel)))*Coulomb_gauss_weight;
+                        if (Input->use_GW_Coulomb){
+                            elec += (332.0*((Rec->charges[i])/(d*Input->diel)))*Coulomb_gauss_weight;
+                        }
+                        else{
+                            elec += (332.0*((Rec->charges[i])/(d*Input->diel)));
+                        }
                     }
                     else if (Input->dielectric_model == "4r") {     // epsilon = 4r
-                        elec += (332.0 * (Rec->charges[i]/(4*d2)))*Coulomb_gauss_weight;
+                        if (Input->use_GW_Coulomb){
+                            elec += (332.0 * (Rec->charges[i]/(4*d2)))*Coulomb_gauss_weight;
+                        }
+                        else{
+                            elec += (332.0 * (Rec->charges[i]/(4*d2)));
+                        }
                     }
                     else {                                          // Input->dielectric_model = "r"
-                        elec += (332.0 * (Rec->charges[i]/d2))*Coulomb_gauss_weight;
+                        if (Input->use_GW_Coulomb){
+                            elec += (332.0 * (Rec->charges[i]/d2))*Coulomb_gauss_weight;
+                        }
+                        else{
+                            elec += (332.0 * (Rec->charges[i]/d2));
+                        }
                     }
 
+                    if (Input->use_GW_LJ12){
+                        vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6))*LJ_gauss_weight;
+                    }
+                    else {
+                        vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6));
+                    }
 
-                    vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6))*LJ_gauss_weight;
-                    vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6)*LJ_gauss_weight;
+                    if (Input->use_GW_LJ6){
+                        vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6)*LJ_gauss_weight;
+                    }
+                    else {
+                        vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6);
+                    }
+
 
                     double deff = (d2);
 

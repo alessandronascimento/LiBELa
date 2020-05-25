@@ -39,12 +39,12 @@ OBMol Conformer::GetMol(const std::string &molfile){
     // Open the file.
     ifstream ifs(molfile.c_str());
     if (!ifs) {
-        printf("Could not open %s for reading\n", molfile.c_str());
+        printf("Could not open %s for reading. Maybe an OpenBabel issue?\n", molfile.c_str());
         return mol;
     }
     // Read the molecule.
     if (!conv->Read(&mol, &ifs)) {
-        printf("Could not read molecule from file\n");
+        printf("Could not read molecule from file. Maybe an OpenBabel issue?\n");
         return mol;
     }
 
@@ -65,12 +65,12 @@ bool Conformer::generate_conformers_confab(PARSER* Input, Mol2* Lig, string molf
 
     ifstream ifs(molfile.c_str());
     if (!ifs) {
-        printf("Could not open %s for reading\n", molfile.c_str());
+        printf("Could not open %s for reading. Maybe an OpenBabel issue?\n", molfile.c_str());
         exit(1);
     }
 
     if (!conv->Read(mol, &ifs)) {
-        printf("Could not read molecule from file\n");
+        printf("Could not read molecule from file. Maybe an OpenBabel issue?\n");
         exit(1);
     }
 
