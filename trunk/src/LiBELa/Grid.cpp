@@ -8,6 +8,9 @@
 #include "Grid.h"
 #include "iMcLiBELa.h"
 
+#define MAX_ALJ 100.0
+#define MAX_BLJ 50.0
+
 using namespace std;
 
 double Grid::distance(double x1, double x2, double y1, double y2, double z1, double z2) {
@@ -912,13 +915,14 @@ void Grid::compute_grid_hardcore_Gaussian(Mol2* Rec){
                     d = sqrt(d2);
                     d6 = d2 * d2 * d2;
 
-                    LJ_gauss_weight = exp(-( (d-(Rec->radii[i]+Rec->radii[i])) * (d-(Rec->radii[i]+Rec->radii[i])) ) /(2.0*Input->LJ_sigma*Input->LJ_sigma));
+                    double dw = d-(1.2*Rec->radii[i]);
+                    dw > 0. ? LJ_gauss_weight = exp(-( (d-(Rec->radii[i]+Rec->radii[i])) * (d-(Rec->radii[i]+Rec->radii[i])) ) /(2.0*Input->LJ_sigma*Input->LJ_sigma)) : -1.0;
+
                     Coulomb_gauss_weight = exp(-( (d-(Rec->radii[i]+Rec->radii[i])) * (d-(Rec->radii[i]+Rec->radii[i])) ) /(2.0*Input->coulomb_sigma*Input->coulomb_sigma));
 
                     // Electrostatic Potential..
 
                     if (Input->dielectric_model == "constant"){
-                        d = sqrt(d2);
                         if (Input->use_GW_Coulomb){
                             elec += (332.0*((Rec->charges[i])/(d*Input->diel)))*Coulomb_gauss_weight;
                         }
@@ -946,7 +950,7 @@ void Grid::compute_grid_hardcore_Gaussian(Mol2* Rec){
                     // VDW Repulsive Potential
 
                     if (Input->use_GW_LJ12){
-                        vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6))*LJ_gauss_weight;
+                        LJ_gauss_weight > 0 ? vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6))*LJ_gauss_weight: vdwA += MAX_ALJ ;
                     }
                     else {
                         vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6));
@@ -956,7 +960,7 @@ void Grid::compute_grid_hardcore_Gaussian(Mol2* Rec){
                     // VDW Attractive Potential
 
                     if (Input->use_GW_LJ6){
-                        vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6)*LJ_gauss_weight;
+                        LJ_gauss_weight > 0 ? vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6)*LJ_gauss_weight: vdwB += MAX_BLJ;
                     }
                     else {
                         vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6);
@@ -1046,7 +1050,10 @@ void Grid::compute_grid_hardcore_omp_Gaussian(Mol2* Rec){
                     double d6 = d2 * d2 * d2;
                     double d = sqrt(d2);
 
-                    double LJ_gauss_weight = exp(-( (d-(Rec->radii[i]+Rec->radii[i])) * (d-(Rec->radii[i]+Rec->radii[i])) ) /(2.0*Input->LJ_sigma*Input->LJ_sigma));
+                    double LJ_gauss_weight;
+
+                    double dw = d-(1.2*Rec->radii[i]);
+                    dw > 0. ? LJ_gauss_weight = exp(-( (d-(Rec->radii[i]+Rec->radii[i])) * (d-(Rec->radii[i]+Rec->radii[i])) ) /(2.0*Input->LJ_sigma*Input->LJ_sigma)) : -1.0;
                     double Coulomb_gauss_weight = exp(-( (d-(Rec->radii[i]+Rec->radii[i])) * (d-(Rec->radii[i]+Rec->radii[i])) ) /(2.0*Input->coulomb_sigma*Input->coulomb_sigma));
 
                     if (Input->dielectric_model == "constant"){
@@ -1076,14 +1083,14 @@ void Grid::compute_grid_hardcore_omp_Gaussian(Mol2* Rec){
                     }
 
                     if (Input->use_GW_LJ12){
-                        vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6))*LJ_gauss_weight;
+                        LJ_gauss_weight > 0 ? vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6))*LJ_gauss_weight: vdwA += MAX_ALJ ;
                     }
                     else {
                         vdwA += (Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6));
                     }
 
                     if (Input->use_GW_LJ6){
-                        vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6)*LJ_gauss_weight;
+                        LJ_gauss_weight > 0 ? vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6)*LJ_gauss_weight: vdwB += MAX_BLJ;
                     }
                     else {
                         vdwB += (sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6);
