@@ -939,12 +939,12 @@ void Grid::load_delphi_gzcube(){
     }
 
     float phi;
-    int count;
+    int count=0;
 
     for (int nx=0; nx < igrid; nx++){
         for (int ny=0; ny < igrid; ny++){
             for (int nz=0; nz < igrid; nz++){
-                count = 0;
+                count++;
                 gzgets(phimap, str, 14);
                 phi = atof(str);
                 this->delphi_grid[nx][ny][nz] = double(0.593*phi);  //converting kt units to kcal/mol
