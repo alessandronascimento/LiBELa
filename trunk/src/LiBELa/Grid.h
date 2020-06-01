@@ -119,6 +119,7 @@ public:
      * a CUBE (ASCII) format.
      */
     void load_delphi_cube(void);
+    void load_delphi_gzcube(void);
 	virtual ~Grid();
 
 };

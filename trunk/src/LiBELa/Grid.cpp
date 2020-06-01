@@ -42,7 +42,12 @@ Grid::Grid(PARSER* _Input, WRITER* _Writer, Mol2* Rec, vector<double> com){
         this->load_phimap_from_file(Input->delphi_gsize);
     }
     else if (Input->delphi_cube_grid != "" and Input->use_delphi){
-        this->load_delphi_cube();
+        if (Input->delphi_cube_grid.substr(Input->delphi_cube_grid.size()-3, 3) == ".gz"){
+            this->load_delphi_gzcube();
+        }
+        else{
+            this->load_delphi_cube();
+        }
     }
     else {
         this->grid_spacing = Input->grid_spacing;
@@ -883,6 +888,75 @@ void Grid::load_delphi_cube(){
     }
 
     fclose(phimap);
+
+    sprintf(info, "DelPhi Grid file %s read!", Input->delphi_cube_grid.c_str());
+    Writer->print_info(info);
+    this->delphi_loaded = true;
+}
+
+void Grid::load_delphi_gzcube(){
+    gzFile phimap = gzopen(Input->delphi_cube_grid.c_str(),"r");
+
+    if (phimap == NULL){
+        printf("Could not open DelPhi Grid file %s. Please check", Input->delphi_cube_grid.c_str());
+        exit(1);
+    }
+
+    int igrid;
+    float scale, centerx, centery, centerz, dtmp;
+    char str[200];
+
+    gzgets(phimap, str, 80);
+    sscanf(str, "%f %d %f %f %f", &scale, &igrid, &centerx, &centery, &centerz);
+    this->grid_spacing = double(1.0/scale);
+    this->xbegin = double(centerx - ((igrid-1)/2)*this->grid_spacing);
+    this->xend = double(centerx + (((igrid+1)/2)*this->grid_spacing));
+    this->npointsx = igrid;
+
+    this->ybegin = double(centery - ((igrid-1)/2)*this->grid_spacing);
+    this->yend = double(centery + (((igrid+1)/2)*this->grid_spacing));
+    this->npointsy = igrid;
+
+    this->zbegin = double(centerz - ((igrid-1)/2)*this->grid_spacing);
+    this->zend = double(centerz + (((igrid+1)/2)*this->grid_spacing));
+    this->npointsz = igrid;
+
+    gzgets(phimap, str, 80);
+    gzgets(phimap, str, 80);
+    gzgets(phimap, str, 80);
+    gzgets(phimap, str, 80);
+    gzgets(phimap, str, 80);
+    gzgets(phimap, str, 80);
+
+    vector<double> vz(igrid);
+    vector<vector<double> > vtmp;
+    for (int i=0; i<igrid; i++){
+        vtmp.push_back(vz);
+    }
+
+    for (int i=0; i<igrid; i++){
+        this->delphi_grid.push_back(vtmp);
+    }
+
+    float phi;
+    int count;
+
+    for (int nx=0; nx < igrid; nx++){
+        for (int ny=0; ny < igrid; ny++){
+            for (int nz=0; nz < igrid; nz++){
+                count = 0;
+                gzgets(phimap, str, 14);
+                phi = atof(str);
+                this->delphi_grid[nx][ny][nz] = double(0.593*phi);  //converting kt units to kcal/mol
+                if (count == 6){
+                    gzgets(phimap, str, 14);
+                    count = 0;
+                }
+            }
+        }
+    }
+
+    gzclose(phimap);
 
     sprintf(info, "DelPhi Grid file %s read!", Input->delphi_cube_grid.c_str());
     Writer->print_info(info);
