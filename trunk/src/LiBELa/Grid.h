@@ -71,6 +71,7 @@ public:
     void generate_points(vector<double> ref_com);
 
     void compute_grid_softcore(Mol2* Lig);
+    void compute_grid_softcore_omp(Mol2* Lig);
 
 	void compute_grid_hardcore(Mol2* Lig);
     void compute_grid_hardcore_Gaussian(Mol2* Lig);
