@@ -86,7 +86,7 @@ void McEntropy::update_trajectory(double x, double y, double z, double alpha, do
 }
 
 void McEntropy::get_results(entropy_t* entropy, entropy_t* max_entropy, int count){
-    for (unsigned i=0; i< trans_bins; i++){
+    for (int i=0; i< trans_bins; i++){
         hist_x[i] = hist_x[i]/count;
         if (hist_x[i] > 0.0){
             entropy->Strans += hist_x[i] * log(hist_x[i]);
@@ -103,7 +103,7 @@ void McEntropy::get_results(entropy_t* entropy, entropy_t* max_entropy, int coun
         }
     }
 
-    for (unsigned i=0; i< rot_bins; i++){
+    for (int i=0; i< rot_bins; i++){
         hist_alpha[i] = hist_alpha[i]/count;
         if (hist_alpha[i]> 0.0){
             entropy->Srot += hist_alpha[i] * log(hist_alpha[i]);
@@ -122,7 +122,7 @@ void McEntropy::get_results(entropy_t* entropy, entropy_t* max_entropy, int coun
         }
     }
 
-    for (unsigned i=0; i< rot_bins/2; i++){
+    for (int i=0; i< rot_bins/2; i++){
         hist_beta[i] = hist_beta[i]/count;
         if (hist_beta[i]> 0.0){
             entropy->Srot += hist_beta[i] * log(hist_beta[i]);
@@ -139,24 +139,24 @@ void McEntropy::get_results(entropy_t* entropy, entropy_t* max_entropy, int coun
 
     max_entropy->Srot = 0.0;
     double rot_bin_prob = 1.0/rot_bins;
-    for (unsigned i=0; i< this->rot_bins; i++){
+    for (int i=0; i< this->rot_bins; i++){
         max_entropy->Srot += rot_bin_prob * log (rot_bin_prob); // for alpha
         max_entropy->Srot += rot_bin_prob * log (rot_bin_prob); // for gamma;
     }
-    for (unsigned i=0; i< this->rot_bins/2; i++){
+    for (int i=0; i< this->rot_bins/2; i++){
         max_entropy->Srot += (2*rot_bin_prob) * log (2*rot_bin_prob); // for beta;
     }
 
     max_entropy->Strans = 0.0;
     double trans_bin_prob = 1.0/trans_bins;
-    for (unsigned i=0; i<this->trans_bins; i++){
+    for (int i=0; i<this->trans_bins; i++){
         max_entropy->Strans +=  3*(trans_bin_prob * log(trans_bin_prob));
     }
 
     max_entropy->Storsion=0.0;
 
-    for (unsigned j=0; j< this->n_rot; j++){
-        for (unsigned i=0; i< this->rot_bins; i++){
+    for (int j=0; j< this->n_rot; j++){
+        for (int i=0; i< this->rot_bins; i++){
             max_entropy->Storsion += rot_bin_prob * log(rot_bin_prob);
         }
     }
@@ -168,7 +168,7 @@ void McEntropy::get_results(entropy_t* entropy, entropy_t* max_entropy, int coun
 }
 
 void McEntropy::get_results(entropy_t* entropy, int count){
-    for (unsigned i=0; i< trans_bins; i++){
+    for (int i=0; i< trans_bins; i++){
         hist_x[i] = hist_x[i]/count;
         if (hist_x[i] > 0.0){
             entropy->Strans += hist_x[i] * log(hist_x[i]);
@@ -185,7 +185,7 @@ void McEntropy::get_results(entropy_t* entropy, int count){
         }
     }
 
-    for (unsigned i=0; i< rot_bins; i++){
+    for (int i=0; i< rot_bins; i++){
         hist_alpha[i] = hist_alpha[i]/count;
         if (hist_alpha[i]> 0.0){
             entropy->Srot += hist_alpha[i] * log(hist_alpha[i]);
@@ -207,7 +207,7 @@ void McEntropy::get_results(entropy_t* entropy, int count){
         }
     }
 
-    for (unsigned i=0; i< rot_bins/2; i++){
+    for (int i=0; i< rot_bins/2; i++){
         hist_beta[i] = hist_beta[i]/count;
         if (hist_beta[i]> 0.0){
             entropy->Srot += hist_beta[i] * log(hist_beta[i]);

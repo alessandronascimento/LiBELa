@@ -1151,7 +1151,7 @@ OBMol MC::GetMol(const std::string &molfile){
 
     ifstream ifs(molfile.c_str());
     if (!ifs) {
-        printf("Could not open &s for reading.\n", molfile.c_str());
+        printf("Could not open %s for reading.\n", molfile.c_str());
         return mol;
     }
 

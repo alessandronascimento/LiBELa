@@ -100,33 +100,7 @@ void Deal::sort_and_evaluate(double *mu, int iteration){
 	for (int i=0; i<population_size; i++){
 		rotrans.push_back(Qrotrans.at(i).toStdVector());
 	}
-
 	this->sort_array();
-
-/*
-	Energy = new ENERGY;
-	energies.clear();
-	rotrans.clear();
-	vector<double> temp;
-	double sqrt_iter = sqrt(iteration);
-	time_i=clock();
-	for (int i=0; i< population_size; i++){
-		temp.push_back((gsl_ran_gaussian_ziggurat(r, sigma[0]/sqrt_iter)) + mu[0]);
-		temp.push_back((gsl_ran_gaussian_ziggurat(r, sigma[1]/sqrt_iter)) + mu[1]);
-		temp.push_back((gsl_ran_gaussian_ziggurat(r, sigma[2]/sqrt_iter)) + mu[2]);
-		temp.push_back((gsl_ran_gaussian_ziggurat(r, sigma[3]/sqrt_iter)) + mu[3]);
-		temp.push_back((gsl_ran_gaussian_ziggurat(r, sigma[4]/sqrt_iter)) + mu[4]);
-		temp.push_back((gsl_ran_gaussian_ziggurat(r, sigma[5]/sqrt_iter)) + mu[5]);
-		rotrans.push_back(temp);
-		new_coord = Coord.rototranslate(Lig->xyz, Lig, temp[0], temp[1], temp[2], temp[3], temp[4], temp[5]);
-		temp.clear();
-		energies.push_back(Energy->compute_ene_softcore_solvation(Rec, Lig, Input, new_coord));
-	}
-	delete Energy;
-	this->sort_array();
-	time_f=clock();
-	printf("Time elapsed for evaluation: %7.2f msecs.\n", double(((time_f-time_i)*1000)/CLOCKS_PER_SEC));
-*/
 }
 
 
