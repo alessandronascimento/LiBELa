@@ -985,7 +985,14 @@ void Grid::load_delphi_cube(){
 
     fclose(phimap);
 
-    sprintf(info, "DelPhi Grid file %s read!", Input->delphi_cube_grid.c_str());
+    sprintf(info, "DelPhi CUBE Grid file %s read!", Input->delphi_cube_grid.c_str());
+    Writer->print_info(info);
+    sprintf(info, "DelPhi CUBE Grid Spacing: %7.4f", this->grid_spacing);
+    Writer->print_info(info);
+    sprintf(info, "DelPhi CUBE Grid GSIZE: %5d. Center: %7.4f %7.4f %7.4f", igrid, centerx, centery, centerz);
+    Writer->print_info(info);
+    sprintf(info, "Grid Dimensions XYZ: %7.4f - %7.4f %7.4f - %7.4f %7.4f - %7.4f", this->xbegin, this->xend, this->ybegin, this->yend,
+            this->zbegin, this->zend);
     Writer->print_info(info);
     this->delphi_loaded = true;
 }
@@ -999,7 +1006,7 @@ void Grid::load_delphi_gzcube(){
     }
 
     int igrid;
-    float scale, centerx, centery, centerz, dtmp;
+    float scale, centerx, centery, centerz;
     char str[200];
 
     gzgets(phimap, str, 80);
@@ -1056,9 +1063,17 @@ void Grid::load_delphi_gzcube(){
 
     gzclose(phimap);
 
-    sprintf(info, "DelPhi Grid file %s read!", Input->delphi_cube_grid.c_str());
+    sprintf(info, "DelPhi CUBE Grid file %s read!", Input->delphi_cube_grid.c_str());
+    Writer->print_info(info);
+    sprintf(info, "DelPhi CUBE Grid Spacing: %7.4f", this->grid_spacing);
+    Writer->print_info(info);
+    sprintf(info, "DelPhi CUBE Grid GSIZE: %5d. Center: %7.4f %7.4f %7.4f", igrid, centerx, centery, centerz);
+    Writer->print_info(info);
+    sprintf(info, "Grid Dimensions XYZ: %7.4f - %7.4f %7.4f - %7.4f %7.4f - %7.4f", this->xbegin, this->xend, this->ybegin, this->yend,
+            this->zbegin, this->zend);
     Writer->print_info(info);
     this->delphi_loaded = true;
+
 }
 
 void Grid::compute_grid_hardcore_Gaussian(Mol2* Rec){
