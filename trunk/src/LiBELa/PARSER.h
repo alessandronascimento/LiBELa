@@ -308,6 +308,10 @@ public:
     bool use_GW_LJ12;
     //! Use Gaussian-weighting for Coulomb potential
     bool use_GW_Coulomb;
+    //!
+    bool use_Erestraints;
+    //!
+    double restraints_weight;
 
 #ifdef HAS_GUI
 	QStringList docking_molecules;

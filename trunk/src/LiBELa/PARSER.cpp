@@ -98,6 +98,8 @@ PARSER::PARSER(){
     this->use_GW_LJ6 = false;
     this->use_GW_LJ12 = false;
     this->use_GW_Coulomb = false;
+    this->use_Erestraints = false;
+    this->restraints_weight = 0.0;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -489,6 +491,15 @@ void PARSER::comparing (string param, ifstream &input) {
         if (tmp == "yes" or tmp == "Yes" or tmp == "YES"){
             this->use_GW_Coulomb = true;
         }
+    }
+    else if (param == "use_docking_restraints"){
+        input >> tmp;
+        if (tmp == "yes" or tmp == "Yes" or tmp == "YES"){
+            this->use_Erestraints = true;
+        }
+    }
+    else if (param == "restraints_weight"){
+        input >> this->restraints_weight;
     }
 	else {
 		cout << "Unknown parameter: " << param << endl;

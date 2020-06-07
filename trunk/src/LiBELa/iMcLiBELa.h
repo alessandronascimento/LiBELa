@@ -13,7 +13,9 @@ struct energy_result_t{
     double elec;
     double rec_solv;
     double lig_solv;
+    double restraints;
     double total;
+
 };
 
 #endif

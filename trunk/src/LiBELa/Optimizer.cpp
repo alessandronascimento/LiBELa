@@ -42,11 +42,23 @@ double Optimizer::evaluate_energy(Mol2* Lig2, vector<vector<double> > new_xyz){
     Energy2* Ene = new Energy2(Parser);
     energy_result_t* energy_results = new energy_result_t;
     double energy=0.0;
+    double e_restraints = 0.0;
+    double d2;
     if (Parser->use_grids){
         energy = Ene->compute_ene(Grids, Lig2, new_xyz, energy_results);
     }
     else {
         energy = Ene->compute_ene(Rec, Lig2, new_xyz, energy_results);
+    }
+    if (Parser->use_Erestraints){
+        for (int i=0; i<Lig2->N; i++){
+            d2 = 0.0;
+            for (int j=0; j< 3; j++){
+                d2 += (Lig2->xyz[i][j]-new_xyz[i][j])*(Lig2->xyz[i][j]-new_xyz[i][j]);
+            }
+            e_restraints += 0.5*Parser->restraints_weight*d2;
+        }
+        energy += e_restraints;
     }
 	delete Ene;
     delete energy_results;
@@ -60,6 +72,19 @@ void Optimizer::evaluate_energy(Mol2* Lig2, vector<vector<double> > new_xyz, ene
     }
     else{
         Ene->compute_ene(Rec, Lig2, new_xyz, energy_result);
+    }
+    double e_restraints = 0.0;
+    double d2;
+    if (Parser->use_Erestraints){
+        for (int i=0; i<Lig2->N; i++){
+            d2 = 0.0;
+            for (int j=0; j< 3; j++){
+                d2 += (Lig2->xyz[i][j]-new_xyz[i][j])*(Lig2->xyz[i][j]-new_xyz[i][j]);
+            }
+            e_restraints += 0.5*Parser->restraints_weight*d2;
+        }
+        energy_result->restraints = e_restraints;
+        energy_result->total += energy_result->restraints;
     }
 }
 
