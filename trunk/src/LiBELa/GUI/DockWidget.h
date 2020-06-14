@@ -172,6 +172,11 @@ public:
     QLabel* use_cutoff_score_lab;
     QLabel* use_cutoff_energy_lab;
 
+    QLabel* docking_restraint_lab;
+    QDoubleSpinBox* docking_restraint_weight;
+    QLabel* use_docking_restraint_lab;
+    QCheckBox* use_docking_restraint;
+
 
     TEMP_SCHEME* RunEngine;
 
@@ -193,6 +198,7 @@ public slots:
 	void set_parameters();
 	void write_parameters();
     void show_scoring_function_options(int sf);
+    void slot_use_restraints(int state);
 };
 
 #endif // DOCKWIDGET_H

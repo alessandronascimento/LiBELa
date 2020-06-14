@@ -83,16 +83,16 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
 	deltaij_vdw = new QDoubleSpinBox;
 	deltaij_vdw->setMaximum(10.0);
 	deltaij_vdw->setMinimum(0.0);
-    deltaij_vdw->setValue(2.75);
-	deltaij_vdw->setSingleStep(0.25);
+    deltaij_vdw->setValue(1.75);
+    deltaij_vdw->setSingleStep(0.05);
 	deltaij_vdw->setDecimals(2);
 	deltaij_vdw_lab = new QLabel(tr("Softcore delta for VDW term: "));
 
 	deltaij_elec = new QDoubleSpinBox;
 	deltaij_elec->setMaximum(10.0);
 	deltaij_elec->setMinimum(0.0);
-	deltaij_elec->setValue(1.75);
-	deltaij_elec->setSingleStep(0.25);
+    deltaij_elec->setValue(1.50);
+    deltaij_elec->setSingleStep(0.05);
 	deltaij_elec->setDecimals(2);
 	deltaij_elec_lab = new QLabel(tr("Softcore delta for electrostatic term: "));
 
@@ -255,136 +255,197 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     cutoff_energy->setValue(Inp->writeMol2_energy_cutoff);
     cutoff_energy->setSingleStep(0.01);
 
+//    use_docking_restraint_lab = new QLabel(tr("Use harmonic restraints in docking ?"));
+    use_docking_restraint = new QCheckBox(tr("Use harmonic restraints in docking ?"));
+    docking_restraint_lab = new QLabel(tr("Docking restraint weight"));
+    docking_restraint_weight = new QDoubleSpinBox;
+    docking_restraint_weight->setValue(Inp->restraints_weight);
+    docking_restraint_weight->setSingleStep(0.1);
 
 
     files_label = new QLabel(tr("<h2>Input Files</h2>"));
-    editLayout->addWidget(files_label, 0, 0);
 
-    editLayout->addWidget(rec_mol2, 1, 0);
-    editLayout->addWidget(choose_rec_mol2, 1, 1);
+    int i=0;
 
-    editLayout->addWidget(reflig_mol2, 2, 0);
-    editLayout->addWidget(choose_reflig_mol2, 2, 1);
+    editLayout->addWidget(files_label, i, 0);
+    i++;
 
-    editLayout->addWidget(docking_mol2, 3, 0);
-    editLayout->addWidget(choose_docking_mol2, 3, 1);
+    editLayout->addWidget(rec_mol2, i, 0);
+    editLayout->addWidget(choose_rec_mol2, i, 1);
+    i++;
 
-    editLayout->addWidget(mol2_aa_lab, 4, 0);
-    editLayout->addWidget(mol2_aa, 4, 1);
+    editLayout->addWidget(reflig_mol2, i, 0);
+    editLayout->addWidget(choose_reflig_mol2, i, 1);
+    i++;
+
+    editLayout->addWidget(docking_mol2, i, 0);
+    editLayout->addWidget(choose_docking_mol2, i, 1);
+    i++;
+
+    editLayout->addWidget(mol2_aa_lab, i, 0);
+    editLayout->addWidget(mol2_aa, i, 1);
+    i++;
 
     output_label = new QLabel(tr("<h2>Output Files</h2>"));
-    editLayout->addWidget(output_label, 5, 0);
+    editLayout->addWidget(output_label, i, 0);
+    i++;
 
-    editLayout->addWidget(output_prefix_lab, 6, 0);
-    editLayout->addWidget(output_prefix, 6, 1);
+    editLayout->addWidget(output_prefix_lab, i, 0);
+    editLayout->addWidget(output_prefix, i, 1);
+    i++;
 
-    editLayout->addWidget(write_mol2, 7,0);
+    editLayout->addWidget(write_mol2, i,0);
+    i++;
 
-    editLayout->addWidget(use_cutoff_score_lab, 8, 0);
-    editLayout->addWidget(use_cutoff_score, 8, 1);
-    editLayout->addWidget(cutoff_score, 8, 2);
+    editLayout->addWidget(use_cutoff_score_lab, i, 0);
+    editLayout->addWidget(use_cutoff_score, i, 1);
+    editLayout->addWidget(cutoff_score, i, 2);
+    i++;
 
-    editLayout->addWidget(use_cutoff_energy_lab, 9, 0);
-    editLayout->addWidget(use_cutoff_energy, 9, 1);
-    editLayout->addWidget(cutoff_energy, 9, 2);
+    editLayout->addWidget(use_cutoff_energy_lab, i, 0);
+    editLayout->addWidget(use_cutoff_energy, i, 1);
+    editLayout->addWidget(cutoff_energy, i, 2);
+    i++;
 
     sf_input = new QLabel(tr("<h2>Scoring options</h2>"));
-    editLayout->addWidget(sf_input, 10, 0);
+    editLayout->addWidget(sf_input, i, 0);
+    i++;
 
-    editLayout->addWidget(scoring_function_lab, 11, 0);
-    editLayout->addWidget(scoring_function, 11, 1);
+    editLayout->addWidget(scoring_function_lab, i, 0);
+    editLayout->addWidget(scoring_function, i, 1);
+    i++;
 
-    editLayout->addWidget(box_size_lab, 12, 0);
-    editLayout->addWidget(box_size, 12, 1);
+    editLayout->addWidget(box_size_lab, i, 0);
+    editLayout->addWidget(box_size, i, 1);
+    i++;
 
-    editLayout->addWidget(diel_lab, 13, 0);
-    editLayout->addWidget(diel, 13, 1);
+    editLayout->addWidget(diel_lab, i, 0);
+    editLayout->addWidget(diel, i, 1);
+    i++;
 
-    editLayout->addWidget(dielectric_model_lab, 14, 0);
-    editLayout->addWidget(dielectric_model, 14, 1);
+    editLayout->addWidget(dielectric_model_lab, i, 0);
+    editLayout->addWidget(dielectric_model, i, 1);
+    i++;
 
-    editLayout->addWidget(sigma_lab, 15, 0);
-    editLayout->addWidget(sigma, 15, 1);
+    editLayout->addWidget(sigma_lab, i, 0);
+    editLayout->addWidget(sigma, i, 1);
+    i++;
 
-    editLayout->addWidget(alpha_lab, 16, 0);
-    editLayout->addWidget(alpha, 16, 1);
+    editLayout->addWidget(alpha_lab, i, 0);
+    editLayout->addWidget(alpha, i, 1);
+    i++;
 
-    editLayout->addWidget(beta_lab, 17, 0);
-    editLayout->addWidget(beta, 17, 1);
+    editLayout->addWidget(beta_lab, i, 0);
+    editLayout->addWidget(beta, i, 1);
+    i++;
 
-    editLayout->addWidget(deltaij_vdw_lab, 18, 0);
-    editLayout->addWidget(deltaij_vdw, 18, 1);
+    editLayout->addWidget(deltaij_vdw_lab, i, 0);
+    editLayout->addWidget(deltaij_vdw, i, 1);
+    i++;
 
-    editLayout->addWidget(deltaij_elec_lab, 19, 0);
-    editLayout->addWidget(deltaij_elec, 19, 1);
+    editLayout->addWidget(deltaij_elec_lab, i, 0);
+    editLayout->addWidget(deltaij_elec, i, 1);
+    i++;
 
-    editLayout->addWidget(vdw_scale_lab, 20, 0);
-    editLayout->addWidget(vdw_scale, 20, 1);
+    editLayout->addWidget(vdw_scale_lab, i, 0);
+    editLayout->addWidget(vdw_scale, i, 1);
+    i++;
 
-    editLayout->addWidget(elec_scale_lab, 21, 0);
-    editLayout->addWidget(elec_scale, 21, 1);
+    editLayout->addWidget(elec_scale_lab, i, 0);
+    editLayout->addWidget(elec_scale, i, 1);
+    i++;
 
     opt_input = new QLabel(tr("<h2>Optimization options</h2>"));
-    editLayout->addWidget(opt_input, 22, 0);
+    editLayout->addWidget(opt_input, i, 0);
+    i++;
 
-    editLayout->addWidget(min_delta_lab, 23, 0);
-    editLayout->addWidget(min_delta, 23, 1);
+    editLayout->addWidget(min_delta_lab, i, 0);
+    editLayout->addWidget(min_delta, i, 1);
+    i++;
 
-    editLayout->addWidget(min_tol_lab, 24, 0);
-    editLayout->addWidget(min_tol, 24, 1);
+    editLayout->addWidget(min_tol_lab, i, 0);
+    editLayout->addWidget(min_tol, i, 1);
+    i++;
 
-    editLayout->addWidget(dock_min_tol_lab, 25, 0);
-    editLayout->addWidget(dock_min_tol, 25, 1);
+    editLayout->addWidget(dock_min_tol_lab, i, 0);
+    editLayout->addWidget(dock_min_tol, i, 1);
+    i++;
 
-    editLayout->addWidget(min_timeout_lab, 26, 0);
-    editLayout->addWidget(min_timeout, 26, 1);
+    editLayout->addWidget(min_timeout_lab, i, 0);
+    editLayout->addWidget(min_timeout, i, 1);
+    i++;
 
-    editLayout->addWidget(dock_timeout_lab, 27, 0);
-    editLayout->addWidget(dock_timeout, 27, 1);
+    editLayout->addWidget(dock_timeout_lab, i, 0);
+    editLayout->addWidget(dock_timeout, i, 1);
+    i++;
 
-    editLayout->addWidget(overlay_optimizer_lab, 28, 0);
-    editLayout->addWidget(overlay_optimizer, 28, 1);
+    editLayout->addWidget(overlay_optimizer_lab, i, 0);
+    editLayout->addWidget(overlay_optimizer, i, 1);
+    i++;
 
-    editLayout->addWidget(energy_optimizer_lab, 29, 0);
-    editLayout->addWidget(energy_optimizer, 29, 1);
+    editLayout->addWidget(energy_optimizer_lab, i, 0);
+    editLayout->addWidget(energy_optimizer, i, 1);
+    i++;
 
-    editLayout->addWidget(box_size_lab, 30, 0);
-    editLayout->addWidget(box_size, 30, 1);
+    editLayout->addWidget(box_size_lab, i, 0);
+    editLayout->addWidget(box_size, i, 1);
+    i++;
 
-    editLayout->addWidget(dock_no_h, 31, 0);
+    editLayout->addWidget(dock_no_h, i, 0);
+    i++;
+
+    editLayout->addWidget(use_docking_restraint, i, 0);
+    i++;
+
+    editLayout->addWidget(docking_restraint_lab, i, 0);
+    editLayout->addWidget(docking_restraint_weight, i, 1);
+    docking_restraint_weight->setDisabled(true);
+    i++;
 
     conf_input = new QLabel(tr("<h2>Conformer options</h2>"));
-    editLayout->addWidget(conf_input, 32, 0);
+    editLayout->addWidget(conf_input, i, 0);
+    i++;
 
-    editLayout->addWidget(generate_conformers, 33, 0);
+    editLayout->addWidget(generate_conformers, i, 0);
+    i++;
 
-    editLayout->addWidget(conformers_lab, 34, 0);
-    editLayout->addWidget(conformers, 34, 1);
+    editLayout->addWidget(conformers_lab, i, 0);
+    editLayout->addWidget(conformers, i, 1);
+    i++;
 
-    editLayout->addWidget(conformers_to_evaluate_lab, 35, 0);
-    editLayout->addWidget(conformers_to_evaluate, 35, 1);
+    editLayout->addWidget(conformers_to_evaluate_lab, i, 0);
+    editLayout->addWidget(conformers_to_evaluate, i, 1);
+    i++;
 
     parallel_label = new QLabel(tr("<h2>Parallel execution</h2>"));
-    editLayout->addWidget(parallel_label, 36, 0);
+    editLayout->addWidget(parallel_label, i, 0);
+    i++;
 
-    editLayout->addWidget(parallel, 37, 0);
+    editLayout->addWidget(parallel, i, 0);
+    i++;
 
-    editLayout->addWidget(parallel_jobs_lab, 38, 0);
-    editLayout->addWidget(parallel_jobs, 38, 1);
+    editLayout->addWidget(parallel_jobs_lab, i, 0);
+    editLayout->addWidget(parallel_jobs, i, 1);
+    i++;
 
     grid_label = new QLabel(tr("<h2>Grid Potentials</h2>"));
-    editLayout->addWidget(grid_label, 39, 0);
+    editLayout->addWidget(grid_label, i, 0);
+    i++;
 
-    editLayout->addWidget(use_grids, 40,0);
+    editLayout->addWidget(use_grids, i,0);
+    i++;
 
-    editLayout->addWidget(grid_spacing_lab, 41, 0);
-    editLayout->addWidget(grid_spacing, 41, 1);
+    editLayout->addWidget(grid_spacing_lab, i, 0);
+    editLayout->addWidget(grid_spacing, i, 1);
+    i++;
 
-    editLayout->addWidget(load_write_file, 42, 0);
-    editLayout->addWidget(grid_file, 42, 1);
+    editLayout->addWidget(load_write_file, i, 0);
+    editLayout->addWidget(grid_file, i, 1);
+    i++;
 
-    editLayout->addWidget(grid_box_lab, 43, 0);
-    editLayout->addWidget(grid_box, 43, 1);
+    editLayout->addWidget(grid_box_lab, i, 0);
+    editLayout->addWidget(grid_box, i, 1);
+    i++;
 
 	progress_layout->addWidget(advanced_settings);
 	progress_layout->addWidget(progress_label, Qt::AlignCenter);
@@ -419,6 +480,8 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     connect(generate_conformers, SIGNAL(stateChanged(int)), this, SLOT(slot_generate_conformers(int)));
     connect(parallel, SIGNAL(stateChanged(int)), this, SLOT(slot_parallel(int)));
     connect(parallel_jobs, SIGNAL(valueChanged(int)), this, SLOT(slot_parallel(int)));
+
+    connect(use_docking_restraint, SIGNAL(stateChanged(int)), this, SLOT(slot_use_restraints(int)));
 
     connect(load_write_file, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_grid_file(int)));
     connect(use_grids, SIGNAL(stateChanged(int)), this, SLOT(slot_use_grids(int)));
@@ -559,11 +622,26 @@ void DockWidget::slot_generate_conformers(int state){
 void DockWidget::slot_parallel(int state){
     if (state > 1){
         Inp->dock_parallel = true;
-        Inp->parallel_jobs = state;
+        Inp->parallel_jobs = unsigned(this->parallel_jobs->value());
     }
     else {
         Inp->dock_parallel = false;
         Inp->parallel_jobs = 1;
+    }
+}
+
+void DockWidget::slot_use_restraints(int state){
+    switch(state){
+    case Qt::Unchecked:
+        Inp->use_Erestraints = false;
+        this->docking_restraint_weight->setDisabled(true);
+        break;
+
+    case Qt::Checked:
+        Inp->use_Erestraints = true;
+        this->docking_restraint_weight->setEnabled(true);
+        Inp->restraints_weight = this->docking_restraint_weight->value();
+        break;
     }
 }
 
@@ -991,6 +1069,10 @@ void DockWidget::hide_advanced_options(){
 
     opt_input->hide();
 
+    use_docking_restraint->hide();
+    docking_restraint_lab->hide();
+    docking_restraint_weight->hide();
+
 }
 
 void DockWidget::show_advanced_options(){
@@ -1045,6 +1127,10 @@ void DockWidget::show_advanced_options(){
     parallel_jobs_lab->show();
 
     opt_input->show();
+
+    use_docking_restraint->show();
+    docking_restraint_lab->show();
+    docking_restraint_weight->show();
 }
 
 void DockWidget::set_initial_parameters(){

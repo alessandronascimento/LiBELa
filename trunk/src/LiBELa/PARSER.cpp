@@ -15,7 +15,7 @@ PARSER::PARSER(){
 	this->flex_rec = false;
 	this->dynamic_rate = false;
     this->timeout = 30;
-    this->scoring_function = 3;
+    this->scoring_function = 1;
     this->min_delta = 1.0e-4;
     this->min_tol = 1.0e-4;
     this->min_timeout = 30;
@@ -59,7 +59,7 @@ PARSER::PARSER(){
 	this->dock_parallel = false;
     this->parallel_jobs = 1 ;
 	this->write_mol2 = true;
-    this->grid_spacing = 0.3;
+    this->grid_spacing = 0.4;
 	this->use_grids = false;
 	this->search_box_x = 12.0;
 	this->search_box_y = 12.0;
