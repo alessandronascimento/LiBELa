@@ -146,13 +146,19 @@ void GUI::closethistab(int tindex){
 
 void GUI::about_libela(){
 	ElSA_Message = new QMessageBox;
-	ElSA_Message->information(this, tr("McLiBELa"),
-			tr("This program was written to dock and simulate ligand dynamics in a\n"
-			    "protein active site. The program is distributed in the hope that it\n"
-				"will be useful, but WITHOUT ANY WARRANTY; without even the implied \n"
-				"warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n"
-                "Detailed information can be found in http://nascimento.ifsc.usp.br"));
-
+    QString Libela_popout = QString("This is LiBELa version 1.%1 \n\n"
+                                   "LiBELa (Ligand Binding Energy Lanscape) is a \n"
+                                   "software dedicate to the docking of ligands to\n"
+                                   "macromolecules usando ligand- and receptor-based\n"
+                                   "methods. It also simulates Monte Carlo simulations\n"
+                                   "of ligands within their binding sites.\n\n"
+                                   "The program is distributed in the hope that it will\n"
+                                   "be useful, but WITHOUT ANY WARRANTY; without even\n"
+                                   "the implied warranty of MERCHANTABILITY or FITNESS\n"
+                                   "for a particular purpose. \n\n"
+                                   "More information can be found in http://nascimento.ifsc.usp.br\n"
+                                    "or in https://github.com/alessandronascimento/LiBELa").arg(BUILD);
+    ElSA_Message->information(this, tr("McLiBELa"),Libela_popout);
 	ElSA_Message->setIcon(QMessageBox::Information);
 }
 
