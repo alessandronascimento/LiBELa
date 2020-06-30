@@ -137,78 +137,6 @@ void TEMP_SCHEME::evaluation(){
     this->print_line();
 }
 
-
-/*
-#ifdef HAS_GUI
-
-void TEMP_SCHEME::evaluation(PARSER* Input, QProgressBar* progressbar){
-
-    QWriter->write_welcome();
-    QWriter->write_params(Input);
-
-    if ((REC->N != int(REC->charges.size())) or (REC->N != int(REC->radii.size())) or (REC->N != int(REC->epsilons.size()))){
-        sprintf(info, "The number of atomic parameters and the number of atoms don't match! Exiting...");
-        QWriter->print_info(info);
-        exit(1);
-    }
-
-    //! Evaluation of the original binding energy
-    start_energy = Ene->compute_ene(REC, LIG, LIG->xyz);
-    sprintf(info,"Original energy: %.4f kcal/mol", start_energy);
-    QWriter->print_info(info);
-
-    center = COORD.compute_com(LIG);
-
-    sprintf(info, "Center of computation box: %.2f %.2f %.2f", center[0], center[1], center[2]);
-    QWriter->print_info(info);
-
-    QWriter->print_line();
-
-    if (Input->use_grids){
-        if (Input->load_grid_from_file){
-            sprintf(info,"Loading grids from file %s.grid...", Input->grid_prefix.c_str());
-            QWriter->print_info(info);
-            Grids = new Grid(Input, Writer);
-            Grids->load_grids_from_file();
-            sprintf(info, "Loaded energy grids with %d points spaced by %5.3f Angstroms in each directon.", Grids->npointsx*Grids->npointsy*Grids->npointsz, Grids->grid_spacing);
-            QWriter->print_info(info);
-            if (Input->pbsa_grid != ""){
-                Grids->load_Ambergrids_from_file();
-            }
-        }
-        else{
-            sprintf(info,"Generating energy grids. It can take a couple of minutes. Coffee time maybe ?");
-            QWriter->print_info(info);
-            start = clock();
-            Grids = new Grid(Input, Writer, REC, center);
-            end = clock();
-            sprintf(info, "Computed energy grids with %d points spaced by %5.3f Angstroms in each directon.", Grids->npointsx*Grids->npointsy*Grids->npointsz, Grids->grid_spacing);
-            QWriter->print_info(info);
-            sprintf(info, "Grid computation took %d seconds.", int((end-start)/CLOCKS_PER_SEC));
-            QWriter->print_info(info);
-        }
-        double grid_energy = Ene->compute_ene(Grids, LIG, LIG->xyz);
-        sprintf(info,"Original Grid energy: %.4f kcal/mol.", grid_energy);
-        QWriter->print_info(info);
-        sprintf(info, "Energy error = %.4f%s.", fabs((grid_energy-start_energy)/start_energy)*100., "%");
-        QWriter->print_info(info);
-    }
-
-    QWriter->print_line();
-
-    this->run_dock_gui(Input, progressbar);
-    //    this->sa_run();
-    //    this->eq_run();
-
-    sprintf(info, "Finishing McLibela...");
-    QWriter->print_info(info);
-    QWriter->print_line();
-
-}
-#endif
-
-*/
-
 void TEMP_SCHEME::sa_run(){
 
     if (Input->sa_mode == true){
@@ -864,7 +792,7 @@ void TEMP_SCHEME::mcr_run(){
         this->print_info(info);
         this->print_line();
 
-
+        //
         // Now starting the MC recursion...
         //
 
@@ -912,6 +840,9 @@ void TEMP_SCHEME::mcr_run(){
         sprintf(info, "MCR: Volume: %10.4g.  ln(volume) = %10.4g",  volume, log(volume));
         this->print_info(info);
 
+        sprintf(info, "MCR: A_complex = %10.4g",  (-k*Input->temp*log(volume))+(-k*Input->temp*cum_W));
+        this->print_info(info);
+
         this->print_line();
 
 
@@ -936,6 +867,7 @@ void TEMP_SCHEME::mcr_run(){
         this->print_info(info);
         this->print_line();
 
+        //
         // Now, starting the MC recursion
         //
 
@@ -970,6 +902,10 @@ void TEMP_SCHEME::mcr_run(){
 
             sprintf(info, "MCR: Ligand Volume: %10.4g.  ln(volume) = %10.4g",  lig_volume, log(lig_volume));
             this->print_info(info);
+
+            sprintf(info, "MCR: A_lig = %10.4g",  (-k*Input->temp*log(lig_volume))+(-k*Input->temp*cum_W_lig));
+            this->print_info(info);
+
             this->print_line();
 
             double complex_A = (-k*Input->temp)*(log(volume)+(cum_W));
@@ -987,141 +923,6 @@ void TEMP_SCHEME::mcr_run(){
         delete EqMC;
     }
 }
-
-/*
-#ifdef HAS_GUI
-void TEMP_SCHEME::run_dock_gui(PARSER* Input, QProgressBar* progressbar){
-    clock_t ti, tf;
-
-    if(Input->dock_mode == true){
-
-        ti = clock();
-
-        sprintf(info, "%5s %-12.12s %-4.4s %-10.10s %-8.8s %-8.8s %-8.8s %-8.8s %-8.8s %3.3s %-5.5s %2.2s", "#", "Ligand", "Resi", "Overlay", "Elec", "VDW", "Rec_Solv", "Lig_Solv", "Energy", "Conf", "MS", "SI");
-        QWriter->print_info(info);
-        QWriter->print_line();
-
-        center = COORD.compute_com(RefLig);
-
-        unsigned counter=0;
-        if (!Input->dock_parallel){
-            string ligand;
-            for (unsigned i=0; i< Input->docking_molecules.size(); i++){
-                ligand = Input->docking_molecules[i].toStdString();
-                Mol2* Lig2 = new Mol2(Input, ligand);
-                counter++;
-                if (Input->generate_conformers){                             // has conformers
-                    Conformer* Conf = new Conformer;
-                    if (Conf->generate_conformers_confab(Input, Lig2, ligand)){
-                        if (Input->use_grids){
-                            Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, Grids, i);
-                            delete Dock;
-                        }
-                        else {
-                            Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, i);
-                            delete Dock;
-                        }
-                    }
-                    else{ 																//test: in case generate_conformers does not succeed.
-                        Lig2->mcoords.push_back(Lig2->xyz);
-                        if (Input->use_grids){
-                            Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, Grids, i);
-                            delete Dock;
-                        }
-                        else {
-                            Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, i);
-                            delete Dock;
-                        }
-
-                    }
-                    Conf->~Conformer();
-                    delete Conf;
-                }
-                else {                                            // single conformation
-                    if (Input->use_grids){
-                        Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, Grids, i);
-                        delete Dock;
-                    }
-                    else {
-                        Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, i);
-                        delete Dock;
-                    }
-
-                }
-                delete Lig2;
-                progressbar->setValue(int(((i+1)*100)/Input->docking_molecules.size()));
-            }
-        }
-        else {
-            this->dock_parallel_gui(Input, progressbar);
-        }
-
-
-        QWriter->print_line();
-        sprintf(info, "Min Status:");
-        QWriter->print_info(info);
-        sprintf(info, "    Failure = -1, Out of memory = -3, Roundoff limited = -4, Forced stop = -5,");
-        QWriter->print_info(info);
-        sprintf(info, "    Stopval reached = 2, Ftol reached = 3, Xtol reached = 4, Maxeval reached=5, Maxtime reached=6");
-        QWriter->print_info(info);
-        QWriter->print_line();
-        tf = clock()-ti;
-        sprintf(info, " Docking computations took %d minute(s)", int((tf/CLOCKS_PER_SEC)/60));
-        QWriter->print_info(info);
-        QWriter->print_line();
-    }
-}
-*/
-
-/*
-void TEMP_SCHEME::dock_parallel_gui(PARSER* Input, QProgressBar *progressbar){
-    sprintf(info, "Running Dock mode in parallel with up to %d threads...", int(Input->parallel_jobs));
-    QWriter->print_info(info);
-
-    int count=0;
-
-
-#pragma omp parallel num_threads(Input->parallel_jobs)
-    {
-#pragma omp for schedule(static,1)
-        for (unsigned i=0; i< Input->docking_molecules.size(); i++){
-            Mol2* Lig2 = new Mol2;
-            bool lig_is_opened = false;
-#pragma omp critical
-            {
-                if (Input->docking_molecules[i].toStdString().substr(Input->docking_molecules[i].toStdString().size()-3, 3) == ".gz"){
-                    lig_is_opened = Lig2->parse_gzipped_file(Input, Input->docking_molecules[i].toStdString());
-                }
-                else {
-                    lig_is_opened = Lig2->parse_mol2file(Input, Input->docking_molecules[i].toStdString());
-                }
-            }
-            if (lig_is_opened){
-                if (Input->generate_conformers){
-                    Conformer* Conf = new Conformer;
-#pragma omp critical
-                    {
-                        Conf->generate_conformers_confab(Input, Lig2, Input->docking_molecules[i].toStdString());
-                    }
-                    delete Conf;
-                    if (Input->use_grids){
-                        Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, Grids, i+1);
-                        delete Dock;
-                    }
-                    else {
-                        Docker* Dock = new Docker(REC, Lig2, RefLig, center, Input, QWriter, i+1);
-                        delete Dock;
-                    }
-                    progressbar->setValue(int(((count+1)*100*Input->parallel_jobs)/Input->docking_molecules.size()));
-                }
-            }
-            delete Lig2;
-        }
-    }
-}
-
-#endif
-*/
 
 void TEMP_SCHEME::print_info(char info[98]){
 #ifdef HAS_GUI

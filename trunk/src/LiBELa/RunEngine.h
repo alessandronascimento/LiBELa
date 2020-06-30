@@ -124,10 +124,7 @@ public:
 
     TEMP_SCHEME(PARSER* Input, QPlainTextEdit* Editor, QProgressBar* _progressbar );
 
-//	void evaluation(PARSER* Input, QProgressBar* progressbar);
 	void sa_run(PARSER* Input);
-//    void run_dock_gui(PARSER *Input, QProgressBar *progressbar);
-//    void dock_parallel_gui(PARSER *Input, QProgressBar *progressbar);
 #endif
 
 /*!
