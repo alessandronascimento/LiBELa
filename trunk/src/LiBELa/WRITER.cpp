@@ -426,7 +426,7 @@ void WRITER::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, do
 }
 
 void WRITER::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, double rmsd){
-    outmol2 = gzopen((Input->output+"_dock.mol2.gz").c_str(), "a");
+    outmol2 = gzopen((this->output_prefix+"_dock.mol2.gz").c_str(), "a");
 	gzprintf(outmol2, "\n");
 	gzprintf(outmol2, "########## %15.15s: %19.19s\n", "Name", Cmol->molname.c_str());
 	gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Energy Score", energy);

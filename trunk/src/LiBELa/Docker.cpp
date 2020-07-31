@@ -144,7 +144,7 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
 			Deal* DEAl = new Deal(Rec, Lig, Input);
 			sprintf(info, "%-20.20s %-20.20s %-7.3e % -7.3f kcal/mol", Lig->molname.c_str(), Lig->resnames[0].c_str(), fo, DEAl->energies[0]);
             this->print_info(info);
-			Writer->writeMol2(Lig, DEAl->final_coords, DEAl->energies[0], fo);
+            Writer->writeMol2(Lig, DEAl->final_coords, DEAl->energies[0], fo);
 			delete DEAl;
 #endif
 		}
