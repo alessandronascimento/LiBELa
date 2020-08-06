@@ -1054,15 +1054,15 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 
 void Docker::print_info(char info[98]){
 #ifdef HAS_GUI
-#pragma omp critical
-{
+//#pragma omp critical
+//{
     QWriter->print_info(info);
-}
+//}
 #else
-#pragma omp critical
-{
+//#pragma omp critical
+//{
     Writer->print_info(info);
-}
+//}
 #endif
 }
 
