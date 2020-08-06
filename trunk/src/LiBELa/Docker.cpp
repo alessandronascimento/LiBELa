@@ -1054,9 +1054,15 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 
 void Docker::print_info(char info[98]){
 #ifdef HAS_GUI
+#pragma omp critical
+{
     QWriter->print_info(info);
+}
 #else
+#pragma omp critical
+{
     Writer->print_info(info);
+}
 #endif
 }
 
@@ -1071,8 +1077,14 @@ void Docker::print_line(){
 
 void Docker::write_mol2(Mol2* Lig, vector<vector<double> > new_xyz, double ene, double si){
 #ifdef HAS_GUI
+#pragma omp critical
+{
     QWriter->writeMol2(Lig, new_xyz, ene, si);
+}
 #else
+#pragma omp critical
+{
     Writer->writeMol2(Lig, new_xyz, ene, si);
+}
 #endif
 }
