@@ -722,7 +722,13 @@ void TEMP_SCHEME::eq_run(){
         MC* EqMC = new MC(LIG, Input, Writer);
         if (Input->generate_conformers){
             Conformer* Conf = new Conformer;
-            Conf->generate_conformers_confab(Input, LIG, Input->lig_mol2);
+            if (Input->dock_mode){
+                Writer->writeMol2(LIG, LIG->xyz, 0.0, 0.0, "Lig_docked");
+                Conf->generate_conformers_confab(Input, LIG, "Lig_docked.mol2.gz");
+            }
+            else {
+                Conf->generate_conformers_confab(Input, LIG, Input->lig_mol2);
+            }
             delete Conf;
         }
 
