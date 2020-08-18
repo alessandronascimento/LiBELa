@@ -32,6 +32,7 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 */
 
     if (Input->dock_mode){
+        Writer->writeMol2(Lig, Lig->xyz, 0.0, 0.0, "Lig_docked");
         mol = this->GetMol("Lig_docked.mol2.gz");
     }
     else {
