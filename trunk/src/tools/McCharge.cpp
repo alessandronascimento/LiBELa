@@ -49,7 +49,7 @@ int main(int argc, char *argv[]){
 		solvation += (alpha*mol1->charges[i]*mol1->charges[i])+beta;
 	} 
 	delete mol1;
-	printf("%-40.40s % 7.5f % 7.5f\n", infile.c_str(), solvation, net_charge);
+	printf("%-40.40s % 7.5f % 7.5f %7d\n", infile.c_str(), solvation, net_charge, int(round(net_charge)));
 	return 0;
 }
 
