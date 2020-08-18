@@ -65,7 +65,7 @@ void TEMP_SCHEME::evaluation(){
     }
 
     //! Evaluation of the original binding energy
-    start_energy = Ene->compute_ene(REC, LIG, LIG->xyz);
+    start_energy = Ene->compute_ene(REC, RefLig, RefLig->xyz);
     sprintf(info,"Original Binding Energy: %.4f kcal/mol", start_energy);
     this->print_info(info);
 
@@ -118,7 +118,7 @@ void TEMP_SCHEME::evaluation(){
             this->write_box(center, Grids->xbegin, Grids->ybegin, Grids->zbegin, Grids->xend, Grids->yend, Grids->zend);
 
         }
-        double grid_energy = Ene->compute_ene(Grids, LIG, LIG->xyz);
+        double grid_energy = Ene->compute_ene(Grids, RefLig, RefLig->xyz);
         sprintf(info,"Original Grid energy: %.4f kcal/mol.", grid_energy);
         this->print_info(info);
         sprintf(info, "Energy error = %.4f%s.", fabs((grid_energy-start_energy)/start_energy)*100., "%");
