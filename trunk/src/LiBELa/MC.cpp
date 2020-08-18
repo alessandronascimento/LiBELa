@@ -31,7 +31,12 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
  * rotatable bonds.
 */
 
-    mol = this->GetMol(Input->lig_mol2);
+    if (Input->dock_mode){
+        mol = this->GetMol("Lig_docked.mol2.gz");
+    }
+    else {
+        mol = this->GetMol(Input->lig_mol2);
+    }
 
     if (Input->ligand_energy_model == "GAFF" or Input->ligand_energy_model == "gaff"){
         OBff = OBForceField::FindForceField("GAFF");
