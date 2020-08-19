@@ -60,7 +60,7 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
     OBff->GetCoordinates(mol);
     OBff->SteepestDescent(Input->conformer_min_steps, 1.0e-10);
     OBff->GetCoordinates(mol);
-    Lig->xyz = this->copy_from_obmol(mol);
+//    Lig->xyz = this->copy_from_obmol(mol);
     RotorList.Setup(mol);
     Rotor = RotorList.BeginRotor(RotorIterator);
     mol.ToInertialFrame();
@@ -213,7 +213,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             Lig->mcoords = Lig->new_mcoords;
             this->xyz = step->xyz;
             energy = new_energy;
-            rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
+            rmsd = Coord->compute_rmsd(Lig->xyz, step->xyz, Lig->N);
 
             this->increment_angles(&rot_angles, step);
             this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
@@ -225,7 +225,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 Lig->mcoords = Lig->new_mcoords;
                 this->xyz = step->xyz;
                 energy = new_energy;
-                rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
+                rmsd = Coord->compute_rmsd(Lig->xyz, step->xyz, Lig->N);
                 this->increment_angles(&rot_angles, step);
                 this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
             }
@@ -267,7 +267,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
             Lig->mcoords = Lig->new_mcoords;
             this->xyz = step->xyz;
             energy = new_energy;
-            rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
+            rmsd = Coord->compute_rmsd(Lig->xyz, step->xyz, Lig->N);
             this->increment_angles(&rot_angles, step);
             this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
             count++;
@@ -309,7 +309,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 Lig->mcoords = Lig->new_mcoords;
                 this->xyz = step->xyz;
                 energy = new_energy;
-                rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
+                rmsd = Coord->compute_rmsd(Lig->xyz, step->xyz, Lig->N);
                 this->increment_angles(&rot_angles, step);
                 this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
                 count++;
@@ -566,7 +566,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                 Lig->mcoords = Lig->new_mcoords;
                 this->xyz = step->xyz;
                 energy = new_energy;
-                rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
+                rmsd = Coord->compute_rmsd(Lig->xyz, step->xyz, Lig->N);
                 this->increment_angles(&rot_angles, step);
                 this->MaxMinCM(com[0], com[1], com[2], this->MaxMin);
 
@@ -606,7 +606,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                     Lig->mcoords = Lig->new_mcoords;
                     this->xyz = step->xyz;
                     energy = new_energy;
-                    rmsd = Coord->compute_rmsd(RefLig->xyz, step->xyz, Lig->N);
+                    rmsd = Coord->compute_rmsd(Lig->xyz, step->xyz, Lig->N);
                     this->increment_angles(&rot_angles, step);
                     this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
 
