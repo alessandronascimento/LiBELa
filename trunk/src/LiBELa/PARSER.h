@@ -235,6 +235,10 @@ public:
     bool ligsim;
     //! An "stride" parameter for writing trajectory file. Coordinates are written at mc_stride intervals.
     int mc_stride;
+    //! step for translation in full search
+    double translation_step;
+    //!
+    bool full_search_mode;
 
 
     /*!

@@ -131,6 +131,7 @@ void TEMP_SCHEME::evaluation(){
     this->sa_run();
     this->eq_run();
     this->mcr_run();
+    this->full_search_run();
 
     sprintf(info, "Finishing McLibela...");
     this->print_info(info);
@@ -928,6 +929,20 @@ void TEMP_SCHEME::mcr_run(){
         }
         delete EqMC;
     }
+}
+
+void TEMP_SCHEME::full_search_run(){
+    if (Input->full_search_mode){
+        if (Input->use_grids){
+            FullSearch* Search = new FullSearch(Input, LIG, Writer, Grids);
+            Search->do_search();
+            delete Search;
+        }
+        else {
+            FullSearch* Search = new FullSearch(Input, LIG, Writer);
+            Search->do_search();
+            delete Search;
+        }    }
 }
 
 void TEMP_SCHEME::print_info(char info[98]){

@@ -56,6 +56,7 @@ PARSER::PARSER(){
 	this->dock_mode = false;
 	this->eq_mode = false;
     this->mcr_mode = false;
+    this->full_search_mode = false;
 	this->dock_parallel = false;
     this->parallel_jobs = 1 ;
 	this->write_mol2 = true;
@@ -100,6 +101,7 @@ PARSER::PARSER(){
     this->use_GW_Coulomb = false;
     this->use_Erestraints = false;
     this->restraints_weight = 0.0;
+    this->translation_step = 0.2;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -122,6 +124,9 @@ void PARSER::comparing (string param, ifstream &input) {
 			if (mode == "dock" or mode == "DOCK" or mode == "Dock"){
 				this->dock_mode = true;
 			}
+            else if(mode == "full_search"){
+                this->full_search_mode = true;
+            }
 			else if (mode == "sa" or mode == "SA" or mode == "Sa"){
 				this->sa_mode = true;
 			}
@@ -500,6 +505,9 @@ void PARSER::comparing (string param, ifstream &input) {
     }
     else if (param == "restraints_weight"){
         input >> this->restraints_weight;
+    }
+    else if (param == "translation_step"){
+        input >> this->translation_step;
     }
 	else {
 		cout << "Unknown parameter: " << param << endl;

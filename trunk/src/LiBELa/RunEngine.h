@@ -10,6 +10,7 @@
 #include"Docker.h"
 #include"Mol2.h"
 #include "MC.h"
+#include "FullSearch.h"
 #include"Conformer.h"
 #include<iostream>
 #include<fstream>
@@ -288,6 +289,8 @@ public:
  * \param max_z Upper limit for z-coordinate
  */
     void write_box(vector<double>center, double min_x, double min_y, double min_z, double max_x, double max_y, double max_z);
+
+    void full_search_run(void);
 
 };
 
