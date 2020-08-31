@@ -1010,7 +1010,7 @@ void Grid::load_delphi_gzcube(){
     char str[200];
 
     gzgets(phimap, str, 80);
-    sscanf(str, "%f %d %f %f %f", &scale, &igrid, &centerx, &centery, &centerz);
+    sscanf(str, "%10f%6d%9f%9f%9f", &scale, &igrid, &centerx, &centery, &centerz);
     this->grid_spacing = double(1.0/scale);
     this->xbegin = double(centerx - ((igrid-1)/2)*this->grid_spacing);
     this->xend = double(centerx + (((igrid+1)/2)*this->grid_spacing));
