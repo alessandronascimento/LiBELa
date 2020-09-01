@@ -57,9 +57,15 @@ int main(int argc, char* argv[]){
         end = clock();
         printf("Grid computation took %d seconds.\n", int((end-start)/CLOCKS_PER_SEC));
 
+        Writer->write_box(com, Grids->xbegin, Grids->ybegin, Grids->zbegin, Grids->xend, Grids->yend, Grids->zend);
+
         delete Rec;
         delete Writer;
         delete Input;
+
+        printf("****************************************************************************************************\n");
+        printf("****************************************************************************************************\n");
+
 
         return 0;
 }
