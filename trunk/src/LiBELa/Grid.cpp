@@ -814,7 +814,7 @@ void Grid::load_Delphi_Grid_from_file(){
         for(int y=0; y<inty+1; y++){
             for (int x=0; x< intx+1; x++){
                 fread(&phi, sizeof(double), 1, phimap);
-                this->delphi_grid[x][y][z] = (0.593*phi); // potential is given in KT/e
+                this->delphi_grid[x][y][z] = (0.593f*phi); // potential is given in KT/e
             }
         }
     }
@@ -978,7 +978,7 @@ void Grid::load_delphi_cube(){
         for (int ny=0; ny < igrid; ny++){
             for (int nz=0; nz < igrid; nz++){
                 fscanf(phimap, "%f", &phi);
-                this->delphi_grid[nx][ny][nz] = double(0.593*phi);  //converting kt units to kcal/mol
+                this->delphi_grid[nx][ny][nz] = double(0.593f*phi);  //converting kt units to kcal/mol
             }
         }
     }
@@ -1050,7 +1050,7 @@ void Grid::load_delphi_gzcube(){
                 count++;
                 gzgets(phimap, str, 14);
                 phi = atof(str);
-                this->delphi_grid[nx][ny][nz] = double(0.593*phi);  //converting kt units to kcal/mol
+                this->delphi_grid[nx][ny][nz] = double(0.593f*phi);  //converting kt units to kcal/mol
                 if (count == 6){
                     gzgets(phimap, str, 14);
                     count = 0;
