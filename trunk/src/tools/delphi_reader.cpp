@@ -3,16 +3,12 @@
 #include <vector>
 using namespace std;
 
-void parse_chunck(int i, FILE* file){
-    fread(&tmpi, sizeof(int), 1, phimap);
-}
-
 int main(int argc, char* argv[]){
 
-    int tmpi;
+    int tmpi, igrid;
     FILE *phimap;
     char *uplbl, *nxtlbl, *toplbl, *botlbl;
-    double scale, oldmid_x, oldmid_y, oldmid_z;
+    float scale, oldmid_x, oldmid_y, oldmid_z;
 
     phimap = fopen(argv[1], "rb");
 
@@ -30,6 +26,7 @@ int main(int argc, char* argv[]){
     printf("%s\n", uplbl);
 
     fread(&tmpi, sizeof(int), 1, phimap);
+
     fread(&tmpi, sizeof(int), 1, phimap);
 
     nxtlbl = (char *) malloc(sizeof(char) * 12);
@@ -40,7 +37,6 @@ int main(int argc, char* argv[]){
     nxtlbl[11] = (char) 0;
     printf("%s\n", nxtlbl);
 
-
     toplbl = (char *) malloc(sizeof(char) * 62);
     for (int i=0; i<60; i++) {
         toplbl[i] = fgetc(phimap);
@@ -49,26 +45,25 @@ int main(int argc, char* argv[]){
     toplbl[61] = (char) 0;
     printf("%s\n", toplbl);
 
-    vector<double> vz(gsize);
-    vector<vector<double> > vtmp;
+    fread(&tmpi, sizeof(int), 1, phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
+
+    vector<float> vz(gsize);
+    vector<vector<float> > vtmp;
     for (int i=0; i<gsize; i++){
         vtmp.push_back(vz);
     }
 
-
-    vector<vector<vector<double> > > phi;
+    vector<vector<vector<float> > > phi;
     for (int i=0; i<gsize; i++){
         phi.push_back(vtmp);
     }
 
-    fread(&tmpi, sizeof(int), 1, phimap);
-    fread(&tmpi, sizeof(int), 1, phimap);
-
-    double kt_phi;
+    float kt_phi;
     for (int nx=0; nx < gsize; nx++){
         for (int ny=0; ny < gsize; ny++){
             for (int nz=0; nz < gsize; nz++){
-                fread(&kt_phi, sizeof(double), 1, phimap);
+                fread(&kt_phi, sizeof(float), 1, phimap);
                 phi[nx][ny][nz] = 0.593*kt_phi;
             }
         }
@@ -88,13 +83,16 @@ int main(int argc, char* argv[]){
     fread(&tmpi, sizeof(int), 1, phimap);
     fread(&tmpi, sizeof(int), 1, phimap);
 
-    fread(&scale, sizeof(double), 1, phimap);
-    fread(&oldmid_x, sizeof(double), 1, phimap);
-    fread(&oldmid_y, sizeof(double), 1, phimap);
-    fread(&oldmid_z, sizeof(double), 1, phimap);
+    fread(&scale, sizeof(float), 1, phimap);
+    fread(&oldmid_x, sizeof(float), 1, phimap);
+    fread(&oldmid_y, sizeof(float), 1, phimap);
+    fread(&oldmid_z, sizeof(float), 1, phimap);
+    fread(&igrid, sizeof(int), 1, phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
 
     printf("Scale: %10.4f\n", 1./scale);
     printf("oldmid: %10.4f %10.4f %10.4f\n", oldmid_x, oldmid_y, oldmid_z);
+    printf("igrid: %d\n", igrid);
 
     for (int nx=0; nx < gsize; nx++){
         for (int ny=0; ny < gsize; ny++){

@@ -882,7 +882,7 @@ void Grid::load_phimap_from_file(int gsize){
         for (int ny=0; ny < gsize; ny++){
             for (int nx=0; nx < gsize; nx++){
                 fread(&kt_phi, sizeof(double), 1, phimap);
-                this->delphi_grid[nx][ny][nz] = 0.593*kt_phi;  //converting kt units to kcal/mol
+                this->delphi_grid[nx][ny][nz] = 0.593f*kt_phi;  //converting kt units to kcal/mol
             }
         }
     }
