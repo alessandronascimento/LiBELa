@@ -898,10 +898,17 @@ void Grid::load_phimap_from_file(int gsize){
     printf("%s\n", botlbl);
 #endif
 
+    int igrid;
     fread(&scale, sizeof(double), 1, phimap);
     fread(&oldmid_x, sizeof(double), 1, phimap);
     fread(&oldmid_y, sizeof(double), 1, phimap);
     fread(&oldmid_z, sizeof(double), 1, phimap);
+    fread(&igrid, sizeof(int), 1, phimap);
+
+    if (igrid =! gsize){
+        printf("Mismatch between GSIZE given and found in phimap file. Please check.\n");
+        exit(1);
+    }
 
     this->grid_spacing = 1/scale;
 
