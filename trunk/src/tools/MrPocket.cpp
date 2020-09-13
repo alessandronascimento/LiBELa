@@ -28,33 +28,44 @@ void append_atom(Mol2* Pocket, double x, double y, double z, double charge){
     Pocket->atomnames.push_back("C");
 }
 
+void usage(){
+    printf("Usage: McPocket -i <iMcLiBELa.inp> \n");
+    printf("\t -l <ligand.mol> to define the pocket using the reference ligand\n");
+    printf("\t -r <Receptor.mol2> to define the pocket using the receptor center of mass\n");
+    printf("\t -n <resnumber> to define residue <resnumber> as an anchor on the pocket\n");
+    printf("\t -b <box_size> to define the box size. Default is 30.0 Angstrom\n");
+}
+
 int main (int argc, char* argv[]){
 
     double probe_radii = 1.9080;          //gaff c
     double probe_epsilon = 0.0860;        //gaff c
-    double box_size = 20.0;
+    double box_size = 30.0;
     int res_site = 0;
     int res_number;
     char *ligfile;
+    char *recfile;
     char *inputfile;
     int c;
 
     if (argc < 2){
-        printf("Usage: McPocket -i iMcLiBELa.inp\n");
-        printf("\t -l <ligand.mol> to define the pocket using the reference ligand\n");
-        printf("\t -r to define the pochet using the receptor center of mass\n");
-        printf("\t -n <resnumber> to define residue <resnumber> as an anchor on the pocket\n");
-        printf("\t -b <box_size> to define the box size. Default is 15.0 Angstrom\n");
+        usage();
         exit(1);
     }
 
-    while ((c = getopt (argc, argv, "i:rln:b:")) != -1)
+    PARSER* Input = new PARSER;
+    Input->write_mol2 = true;
+
+    while ((c = getopt (argc, argv, "i:r:l:n:b:")) != -1)
         switch (c)
         {
         case 'i':
             inputfile = optarg;
+            Input->set_parameters(inputfile);
             break;
         case 'r':
+            recfile = optarg;
+            Input->rec_mol2 = string(recfile);
             break;
         case 'n':
             res_site = 1;
@@ -63,6 +74,8 @@ int main (int argc, char* argv[]){
         case 'l':
             res_site = -1;
             ligfile = optarg;
+            Input->reflig_mol2 = string(ligfile);
+            Input->lig_mol2 = string(ligfile);
             break;
         case 'b':
             box_size = atof(optarg);
@@ -72,34 +85,18 @@ int main (int argc, char* argv[]){
                 fprintf (stderr, "Option -%c requires an argument.\n", optopt);
             else if (isprint (optopt)){
                 fprintf (stderr, "Unknown option `-%c'.\n", optopt);
-                printf("Usage: McPocket -i iMcLiBELa.inp\n");
-                printf("\t -l to define the pocket using the reference ligand\n");
-                printf("\t -r to define the pochet using the receptor center of mass\n");
-                printf("\t -n <resnumber> to define residue <resnumber> as an anchor on the pocket\n");
-                printf("\t -b <box_size> to define the box size. Default is 15.0 Angstrom\n");
+                usage();
             }
             else{
                 fprintf (stderr, "Unknown option character `\\x%x'.\n",optopt);
-                printf("Usage: McPocket -i iMcLiBELa.inp\n");
-                printf("\t -l to define the pocket using the reference ligand\n");
-                printf("\t -r to define the pochet using the receptor center of mass\n");
-                printf("\t -n <resnumber> to define residue <resnumber> as an anchor on the pocket\n");
-                printf("\t -b <box_size> to define the box size. Default is 15.0 Angstrom\n");
+                usage();
             }
             return 1;
             break;
         default:
-            printf("Usage: McPocket -i iMcLiBELa.inp\n");
-            printf("\t -l <ligand.mol2> to define the pocket using the reference ligand\n");
-            printf("\t -r to define the pochet using the receptor center of mass\n");
-            printf("\t -n <resnumber> to define residue <resnumber> as an anchor on the pocket\n");
-            printf("\t -b <box_size> to define the box size. Default is 15.0 Angstrom\n");
+            usage();
         }
 
-
-    PARSER* Input = new PARSER;
-    Input->set_parameters(inputfile);
-    Input->write_mol2 = true;
 
     Mol2* Rec = new Mol2(Input, Input->rec_mol2);
     printf("Molecule %s read!\n", Rec->molname.c_str());
@@ -137,7 +134,6 @@ int main (int argc, char* argv[]){
         printf("Ligand center of mass: %.3f %.3f %.3f\n", rec_com[0], rec_com[1], rec_com[2]);
     }
 
-//    printf("Receptor center of mass: %.3f %.3f %.3f\n", rec_com[0], rec_com[1], rec_com[2]);
     printf("Defining a search box with %.1f x %.1f x %.1f Angstroms for cavity searching....\n", box_size, box_size, box_size);
 
     double x_min = rec_com[0]-(box_size/2);
@@ -163,7 +159,7 @@ int main (int argc, char* argv[]){
                     acoef = eij*(rij*rij*rij*rij*rij*rij*rij*rij*rij*rij*rij*rij);
                     vdw+= ((acoef/(dij2*dij2*dij2*dij2*dij2*dij2)) - (bcoef/(dij2*dij2*dij2)));
                     if (Input->dielectric_model == "constant"){
-                        (332.0*Rec->charges[i])/(Input->diel*dij);
+                        elec += (332.0*Rec->charges[i])/(Input->diel*dij);
                     }
                     else if (Input->dielectric_model == "4r") {
                         elec += (332.0*Rec->charges[i])/(4*dij2);
@@ -173,16 +169,26 @@ int main (int argc, char* argv[]){
                     }
                 }
                 if (vdw < -5.0){
-                    //        printf("%.3f %.3f %.3f: %.4f\n", x, y, z, vdw);
                     append_atom(Pocket, x, y, z, -elec);
                 }
             }
         }
     }
 
+/*
+ *
+ * The object Pocket2 is defined as a subset of dummy atoms found in Pocket.
+ * In this subset, a dummy atom is kept if it has at least 3 neighbors.
+ *
+ * Both, Pocket and Pocket2, are written in the endi of execution.
+ *
+ */
+
+
 
     Mol2* Pocket2 = new Mol2();
     Pocket2->N=0;
+
 
     int neighbors=0;
     for (unsigned i=0; i<Pocket->xyz.size()-1; i++){
@@ -192,14 +198,13 @@ int main (int argc, char* argv[]){
                 neighbors++;
             }
         }
-        //      printf("Dummy atom %d has %d neighbors.\n", i, neighbors);
         if (neighbors > 3){
             append_atom(Pocket2, Pocket->xyz[i][0],Pocket->xyz[i][1], Pocket->xyz[i][2], Pocket->charges[i]);
         }
     }
 
 
-    Writer->writeMol2(Pocket, Pocket->xyz, 0.00, 0.00);
+    Writer->writeMol2(Pocket, Pocket->xyz, 0.00, 0.00, "pocket1");
     Writer->writeMol2(Pocket2, Pocket2->xyz, 0.00, 0.00, "pocket2");
     delete Writer;
     delete Coord;
