@@ -46,6 +46,7 @@ public:
     void print_line();
     void print_info(char info[98]);
     void write_mol2(Mol2* Lig, vector<vector<double> > new_xyz, double ene, double si);
+    void write_mol2(Mol2* Lig, vector<vector<double> > new_xyz, energy_result_t* result, double si);
 	//! Optimizer class
 	//! Class constructor. Automatically starts the docking procedure.
     void run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* Input, unsigned counter);

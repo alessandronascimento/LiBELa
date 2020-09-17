@@ -425,6 +425,58 @@ void WRITER::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, do
 	gzclose(outmol2);
 }
 
+void WRITER::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, energy_result_t* result, double rmsd, string outname){
+    gzFile outmol2;
+
+    outmol2 = gzopen((outname+".mol2.gz").c_str(), "a");
+    gzprintf(outmol2, "\n");
+    gzprintf(outmol2, "########## %15.15s: %19.19s\n", "Name", Cmol->molname.c_str());
+    gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Energy Score", result->total);
+    gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Elec Score", result->elec);
+    gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "VDW Score", result->vdw);
+    gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Rest Score", result->restraints);
+    gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Solv Score", (result->rec_solv + result->lig_solv));
+    gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "RMSD", rmsd);
+    gzprintf(outmol2, "\n");
+    gzprintf(outmol2, "@<TRIPOS>MOLECULE\n");
+    gzprintf(outmol2, "%s\n", Cmol->molname.c_str());
+    gzprintf(outmol2, "%d %d %d\n", Cmol->N, Cmol->Nbonds, Cmol->Nres);
+    gzprintf(outmol2, "SMALL\n");
+    gzprintf(outmol2, "USER_CHARGES\n");
+    gzprintf(outmol2, "@<TRIPOS>ATOM\n");
+    int i=0;
+    unsigned resn=0;
+
+    while(resn < Cmol->residue_pointer.size()-1){
+        while(i < Cmol->residue_pointer[resn+1]-1){
+            if (int(Cmol->sybyl_atoms.size()) == Cmol->N){
+                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s%4d %18.18s %9.4f \n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+            }
+            else {
+                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s%4d %18.18s %9.4f \n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+            }
+            i++;
+        }
+        resn++;
+    }
+    while(i < Cmol->N){
+        if (int(Cmol->sybyl_atoms.size()) == Cmol->N){
+            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s%4d %18.18s %9.4f \n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+        }
+        else{
+            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s%4d %18.18s %9.4f \n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+        }
+        i++;
+    }
+
+    gzprintf(outmol2, "@<TRIPOS>BOND\n");
+
+    for (unsigned j=0; j<Cmol->bonds.size(); j++){
+        gzprintf(outmol2, "%6d%6.6s%6.6s%5.5s\n", j+1, Cmol->bonds[j][0].c_str(), Cmol->bonds[j][1].c_str(),Cmol->bonds[j][2].c_str());
+    }
+    gzclose(outmol2);
+}
+
 void WRITER::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, double rmsd){
     outmol2 = gzopen((this->output_prefix+"_dock.mol2.gz").c_str(), "a");
 	gzprintf(outmol2, "\n");
@@ -476,6 +528,63 @@ void WRITER::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, do
 	for (unsigned j=0; j<Cmol->bonds.size(); j++){
 		gzprintf(outmol2, "%6d%6.6s%6.6s%5.5s\n", j+1, Cmol->bonds[j][0].c_str(), Cmol->bonds[j][1].c_str(),Cmol->bonds[j][2].c_str());
 	}
+    gzprintf(outmol2, "\n");
+    gzclose(outmol2);
+}
+
+void WRITER::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, energy_result_t* result, double rmsd){
+    outmol2 = gzopen((this->output_prefix+"_dock.mol2.gz").c_str(), "a");
+    gzprintf(outmol2, "\n");
+    gzprintf(outmol2, "########## %15.15s: %19.19s\n", "Name", Cmol->molname.c_str());
+    gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Energy Score", result->total);
+    gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Elec Score", result->elec);
+    gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "VDW Score", result->vdw);
+    gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Rest Score", result->restraints);
+    gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Solv Score", (result->rec_solv + result->lig_solv));
+    gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "RMSD", rmsd);
+    gzprintf(outmol2, "\n");
+    gzprintf(outmol2, "@<TRIPOS>MOLECULE\n");
+    gzprintf(outmol2, "%s\n", Cmol->molname.c_str());
+    gzprintf(outmol2, "%d %d %d\n", Cmol->N, Cmol->Nbonds, Cmol->Nres);
+    gzprintf(outmol2, "SMALL\n");
+    gzprintf(outmol2, "USER_CHARGES\n");
+    gzprintf(outmol2, "@<TRIPOS>ATOM\n");
+    int i=0;
+    unsigned resn=0;
+
+    if (int(xyz.size()) != Cmol->N){
+        printf("Mismatch in atom number while writting mol2 file. Please check!\n");
+        printf("Cmol->N = %d    xyz.size() = %d\n", Cmol->N, int(xyz.size()));
+        exit(1);
+    }
+
+    while(resn < Cmol->residue_pointer.size()-1){
+        while(i < Cmol->residue_pointer[resn+1]-1){
+            if (int(Cmol->sybyl_atoms.size()) == Cmol->N){
+                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s%4d %18.18s %9.4f \n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+            }
+            else {
+                gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s%4d %18.18s %9.4f \n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+            }
+            i++;
+        }
+        resn++;
+    }
+    while(i < Cmol->N){
+        if (int(Cmol->sybyl_atoms.size()) == Cmol->N){
+            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s%4d %18.18s %9.4f \n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->sybyl_atoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+        }
+        else{
+            gzprintf(outmol2, "%7d %-3.3s      %9.4f %9.4f %9.4f %-5.5s%4d %18.18s %9.4f \n", i+1, Cmol->atomnames[i].c_str(), xyz[i][0], xyz[i][1], xyz[i][2], Cmol->amberatoms[i].c_str(), resn+1, Cmol->resnames[resn].c_str(), Cmol->charges[i]);
+        }
+        i++;
+    }
+
+    gzprintf(outmol2, "@<TRIPOS>BOND\n");
+
+    for (unsigned j=0; j<Cmol->bonds.size(); j++){
+        gzprintf(outmol2, "%6d%6.6s%6.6s%5.5s\n", j+1, Cmol->bonds[j][0].c_str(), Cmol->bonds[j][1].c_str(),Cmol->bonds[j][2].c_str());
+    }
     gzprintf(outmol2, "\n");
     gzclose(outmol2);
 }

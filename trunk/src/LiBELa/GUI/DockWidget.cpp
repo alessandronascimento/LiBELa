@@ -262,6 +262,16 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     docking_restraint_weight->setValue(Inp->restraints_weight);
     docking_restraint_weight->setSingleStep(0.1);
 
+    scale_ele_energy_lab = new QLabel(tr("Scale for Electrostatic Energy Term:"));
+    scale_vdw_energy_lab = new QLabel(tr("Scale for VDW Energy Term:"));
+    scale_ele_energy = new QDoubleSpinBox;
+    scale_ele_energy->setValue(1.0);
+    scale_ele_energy->setSingleStep(0.1);
+    scale_vdw_energy = new QDoubleSpinBox;
+    scale_vdw_energy->setValue(1.0);
+    scale_vdw_energy->setSingleStep(0.1);
+
+
 
     files_label = new QLabel(tr("<h2>Input Files</h2>"));
 
@@ -353,6 +363,14 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
 
     editLayout->addWidget(elec_scale_lab, i, 0);
     editLayout->addWidget(elec_scale, i, 1);
+    i++;
+
+    editLayout->addWidget(scale_ele_energy_lab, i, 0);
+    editLayout->addWidget(scale_ele_energy, i, 1);
+    i++;
+
+    editLayout->addWidget(scale_vdw_energy_lab, i, 0);
+    editLayout->addWidget(scale_vdw_energy, i, 1);
     i++;
 
     opt_input = new QLabel(tr("<h2>Optimization options</h2>"));
@@ -482,6 +500,9 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     connect(parallel_jobs, SIGNAL(valueChanged(int)), this, SLOT(slot_parallel(int)));
 
     connect(use_docking_restraint, SIGNAL(stateChanged(int)), this, SLOT(slot_use_restraints(int)));
+
+    connect(scale_ele_energy, SIGNAL(valueChanged(double)), this, SLOT(slot_scale_ele(double)));
+    connect(scale_vdw_energy, SIGNAL(valueChanged(double)), this, SLOT(slot_scale_vdw(double)));
 
     connect(load_write_file, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_grid_file(int)));
     connect(use_grids, SIGNAL(stateChanged(int)), this, SLOT(slot_use_grids(int)));
@@ -665,6 +686,14 @@ void DockWidget::slot_use_grids(int state){
     }
 }
 
+void DockWidget::slot_scale_ele(double value){
+    Inp->scale_elec_energy = value;
+}
+
+void DockWidget::slot_scale_vdw(double value){
+    Inp->scale_vdw_energy = value;
+}
+
 void DockWidget::Start(){
 	this->set_parameters();
     RunEngine = new TEMP_SCHEME(Inp, Editor, this->progressbar);
@@ -813,6 +842,9 @@ void DockWidget::set_parameters(){
 
     Inp->writeMol2_score_cutoff = this->cutoff_score->value();
     Inp->writeMol2_energy_cutoff = this->cutoff_energy->value();
+
+    Inp->scale_elec_energy = this->scale_ele_energy->value();
+    Inp->scale_vdw_energy = this->scale_vdw_energy->value();
 
     // writing the list of molecules do dock
 
@@ -1073,6 +1105,11 @@ void DockWidget::hide_advanced_options(){
     docking_restraint_lab->hide();
     docking_restraint_weight->hide();
 
+    scale_ele_energy_lab->hide();
+    scale_vdw_energy_lab->hide();
+    scale_ele_energy->hide();
+    scale_vdw_energy->hide();
+
 }
 
 void DockWidget::show_advanced_options(){
@@ -1131,6 +1168,11 @@ void DockWidget::show_advanced_options(){
     use_docking_restraint->show();
     docking_restraint_lab->show();
     docking_restraint_weight->show();
+
+    scale_ele_energy_lab->show();
+    scale_vdw_energy_lab->show();
+    scale_ele_energy->show();
+    scale_vdw_energy->show();
 }
 
 void DockWidget::set_initial_parameters(){

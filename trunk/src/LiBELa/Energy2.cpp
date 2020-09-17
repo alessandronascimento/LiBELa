@@ -162,7 +162,7 @@ double Energy2::compute_energy_softcore_solvation(Mol2* Rec, Mol2* Lig, vector<v
         }
     }
 //    printf("Elec: %7.3f    VDW: %7.3f    RecSolv: %7.3f    LigSolv: %7.3f    Total: %7.3f\n", elec, vdw, rec_solv, lig_solv, elec+vdw+rec_solv+lig_solv);
-    return(elec+vdw+rec_solv+lig_solv);
+    return((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*vdw)+rec_solv+lig_solv);
 }
 
 double Energy2::compute_energy_softcore(Mol2* Rec, Mol2* Lig, vector<vector<double> > lig_xyz){
@@ -195,7 +195,7 @@ double Energy2::compute_energy_softcore(Mol2* Rec, Mol2* Lig, vector<vector<doub
         }
     }
 //    printf("Elec: %7.3f    VDW: %7.3f    Total: %7.3f\n", elec, vdw, elec+vdw);
-    return(elec+vdw);
+    return((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*vdw));
 }
 
 double Energy2::compute_energy_hardcore_solvation(Mol2* Rec, Mol2* Lig, vector<vector<double> > lig_xyz){
@@ -238,7 +238,7 @@ double Energy2::compute_energy_hardcore_solvation(Mol2* Rec, Mol2* Lig, vector<v
         }
     }
 //    printf("Elec: %7.3f    VDW: %7.3f    RecSolv: %7.3f    LigSolv: %7.3f    Total: %7.3f\n", elec, vdw, rec_solv, lig_solv, elec+vdw+rec_solv+lig_solv);
-    return (vdw+elec+rec_solv+lig_solv);
+    return ((Input->scale_vdw_energy*vdw)+(Input->scale_elec_energy*elec)+rec_solv+lig_solv);
 }
 
 double Energy2::compute_energy_hardcore(Mol2* Rec, Mol2* Lig, vector<vector<double> > lig_xyz){
@@ -266,7 +266,7 @@ double Energy2::compute_energy_hardcore(Mol2* Rec, Mol2* Lig, vector<vector<doub
         }
     }
 //    printf("Elec: %7.3f    VDW: %7.3f    Total: %7.3f\n", elec, vdw,elec+vdw);
-    return (vdw+elec);
+    return ((Input->scale_vdw_energy*vdw)+(Input->scale_elec_energy*elec));
 }
 
 double Energy2::compute_ene_from_grids_softcore_solvation(Grid* Grids, Mol2* Lig, vector<vector<double> > xyz){
@@ -325,7 +325,7 @@ double Energy2::compute_ene_from_grids_softcore_solvation(Grid* Grids, Mol2* Lig
 #endif
         }
     }
-    return(elec+vdwA-vdwB+rec_solv+lig_solv);
+    return((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB))+rec_solv+lig_solv);
 }
 
 double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<vector<double> > xyz){
@@ -380,7 +380,7 @@ double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<v
 #endif
         }
     }
-    return(elec+vdwA-vdwB);
+    return((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB)));
 }
 
 double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig, vector<vector<double> > xyz){
@@ -440,7 +440,7 @@ double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig
 #endif
         }
     }
-    return(elec+(vdwA-vdwB)+rec_solv+lig_solv);
+    return((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB))+rec_solv+lig_solv);
 }
 
 double Energy2::compute_ene_from_grids_hardcore(Grid* Grids, Mol2* Lig, vector<vector<double> > xyz){
@@ -496,7 +496,7 @@ double Energy2::compute_ene_from_grids_hardcore(Grid* Grids, Mol2* Lig, vector<v
 #endif
         }
     }
-    return(elec+vdwA-vdwB);
+    return((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB)));
 }
 
 double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig, vector<vector<double> > xyz, energy_result_t* energy_result){
@@ -553,13 +553,13 @@ double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig
             vdwB += 999999.9;
         }
     }
-    energy_result->vdw = vdwA-vdwB;
-    energy_result->elec = elec;
+    energy_result->vdw = Input->scale_vdw_energy*(vdwA-vdwB);
+    energy_result->elec = Input->scale_elec_energy*elec;
     energy_result->rec_solv = rec_solv;
     energy_result->lig_solv = lig_solv;
-    energy_result->total = elec+(vdwA-vdwB)+rec_solv+lig_solv;
+    energy_result->total = (Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB))+rec_solv+lig_solv;
 
-    return(elec+(vdwA-vdwB)+rec_solv+lig_solv);
+    return((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB))+rec_solv+lig_solv);
 }
 
 double Energy2::compute_ene_from_grids_hardcore(Grid* Grids, Mol2* Lig, vector<vector<double> > xyz, energy_result_t* energy_result){
@@ -610,13 +610,13 @@ double Energy2::compute_ene_from_grids_hardcore(Grid* Grids, Mol2* Lig, vector<v
             vdwB += 999999.9;
         }
     }
-    energy_result->vdw = vdwA-vdwB;
-    energy_result->elec = elec;
+    energy_result->vdw = Input->scale_vdw_energy*(vdwA-vdwB);
+    energy_result->elec = Input->scale_elec_energy*elec;
     energy_result->rec_solv = 0.00;
     energy_result->lig_solv = 0.00;
-    energy_result->total = elec+(vdwA-vdwB);
+    energy_result->total = (Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB));
 
-    return(elec+(vdwA-vdwB));
+    return((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB)));
 }
 
 double Energy2::compute_ene_from_grids_softcore_solvation(Grid* Grids, Mol2* Lig, vector<vector<double> > xyz, energy_result_t* energy_result){
@@ -671,13 +671,13 @@ double Energy2::compute_ene_from_grids_softcore_solvation(Grid* Grids, Mol2* Lig
             vdwB += 999999.9;
         }
     }
-    energy_result->elec = elec;
-    energy_result->vdw = vdwA-vdwB;
+    energy_result->elec = Input->scale_elec_energy*elec;
+    energy_result->vdw = Input->scale_vdw_energy*(vdwA-vdwB);
     energy_result->rec_solv = rec_solv;
     energy_result->lig_solv = lig_solv;
-    energy_result->total = elec+vdwA-vdwB+rec_solv+lig_solv;
+    energy_result->total = (Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB))+rec_solv+lig_solv;
 
-    return (elec+vdwA-vdwB+rec_solv+lig_solv);
+    return ((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB))+rec_solv+lig_solv);
 }
 
 double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<vector<double> > xyz, energy_result_t* energy_result){
@@ -728,13 +728,13 @@ double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<v
             vdwB += 999999.9;
         }
     }
-    energy_result->elec = elec;
-    energy_result->vdw = vdwA-vdwB;
+    energy_result->elec = Input->scale_elec_energy*elec;
+    energy_result->vdw = Input->scale_vdw_energy*(vdwA-vdwB);
     energy_result->rec_solv = 0.00;
     energy_result->lig_solv = 0.00;
-    energy_result->total = elec+vdwA-vdwB;
+    energy_result->total = (Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB));
 
-    return (elec+vdwA-vdwB);
+    return ((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB)));
 }
 
 double Energy2::compute_energy_softcore_solvation(Mol2* Rec, Mol2* Lig, vector<vector<double> > lig_xyz, energy_result_t* energy_result){
@@ -790,13 +790,13 @@ double Energy2::compute_energy_softcore_solvation(Mol2* Rec, Mol2* Lig, vector<v
             lig_solv+= lig_solv_affinity*lig_solv_distf;
         }
     }
-    energy_result->elec = elec;
-    energy_result->vdw = vdw;
+    energy_result->elec = Input->scale_elec_energy*elec;
+    energy_result->vdw = Input->scale_vdw_energy*vdw;
     energy_result->rec_solv = rec_solv;
     energy_result->lig_solv = lig_solv;
-    energy_result->total = (elec+vdw+rec_solv+lig_solv);
+    energy_result->total = ((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*vdw)+rec_solv+lig_solv);
 
-    return(elec+vdw+rec_solv+lig_solv);
+    return((Input->elec_scale*elec)+(Input->scale_vdw_energy*vdw)+rec_solv+lig_solv);
 }
 
 double Energy2::compute_energy_softcore(Mol2* Rec, Mol2* Lig, vector<vector<double> > lig_xyz, energy_result_t* energy_result){
@@ -831,13 +831,13 @@ double Energy2::compute_energy_softcore(Mol2* Rec, Mol2* Lig, vector<vector<doub
             vdw+= ((acoef/pow((dij6+Input->deltaij6),2)) - (bcoef/(dij6 + Input->deltaij6)));
        }
     }
-    energy_result->elec = elec;
-    energy_result->vdw = vdw;
+    energy_result->elec = Input->scale_elec_energy*elec;
+    energy_result->vdw = Input->scale_vdw_energy*vdw;
     energy_result->rec_solv = 0.00;
     energy_result->lig_solv = 0.00;
-    energy_result->total = (elec+vdw);
+    energy_result->total = (Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*vdw);
 
-    return(elec+vdw);
+    return((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*vdw));
 }
 
 double Energy2::compute_energy_hardcore_solvation(Mol2* Rec, Mol2* Lig, vector<vector<double> > lig_xyz, energy_result_t* energy_result){
@@ -879,13 +879,13 @@ double Energy2::compute_energy_hardcore_solvation(Mol2* Rec, Mol2* Lig, vector<v
             lig_solv+= lig_solv_affinity*lig_solv_distf;
         }
     }
-    energy_result->elec = elec;
-    energy_result->vdw = vdw;
+    energy_result->elec = Input->scale_elec_energy*elec;
+    energy_result->vdw = Input->scale_vdw_energy*vdw;
     energy_result->rec_solv = rec_solv;
     energy_result->lig_solv = lig_solv;
-    energy_result->total = (vdw+elec+rec_solv+lig_solv);
+    energy_result->total = ((Input->scale_vdw_energy*vdw)+(Input->scale_elec_energy*elec)+rec_solv+lig_solv);
 
-    return (vdw+elec+rec_solv+lig_solv);
+    return ((Input->scale_vdw_energy*vdw)+(Input->scale_elec_energy*elec)+rec_solv+lig_solv);
 }
 
 double Energy2::compute_energy_hardcore(Mol2* Rec, Mol2* Lig, vector<vector<double> > lig_xyz, energy_result_t* energy_result){
@@ -914,13 +914,13 @@ double Energy2::compute_energy_hardcore(Mol2* Rec, Mol2* Lig, vector<vector<doub
             vdw+= ((acoef/(dij2*dij2*dij2*dij2*dij2*dij2)) - (bcoef/(dij2*dij2*dij2)));
         }
     }
-    energy_result->elec = elec;
-    energy_result->vdw = vdw;
+    energy_result->elec = Input->scale_elec_energy*elec;
+    energy_result->vdw = Input->scale_vdw_energy*vdw;
     energy_result->rec_solv = 0.00;
     energy_result->lig_solv = 0.00;
-    energy_result->total = (vdw+elec);
+    energy_result->total = (Input->scale_vdw_energy*vdw)+(Input->scale_elec_energy*elec);
 
-    return(elec+vdw);
+    return((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*vdw));
 }
 
 double Energy2::trilinear_interpolation(vector<vector<vector<double> > > grid, double x, double y, double z, int x0, int y0, int z0, int x1, int y1, int z1){

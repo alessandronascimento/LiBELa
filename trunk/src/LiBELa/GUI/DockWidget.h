@@ -177,6 +177,11 @@ public:
     QLabel* use_docking_restraint_lab;
     QCheckBox* use_docking_restraint;
 
+    QLabel* scale_ele_energy_lab;
+    QLabel* scale_vdw_energy_lab;
+    QDoubleSpinBox* scale_ele_energy;
+    QDoubleSpinBox* scale_vdw_energy;
+
 
     TEMP_SCHEME* RunEngine;
 
@@ -199,6 +204,8 @@ public slots:
 	void write_parameters();
     void show_scoring_function_options(int sf);
     void slot_use_restraints(int state);
+    void slot_scale_ele(double value);
+    void slot_scale_vdw(double value);
 };
 
 #endif // DOCKWIDGET_H

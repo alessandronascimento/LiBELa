@@ -239,6 +239,10 @@ public:
     double translation_step;
     //!
     bool full_search_mode;
+    //!
+    double scale_vdw_energy;
+    //!
+    double scale_elec_energy;
 
 
     /*!

@@ -11,6 +11,7 @@
 #include "../PARSER.h"
 #include "../Mol2.h"
 #include "../Mol2.h"
+#include "../iMcLiBELa.h"
 #include <QPlainTextEdit>
 #include <QString>
 #include<QApplication>
@@ -65,6 +66,7 @@ public:
 	void write_pdb(Mol2 *Cmol, vector<vector<double> >xyz, double energy, double rmsd, string outname);
 	void writeMol2(Mol2 *Cmol, vector<vector<double> >xyz, double energy, double rmsd, string outname);
     void writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, double rmsd);
+    void writeMol2(Mol2* Cmol, vector<vector<double> >xyz, energy_result_t* result, double rmsd);
 	//! Class destructor. Closes the logfile.
 	~QtWriter(void);
     //!

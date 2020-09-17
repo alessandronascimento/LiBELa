@@ -71,6 +71,8 @@ public:
 	void write_pdb(Mol2 *Cmol, vector<vector<double> >xyz, double energy, double rmsd, string outname);
 	void writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, double rmsd, string outname);
 	void writeMol2(Mol2* Cmol, vector<vector<double> >xyz, double energy, double rmsd);
+    void writeMol2(Mol2* Cmol, vector<vector<double> >xyz, energy_result_t* result, double rmsd);
+    void writeMol2(Mol2* Cmol, vector<vector<double> >xyz, energy_result_t* result, double rmsd, string outname);
 	void writeMol2_Mol_new_xyz(Mol2* Cmol, double energy, double rmsd);
 
     /**
