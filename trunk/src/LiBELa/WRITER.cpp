@@ -156,6 +156,9 @@ void WRITER::print_params(){
     printf("* %-30s %-66.66s*\n", "energy_optimizer", Input->energy_optimizer.c_str());
     printf("* %-30s %-66d*\n", "ignore_h", Input->dock_no_h);
     printf("* %-30s %-66d*\n", "deal", Input->deal);
+    printf("* %-30s %-66.2f*\n", "scale_elec_energy", Input->scale_elec_energy);
+    printf("* %-30s %-66.2f*\n", "scale_vdw_energy", Input->scale_vdw_energy);
+
     printf("*                                                                                                  *\n");
     printf("* %-30s %-66d*\n", "generate_conformers", Input->generate_conformers);
     if (Input->generate_conformers){
