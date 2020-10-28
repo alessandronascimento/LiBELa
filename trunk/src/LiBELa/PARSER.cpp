@@ -104,6 +104,8 @@ PARSER::PARSER(){
     this->translation_step = 0.2;
     this->scale_vdw_energy = 1.0;
     this->scale_elec_energy = 1.0;
+    this->overlay_cutoff = 0.7;
+    this->use_overlay_cutoff = false;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -516,6 +518,15 @@ void PARSER::comparing (string param, ifstream &input) {
     }
     else if (param == "scale_elec_energy"){
         input >> this->scale_elec_energy;
+    }
+    else if (param == "use_overlay_cutoff"){
+        input >> tmp;
+        if (tmp == "yes" or tmp == "Yes" or tmp == "YES"){
+            this->use_overlay_cutoff = true;
+        }
+    }
+    else if (param == "overlay_cutoff"){
+        input >> this->overlay_cutoff;
     }
 	else {
 		cout << "Unknown parameter: " << param << endl;

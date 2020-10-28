@@ -103,6 +103,7 @@ public:
      * \return false if optimization has any problem
      */
     bool minimize_energy(PARSER* Input, Optimizer* Opt, Mol2* Rec, Mol2* Lig, Optimizer::opt_result_t* opt_result);
+    bool minimize_energy(PARSER* Input, Optimizer* Opt, Mol2* Rec, Mol2* Lig, Mol2* Reflig, Optimizer::opt_result_t* opt_result);
 
 };
 

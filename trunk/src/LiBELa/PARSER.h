@@ -320,6 +320,10 @@ public:
     bool use_Erestraints;
     //!
     double restraints_weight;
+    //! Defines whether there should be used a cutoff in overlay to energy optimization
+    bool use_overlay_cutoff;
+    //! Cutoff value in similatiy index for energy optimization
+    double overlay_cutoff;
 
 #ifdef HAS_GUI
 	QStringList docking_molecules;
