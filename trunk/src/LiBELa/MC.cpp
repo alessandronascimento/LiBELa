@@ -288,7 +288,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 Writer->print_info(info);
 
                 if (Input->write_mol2){
-                    Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
+                    Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, string(Input->output + "_" + Lig->molname + "_MC"));
                 }
 
                 if (n_rot == 0){
@@ -330,7 +330,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                     Writer->print_info(info);
 
                     if (Input->write_mol2){
-                        Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
+                        Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, string(Input->output + "_" + Lig->molname + "_MC"));
                     }
                     if (n_rot == 0){
                         gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f %10.6f %10.6f %10.6f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy, energy_t->elec, energy_t->vdw, (energy_t->lig_solv+energy_t->rec_solv));
@@ -590,7 +590,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                     Writer->print_info(info);
 
                     if (Input->write_mol2){
-                        Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC.ligsim");
+                        Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, string(Input->output + "_" + Lig->molname + "_MC.ligsim"));
                     }
                     if (n_rot == 0 ){
                         gzprintf(mc_output_lig, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
@@ -631,7 +631,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
                         Writer->print_info(info);
 
                         if (Input->write_mol2){
-                            Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC.ligsim");
+                            Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, string(Input->output + "_" + Lig->molname + "_MC.ligsim"));
                         }
 
                         if (n_rot == 0){
@@ -931,7 +931,7 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
             }
 
             if ((Input->write_mol2) and (count % Input->mc_stride == 0)){
-                Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, Input->output + "_MC");
+                Writer->writeMol2(Lig, step->xyz, new_energy, rmsd, string(Input->output + "_" + Lig->molname + "_MC"));
             }
             if (! Input->sample_torsions){
                 gzprintf(mc_output, "%10d %10.3f %10.3f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6d %10.3f\n", count, energy, rmsd, com[0], com[1], com[2], rot_angles[0], rot_angles[1], rot_angles[2], step->nconf, step->internal_energy);
