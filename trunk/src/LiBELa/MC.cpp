@@ -15,12 +15,12 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 
     if (Input->write_mol2){
         gzFile outmol2;
-        string outname = Input->output + "_MC";
+        string outname = Input->output + "_" + Lig->molname + "_MC";
         outmol2 = gzopen((outname+".mol2.gz").c_str(), "w");
         gzclose(outmol2);
         if (Input->ligsim){
             gzFile outmol2_lig;
-            outname = Input->output + "_MC.ligsim";
+            outname = Input->output + "_" + Lig->molname + "_MC.ligsim";
             outmol2_lig = gzopen((outname+".mol2.gz").c_str(), "w");
             gzclose(outmol2_lig);
         }
@@ -32,8 +32,8 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 */
 
     if (Input->dock_mode){
-        Writer->writeMol2(Lig, Lig->xyz, 0.0, 0.0, "Lig_docked");
-        mol = this->GetMol("Lig_docked.mol2.gz");
+//        Writer->writeMol2(Lig, Lig->xyz, 0.0, 0.0, Lig->molname.c_str());
+        mol = this->GetMol(string(Input->output + "_" + Lig->molname + ".mol2.gz"));
     }
     else {
         mol = this->GetMol(Input->lig_mol2);
@@ -120,7 +120,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     sprintf(info, "Starting Monte Carlo equilibration simulation with %5d steps...", (Input->eq_steps));
     Writer->print_info(info);
     gzFile mc_output;
-    mc_output = gzopen((Input->output + "_mc.dat.gz").c_str(), "w");
+    mc_output = gzopen((Input->output + "_" + Lig->molname + "_mc.dat.gz").c_str(), "w");
 
     Energy2* Energy = new Energy2(Input);
     COORD_MC* Coord = new COORD_MC;
@@ -143,10 +143,11 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     step_t* step = new step_t;
 
     while (!ligand_is_in){
-        if (Input->generate_conformers){
-            this->take_step_flex(Input, Lig, step);
-        }
-        else if (Input->sample_torsions){
+//        if (Input->generate_conformers){
+//            this->take_step_flex(Input, Lig, step);
+//        }
+//        else
+        if (Input->sample_torsions){
             this->take_step_torsion(Input, Lig, step);
         }
         else if (Input->mc_full_flex){
@@ -189,10 +190,10 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     while (eqcount <= Input->eq_steps){
 
         while (!ligand_is_in){
-            if (Input->generate_conformers){
-                this->take_step_flex(Input, Lig, step);
-            }
-            else if (Input->sample_torsions){
+//            if (Input->generate_conformers){
+//                this->take_step_flex(Input, Lig, step);
+//            }
+/*            else*/ if (Input->sample_torsions){
                 this->take_step_torsion(Input, Lig, step);
             }
             else if (Input->mc_full_flex){
@@ -243,10 +244,12 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     while (count <= Input->number_steps){
 
         while (!ligand_is_in){
-            if (Input->generate_conformers){
-                this->take_step_flex(Input, Lig, step);
-            }
-            else if (Input->sample_torsions){
+
+//            if (Input->generate_conformers){
+//                this->take_step_flex(Input, Lig, step);
+//            }
+//            else
+            if (Input->sample_torsions){
                 this->take_step_torsion(Input, Lig, step);
             }
             else if (Input->mc_full_flex){
@@ -480,7 +483,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         Writer->print_info(info);
 
         gzFile mc_output_lig;
-        mc_output_lig = gzopen((Input->output + "_mc.ligsim.dat.gz").c_str(), "w");
+        mc_output_lig = gzopen(string(Input->output + "_" + Lig->molname + "_mc.ligsim.dat.gz").c_str(), "w");
 
         Energy2* Energy = new Energy2(Input);
         COORD_MC* Coord = new COORD_MC;
@@ -502,10 +505,11 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         step_t* step = new step_t;
 
         while (!ligand_is_in){
-            if (Input->generate_conformers){
-                this->take_step_flex(Input, Lig, step);
-            }
-            else if (Input->sample_torsions){
+//            if (Input->generate_conformers){
+//                this->take_step_flex(Input, Lig, step);
+//            }
+//            else
+            if (Input->sample_torsions){
                 this->take_step_torsion(Input, Lig, step);
             }
             else if(Input->mc_full_flex){
@@ -543,10 +547,12 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         while (count <= Input->number_steps){
 
             while (!ligand_is_in){
-                if (Input->generate_conformers){
-                    this->take_step_flex(Input, Lig, step);
-                }
-                else if (Input->sample_torsions){
+
+//                if (Input->generate_conformers){
+//                    this->take_step_flex(Input, Lig, step);
+//                }
+//                else
+                if (Input->sample_torsions){
                     this->take_step_torsion(Input, Lig, step);
                 }
                 else if (Input->mc_full_flex){
@@ -680,11 +686,11 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         this->MCR_Boltzmann_weighted_average = sum_Boltzmann2_ene/(Input->number_steps+nReject);
         this->MCR_Boltzmann_weighted_stdev = sqrt((avg_Boltzmann2_ene_squared - (this->MCR_Boltzmann_weighted_average*this->MCR_Boltzmann_weighted_average))/(Input->number_steps+nReject-1.0));
 
-        sprintf(info, "Average Monte Carlo energy: %10.3f +- %10.3f @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
+        sprintf(info, "Average Monte Carlo ligand energy: %10.3f +- %10.3f @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
         Writer->print_info(info);
-        sprintf(info, "Boltzmann-weighted average energy: %10.3Lg @ %7.2f K", this->Boltzmann_weighted_average_energy, T);
+        sprintf(info, "Boltzmann-weighted average ligand energy: %10.3Lg @ %7.2f K", this->Boltzmann_weighted_average_energy, T);
         Writer->print_info(info);
-        sprintf(info, "Average Monte Carlo energy over independent steps: %10.3Lf @ %7.2f K", independent_average, T);
+        sprintf(info, "Average Monte Carlo ligand energy over independent steps: %10.3Lf @ %7.2f K", independent_average, T);
         Writer->print_info(info);
 
         Writer->print_line();
@@ -696,34 +702,34 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         McEnt->Srot = 0.0; McEnt->Storsion = 0.0; McEnt->Strans = 0.0;
         Entropy->get_results(McEnt, Max_Ent, Input->number_steps);
 
-        sprintf(info, "First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K", McEnt->Strans*T, T);
+        sprintf(info, "First-Order Approximation Ligand Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K", McEnt->Strans*T, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K", McEnt->Srot*T, T);
+        sprintf(info, "First-Order Approximation Ligand Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K", McEnt->Srot*T, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K", McEnt->Storsion*T, T);
+        sprintf(info, "First-Order Approximation Ligand Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K", McEnt->Storsion*T, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K", McEnt->S, T);
+        sprintf(info, "First-Order Approximation Ligand Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K", McEnt->S, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K", -McEnt->TS, T);
+        sprintf(info, "First-Order Approximation Ligand -TS (-TS):                %10.4g kcal/mol @ %7.2f K", -McEnt->TS, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K", -McEnt->S*300., 300.);
+        sprintf(info, "First-Order Approximation Ligand -TS @ 300K:               %10.4g kcal/mol @ %7.2f K", -McEnt->S*300., 300.);
         Writer->print_info(info);
 
         Writer->print_line();
 
         sprintf(info, "Maximal Entropies Computed for this System:");
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K", Max_Ent->Strans*T, T);
+        sprintf(info, "First-Order Approximation Ligand Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K", Max_Ent->Strans*T, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K", Max_Ent->Srot*T, T);
+        sprintf(info, "First-Order Approximation Ligand Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K", Max_Ent->Srot*T, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K", Max_Ent->Storsion*T, T);
+        sprintf(info, "First-Order Approximation Ligand Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K", Max_Ent->Storsion*T, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K", Max_Ent->S, T);
+        sprintf(info, "First-Order Approximation Ligand Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K", Max_Ent->S, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K", -Max_Ent->TS, T);
+        sprintf(info, "First-Order Approximation Ligand -TS (-TS):                %10.4g kcal/mol @ %7.2f K", -Max_Ent->TS, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K", -Max_Ent->S*300., 300.);
+        sprintf(info, "First-Order Approximation Ligand -TS @ 300K:               %10.4g kcal/mol @ %7.2f K", -Max_Ent->S*300., 300.);
         Writer->print_info(info);
 
         Writer->print_line();
@@ -813,16 +819,19 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
         //Equilibration implementation
         while (eqcount <= Input->eq_steps){
 
-            if (Input->generate_conformers){
-                this->take_step_flex(Input, Lig, step);
-            }
-            else if (Input->sample_torsions){
+//            if (Input->generate_conformers){
+//                this->take_step_flex(Input, Lig, step);
+//            }
+//            else
+            if (Input->sample_torsions){
                 this->take_step_torsion(Input, Lig, step);
+            }
+            else if (Input->mc_full_flex){
+                this->take_step_full_flex(Input, Lig, step);
             }
             else {
                 this->take_step(Input, Lig, step);
             }
-
             new_energy = (Energy->compute_ene(Rec, Lig, step->xyz)+Lig->conformer_energies[step->nconf]);
 
             if (new_energy <= energy){
@@ -863,8 +872,15 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
 
         while (count <= Input->number_steps){
 
-            if (Input->generate_conformers){
-                this->take_step_flex(Input, Lig, step);
+//            if (Input->generate_conformers){
+//                this->take_step_flex(Input, Lig, step);
+//            }
+//            else {
+            if (Input->sample_torsions){
+                this->take_step_torsion(Input, Lig, step);
+            }
+            else if (Input->mc_full_flex){
+                this->take_step_full_flex(Input, Lig, step);
             }
             else {
                 this->take_step(Input, Lig, step);
@@ -1151,7 +1167,7 @@ OBMol MC::GetMol(const std::string &molfile){
     OBConversion conv;
     OBFormat *format = conv.FormatFromExt(molfile.c_str());
     if (!format || !conv.SetInFormat(format)) {
-    printf("Could not find input format for file\n");
+    printf("Could not find input format for file %s\n", molfile.c_str());
     return mol;
   }
 
@@ -1162,7 +1178,7 @@ OBMol MC::GetMol(const std::string &molfile){
     }
 
     if (!conv.Read(&mol, &ifs)) {
-        printf("Could not read molecule from file\n");
+        printf("Could not read molecule from file %s\n", molfile.c_str());
         return mol;
     }
     return mol;

@@ -127,11 +127,21 @@ void TEMP_SCHEME::evaluation(){
 
     this->print_line();
 
-    this->dock_run();
-    this->sa_run();
-    this->eq_run();
-    this->mcr_run();
-    this->full_search_run();
+    if (Input->dock_mode){
+        this->dock_run();
+    }
+    else if (Input->eq_mode){
+        this->eq_run();
+    }
+    else if (Input->mcr_mode){
+        this->mcr_run();
+    }
+    else if (Input->full_search_mode){
+        this->full_search_run();
+    }
+    else if (Input->sa_mode){
+        this->sa_run();
+    }
 
     sprintf(info, "Finishing McLibela...");
     this->print_info(info);
@@ -344,6 +354,24 @@ void TEMP_SCHEME::dock_run(){
                             else {
                                 Dock->run(REC, Lig2, RefLig, center, Input, counter);
                             }
+
+                            if (Input->eq_mode){
+                                Writer->writeMol2(Lig2, Lig2->xyz, 0.0, 0.0, string(Input->output + "_" + Lig2->molname));
+                                Conformer* Conf = new Conformer;
+                                Lig2->mcoords.clear();
+                                Conf->generate_conformers_confab(Input, Lig2, string(Input->output + "_" + Lig2->molname+".mol2.gz"));
+                                MC* EqMC = new MC(Lig2, Input, Writer);
+                                if (Input->use_grids){
+                                    EqMC->run(Grids, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
+                                }
+                                else {
+                                    EqMC->run(REC, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
+                                }
+                                if (Input->ligsim){
+                                    EqMC->ligand_run(RefLig, Lig2, Lig2->xyz, Input, Input->temp);
+                                }
+                                delete EqMC;
+                            }
                         }
                         else{ 																//test: in case generate_conformers does not succeed.
                             Lig2->mcoords.push_back(Lig2->xyz);
@@ -352,6 +380,19 @@ void TEMP_SCHEME::dock_run(){
                             }
                             else {
                                 Dock->run(REC, Lig2, RefLig, center, Input, counter);
+                            }
+                            if (Input->eq_mode){
+                                MC* EqMC = new MC(Lig2, Input, Writer);
+                                if (Input->use_grids){
+                                    EqMC->run(Grids, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
+                                }
+                                else {
+                                    EqMC->run(REC, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
+                                }
+                                if (Input->ligsim){
+                                    EqMC->ligand_run(RefLig, Lig2, Lig2->xyz, Input, Input->temp);
+                                }
+                                delete EqMC;
                             }
                         }
                         Conf->~Conformer();
@@ -363,6 +404,19 @@ void TEMP_SCHEME::dock_run(){
                         }
                         else {
                             Dock->run(REC, Lig2, RefLig, center, Input, counter);
+                        }
+                        if (Input->eq_mode){
+                            MC* EqMC = new MC(Lig2, Input, Writer);
+                            if (Input->use_grids){
+                                EqMC->run(Grids, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
+                            }
+                            else {
+                                EqMC->run(REC, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
+                            }
+                            if (Input->ligsim){
+                                EqMC->ligand_run(RefLig, Lig2, Lig2->xyz, Input, Input->temp);
+                            }
+                            delete EqMC;
                         }
                     }
                     delete Lig2;
@@ -384,7 +438,23 @@ void TEMP_SCHEME::dock_run(){
                     else {
                         Dock->run(REC, LIG, RefLig, center, Input, counter);
                     }
+                    if (Input->eq_mode){
+                        Writer->writeMol2(LIG, LIG->xyz, 0.0, 0.0, string(Input->output + "_" + LIG->molname));
+                        Conformer* Conf = new Conformer;
+                        Conf->generate_conformers_confab(Input, LIG, string(Input->output + "_" + LIG->molname+".mol2.gz"));
+                        MC* EqMC = new MC(LIG, Input, Writer);
+                        if (Input->use_grids){
+                            EqMC->run(Grids, RefLig , LIG, LIG->xyz, Input, Input->temp);
+                        }
+                        else {
+                            EqMC->run(REC, RefLig , LIG, LIG->xyz, Input, Input->temp);
+                        }
+                        if (Input->ligsim){
+                            EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, Input->temp);
+                        }
+                        delete EqMC;
                     delete Conf;
+                    }
                 }
                 else {
                     if (Input->use_grids){
@@ -393,6 +463,17 @@ void TEMP_SCHEME::dock_run(){
                     else {
                         Dock->run(REC, LIG, RefLig, center, Input, counter);
                     }
+                    MC* EqMC = new MC(LIG, Input, Writer);
+                    if (Input->use_grids){
+                        EqMC->run(Grids, RefLig , LIG, LIG->xyz, Input, Input->temp);
+                    }
+                    else {
+                        EqMC->run(REC, RefLig , LIG, LIG->xyz, Input, Input->temp);
+                    }
+                    if (Input->ligsim){
+                        EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, Input->temp);
+                    }
+                    delete EqMC;
                 }
             }
             delete Dock;
@@ -468,6 +549,25 @@ int TEMP_SCHEME::dock_serial(vector<string> ligand_list, int count, int chunck_s
             }
             else {
                 Dock->run(REC, Lig2, RefLig, center, Input, ((count*chunck_size))+i+1);
+            }
+            if (Input->eq_mode){
+                if (Input->generate_conformers){
+                    Conformer* Conf = new Conformer;
+                    Writer->writeMol2(Lig2, Lig2->xyz, 0.0, 0.0, string(Input->output + "_" + Lig2->molname));
+                    Conf->generate_conformers_confab(Input, Lig2, string(Input->output +"_" + Lig2->molname+".mol2.gz"));
+                    delete Conf;
+                }
+                MC* EqMC = new MC(Lig2, Input, Writer);
+                if (Input->use_grids){
+                    EqMC->run(Grids, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
+                }
+                else {
+                    EqMC->run(REC, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
+                }
+                if (Input->ligsim){
+                    EqMC->ligand_run(RefLig, Lig2, Lig2->xyz, Input, Input->temp);
+                }
+                delete EqMC;
             }
         }
         delete Lig2;
@@ -569,7 +669,10 @@ void TEMP_SCHEME::dock_parallel(){
                         {
                             Conf->generate_conformers_confab(Input, Lig2, ligand_list[i]);
                         }
+
                         delete Conf;
+                    }
+
 #ifdef HAS_GUI
                         Docker* Dock = new Docker(QWriter);
 #else
@@ -582,9 +685,28 @@ void TEMP_SCHEME::dock_parallel(){
                             Dock->run(REC, Lig2, RefLig, center, Input, i+1);
                         }
                         delete Dock;
+                        if (Input->eq_mode){
+                            if (Input->generate_conformers){
+                                Writer->writeMol2(Lig2, Lig2->xyz, 0.0, 0.0, string(Input->output + "_" + Lig2->molname));
+                                Conformer* Conf = new Conformer;
+                                Conf->generate_conformers_confab(Input, Lig2, string(Input->output + "_" + Lig2->molname+".mol2.gz"));
+                                delete Conf;
+                            }
+                            MC* EqMC = new MC(Lig2, Input, Writer);
+                            if (Input->use_grids){
+                                EqMC->run(Grids, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
+                            }
+                            else {
+                                EqMC->run(REC, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
+                            }
+                            if (Input->ligsim){
+                                EqMC->ligand_run(RefLig, Lig2, Lig2->xyz, Input, Input->temp);
+                            }
+                            delete EqMC;
+                        }
                     }
-                }
                 delete Lig2;
+
 #ifdef HAS_GUI
                 if (omp_get_thread_num() ==0) {
                     progressbar->setValue(round((i+1)*100/int(ligand_list.size())));

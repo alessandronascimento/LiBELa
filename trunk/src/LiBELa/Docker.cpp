@@ -90,6 +90,7 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
         delete Coord;
         delete opt_result2;
         delete Opt;
+        Lig->xyz = opt_result2->optimized_xyz;
     }
     else {
         this->Dock_conformers(Rec, Lig, RefLig, com, Input, counter);
