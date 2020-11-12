@@ -553,11 +553,12 @@ int TEMP_SCHEME::dock_serial(vector<string> ligand_list, int count, int chunck_s
             if (Input->eq_mode){
                 if (Input->generate_conformers){
                     Conformer* Conf = new Conformer;
-                    Writer->writeMol2(Lig2, Lig2->xyz, 0.0, 0.0, string(Input->output + "_" + Lig2->molname));
+                    Write_lig->writeMol2(Lig2, Lig2->xyz, 0.0, 0.0, string(Input->output + "_" + Lig2->molname));
+                    Lig2->mcoords.clear();
                     Conf->generate_conformers_confab(Input, Lig2, string(Input->output +"_" + Lig2->molname+".mol2.gz"));
                     delete Conf;
                 }
-                MC* EqMC = new MC(Lig2, Input, Writer);
+                MC* EqMC = new MC(Lig2, Input, Write_lig);
                 if (Input->use_grids){
                     EqMC->run(Grids, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
                 }
