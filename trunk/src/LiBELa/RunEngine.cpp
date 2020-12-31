@@ -29,6 +29,17 @@ TEMP_SCHEME::TEMP_SCHEME(int ac, char *av[]){
     RefLig = new Mol2(Input, Input->reflig_mol2);
     Ene = new Energy2(Input);
 
+    // Finding HB donors/acceptors for receptor. Using a cutoff of 10. Ang distance between the each CA atom and the ligand COM.
+    FindHB* HB = new FindHB;
+
+    for (int i=0; i< REC->residue_pointer.size()-1; i++){
+        HB->parse_residue(REC->residue_pointer[i]-1, REC->residue_pointer[i+1]-2, REC->resnames[i], REC, RefLig, 10.0);
+    }
+
+    // Finding HB donors/acceptors for RefLig;
+    HB->find_ligandHB(Input->reflig_mol2, RefLig);
+
+    delete HB;
 }
 
 /*
@@ -49,6 +60,18 @@ TEMP_SCHEME::TEMP_SCHEME(PARSER* _Input, QPlainTextEdit* Editor, QProgressBar* _
     LIG = new Mol2(Input, Input->lig_mol2);
     RefLig = new Mol2(Input, Input->reflig_mol2);
     Ene = new Energy2(Input);
+
+    // Finding HB donors/acceptors for receptor. Using a cutoff of 10. Ang distance between the each CA atom and the ligand COM.
+    FindHB* HB = new FindHB;
+
+    for (int i=0; i< REC->residue_pointer.size()-1; i++){
+        HB->parse_residue(REC->residue_pointer[i]-1, REC->residue_pointer[i+1]-2, REC->resnames[i], REC, RefLig, 10.0);
+    }
+
+    // Finding HB donors/acceptors for RefLig;
+    HB->find_ligandHB(Input->reflig_mol2, RefLig);
+
+    delete HB;
 }
 #endif
 
@@ -308,7 +331,7 @@ void TEMP_SCHEME::dock_run(){
     int time_elapsed;
     if(Input->dock_mode == true){
         ti = clock();
-        sprintf(info, "%5s %-12.12s %-4.4s %-10.10s %-8.8s %-8.8s %-8.8s %-8.8s %-8.8s %3.3s %-5.5s %2.2s", "#", "Ligand", "Resi", "Overlay", "Elec", "VDW", "Rec_Solv", "Lig_Solv", "Energy", "Conf", "MS", "SI");
+        sprintf(info, "%5s %-12.12s %-4.4s %-10.10s %-8.8s %-8.8s %-8.8s %-8.8s %-8.8s %3.3s %-5.5s %2.2s", "#", "Ligand", "Resi", "Overlay", "Elec", "VDW", "Solv", "HBond", "Energy", "Conf", "MS", "SI");
         this->print_info(info);
         this->print_line();
 
@@ -345,6 +368,9 @@ void TEMP_SCHEME::dock_run(){
                 while ((!multifile.eof()) and (ligand != "EOF")){
                     Mol2* Lig2 = new Mol2(Input, ligand);
                     counter++;
+                    FindHB* HB = new FindHB;
+                    HB->find_ligandHB(ligand, Lig2);
+                    delete HB;
                     if (Input->generate_conformers){
                         Conformer* Conf = new Conformer;
                         if (Conf->generate_conformers_confab(Input, Lig2, ligand)){
@@ -429,6 +455,9 @@ void TEMP_SCHEME::dock_run(){
             }
             else {
                 counter=1; 														// just one ligand
+                FindHB* HB = new FindHB;
+                HB->find_ligandHB(Input->lig_mol2, LIG);
+                delete HB;
                 if (Input->generate_conformers){
                     Conformer* Conf = new Conformer;
                     Conf->generate_conformers_confab(Input, LIG, Input->lig_mol2);
@@ -539,6 +568,9 @@ int TEMP_SCHEME::dock_serial(vector<string> ligand_list, int count, int chunck_s
         }
 
         if (lig_is_opened){
+            FindHB* HB = new FindHB;
+            HB->find_ligandHB(ligand_list[i], Lig2);
+            delete HB;
             if (Input->generate_conformers){
                 Conformer* Conf = new Conformer;
                 Conf->generate_conformers_confab(Input, Lig2, ligand_list[i]);
@@ -664,13 +696,15 @@ void TEMP_SCHEME::dock_parallel(){
                     }
                 }
                 if (lig_is_opened){
+                    FindHB* HB = new FindHB;
+                    HB->find_ligandHB(ligand_list[i], Lig2);
+                    delete HB;
                     if (Input->generate_conformers){
                         Conformer* Conf = new Conformer;
 #pragma omp critical
                         {
                             Conf->generate_conformers_confab(Input, Lig2, ligand_list[i]);
                         }
-
                         delete Conf;
                     }
 

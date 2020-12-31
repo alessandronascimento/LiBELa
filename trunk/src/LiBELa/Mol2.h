@@ -75,6 +75,10 @@ public:
 	vector<string> resnames;
 	//! Pointers to the number of residues / number of atoms.
 	vector<int> residue_pointer;
+    //! C++ vector containing the index for atoms that are HB acceptors
+    vector<int> HBacceptors;
+    //! C++ vector containing the index for atoms that are HB acceptors. For a X-H donor, mapping is X in element [0] and H in element [1];
+    vector<vector<int> > HBdonors;
 	//! Temporary string to parse prmtop file.
 	string line;
 	//!

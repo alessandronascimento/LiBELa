@@ -21,6 +21,18 @@ double Grid::distance_squared(double x1, double x2, double y1, double y2, double
 	return ((((x2-x1)*(x2-x1))+((y2-y1)*(y2-y1))+((z2-z1)*(z2-z1))) );
 }
 
+double Grid::angle(double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3){
+    //
+    // Law of cosines: c** = a** + b** - 2ab cos(C)
+    //
+    double ab = distance(x1, x2, y1, y2, z1, z2);
+    double ac = distance(x1, x3, y1, y3, z1, z3);
+    double bc = distance(x2, x3, y2, y3, z2, z3);
+    double angle = acos(((ab*ab)+(bc*bc)-(ac*ac))/(2*ab*bc));
+    angle = angle * 180.0 / PI;
+    return (angle);
+}
+
 
 Grid::Grid(PARSER* _Input, WRITER* _Writer) {
     this->Input = _Input;
@@ -56,52 +68,22 @@ Grid::Grid(PARSER* _Input, WRITER* _Writer, Mol2* Rec, vector<double> com){
 
     switch (Input->scoring_function) {
     case 0:
-        if (Input->dock_parallel and Input->parallel_jobs > 1){
-            this->compute_grid_softcore_omp(Rec);
-        }
-        else {
-            this->compute_grid_softcore(Rec);
-        }
+        this->compute_grid_softcore_HB_omp(Rec);
         break;
     case 1:
-        if (Input->dock_parallel and Input->parallel_jobs > 1){
-            this->compute_grid_softcore_omp(Rec);
-        }
-        else {
-            this->compute_grid_softcore(Rec);
-        }
+        this->compute_grid_softcore_HB_omp(Rec);
         break;
     case 2:
-        if (Input->dock_parallel and Input->parallel_jobs > 1){
-            this->compute_grid_hardcore_omp(Rec);
-        }
-        else{
-            this->compute_grid_hardcore(Rec);
-        }
+        this->compute_grid_hardcore_HB_omp(Rec);
         break;
     case 3:
-        if (Input->dock_parallel and Input->parallel_jobs > 1){
-            this->compute_grid_hardcore_omp(Rec);
-        }
-        else{
-            this->compute_grid_hardcore(Rec);
-        }
+        this->compute_grid_hardcore_HB_omp(Rec);
         break;
     case 4:
-        if (Input->dock_parallel and Input->parallel_jobs > 1){
-            this->compute_grid_hardcore_omp_Gaussian(Rec);
-        }
-        else{
-            this->compute_grid_hardcore_Gaussian(Rec);
-        }
+        this->compute_grid_hardcore_omp_HB_Gaussian(Rec);
         break;
     case 5:
-        if (Input->dock_parallel and Input->parallel_jobs > 1){
-            this->compute_grid_hardcore_omp_Gaussian(Rec);
-        }
-        else{
-            this->compute_grid_hardcore_Gaussian(Rec);
-        }
+        this->compute_grid_hardcore_omp_HB_Gaussian(Rec);
         break;
     }
 
@@ -296,9 +278,123 @@ void Grid::compute_grid_softcore_omp(Mol2* Rec){
     }
 }
 
+void Grid::compute_grid_softcore_HB_omp(Mol2* Rec){
+    if (Input->scoring_function < 2){
+        vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz), hb_donor_t1(npointsz), hb_acceptor_t1(npointsz);
+        vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2, hb_donor_t2, hb_acceptor_t2;
+
+        double HB_C12=55332.873;
+        double HB_C10=18393.199;
+
+        // initializing the vectors;
+
+        for (int i=0; i<this->npointsy; i++){
+            elec_t2.push_back(elec_t1);
+            vdwA_t2.push_back(vdwA_t1);
+            vdwB_t2.push_back(vdwB_t1);
+            solv_t2.push_back(solv_t1);
+            rec_solv_t2.push_back(rec_solv_t1);
+            hb_donor_t2.push_back(hb_donor_t1);
+            hb_acceptor_t2.push_back(hb_acceptor_t1);
+        }
+
+        for (int i=0; i<this->npointsx; i++){
+            this->elec_grid.push_back(elec_t2);
+            this->vdwA_grid.push_back(vdwA_t2);
+            this->vdwB_grid.push_back(vdwB_t2);
+            this->solv_gauss.push_back(solv_t2);
+            this->rec_solv_gauss.push_back(rec_solv_t2);
+            this->hb_donor_grid.push_back(hb_donor_t2);
+            this->hb_acceptor_grid.push_back(hb_acceptor_t2);
+        }
+
+        // Now, starting OMP...
+#pragma omp parallel num_threads(Input->parallel_jobs)
+        {
+#pragma omp for schedule(static, 1)
+            for(int a=0; a< this->npointsx; a++){
+                double x = (a*grid_spacing) + this->xbegin;
+
+                for (int b=0; b< this->npointsy; b++){
+                    double y = (b*this->grid_spacing) + this->ybegin;
+                    for (int c=0; c<this->npointsz; c++){
+                        double z = (c*this->grid_spacing) + this->zbegin;
+                        double elec = 0.0;
+                        double vdwA = 0.0;
+                        double vdwB = 0.0;
+                        double solv=0.0;
+                        double rec_solv=0.0;
+                        double hb_donor=0.0;
+                        double hb_acceptor = 0.0;
+
+                        for (int i=0; i< Rec->N; i++){
+                            double d = this->distance(x, Rec->xyz[i][0], y,Rec->xyz[i][1], z, Rec->xyz[i][2]);
+                            double d2 = d*d;
+                            double d3 = d*d*d;
+                            double d6 = d2*d2*d2;
+
+                            double denom = pow((d3 + Input->deltaij_es3), (1.0/3.0));
+
+                            if (Input->dielectric_model == "constant"){
+                                elec += (332.0*Rec->charges[i])/(Input->diel*denom);
+                                denom = pow((d6 + Input->deltaij_es6), (1.0/3.0));
+                                solv += ((Input->solvation_alpha * Rec->charges[i] * Rec->charges[i])+ Input->solvation_beta) *  exp((-denom/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
+                                rec_solv += (4.0/3.0) * PI * pow(Rec->radii[i], 3) * exp((-denom/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
+                            }
+
+                            else {                      // dielectric model == r
+                                denom = pow((d6 + Input->deltaij_es6), (1.0/3.0));
+                                elec += (332.0* Rec->charges[i]/(Input->diel*denom));
+                                solv += ((Input->solvation_alpha * Rec->charges[i] * Rec->charges[i])+ Input->solvation_beta) *  exp((-denom/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
+                                rec_solv += (4.0/3.0) * PI * pow(Rec->radii[i], 3) * exp((-denom/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
+                            }
+
+                            denom = (d6 + Input->deltaij6);
+                            vdwA += (4096.0 * Rec->epsilons_sqrt[i] * pow(Rec->radii[i], 6)) / (denom*denom);
+                            vdwB += ( 128.0 * Rec->epsilons_sqrt[i] * pow(Rec->radii[i], 3)) / denom;
+                        }
+
+                        for (unsigned i=0; i<Rec->HBdonors.size(); i++){
+                            double d = distance(Rec->xyz[Rec->HBdonors[i][1]][0], x, Rec->xyz[Rec->HBdonors[i][1]][1], y, Rec->xyz[Rec->HBdonors[i][1]][2], z);
+                            double d10 = d*d*d*d*d*d*d*d*d*d;
+                            double ang = angle(Rec->xyz[Rec->HBdonors[i][0]][0], Rec->xyz[Rec->HBdonors[i][0]][1], Rec->xyz[Rec->HBdonors[i][0]][2], Rec->xyz[Rec->HBdonors[i][1]][0],
+                                    Rec->xyz[Rec->HBdonors[i][1]][1], Rec->xyz[Rec->HBdonors[i][1]][2], x, y, z);
+                            double angle_term = cos(ang * PI / 180.0) * cos(ang * PI / 180.0) * cos(ang * PI / 180.0) * cos(ang * PI / 180.0);
+                            hb_donor += ((HB_C12/(d10*d*d)) - (HB_C10/d10)) * angle_term;
+
+                        }
+
+                        for (unsigned i=0; i<Rec->HBacceptors.size(); i++){
+                            double d = distance(Rec->xyz[Rec->HBacceptors[i]][0], x, Rec->xyz[Rec->HBacceptors[i]][1], y, Rec->xyz[Rec->HBacceptors[i]][2], z);
+                            double d10 = d*d*d*d*d*d*d*d*d*d;
+                            hb_acceptor += ((HB_C12/(d10*d*d)) - (HB_C10/d10));
+                        }
+
+                        this->elec_grid[a][b][c] = elec;
+                        this->vdwA_grid[a][b][c] = vdwA;
+                        this->vdwB_grid[a][b][c] = vdwB;
+                        this->solv_gauss[a][b][c] = solv;
+                        this->rec_solv_gauss[a][b][c] = rec_solv;
+                        this->hb_donor_grid[a][b][c] = hb_donor;
+                        this->hb_acceptor_grid[a][b][c] = hb_acceptor;
+                    }
+                }
+            }
+
+            this->rec_si = 0.00;
+            for(int i=0; i<Rec->N; i++){
+                this->rec_si += (Input->solvation_alpha*Rec->charges[i]*Rec->charges[i]) + Input->solvation_beta;
+            }
+        }
+    }
+    else {
+        this->compute_grid_hardcore(Rec);
+    }
+}
+
 void Grid::write_grids_to_file(){
 	FILE* outgrid;
-    double elec, vdwA, vdwB, solv, rec_solv, pbsa, delphi;
+    double elec, vdwA, vdwB, solv, rec_solv, pbsa, delphi, hb_donor, hb_acceptor;
     int pbsa_flag = 0;
     if (this->pbsa_loaded){
         pbsa_flag = 1;
@@ -331,6 +427,8 @@ void Grid::write_grids_to_file(){
 				vdwB = this->vdwB_grid[a][b][c];
 				solv = this->solv_gauss[a][b][c];
 				rec_solv = this->rec_solv_gauss[a][b][c];
+                hb_donor = this->hb_donor_grid[a][b][c];
+                hb_acceptor = this->hb_acceptor_grid[a][b][c];
                 if (this->pbsa_loaded){
                     pbsa = this->pbsa_grid[a][b][c];
                 }
@@ -346,8 +444,11 @@ void Grid::write_grids_to_file(){
 				fwrite(&vdwB, sizeof(double), 1, outgrid);
 				fwrite(&rec_solv, sizeof(double), 1, outgrid);
 				fwrite(&solv, sizeof(double), 1, outgrid);
+                fwrite(&hb_donor, sizeof(double), 1, outgrid);
+                fwrite(&hb_acceptor, sizeof(double), 1, outgrid);
                 fwrite(&pbsa, sizeof(double), 1, outgrid);
                 fwrite(&delphi, sizeof(double), 1, outgrid);
+
 			}
 		}
 	}
@@ -356,7 +457,7 @@ void Grid::write_grids_to_file(){
 
 void Grid::load_grids_from_file(){
 	FILE* ingrid;
-    double elec, vdwA, vdwB, solv, rec_solv, pbsa, delphi;
+    double elec, vdwA, vdwB, solv, rec_solv, pbsa, delphi, hb_acceptor, hb_donor;
     size_t garbage;
     int pbsa_flag;
 	ingrid = fopen((Input->grid_prefix + ".grid").c_str(), "rb");
@@ -386,8 +487,8 @@ void Grid::load_grids_from_file(){
         break;
     }
 
-    vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz), pbsa_t1(npointsz), delphi_t1(npointsz);
-    vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2, pbsa_t2, delphi_t2;
+    vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz), pbsa_t1(npointsz), delphi_t1(npointsz), hb_donor_t1(npointsz), hb_acceptor_t1(npointsz);
+    vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2, pbsa_t2, delphi_t2, hb_donor_t2, hb_acceptor_t2;
 
 		for(int a=0; a< this->npointsx; a++){
 			for (int b=0; b< this->npointsy; b++){
@@ -397,22 +498,28 @@ void Grid::load_grids_from_file(){
 					garbage = fread(&vdwB, sizeof(double), 1, ingrid);
 					garbage = fread(&rec_solv, sizeof(double), 1, ingrid);
 					garbage = fread(&solv, sizeof(double), 1, ingrid);
+                    garbage = fread(&hb_donor, sizeof(double), 1, ingrid);
+                    garbage = fread(&hb_acceptor, sizeof(double), 1, ingrid);
                     garbage = fread(&pbsa, sizeof(double), 1, ingrid);
                     garbage = fread(&delphi, sizeof(double), 1, ingrid);
 
-					elec_t1[c] = (elec);
-					vdwA_t1[c] = (vdwA);
-					vdwB_t1[c] = (vdwB);
-					solv_t1[c] = (solv);
-					rec_solv_t1[c] = (rec_solv);
-                    pbsa_t1[c] = (pbsa);
-                    delphi_t1[c] = (delphi);
+                    elec_t1[unsigned(c)] = (elec);
+                    vdwA_t1[unsigned(c)] = (vdwA);
+                    vdwB_t1[unsigned(c)] = (vdwB);
+                    solv_t1[unsigned(c)] = (solv);
+                    rec_solv_t1[unsigned(c)] = (rec_solv);
+                    hb_donor_t1[unsigned(c)] = (hb_donor);
+                    hb_acceptor_t1[unsigned(c)] = (hb_acceptor);
+                    pbsa_t1[unsigned(c)] = (pbsa);
+                    delphi_t1[unsigned(c)] = (delphi);
 				}
 				elec_t2.push_back(elec_t1);
 				vdwA_t2.push_back(vdwA_t1);
 				vdwB_t2.push_back(vdwB_t1);
 				solv_t2.push_back(solv_t1);
 				rec_solv_t2.push_back(rec_solv_t1);
+                hb_donor_t2.push_back(hb_donor_t1);
+                hb_acceptor_t2.push_back(hb_acceptor_t1);
                 pbsa_t2.push_back(pbsa_t1);
                 delphi_t2.push_back(delphi_t1);
 			}
@@ -421,6 +528,8 @@ void Grid::load_grids_from_file(){
 			this->vdwB_grid.push_back(vdwB_t2);
 			this->solv_gauss.push_back(solv_t2);
 			this->rec_solv_gauss.push_back(rec_solv_t2);
+            this->hb_donor_grid.push_back(hb_donor_t2);
+            this->hb_acceptor_grid.push_back(hb_acceptor_t2);
             this->pbsa_grid.push_back(pbsa_t2);
             this->delphi_grid.push_back(delphi_t2);
 			elec_t2.clear();
@@ -428,6 +537,8 @@ void Grid::load_grids_from_file(){
 			vdwB_t2.clear();
 			solv_t2.clear();
 			rec_solv_t2.clear();
+            hb_donor_t2.clear();
+            hb_acceptor_t2.clear();
             pbsa_t2.clear();
             delphi_t2.clear();
 		}
@@ -440,6 +551,8 @@ Grid::~Grid() {
 	this->vdwB_grid.clear();
 	this->rec_solv_gauss.clear();
 	this->solv_gauss.clear();
+    this->hb_donor_grid.clear();
+    this->hb_acceptor_grid.clear();
 }
 
 void Grid::compute_grid_hardcore(Mol2* Rec){
@@ -717,6 +830,118 @@ void Grid::compute_grid_hardcore_omp(Mol2* Rec){
                 this->vdwB_grid[a][b][c] = vdwB;
                 this->solv_gauss[a][b][c] = solv;
                 this->rec_solv_gauss[a][b][c] = rec_solv;
+            }
+        }
+    }
+}                       // end of pragma
+    this->rec_si = 0.00;
+    for(int i=0; i<Rec->N; i++){
+        this->rec_si += (Input->solvation_alpha*Rec->charges[i]*Rec->charges[i]) + Input->solvation_beta;
+    }
+}
+
+void Grid::compute_grid_hardcore_HB_omp(Mol2* Rec){
+    vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz), hb_donor_t1(npointsz), hb_acceptor_t1(npointsz);
+    vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2, hb_donor_t2, hb_acceptor_t2;
+
+    double HB_C12=55332.873;
+    double HB_C10=18393.199;
+
+    double sqrt2 = sqrt(2.0);
+
+// initializing the vectors;
+
+    for (int i=0; i<this->npointsy; i++){
+        elec_t2.push_back(elec_t1);
+        vdwA_t2.push_back(vdwA_t1);
+        vdwB_t2.push_back(vdwB_t1);
+        solv_t2.push_back(solv_t1);
+        rec_solv_t2.push_back(rec_solv_t1);
+        hb_donor_t2.push_back(hb_donor_t1);
+        hb_acceptor_t2.push_back(hb_acceptor_t1);
+    }
+
+    for (int i=0; i<this->npointsx; i++){
+        this->elec_grid.push_back(elec_t2);
+        this->vdwA_grid.push_back(vdwA_t2);
+        this->vdwB_grid.push_back(vdwB_t2);
+        this->solv_gauss.push_back(solv_t2);
+        this->rec_solv_gauss.push_back(rec_solv_t2);
+        this->hb_donor_grid.push_back(hb_donor_t2);
+        this->hb_acceptor_grid.push_back(hb_acceptor_t2);
+    }
+
+// Now, starting OMP...
+
+#pragma omp parallel num_threads(Input->parallel_jobs)
+{
+#pragma omp for schedule(static, 1)
+    for(int a=0; a< this->npointsx; a++){
+
+        double x = (a*this->grid_spacing) + this->xbegin;
+
+        for (int b=0; b< this->npointsy; b++){
+            double y = (b*this->grid_spacing) + this->ybegin;
+
+            for (int c=0; c<this->npointsz; c++){
+                double z = (c*this->grid_spacing) + this->zbegin;
+                double elec = 0.0;
+                double vdwA = 0.0;
+                double vdwB = 0.0;
+                double solv=0.0;
+                double rec_solv=0.0;
+                double hb_donor=0.0;
+                double hb_acceptor = 0.0;
+
+                for (int i=0; i< Rec->N; i++){
+                    double d2 = this->distance_squared(x, Rec->xyz[i][0], y,Rec->xyz[i][1], z, Rec->xyz[i][2]);
+                    double d6 = d2 * d2 * d2;
+                    if (Input->dielectric_model == "constant"){
+                        double d = sqrt(d2);
+                        elec += 332.0*((Rec->charges[i])/(d*Input->diel));
+                    }
+                    else if (Input->dielectric_model == "4r") {     // epsilon = 4r
+                        elec += 332.0 * (Rec->charges[i]/(4*d2));
+                    }
+                    else {                                          // Input->dielectric_model = "r"
+                        elec += 332.0 * (Rec->charges[i]/d2);
+                    }
+
+                    vdwA += Rec->epsilons_sqrt[i]*64.0*pow(Rec->radii[i], 6) / (d6*d6);
+                    vdwB += sqrt2*Rec->epsilons_sqrt[i]*8.0*pow(Rec->radii[i], 3) / d6;
+
+                    double deff = (d2);
+
+                    solv += ((Input->solvation_alpha * Rec->charges[i] * Rec->charges[i])+ Input->solvation_beta) *  exp((-(deff)/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
+                    rec_solv += (4.0/3.0) * PI * pow(Rec->radii[i], 3) * exp((-(deff)/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
+                }
+
+                for (unsigned i=0; i<Rec->HBdonors.size(); i++){
+                    printf("Running over Receptor HB donors...\n");
+                    double d = distance(Rec->xyz[Rec->HBdonors[i][1]][0], x, Rec->xyz[Rec->HBdonors[i][1]][1], y, Rec->xyz[Rec->HBdonors[i][1]][2], z);
+                    double d10 = d*d*d*d*d*d*d*d*d*d;
+                    double ang = angle(Rec->xyz[Rec->HBdonors[i][0]][0], Rec->xyz[Rec->HBdonors[i][0]][1], Rec->xyz[Rec->HBdonors[i][0]][2], Rec->xyz[Rec->HBdonors[i][1]][0],
+                            Rec->xyz[Rec->HBdonors[i][1]][1], Rec->xyz[Rec->HBdonors[i][1]][2], x, y, z);
+                    double angle_term = cos(ang * PI / 180.0) * cos(ang * PI / 180.0) * cos(ang * PI / 180.0) * cos(ang * PI / 180.0);
+                    hb_donor += ((HB_C12/(d10*d*d)) - (HB_C10/d10)) * angle_term;
+
+                }
+
+                for (unsigned i=0; i<Rec->HBacceptors.size(); i++){
+                    printf("Running over Receptor HB acceptors...\n");
+                    double d = distance(Rec->xyz[Rec->HBacceptors[i]][0], x, Rec->xyz[Rec->HBacceptors[i]][1], y, Rec->xyz[Rec->HBacceptors[i]][2], z);
+                    double d10 = d*d*d*d*d*d*d*d*d*d;
+                    hb_acceptor += ((HB_C12/(d10*d*d)) - (HB_C10/d10));
+                }
+
+
+                this->elec_grid[a][b][c] = elec;
+                this->vdwA_grid[a][b][c] = vdwA;
+                this->vdwB_grid[a][b][c] = vdwB;
+                this->solv_gauss[a][b][c] = solv;
+                this->rec_solv_gauss[a][b][c] = rec_solv;
+                this->hb_donor_grid[a][b][c] = hb_donor;
+                this->hb_acceptor_grid[a][b][c] = hb_acceptor;
             }
         }
     }
@@ -1195,9 +1420,12 @@ void Grid::compute_grid_hardcore_Gaussian(Mol2* Rec){
     }
 }
 
-void Grid::compute_grid_hardcore_omp_Gaussian(Mol2* Rec){
-    vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz);
-    vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2;
+void Grid::compute_grid_hardcore_omp_HB_Gaussian(Mol2* Rec){
+    vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz), hb_donor_t1(npointsz), hb_acceptor_t1(npointsz);
+    vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2, hb_donor_t2, hb_acceptor_t2;
+
+    double HB_C12=55332.873;
+    double HB_C10=18393.199;
 
     double sqrt2 = sqrt(2.0);
 
@@ -1209,6 +1437,8 @@ void Grid::compute_grid_hardcore_omp_Gaussian(Mol2* Rec){
         vdwB_t2.push_back(vdwB_t1);
         solv_t2.push_back(solv_t1);
         rec_solv_t2.push_back(rec_solv_t1);
+        hb_donor_t2.push_back(hb_donor_t1);
+        hb_acceptor_t2.push_back(hb_acceptor_t1);
     }
 
     for (int i=0; i<this->npointsx; i++){
@@ -1217,6 +1447,8 @@ void Grid::compute_grid_hardcore_omp_Gaussian(Mol2* Rec){
         this->vdwB_grid.push_back(vdwB_t2);
         this->solv_gauss.push_back(solv_t2);
         this->rec_solv_gauss.push_back(rec_solv_t2);
+        this->hb_donor_grid.push_back(hb_donor_t2);
+        this->hb_acceptor_grid.push_back(hb_acceptor_t2);
     }
 
 // Now, starting OMP...
@@ -1238,6 +1470,8 @@ void Grid::compute_grid_hardcore_omp_Gaussian(Mol2* Rec){
                 double vdwB = 0.0;
                 double solv=0.0;
                 double rec_solv=0.0;
+                double hb_donor=0.0;
+                double hb_acceptor = 0.0;
 
                 for (int i=0; i< Rec->N; i++){
                     double d2 = this->distance_squared(x, Rec->xyz[i][0], y,Rec->xyz[i][1], z, Rec->xyz[i][2]);
@@ -1296,11 +1530,30 @@ void Grid::compute_grid_hardcore_omp_Gaussian(Mol2* Rec){
                     solv += ((Input->solvation_alpha * Rec->charges[i] * Rec->charges[i])+ Input->solvation_beta) *  exp((-(deff)/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
                     rec_solv += (4.0/3.0) * PI * pow(Rec->radii[i], 3) * exp((-(deff)/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
                 }
+
+                for (unsigned i=0; i<Rec->HBdonors.size(); i++){
+                    double d = distance(Rec->xyz[Rec->HBdonors[i][1]][0], x, Rec->xyz[Rec->HBdonors[i][1]][1], y, Rec->xyz[Rec->HBdonors[i][1]][2], z);
+                    double d10 = d*d*d*d*d*d*d*d*d*d;
+                    double ang = angle(Rec->xyz[Rec->HBdonors[i][0]][0], Rec->xyz[Rec->HBdonors[i][0]][1], Rec->xyz[Rec->HBdonors[i][0]][2], Rec->xyz[Rec->HBdonors[i][1]][0],
+                            Rec->xyz[Rec->HBdonors[i][1]][1], Rec->xyz[Rec->HBdonors[i][1]][2], x, y, z);
+                    double angle_term = cos(ang * PI / 180.0) * cos(ang * PI / 180.0) * cos(ang * PI / 180.0) * cos(ang * PI / 180.0);
+                    hb_donor += ((HB_C12/(d10*d*d)) - (HB_C10/d10)) * angle_term;
+
+                }
+
+                for (unsigned i=0; i<Rec->HBacceptors.size(); i++){
+                    double d = distance(Rec->xyz[Rec->HBacceptors[i]][0], x, Rec->xyz[Rec->HBacceptors[i]][1], y, Rec->xyz[Rec->HBacceptors[i]][2], z);
+                    double d10 = d*d*d*d*d*d*d*d*d*d;
+                    hb_acceptor += ((HB_C12/(d10*d*d)) - (HB_C10/d10));
+                }
+
                 this->elec_grid[a][b][c] = elec;
                 this->vdwA_grid[a][b][c] = vdwA;
                 this->vdwB_grid[a][b][c] = vdwB;
                 this->solv_gauss[a][b][c] = solv;
                 this->rec_solv_gauss[a][b][c] = rec_solv;
+                this->hb_donor_grid[a][b][c] = hb_donor;
+                this->hb_acceptor_grid[a][b][c] = hb_acceptor;
             }
         }
     }

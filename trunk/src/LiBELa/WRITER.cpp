@@ -437,6 +437,7 @@ void WRITER::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, energy_result_t* 
     gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Energy Score", result->total);
     gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Elec Score", result->elec);
     gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "VDW Score", result->vdw);
+    gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "HB Score", result->hb_donor+result->hb_acceptor);
     gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Rest Score", result->restraints);
     gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Solv Score", (result->rec_solv + result->lig_solv));
     gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "RMSD", rmsd);
@@ -542,6 +543,7 @@ void WRITER::writeMol2(Mol2* Cmol, vector<vector<double> >xyz, energy_result_t* 
     gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Energy Score", result->total);
     gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Elec Score", result->elec);
     gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "VDW Score", result->vdw);
+    gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "HB Score", result->hb_donor+result->hb_acceptor);
     gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Rest Score", result->restraints);
     gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "Solv Score", (result->rec_solv + result->lig_solv));
     gzprintf(outmol2, "########## %15.15s: % 19.6f\n", "RMSD", rmsd);

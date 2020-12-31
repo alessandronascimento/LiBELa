@@ -32,6 +32,9 @@ public:
 	vector<vector<vector<double> > > solv_gauss;
 	vector<vector<vector<double> > > rec_solv_gauss;
     vector<vector<vector<double> > > delphi_grid;
+    vector<vector<vector<double> > > hb_donor_grid;
+    vector<vector<vector<double> > > hb_acceptor_grid;
+
 	double rec_si;
     //! Pointer to the PARSER class
 	PARSER* Input;
@@ -68,10 +71,13 @@ public:
 
     double distance_squared(double x1, double x2, double y1, double y2, double z1, double z2) ;
 
+    double angle(double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3);
+
     void generate_points(vector<double> ref_com);
 
     void compute_grid_softcore(Mol2* Lig);
     void compute_grid_softcore_omp(Mol2* Lig);
+    void compute_grid_softcore_HB_omp(Mol2* Lig);
 
 	void compute_grid_hardcore(Mol2* Lig);
     void compute_grid_hardcore_Gaussian(Mol2* Lig);
@@ -113,7 +119,8 @@ public:
      * @param Rec class Mol2 object with receptor description
      */
     void compute_grid_hardcore_omp(Mol2* Rec);
-    void compute_grid_hardcore_omp_Gaussian(Mol2* Rec);
+    void compute_grid_hardcore_HB_omp(Mol2* Rec);
+    void compute_grid_hardcore_omp_HB_Gaussian(Mol2* Rec);
 
     /**
      * @brief load_delphi_cube This function loads a DelPhi potential in

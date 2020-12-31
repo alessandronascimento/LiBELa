@@ -13,6 +13,8 @@ struct energy_result_t{
     double elec;
     double rec_solv;
     double lig_solv;
+    double hb_donor;
+    double hb_acceptor;
     double restraints;
     double total;
 

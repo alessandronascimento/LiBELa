@@ -2,6 +2,7 @@
 #define ENERGY2_H
 
 #include<vector>
+#include<cmath>
 #include "PARSER.h"
 #include "Mol2.h"
 #include "iMcLiBELa.h"
@@ -23,6 +24,8 @@ public:
         double delphi;
         double solv_gauss;
         double rec_solv_gauss;
+        double hb_donor;
+        double hb_acceptor;
     };
 
     //! class PARSER provided to this class;
@@ -39,6 +42,10 @@ public:
     //! \param z2 Z coordinate for atom 2
     //! \return the distance between the two atoms
     //!
+
+    bool atom_is_acceptor(int a, Mol2* Lig);
+    int H_is_donor(int a, Mol2* Lig);
+    double angle(double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3);
     double distance(double x1, double x2, double y1, double y2, double z1, double z2);
 
     //!

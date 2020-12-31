@@ -11,14 +11,14 @@ using namespace std;
 using namespace OpenBabel;
 
 Conformer::Conformer() {
+/*
 // Supressing OpenBabel warning messages
 #ifndef DEBUG
     OBMessageHandler* messageHandler = new OBMessageHandler;
 	messageHandler->SetOutputLevel(obError);
 	OpenBabel::obErrorLog = *messageHandler;
 #endif
-
-
+*/
 }
 
 Conformer::~Conformer() {

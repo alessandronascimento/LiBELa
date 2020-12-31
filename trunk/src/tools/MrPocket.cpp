@@ -68,7 +68,7 @@ int main (int argc, char* argv[]){
             Input->rec_mol2 = string(recfile);
             break;
         case 'n':
-            res_site = 1;
+            res_site = atoi(optarg);
             res_number = atoi(optarg);
             break;
         case 'l':

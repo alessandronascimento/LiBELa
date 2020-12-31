@@ -12,6 +12,7 @@
 #include "MC.h"
 #include "FullSearch.h"
 #include"Conformer.h"
+#include "FindHB.h"
 #include<iostream>
 #include<fstream>
 #include<cstdlib>
