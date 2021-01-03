@@ -380,9 +380,9 @@ double Energy2::compute_ene_from_grids_softcore_solvation(Grid* Grids, Mol2* Lig
 }
 
 double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<vector<double> > xyz){
-    double elec =0.0, vdwA=0.0, vdwB = 0.00;
-    int a1=0, b1=0, c1=0, a2=0, b2=0, c2=0;
-    double af, bf, cf;
+    double elec =0.0, vdwA=0.0, vdwB = 0.00, hb_donor=0.0, hb_acceptor=0.0;
+    int a1=0, b1=0, c1=0, a2=0, b2=0, c2=0, donor_index;
+    double af, bf, cf, angle_term;
     for (int i=0; i< Lig->N; i++){
         af = (xyz[i][0] - Grids->xbegin)/Grids->grid_spacing;
         bf = (xyz[i][1] - Grids->ybegin)/Grids->grid_spacing;
@@ -420,6 +420,23 @@ double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<v
             vdwA += Lig->epsilons_sqrt[i] * pow(Lig->radii[i], 6) * GI->vdwA;
             vdwB += Lig->epsilons_sqrt[i] * pow(Lig->radii[i], 3) * GI->vdwB;
 
+            if (this->atom_is_acceptor(i, Lig)){
+                hb_donor += GI->hb_donor;
+            }
+            else {
+                if (Lig->HBacceptors.size() > 0){
+                    donor_index = this->H_is_donor(i, Lig);
+                    if (donor_index >= 0){       // atom is a H donor
+                        double x = (af*Grids->grid_spacing)+Grids->xbegin;
+                        double y = (bf*Grids->grid_spacing)+Grids->ybegin;
+                        double z = (cf*Grids->grid_spacing)+Grids->zbegin;
+                        angle_term = this->angle(Lig->xyz[donor_index][0], Lig->xyz[donor_index][1], Lig->xyz[donor_index][2], Lig->xyz[i][0], Lig->xyz[i][1], Lig->xyz[i][2], x, y, z);
+                        angle_term = cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0);
+                        hb_acceptor += GI->hb_acceptor*angle_term;
+                    }
+                }
+            }
+
             delete GI;
         }
         else {
@@ -431,7 +448,7 @@ double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<v
 #endif
         }
     }
-    return((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB)));
+    return((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB))+ hb_donor + hb_acceptor);
 }
 
 double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig, vector<vector<double> > xyz){
@@ -555,17 +572,19 @@ double Energy2::compute_ene_from_grids_hardcore(Grid* Grids, Mol2* Lig, vector<v
             if (this->atom_is_acceptor(i, Lig)){
                 hb_donor += GI->hb_donor;
             }
-
-            donor_index = this->H_is_donor(i, Lig);
-            if (donor_index >= 0){       // atom is a H donor
-                double x = (af*Grids->grid_spacing)+Grids->xbegin;
-                double y = (bf*Grids->grid_spacing)+Grids->ybegin;
-                double z = (cf*Grids->grid_spacing)+Grids->zbegin;
-                angle_term = this->angle(Lig->xyz[donor_index][0], Lig->xyz[donor_index][1], Lig->xyz[donor_index][2], Lig->xyz[i][0], Lig->xyz[i][1], Lig->xyz[i][2], x, y, z);
-                angle_term = cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0);
-                hb_acceptor += GI->hb_acceptor*angle_term;
+            else {
+                if (Lig->HBacceptors.size() > 0){
+                    donor_index = this->H_is_donor(i, Lig);
+                    if (donor_index >= 0){       // atom is a H donor
+                        double x = (af*Grids->grid_spacing)+Grids->xbegin;
+                        double y = (bf*Grids->grid_spacing)+Grids->ybegin;
+                        double z = (cf*Grids->grid_spacing)+Grids->zbegin;
+                        angle_term = this->angle(Lig->xyz[donor_index][0], Lig->xyz[donor_index][1], Lig->xyz[donor_index][2], Lig->xyz[i][0], Lig->xyz[i][1], Lig->xyz[i][2], x, y, z);
+                        angle_term = cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0);
+                        hb_acceptor += GI->hb_acceptor*angle_term;
+                    }
+                }
             }
-
 
             delete GI;
         }
@@ -630,17 +649,19 @@ double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig
             if (this->atom_is_acceptor(i, Lig)){
                 hb_donor += GI->hb_donor;
             }
-
-            donor_index = this->H_is_donor(i, Lig);
-            if (donor_index >= 0){       // atom is a H donor
-                double x = (af*Grids->grid_spacing)+Grids->xbegin;
-                double y = (bf*Grids->grid_spacing)+Grids->ybegin;
-                double z = (cf*Grids->grid_spacing)+Grids->zbegin;
-                angle_term = this->angle(Lig->xyz[donor_index][0], Lig->xyz[donor_index][1], Lig->xyz[donor_index][2], Lig->xyz[i][0], Lig->xyz[i][1], Lig->xyz[i][2], x, y, z);
-                angle_term = cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0);
-                hb_acceptor += GI->hb_acceptor*angle_term;
+            else {
+                if (Lig->HBacceptors.size() > 0){
+                    donor_index = this->H_is_donor(i, Lig);
+                    if (donor_index >= 0){       // atom is a H donor
+                        double x = (af*Grids->grid_spacing)+Grids->xbegin;
+                        double y = (bf*Grids->grid_spacing)+Grids->ybegin;
+                        double z = (cf*Grids->grid_spacing)+Grids->zbegin;
+                        angle_term = this->angle(Lig->xyz[donor_index][0], Lig->xyz[donor_index][1], Lig->xyz[donor_index][2], Lig->xyz[i][0], Lig->xyz[i][1], Lig->xyz[i][2], x, y, z);
+                        angle_term = cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0);
+                        hb_acceptor += GI->hb_acceptor*angle_term;
+                    }
+                }
             }
-
             delete GI;
         }
         else {
@@ -703,17 +724,19 @@ double Energy2::compute_ene_from_grids_hardcore(Grid* Grids, Mol2* Lig, vector<v
             if (this->atom_is_acceptor(i, Lig)){
                 hb_donor += GI->hb_donor;
             }
-
-            donor_index = this->H_is_donor(i, Lig);
-            if (donor_index >= 0){       // atom is a H donor
-                double x = (af*Grids->grid_spacing)+Grids->xbegin;
-                double y = (bf*Grids->grid_spacing)+Grids->ybegin;
-                double z = (cf*Grids->grid_spacing)+Grids->zbegin;
-                angle_term = this->angle(Lig->xyz[donor_index][0], Lig->xyz[donor_index][1], Lig->xyz[donor_index][2], Lig->xyz[i][0], Lig->xyz[i][1], Lig->xyz[i][2], x, y, z);
-                angle_term = cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0);
-                hb_acceptor += GI->hb_acceptor*angle_term;
+            else {
+                if (Lig->HBacceptors.size() > 0){
+                    donor_index = this->H_is_donor(i, Lig);
+                    if (donor_index >= 0){       // atom is a H donor
+                        double x = (af*Grids->grid_spacing)+Grids->xbegin;
+                        double y = (bf*Grids->grid_spacing)+Grids->ybegin;
+                        double z = (cf*Grids->grid_spacing)+Grids->zbegin;
+                        angle_term = this->angle(Lig->xyz[donor_index][0], Lig->xyz[donor_index][1], Lig->xyz[donor_index][2], Lig->xyz[i][0], Lig->xyz[i][1], Lig->xyz[i][2], x, y, z);
+                        angle_term = cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0);
+                        hb_acceptor += GI->hb_acceptor*angle_term;
+                    }
+                }
             }
-
             delete GI;
         }
         else {
@@ -813,9 +836,9 @@ double Energy2::compute_ene_from_grids_softcore_solvation(Grid* Grids, Mol2* Lig
 }
 
 double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<vector<double> > xyz, energy_result_t* energy_result){
-    double elec =0.0, vdwA=0.0, vdwB = 0.00;
-    int a1=0, b1=0, c1=0, a2=0, b2=0, c2=0;
-    double af, bf, cf;
+    double elec =0.0, vdwA=0.0, vdwB = 0.00, hb_donor=0.0, hb_acceptor=0.0;
+    int a1=0, b1=0, c1=0, a2=0, b2=0, c2=0, donor_index;
+    double af, bf, cf, angle_term;
     for (int i=0; i< Lig->N; i++){
         af = (xyz[i][0] - Grids->xbegin)/Grids->grid_spacing;
         bf = (xyz[i][1] - Grids->ybegin)/Grids->grid_spacing;
@@ -852,6 +875,23 @@ double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<v
             vdwA += Lig->epsilons_sqrt[i] * pow(Lig->radii[i], 6) * GI->vdwA;
             vdwB += Lig->epsilons_sqrt[i] * pow(Lig->radii[i], 3) * GI->vdwB;
 
+            if (this->atom_is_acceptor(i, Lig)){
+                hb_donor += GI->hb_donor;
+            }
+            else {
+                if (Lig->HBacceptors.size() > 0){
+                    donor_index = this->H_is_donor(i, Lig);
+                    if (donor_index >= 0){       // atom is a H donor
+                        double x = (af*Grids->grid_spacing)+Grids->xbegin;
+                        double y = (bf*Grids->grid_spacing)+Grids->ybegin;
+                        double z = (cf*Grids->grid_spacing)+Grids->zbegin;
+                        angle_term = this->angle(Lig->xyz[donor_index][0], Lig->xyz[donor_index][1], Lig->xyz[donor_index][2], Lig->xyz[i][0], Lig->xyz[i][1], Lig->xyz[i][2], x, y, z);
+                        angle_term = cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0) * cos(angle_term * PI / 180.0);
+                        hb_acceptor += GI->hb_acceptor*angle_term;
+                    }
+                }
+            }
+
             delete GI;
         }
         else {
@@ -864,9 +904,11 @@ double Energy2::compute_ene_from_grids_softcore(Grid* Grids, Mol2* Lig, vector<v
     energy_result->vdw = Input->scale_vdw_energy*(vdwA-vdwB);
     energy_result->rec_solv = 0.00;
     energy_result->lig_solv = 0.00;
-    energy_result->total = (Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB));
+    energy_result->hb_donor = hb_donor;
+    energy_result->hb_acceptor = hb_acceptor;
+    energy_result->total = (Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB)) + hb_donor + hb_acceptor;
 
-    return ((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB)));
+    return ((Input->scale_elec_energy*elec)+(Input->scale_vdw_energy*(vdwA-vdwB)) + hb_donor + hb_acceptor);
 }
 
 double Energy2::compute_energy_softcore_solvation(Mol2* Rec, Mol2* Lig, vector<vector<double> > lig_xyz, energy_result_t* energy_result){
