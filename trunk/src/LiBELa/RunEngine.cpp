@@ -88,6 +88,7 @@ void TEMP_SCHEME::evaluation(){
     }
 
     //! Evaluation of the original binding energy
+    sprintf(info, "The receptor has %5lu / %5lu HB donors/acceptors around the active site.", REC->HBdonors.size(), REC->HBacceptors.size());
     start_energy = Ene->compute_ene(REC, RefLig, RefLig->xyz);
     sprintf(info,"Original Binding Energy: %.4f kcal/mol", start_energy);
     this->print_info(info);

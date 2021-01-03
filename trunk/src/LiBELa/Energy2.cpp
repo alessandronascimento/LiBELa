@@ -20,8 +20,14 @@ double Energy2::angle(double x1, double y1, double z1, double x2, double y2, dou
     // Law of cosines: c** = a** + b** - 2ab cos(C)
     //
     double ab = distance(x1, x2, y1, y2, z1, z2);
+    if (ab == 0.0)
+        ab=0.0001 ;
     double ac = distance(x1, x3, y1, y3, z1, z3);
+    if (ac == 0.0)
+        ac=0.0001 ;
     double bc = distance(x2, x3, y2, y3, z2, z3);
+    if (bc == 0.0)
+        bc=0.0001 ;
     double angle = acos(((ab*ab)+(bc*bc)-(ac*ac))/(2*ab*bc));
     angle = angle * 180.0 / PI;
     return (angle);
