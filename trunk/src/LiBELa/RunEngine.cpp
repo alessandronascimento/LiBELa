@@ -33,7 +33,7 @@ TEMP_SCHEME::TEMP_SCHEME(int ac, char *av[]){
     FindHB* HB = new FindHB;
 
     for (int i=0; i< REC->residue_pointer.size()-1; i++){
-        HB->parse_residue(REC->residue_pointer[i]-1, REC->residue_pointer[i+1]-2, REC->resnames[i], REC, RefLig, 10.0);
+        HB->parse_residue(REC->residue_pointer[i]-1, REC->residue_pointer[i+1]-2, REC->resnames[i], REC, RefLig, 9.0);
     }
 
     // Finding HB donors/acceptors for RefLig;

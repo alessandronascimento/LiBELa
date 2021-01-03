@@ -430,7 +430,7 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
     Lig->xyz = new_xyz;
 
     sprintf(info, "%5d %-12.12s %-4.4s %-10.3e  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlays[best_conf],
-            best_energy_t->elec, best_energy_t->vdw, best_energy_t->rec_solv+best_energy_t->lig_solv, best_energy_t->hb_donor+best_energy_t->hb_acceptor, best_energy_t->total, best_conf, overlay_status[best_conf], energy_status, si);
+            best_energy_t->elec, best_energy_t->vdw, (best_energy_t->rec_solv + best_energy_t->lig_solv), (best_energy_t->hb_donor + best_energy_t->hb_acceptor), best_energy_t->total, best_conf, overlay_status[best_conf], energy_status, si);
     this->print_info(info);
 
     if (Input->write_mol2){
