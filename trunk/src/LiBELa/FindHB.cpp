@@ -53,30 +53,26 @@ void FindHB::find_ligandHB(string molfile, Mol2* Lig){
     if (!ifs) {
         printf("Could not open %s for reading. Maybe an OpenBabel issue?\n", molfile.c_str());
     }
-    // Read the molecule.
     if (!conv->Read(&mol, &ifs)) {
         printf("Could not read molecule from file. Maybe an OpenBabel issue?\n");
     }
-    delete conv;
 
     OBAtom *atom;
-    int index = -1;
-
-    vector<int> vtemp (2);
+    vector<int> vtemp(2);
 
     FOR_ATOMS_OF_MOL(atom, mol){
         if (atom->IsHbondAcceptor()){
-            index = atom->GetIdx()-1;
-            Lig->HBacceptors.push_back(index);
+            Lig->HBacceptors.push_back(int(atom->GetIdx()-1));
         }
         else if (atom->IsHbondDonorH()){
             FOR_NBORS_OF_ATOM(nbr, &*atom){
-                vtemp[0] = nbr->GetIdx()-1;
-                vtemp[1] = atom->GetIdx()-1;
+                vtemp[0] = int(nbr->GetIdx()-1);
+                vtemp[1] = int(atom->GetIdx()-1);
                 Lig->HBdonors.push_back(vtemp);
             }
         }
     }
+    delete conv;
 }
 
 void FindHB::parse_residue(int atom_start, int atom_end, string resname, Mol2* Rec, Mol2* Lig, double dist_cutoff){
