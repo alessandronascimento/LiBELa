@@ -58,6 +58,7 @@ int main(int argc, char* argv[]){
         printf("This may take a while...\n");
         delete Lig;
         delete Coord;
+        delete HB;
         Grid* Grids = new Grid(Input, Writer, Rec, com);
         printf("Computed energy grids with %d points spaced by %5.3f Angstroms in each directon.\n", Grids->npointsx*Grids->npointsy*Grids->npointsz, Grids->grid_spacing);
         printf("Grid X limits: %10.4f %10.4f.\n", Grids->xbegin, Grids->xend);
