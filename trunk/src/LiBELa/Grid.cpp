@@ -388,7 +388,7 @@ void Grid::compute_grid_softcore_HB_omp(Mol2* Rec){
         }
     }
     else {
-        this->compute_grid_hardcore(Rec);
+        this->compute_grid_hardcore_HB_omp(Rec);
     }
 }
 

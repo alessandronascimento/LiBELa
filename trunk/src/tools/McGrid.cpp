@@ -6,6 +6,7 @@
 #include "../LiBELa/Mol2.cpp"
 #include "../LiBELa/COORD_MC.cpp"
 #include "../LiBELa/WRITER.cpp"
+#include "../LiBELa/FindHB.cpp"
 
 using namespace std;
 
@@ -41,10 +42,18 @@ int main(int argc, char* argv[]){
         Mol2* Rec = new Mol2(Input, Input->rec_mol2);
         Mol2* Lig = new Mol2(Input, Input->reflig_mol2);
 
+        FindHB* HB = new FindHB;
+
+        HB->find_ligandHB(Input->reflig_mol2, Lig);
+        for (int i=0; i< Rec->residue_pointer.size()-1; i++){
+            HB->parse_residue(Rec->residue_pointer[i]-1, Rec->residue_pointer[i+1]-2, Rec->resnames[i], Rec, Lig, 9.0);
+        }
+
         vector<double> com;
         COORD_MC* Coord = new COORD_MC();
         com = Coord->compute_com(Lig);
         printf("Ligand and Receptor files read!\n");
+        printf("Found %5lu HB donors and %5lu HB acceptor around the active site\n", Rec->HBdonors.size(), Rec->HBacceptors.size());
         printf("Computing grids centered at %10.5f %10.5f %10.5f.\n", com[0], com[1], com[2]);
         printf("This may take a while...\n");
         delete Lig;
