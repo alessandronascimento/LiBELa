@@ -917,7 +917,6 @@ void Grid::compute_grid_hardcore_HB_omp(Mol2* Rec){
                 }
 
                 for (unsigned i=0; i<Rec->HBdonors.size(); i++){
-                    printf("Running over Receptor HB donors...\n");
                     double d = distance(Rec->xyz[Rec->HBdonors[i][1]][0], x, Rec->xyz[Rec->HBdonors[i][1]][1], y, Rec->xyz[Rec->HBdonors[i][1]][2], z);
                     double d10 = d*d*d*d*d*d*d*d*d*d;
                     double ang = angle(Rec->xyz[Rec->HBdonors[i][0]][0], Rec->xyz[Rec->HBdonors[i][0]][1], Rec->xyz[Rec->HBdonors[i][0]][2], Rec->xyz[Rec->HBdonors[i][1]][0],
@@ -928,7 +927,6 @@ void Grid::compute_grid_hardcore_HB_omp(Mol2* Rec){
                 }
 
                 for (unsigned i=0; i<Rec->HBacceptors.size(); i++){
-                    printf("Running over Receptor HB acceptors...\n");
                     double d = distance(Rec->xyz[Rec->HBacceptors[i]][0], x, Rec->xyz[Rec->HBacceptors[i]][1], y, Rec->xyz[Rec->HBacceptors[i]][2], z);
                     double d10 = d*d*d*d*d*d*d*d*d*d;
                     hb_acceptor += ((HB_C12/(d10*d*d)) - (HB_C10/d10));
