@@ -49,6 +49,7 @@ PARSER::PARSER(){
     this->generate_conformers = true;
 	this->lig_conformers = 10;
 	this->conformers_to_evaluate = 1;
+    this->conf_search_trials = 1000;
 	this->mol2_aa = false;
     this->conformer_min_steps = 1000;
 	this->dock_min_tol = 0.001;
@@ -311,6 +312,10 @@ void PARSER::comparing (string param, ifstream &input) {
     else if (param == "conformer_min_steps"){
         input >> this->conformer_min_steps;
 	}
+
+    else if (param == "conf_search_trials"){
+        input >> this->conf_search_trials;
+    }
 
     else if (param == "dock_min_tol"){
 		input >> this->dock_min_tol;

@@ -190,6 +190,8 @@ public:
 	int conformers_to_evaluate;
     //! Number of minimization steps before conformer generation, when using WRS.
     int conformer_min_steps;
+    //! Number of search trials for conformer generation in confab
+    int conf_search_trials;
     //! Tolerance for binding energy optimization
 	double dock_min_tol;
     //! Turns on the equilibrium mode

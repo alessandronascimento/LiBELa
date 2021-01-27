@@ -109,7 +109,7 @@ bool Conformer::generate_conformers_confab(PARSER* Input, Mol2* Lig, string molf
     Lig->mcoords.push_back(Lig->xyz);
 
 // Conformer Search
-    OBff->DiverseConfGen(0.5, 1000, 50.0, false);
+    OBff->DiverseConfGen(0.5, Input->conf_search_trials, 50.0, false);
     OBff->GetConformers(*mol);
 
     int generated_conformers=0;

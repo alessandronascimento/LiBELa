@@ -29,16 +29,18 @@ int main(int argc, char* argv[]) {
 
 
     if (argc < 2){
-        printf("Usage: %s file.mol2 [input_file]\n", argv[0]);
+        printf("Usage: %s file.mol2 [input_file] [Ntrials=1000]\n", argv[0]);
         exit(1);
     }
 
     PARSER* Input = new PARSER;
     Mol2* Mol = new Mol2(Input, string(argv[1]));
     WRITER* Writer = new WRITER("McConf", Input);
-
+    double confrmsd = 0.5;
+    double confene = 50.0;
+    int ntrial=1000;
     if (argc > 2){
-        Input->set_parameters(argv[2]);
+        ntrial = atoi(argv[2]);
     }
 
     Input->write_mol2 = true;
@@ -90,7 +92,7 @@ int main(int argc, char* argv[]) {
     printf("Original energy for molecule %s: %10.4f\n", argv[1], energy);
 
     // Conformer Search
-    OBff->DiverseConfGen(0.5, 1000, 50.0, false);
+    OBff->DiverseConfGen(confrmsd, ntrial, confene, false);
     OBff->GetConformers(*mol);
 
     double rmsd;
