@@ -105,8 +105,12 @@ bool Conformer::generate_conformers_confab(PARSER* Input, Mol2* Lig, string molf
     if (OBff->GetUnit() == "kJ/mol"){       // Converting to kcal/mol, if needed.
         energy = energy/4.18;
     }
+/*
+ * Since the Confab Generator already includes the original conformation, I dropped this
+ * portion of the code.
     Lig->conformer_energies.push_back(energy);
     Lig->mcoords.push_back(Lig->xyz);
+*/
 
 // Conformer Search
     OBff->DiverseConfGen(0.5, Input->conf_search_trials, 50.0, false);
