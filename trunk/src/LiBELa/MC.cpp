@@ -143,10 +143,6 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     step_t* step = new step_t;
 
     while (!ligand_is_in){
-//        if (Input->generate_conformers){
-//            this->take_step_flex(Input, Lig, step);
-//        }
-//        else
         if (Input->sample_torsions){
             this->take_step_torsion(Input, Lig, step);
         }
@@ -190,10 +186,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     while (eqcount <= Input->eq_steps){
 
         while (!ligand_is_in){
-//            if (Input->generate_conformers){
-//                this->take_step_flex(Input, Lig, step);
-//            }
-/*            else*/ if (Input->sample_torsions){
+            if (Input->sample_torsions){
                 this->take_step_torsion(Input, Lig, step);
             }
             else if (Input->mc_full_flex){
@@ -245,10 +238,6 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
         while (!ligand_is_in){
 
-//            if (Input->generate_conformers){
-//                this->take_step_flex(Input, Lig, step);
-//            }
-//            else
             if (Input->sample_torsions){
                 this->take_step_torsion(Input, Lig, step);
             }
