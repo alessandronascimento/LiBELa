@@ -13,15 +13,13 @@ using namespace OpenBabel;
 Conformer::Conformer() {
 
 // Supressing OpenBabel warning messages
-#ifndef DEBUG
-    OBMessageHandler* messageHandler = new OBMessageHandler;
-	messageHandler->SetOutputLevel(obError);
-	OpenBabel::obErrorLog = *messageHandler;
-#endif
-
+messageHandler = new OBMessageHandler;
+messageHandler->SetOutputLevel(obError);
+OpenBabel::obErrorLog = *messageHandler;
 }
 
 Conformer::~Conformer() {
+    delete messageHandler;
 }
 
 OBMol Conformer::GetMol(const std::string &molfile){
@@ -57,6 +55,7 @@ bool Conformer::generate_conformers_confab(PARSER* Input, Mol2* Lig, string molf
     bool file_read;
     OBMol* mol = new OBMol;
     OBConversion* conv = new OBConversion;
+
     OBFormat *format = conv->FormatFromExt(molfile.c_str());
     if (!format || !conv->SetInFormat(format)) {
     printf("Could not find input format for file\n");
@@ -105,12 +104,6 @@ bool Conformer::generate_conformers_confab(PARSER* Input, Mol2* Lig, string molf
     if (OBff->GetUnit() == "kJ/mol"){       // Converting to kcal/mol, if needed.
         energy = energy/4.18;
     }
-/*
- * Since the Confab Generator already includes the original conformation, I dropped this
- * portion of the code.
-    Lig->conformer_energies.push_back(energy);
-    Lig->mcoords.push_back(Lig->xyz);
-*/
 
 // Conformer Search
     OBff->DiverseConfGen(0.5, Input->conf_search_trials, 50.0, false);

@@ -36,6 +36,8 @@ using namespace std;
 
 class Conformer {
 public:
+    //! OpenBabel Message Handler to supress warning messages
+    OBMessageHandler* messageHandler;
     //! Constructor
     Conformer();
     //! Destructor
