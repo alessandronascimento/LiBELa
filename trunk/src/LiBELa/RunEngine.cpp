@@ -40,6 +40,15 @@ TEMP_SCHEME::TEMP_SCHEME(int ac, char *av[]){
     HB->find_ligandHB(Input->reflig_mol2, RefLig);
 
     delete HB;
+
+/* For debuggind purposes
+ * Here we write the HB bond donors
+ *
+    for (unsigned i=0; i< REC->HBdonors.size(); i++){
+        printf("[%5d]: %4s / %4s --> %4d / %4d \n", i, REC->atomnames[REC->HBdonors[i][0]].c_str(), REC->atomnames[REC->HBdonors[i][1]].c_str(), REC->HBdonors[i][0],REC->HBdonors[i][1]);
+    }
+*/
+
 }
 
 /*
