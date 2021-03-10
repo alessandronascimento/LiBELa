@@ -51,7 +51,17 @@ int main (int argc, char *argv[]){
       }
 
 
+    printf("*****************************************************************************\n");
+    printf("*                                                                           *\n");
+    printf("*                               McBootstrapper                              *\n");
+    printf("* A sery simple program to compute averages/standard deviations in datasets *\n");
+    printf("* using the Bootstrap method. Written by Alessandro Nascimento @ IFSC/USP   *\n");
+    printf("*                                                                           *\n");
+    printf("*****************************************************************************\n");
+
+
 // Reading data
+
 
 
     FILE *datafile = fopen(infile.c_str(), "r");
@@ -65,6 +75,13 @@ int main (int argc, char *argv[]){
     fclose(datafile);
 
     printf("The dataset has %d data points.\n", int(datax.size()));
+    printf("Read dataset:\n");
+    printf("*****************************************************************************\n");
+    printf("%7.7s %7.7s\n", "[X]", "[Y]");
+    for (unsigned i=0; i<datax.size()-1; i++){
+        printf("%7.4f %7.4f\n", datax[i], datay[i]);
+    }
+    printf("*****************************************************************************\n");
 
     if (datax.size() != datay.size()){
         printf("Data inconsistency. Different number of values for sets. Please check!\n");
@@ -119,6 +136,7 @@ int main (int argc, char *argv[]){
     fclose(output);
 
     printf("Average correlation coefficient: %7.4f +/- %7.4f (N=%d).\n", average_r, stdev, ncycles);
+    printf("*****************************************************************************\n");
 
     return 0;
 
