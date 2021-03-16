@@ -34,6 +34,7 @@ void usage(){
     printf("\t -r <Receptor.mol2> to define the pocket using the receptor center of mass\n");
     printf("\t -n <resnumber> to define residue <resnumber> as an anchor on the pocket\n");
     printf("\t -b <box_size> to define the box size. Default is 30.0 Angstrom\n");
+    printf("\t -s <space> to define the spacing betweent grid points. Default is 1.5 Angstrom\n");
 }
 
 int main (int argc, char* argv[]){
@@ -41,6 +42,7 @@ int main (int argc, char* argv[]){
     double probe_radii = 1.9080;          //gaff c
     double probe_epsilon = 0.0860;        //gaff c
     double box_size = 30.0;
+    double space = 1.5;
     int res_site = 0;
     int res_number;
     char *ligfile;
@@ -56,7 +58,7 @@ int main (int argc, char* argv[]){
     PARSER* Input = new PARSER;
     Input->write_mol2 = true;
 
-    while ((c = getopt (argc, argv, "i:r:l:n:b:")) != -1)
+    while ((c = getopt (argc, argv, "i:r:l:n:b:s:")) != -1)
         switch (c)
         {
         case 'i':
@@ -79,6 +81,9 @@ int main (int argc, char* argv[]){
             break;
         case 'b':
             box_size = atof(optarg);
+            break;
+        case 's':
+            space = atof(optarg);
             break;
         case '?':
             if (optopt == 'c')
@@ -110,6 +115,8 @@ int main (int argc, char* argv[]){
 
     Mol2* Pocket = new Mol2();
     Pocket->N=0;
+    Pocket->Nbonds = 0;
+    Pocket->Nres=1;
 
     COORD_MC* Coord = new COORD_MC;
 
@@ -145,9 +152,9 @@ int main (int argc, char* argv[]){
 
     Writer->write_box(rec_com, x_min, y_min, z_min, x_max, y_max, z_max);
 
-    for (double x=x_min; x<=x_max; x+=1.5){
-        for (double y=y_min; y<=y_max; y+=1.5){
-            for (double z=z_min; z<=z_max; z+=1.5){
+    for (double x=x_min; x<=x_max; x+=space){
+        for (double y=y_min; y<=y_max; y+=space){
+            for (double z=z_min; z<=z_max; z+=space){
                 vdw=0.0;
                 elec=0.0;
                 for (int i=0; i<Rec->N; i++){
@@ -169,7 +176,7 @@ int main (int argc, char* argv[]){
                     }
                 }
                 if (vdw < -5.0){
-                    append_atom(Pocket, x, y, z, -elec);
+                    append_atom(Pocket, x, y, z, -(0.1*elec));
                 }
             }
         }
@@ -188,6 +195,8 @@ int main (int argc, char* argv[]){
 
     Mol2* Pocket2 = new Mol2();
     Pocket2->N=0;
+    Pocket2->Nbonds = 0;
+    Pocket2->Nres=1;
 
 
     int neighbors=0;
