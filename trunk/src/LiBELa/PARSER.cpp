@@ -107,6 +107,7 @@ PARSER::PARSER(){
     this->scale_elec_energy = 1.0;
     this->overlay_cutoff = 0.7;
     this->use_overlay_cutoff = false;
+    this->conf_search_trials = 10000;
 }
 
 void PARSER::comparing (string param, ifstream &input) {

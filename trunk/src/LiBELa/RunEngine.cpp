@@ -14,13 +14,10 @@ using namespace std;
  * Constructor for McLIBELa compilation without GUI
 */
 
-TEMP_SCHEME::TEMP_SCHEME(int ac, char *av[]){
-
-    this->argc = ac;
-    this->argv = av;
+TEMP_SCHEME::TEMP_SCHEME(char* inputfile){
 
     Input = new PARSER();
-    Input->set_parameters(av[1]);
+    Input->set_parameters(inputfile);
 
     Writer = new WRITER(Input);
 

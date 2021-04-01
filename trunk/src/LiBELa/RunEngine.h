@@ -187,7 +187,7 @@ public:
 /*!
  * The constructor defines the Input object and parses the input file
  */
-    TEMP_SCHEME(int ac, char* av[]);
+    TEMP_SCHEME(char* inputfile);
 
 /*!
  * The evaluation method evaluates the initial state of ligand and protein
