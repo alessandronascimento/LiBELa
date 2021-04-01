@@ -17,12 +17,13 @@ using namespace std;
 
 
 void write_dock_input(){
-    printf("# mode\n");
-    printf("mode                    eq\n");
+    printf("# Mode\n");
+    printf("mode                    dock\n");
     printf("dock_parallel           no\n");
     printf("parallel_jobs           1\n");
+    printf("\n");
     printf("#\n");
-    printf("# input files\n");
+    printf("# Input files\n");
     printf("#\n");
     printf("rec_mol2              	../mol2/rec.mol2.gz\n");
     printf("lig_mol2                ../mol2/lig.mol2.gz\n");
@@ -64,7 +65,8 @@ void write_dock_input(){
     printf("\n");
     printf("delphi_grid             ../delphi_grids/phimap.phi\n");
     printf("use_delphi              no\n");
-    printf("delphi_gsize            0.4\n");
+    printf("delphi_gsize            75\n");
+    printf("\n");
     printf("#\n");
     printf("# Optimization\n");
     printf("#\n");
@@ -115,12 +117,13 @@ void write_dock_input(){
 }
 
 void write_mc_input(){
-    printf("# mode\n");
-    printf("mode                    dock\n");
+    printf("# Mode\n");
+    printf("mode                    eq\n");
     printf("dock_parallel           yes\n");
     printf("parallel_jobs           2\n");
+    printf("\n");
     printf("#\n");
-    printf("# input files\n");
+    printf("# Input files\n");
     printf("#\n");
     printf("rec_mol2              	../mol2/rec.mol2.gz\n");
     printf("lig_mol2                ../mol2/lig.mol2.gz\n");
@@ -161,7 +164,7 @@ void write_mc_input(){
     printf("\n");
     printf("delphi_grid             ../delphi_grids/phimap.phi\n");
     printf("use_delphi              no\n");
-    printf("delphi_gsize            0.4\n");
+    printf("delphi_gsize            75\n");
     printf("\n");
     printf("#\n");
     printf("# Optimization\n");
