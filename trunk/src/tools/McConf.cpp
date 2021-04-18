@@ -81,6 +81,11 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
 
+    if (Input->verbose){
+        OBff->SetLogFile(&cout);
+        OBff->SetLogLevel(OBFF_LOGLVL_LOW);
+    }
+
     // Original conformation energy
     OBff->Setup(*mol);
     mol->SetTotalCharge(mol->GetTotalCharge());

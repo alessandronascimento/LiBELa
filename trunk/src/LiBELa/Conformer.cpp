@@ -11,19 +11,9 @@ using namespace std;
 using namespace OpenBabel;
 
 Conformer::Conformer() {
-
-    // Supressing OpenBabel warning messages
-
-    messageHandler = new OBMessageHandler;
-    messageHandler->SetOutputLevel(obError);
-    OpenBabel::obErrorLog = *messageHandler;
-
 }
 
 Conformer::~Conformer() {
-
-    delete messageHandler;
-
 }
 
 OBMol Conformer::GetMol(const std::string &molfile){
