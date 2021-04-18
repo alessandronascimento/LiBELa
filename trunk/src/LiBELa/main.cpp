@@ -265,9 +265,11 @@ int main(int argc, char *argv[]){
                 break;
             case 'd':
                 write_dock_input();
+                exit(0);
                 break;
             case 'm':
                 write_mc_input();
+                exit(0);
                 break;
             case '?':
                 if (optopt == 'c')
@@ -334,9 +336,11 @@ int main(int argc, char *argv[]){
                 break;
             case 'd':
                 write_dock_input();
+                exit(0);
                 break;
             case 'm':
                 write_mc_input();
+                exit(0);
                 break;
             case '?':
                 if (optopt == 'c')

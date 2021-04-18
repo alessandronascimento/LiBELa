@@ -91,6 +91,17 @@ int main(int argc, char* argv[]) {
 
     printf("Original energy for molecule %s: %10.4f\n", argv[1], energy);
 
+    // Energy minimization
+    OBff->GetCoordinates(*mol);
+    OBff->SteepestDescent(1000);
+    OBff->GetCoordinates(*mol);
+    energy = OBff->Energy();
+    if (OBff->GetUnit() == "kJ/mol"){       // Converting to kcal/mol, if needed.
+        energy = energy/4.18;
+    }
+    printf("Energy for molecule after minimization %s: %10.4f\n", argv[1], energy);
+
+
     // Conformer Search
     OBff->DiverseConfGen(confrmsd, ntrial, confene, false);
     OBff->GetConformers(*mol);

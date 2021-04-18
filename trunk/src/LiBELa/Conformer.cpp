@@ -12,18 +12,18 @@ using namespace OpenBabel;
 
 Conformer::Conformer() {
 
-// Supressing OpenBabel warning messages
+    // Supressing OpenBabel warning messages
 
-/*messageHandler = new OBMessageHandler;
-messageHandler->SetOutputLevel(obError);
-OpenBabel::obErrorLog = *messageHandler;
-*/
+    messageHandler = new OBMessageHandler;
+    messageHandler->SetOutputLevel(obError);
+    OpenBabel::obErrorLog = *messageHandler;
+
 }
 
 Conformer::~Conformer() {
-/*
+
     delete messageHandler;
-*/
+
 }
 
 OBMol Conformer::GetMol(const std::string &molfile){
@@ -34,9 +34,9 @@ OBMol Conformer::GetMol(const std::string &molfile){
     OBConversion* conv = new OBConversion;
     OBFormat *format = conv->FormatFromExt(molfile.c_str());
     if (!format || !conv->SetInFormat(format)) {
-    printf("Could not find input format for file\n");
-    return mol;
-  }
+        printf("Could not find input format for file\n");
+        return mol;
+    }
 
     // Open the file.
     ifstream ifs(molfile.c_str());
@@ -62,9 +62,9 @@ bool Conformer::generate_conformers_confab(PARSER* Input, Mol2* Lig, string molf
 
     OBFormat *format = conv->FormatFromExt(molfile.c_str());
     if (!format || !conv->SetInFormat(format)) {
-    printf("Could not find input format for file\n");
-    exit(1);
-  }
+        printf("Could not find input format for file\n");
+        exit(1);
+    }
 
     ifstream ifs(molfile.c_str());
     if (!ifs) {
@@ -101,7 +101,7 @@ bool Conformer::generate_conformers_confab(PARSER* Input, Mol2* Lig, string molf
         exit(1);
     }
 
-// Original conformation energy
+    // Original conformation energy
     OBff->Setup(*mol);
     mol->SetTotalCharge(mol->GetTotalCharge());
     double energy = OBff->Energy();
@@ -109,7 +109,16 @@ bool Conformer::generate_conformers_confab(PARSER* Input, Mol2* Lig, string molf
         energy = energy/4.18;
     }
 
-// Conformer Search
+    // Do initial energy minimization prior to conformer generation
+    OBff->GetCoordinates(*mol);
+    OBff->SteepestDescent(Input->conformer_min_steps);
+    OBff->GetCoordinates(*mol);
+    energy = OBff->Energy();
+    if (OBff->GetUnit() == "kJ/mol"){       // Converting to kcal/mol, if needed.
+        energy = energy/4.18;
+    }
+
+    // Conformer Search
     OBff->DiverseConfGen(0.5, Input->conf_search_trials, 50.0, false);
     OBff->GetConformers(*mol);
 
@@ -162,4 +171,4 @@ bool Conformer::generate_conformers_confab(PARSER* Input, Mol2* Lig, string molf
     }
     delete ref_mol;
     return file_read;
- }
+}
