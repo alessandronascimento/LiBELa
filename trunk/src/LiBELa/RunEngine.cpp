@@ -704,16 +704,25 @@ void TEMP_SCHEME::dock_parallel(){
                     }
                 }
                 if (lig_is_opened){
-                    FindHB* HB = new FindHB;
-                    HB->find_ligandHB(ligand_list[i], Lig2);
-                    delete HB;
+
+
+#pragma omp critical
+                    {
+                        FindHB* HB = new FindHB;
+                        HB->find_ligandHB(ligand_list[i], Lig2);
+                        delete HB;
+                    }
+
+
                     if (Input->generate_conformers){
-                        Conformer* Conf = new Conformer;
+
 #pragma omp critical
                         {
+                            Conformer* Conf = new Conformer;
                             Conf->generate_conformers_confab(Input, Lig2, ligand_list[i]);
+                            delete Conf;
                         }
-                        delete Conf;
+
                     }
 
 #ifdef HAS_GUI

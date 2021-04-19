@@ -5,7 +5,9 @@ using namespace OpenBabel;
 
 FindHB::FindHB()
 {
-
+    OBMessageHandler messageHandler;
+    messageHandler.SetOutputLevel(obError);
+    OpenBabel::obErrorLog = messageHandler;
 }
 
 int FindHB::find_atom(string atomname, Mol2* Rec, int astart, int aend){
