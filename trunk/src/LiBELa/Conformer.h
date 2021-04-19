@@ -36,7 +36,7 @@ using namespace std;
 
 class Conformer {
 public:
-    //! Constructor
+    //! Constructor. Used functions to supress OB warnings.
     Conformer();
     //! Destructor
 	~Conformer();

@@ -1155,7 +1155,7 @@ void Grid::load_phimap_from_file(int gsize){
     Writer->print_info(info);
     sprintf(info, "DelPhi Grid GSIZE: %5d. Mid XYZ: %7.4f %7.4f %7.4f", gsize, oldmid_x, oldmid_y, oldmid_z);
     Writer->print_info(info);
-    sprintf(info, "Grid Dimensions XYZ: %7.4f - %7.4f %7.4f - %7.4f %7.4f - %7.4f", this->xbegin, this->xend, this->ybegin, this->yend,
+    sprintf(info, "Grid Dimensions XYZ: [%7.4f <-> %7.4f] [%7.4f <-> %7.4f] [%7.4f <-> %7.4f]", this->xbegin, this->xend, this->ybegin, this->yend,
             this->zbegin, this->zend);
     Writer->print_info(info);
 
@@ -1221,7 +1221,7 @@ void Grid::load_delphi_cube(){
     Writer->print_info(info);
     sprintf(info, "DelPhi CUBE Grid GSIZE: %5d. Center: %7.4f %7.4f %7.4f", igrid, centerx, centery, centerz);
     Writer->print_info(info);
-    sprintf(info, "Grid Dimensions XYZ: [%7.4f - %7.4f] [%7.4f - %7.4f] [%7.4f - %7.4f]", this->xbegin, this->xend, this->ybegin, this->yend,
+    sprintf(info, "Grid Dimensions XYZ: [%7.4f <-> %7.4f] [%7.4f <-> %7.4f] [%7.4f <-> %7.4f]", this->xbegin, this->xend, this->ybegin, this->yend,
             this->zbegin, this->zend);
     Writer->print_info(info);
     this->delphi_loaded = true;
@@ -1299,7 +1299,7 @@ void Grid::load_delphi_gzcube(){
     Writer->print_info(info);
     sprintf(info, "DelPhi CUBE Grid GSIZE: %5d. Center: %7.4f %7.4f %7.4f", igrid, centerx, centery, centerz);
     Writer->print_info(info);
-    sprintf(info, "Grid Dimensions XYZ: [%7.4f - %7.4f] [%7.4f - %7.4f] [%7.4f - %7.4f]", this->xbegin, this->xend, this->ybegin, this->yend,
+    sprintf(info, "Grid Dimensions XYZ: [%7.4f <-> %7.4f] [%7.4f <-> %7.4f] [%7.4f <-> %7.4f]", this->xbegin, this->xend, this->ybegin, this->yend,
             this->zbegin, this->zend);
     Writer->print_info(info);
     this->delphi_loaded = true;

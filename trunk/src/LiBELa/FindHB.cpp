@@ -43,9 +43,9 @@ double FindHB::angle(vector<double> xyz1, vector<double> xyz2, vector<double> xy
 
 void FindHB::find_ligandHB(string molfile, Mol2* Lig){
     OBMol mol;
-    OBConversion* conv = new OBConversion;
-    OBFormat *format = conv->FormatFromExt(molfile.c_str());
-    if (!format || !conv->SetInFormat(format)) {
+    OBConversion conv;
+    OBFormat *format = conv.FormatFromExt(molfile.c_str());
+    if (!format || !conv.SetInFormat(format)) {
         printf("Could not find input format for file\n");
     }
 
@@ -53,7 +53,7 @@ void FindHB::find_ligandHB(string molfile, Mol2* Lig){
     if (!ifs) {
         printf("Could not open %s for reading. Maybe an OpenBabel issue?\n", molfile.c_str());
     }
-    if (!conv->Read(&mol, &ifs)) {
+    if (!conv.Read(&mol, &ifs)) {
         printf("Could not read molecule from file. Maybe an OpenBabel issue?\n");
     }
 
@@ -72,7 +72,6 @@ void FindHB::find_ligandHB(string molfile, Mol2* Lig){
             }
         }
     }
-    delete conv;
 }
 
 void FindHB::parse_residue(int atom_start, int atom_end, string resname, Mol2* Rec, Mol2* Lig, double dist_cutoff){
