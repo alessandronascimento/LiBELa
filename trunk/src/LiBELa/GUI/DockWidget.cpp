@@ -164,7 +164,10 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     energy_optimizer->addItem("SIMPLEX");                   //6
     energy_optimizer->addItem("DIRECT");                    //7
     energy_optimizer->addItem("CRS");                       //8
-    energy_optimizer->addItem("NONE");                      //9
+    energy_optimizer->addItem("STOGO");                     //9
+    energy_optimizer->addItem("ISRES");                     //10
+    energy_optimizer->addItem("ESCH");                      //11
+    energy_optimizer->addItem("NONE");                      //12
     energy_optimizer->setCurrentIndex(7);
 	energy_optimizer_lab = new QLabel(tr("Binding energy optimizer: "));
 
@@ -223,6 +226,11 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     conformers_to_evaluate = new QSpinBox;
     conformers_to_evaluate->setValue(Inp->conformers_to_evaluate);
     conformers_to_evaluate->setMinimum(1);
+
+    ligand_energy_model_lab = new QLabel(tr("Ligand Energy Model: "));
+    ligand_energy_model = new QComboBox;
+    ligand_energy_model->addItem("GAFF");
+    ligand_energy_model->addItem("MMFF94");
 
     dock_min_tol_lab = new QLabel(tr("Docking tolerance: "));
     dock_min_tol = new QDoubleSpinBox;
@@ -433,6 +441,10 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
 
     editLayout->addWidget(conformers_to_evaluate_lab, i, 0);
     editLayout->addWidget(conformers_to_evaluate, i, 1);
+    i++;
+
+    editLayout->addWidget(ligand_energy_model_lab, i, 0);
+    editLayout->addWidget(ligand_energy_model, i, 1);
     i++;
 
     parallel_label = new QLabel(tr("<h2>Parallel execution</h2>"));
@@ -816,9 +828,19 @@ void DockWidget::set_parameters(){
         Inp->energy_optimizer = "crs";
         break;
     case 9:
+        Inp->energy_optimizer = "stogo";
+        break;
+    case 10:
+        Inp->energy_optimizer = "isres";
+        break;
+    case 11:
+        Inp->energy_optimizer = "esch";
+        break;
+    case 12:
         Inp->energy_optimizer = "none";
         break;
 	}
+
 	Inp->output = output_prefix->text().toStdString();
 
 	if (dock_no_h->isChecked()){
@@ -830,6 +852,15 @@ void DockWidget::set_parameters(){
     if (Inp->generate_conformers){
         Inp->lig_conformers = this->conformers->value();
         Inp->conformers_to_evaluate = this->conformers_to_evaluate->value();
+    }
+
+    switch (ligand_energy_model->currentIndex()){
+    case 0:
+        Inp->ligand_energy_model = "GAFF";
+        break;
+    case 1:
+        Inp->ligand_energy_model = "MMFF94";
+        break;
     }
 
     if (this->use_cutoff_score->isChecked()){
@@ -1087,6 +1118,9 @@ void DockWidget::hide_advanced_options(){
     conformers_to_evaluate->hide();
     conformers_to_evaluate_lab->hide();
 
+    ligand_energy_model_lab->hide();
+    ligand_energy_model->hide();
+
     dock_min_tol->hide();
     dock_min_tol_lab->hide();
     dock_timeout->hide();
@@ -1155,6 +1189,8 @@ void DockWidget::show_advanced_options(){
     conformers_lab->show();
     conformers_to_evaluate->show();
     conformers_to_evaluate_lab->show();
+    ligand_energy_model_lab->show();
+    ligand_energy_model->show();
     dock_min_tol->show();
     dock_min_tol_lab->show();
     dock_timeout->show();

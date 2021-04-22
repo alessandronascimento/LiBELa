@@ -124,6 +124,8 @@ public:
     QCheckBox* dock_no_h;
 
     QCheckBox* generate_conformers;
+    QComboBox* ligand_energy_model;
+    QLabel* ligand_energy_model_lab;
 
     QSpinBox* conformers;
     QLabel* conformers_lab;
