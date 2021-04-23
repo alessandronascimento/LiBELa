@@ -22,6 +22,13 @@ Optimizer::Optimizer(Mol2* _Rec, Mol2* _RefLig, PARSER* _Parser, Grid* _Grids) {
 Optimizer::~Optimizer() {
 }
 
+double Optimizer::distance(vector<double> atom1, vector<double> atom2) {
+    return ( sqrt(((atom2[0]-atom1[0])*(atom2[0]-atom1[0]))+((atom2[1]-atom1[1])*(atom2[1]-atom1[1]))+((atom2[2]-atom1[2])*(atom2[2]-atom1[2]))) );
+}
+double Optimizer::distance_squared(vector<double> atom1, vector<double> atom2) {
+    return ( (((atom2[0]-atom1[0])*(atom2[0]-atom1[0]))+((atom2[1]-atom1[1])*(atom2[1]-atom1[1]))+((atom2[2]-atom1[2])*(atom2[2]-atom1[2]))) );
+}
+
 vector<vector<double> > Optimizer::update_coords(const std::vector<double> &x, Mol2* Lig2){
 	COORD_MC* Coord = new COORD_MC;
 	return(Coord->rototranslate(Lig2->xyz, Lig2, x[0], x[1], x[2], x[3], x[4], x[5]));
@@ -165,6 +172,28 @@ double Optimizer::objective_overlay_function(const std::vector<double> &x, std::
 	delete Gauss;
 	delete Coord;
 	return (f);
+}
+
+double Optimizer::objective_prealign_function(const std::vector<double> &x, std::vector<double> &grad, void *data){
+    COORD_MC* Coord = new COORD_MC;
+    vector<vector<double> > new_xyz;
+    double f=0.0, f2=0.0;
+    Mol2* Lig2 = (Mol2*) data;
+
+    new_xyz = Coord->rototranslate(Lig2->xyz, Lig2, x[0], x[1], x[2], x[3], x[4], x[5]);
+
+    f += distance_squared(new_xyz[Lig2->longest_axis[0]], RefLig->xyz[RefLig->longest_axis[0]]);
+    f += distance_squared(new_xyz[Lig2->longest_axis[1]], RefLig->xyz[RefLig->longest_axis[1]]);
+
+    f2 += distance_squared(new_xyz[Lig2->longest_axis[0]], RefLig->xyz[RefLig->longest_axis[1]]);
+    f2 += distance_squared(new_xyz[Lig2->longest_axis[1]], RefLig->xyz[RefLig->longest_axis[0]]);
+
+    if (f2 < f){
+        f = f2;
+    }
+
+    delete Coord;
+    return (f);
 }
 
 void  Optimizer::minimize_energy_nlopt_cobyla(Mol2* Lig2, opt_result_t* opt_result){
@@ -1340,4 +1369,49 @@ void Optimizer::minimize_alignment_nlopt_simplex(align_t* align_data, align_resu
     opt_result->rotation[1] = x[1];
     opt_result->rotation[2] = x[2];
     opt_result->opt_status = nres;
+}
+
+void Optimizer::pre_align(Mol2* Lig2, opt_result_t* opt_result){
+    nlopt::opt *opt = new nlopt::opt(nlopt::LN_NELDERMEAD,6);
+
+    vector<double> lb(6);
+    lb[0] = -180.0;
+    lb[1] = -90.0;
+    lb[2] = -180.0;
+    lb[3] = -3.0;
+    lb[4] = -3.0;
+    lb[5] = -3.0;
+    vector<double> ub(6);
+    ub[0] = 180.0;
+    ub[1] = 90.0;
+    ub[2] = 180.0;
+    ub[3] = 3.0;
+    ub[4] = 3.0;
+    ub[5] = 3.0;
+
+    opt->set_lower_bounds(lb);
+    opt->set_upper_bounds(ub);
+
+    opt->set_min_objective(Optimizer::objective_prealign_function, Lig2);
+    opt->set_xtol_rel(Parser->min_tol);
+    opt->set_maxtime(Parser->min_timeout);
+
+    vector<double> x(6);
+    x[0] = 0.0;
+    x[1] = 0.0;
+    x[2] = 0.0;
+    x[3] = 0.0;
+    x[4] = 0.0;
+    x[5] = 0.0;
+
+    double fo;
+    nlopt::result nres = opt->optimize(x,fo);
+    vector<vector<double> > xyz = update_coords(x, Lig2);
+    double f_minimum = 0.0; //evaluate_energy(Lig2, xyz);
+    delete opt;
+
+    opt_result->energy_result->total = f_minimum;
+    opt_result->f_min = fo;
+    opt_result->optimization_status = nres;
+    opt_result->optimized_xyz = xyz;
 }

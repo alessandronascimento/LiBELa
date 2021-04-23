@@ -98,6 +98,8 @@ public:
     double energy;
     //! RMSD used when parsing a trajectory ensemble
     double rmsd;
+    //!
+    vector<int> longest_axis;
 
 	/*!
 	 * Initializer. This class has, as arguments, a pointer to the class PARSER.
@@ -124,6 +126,10 @@ public:
     void get_gaff_atomic_parameters(string gaff_atom, atom_param* ap);
     string sybyl_2_gaff(string atom);
     string sybyl_2_amber(string atom);
+
+    //!
+    void find_longest_axis();
+    double distance(vector<double> atom1, vector<double> atom2);
 };
 
 #endif /* MOL2_H_ */

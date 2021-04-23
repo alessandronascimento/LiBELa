@@ -26,12 +26,36 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
         double overlay_fmax;
         vector<double> com_lig = Coord->compute_com(Lig);
 
-        /*
-         * Shifting the ligand to match its center of mass with the reference
-         * ligand center of mass.
-         */
+/*
+* Shifting the ligand to match its center of mass with the reference
+* ligand center of mass.
+*/
 
         Lig->xyz = Coord->translate(Lig->xyz, Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
+
+/*
+ *
+ * Doing a pre-alignment of the longest axis of the ligands
+ *
+ */
+
+        Lig->find_longest_axis();
+        RefLig->find_longest_axis();
+
+        Optimizer* Opt0 = new Optimizer(Rec, RefLig, Input);
+        Optimizer::opt_result_t* opt_result0 = new Optimizer::opt_result_t;
+        opt_result0->energy_result = new energy_result_t;
+
+        Opt0->pre_align(Lig, opt_result0);
+        Lig->xyz = opt_result0->optimized_xyz;
+
+        delete opt_result0;
+        delete Opt0;
+
+/*
+ * End of pre-alignment
+ */
+
 
         Optimizer* Opt = new Optimizer(Rec, RefLig, Input);
         Optimizer::opt_result_t* opt_result = new Optimizer::opt_result_t;
@@ -106,12 +130,35 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
         double overlay_fmax;
         vector<double> com_lig = Coord->compute_com(Lig);
 
-        /*
-         * Shifting the ligand to match its center of mass with the reference
-         * ligand center of mass.
-         */
+/*
+* Shifting the ligand to match its center of mass with the reference
+* ligand center of mass.
+*/
 
         Lig->xyz = Coord->translate(Lig->xyz, Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
+
+/*
+*
+* Doing a pre-alignment of the longest axis of the ligands
+*
+*/
+
+        Lig->find_longest_axis();
+        RefLig->find_longest_axis();
+
+        Optimizer* Opt0 = new Optimizer(Rec, RefLig, Input);
+        Optimizer::opt_result_t* opt_result0 = new Optimizer::opt_result_t;
+        opt_result0->energy_result = new energy_result_t;
+
+        Opt0->pre_align(Lig, opt_result0);
+        Lig->xyz = opt_result0->optimized_xyz;
+
+        delete opt_result0;
+        delete Opt0;
+
+/*
+* End of pre-alignment
+*/
 
         Optimizer* Opt = new Optimizer(Rec, RefLig, Input, Grids);
         Optimizer::opt_result_t* opt_result = new Optimizer::opt_result_t;
@@ -217,6 +264,30 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
         if (int(Lig->mcoords[i].size()) == Lig->N){
 
             Lig->xyz = Coord->translate(Lig->mcoords[i], Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
+
+/*
+*
+* Doing a pre-alignment of the longest axis of the ligands
+*
+*/
+
+            Lig->find_longest_axis();
+            RefLig->find_longest_axis();
+
+            Optimizer* Opt0 = new Optimizer(Rec, RefLig, Input);
+            Optimizer::opt_result_t* opt_result0 = new Optimizer::opt_result_t;
+            opt_result0->energy_result = new energy_result_t;
+
+            Opt0->pre_align(Lig, opt_result0);
+            Lig->xyz = opt_result0->optimized_xyz;
+
+            delete opt_result0;
+            delete Opt0;
+
+/*
+* End of pre-alignment
+*/
+
 
             Optimizer* Opt = new Optimizer(Rec, RefLig, Input);
             Optimizer::opt_result_t* opt_result = new Optimizer::opt_result_t;
@@ -347,6 +418,29 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
 
             Lig->xyz = Coord->translate(Lig->mcoords[i], Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
 
+/*
+*
+* Doing a pre-alignment of the longest axis of the ligands
+*
+*/
+
+            Lig->find_longest_axis();
+            RefLig->find_longest_axis();
+
+            Optimizer* Opt0 = new Optimizer(Rec, RefLig, Input);
+            Optimizer::opt_result_t* opt_result0 = new Optimizer::opt_result_t;
+            opt_result0->energy_result = new energy_result_t;
+
+            Opt0->pre_align(Lig, opt_result0);
+            Lig->xyz = opt_result0->optimized_xyz;
+
+            delete opt_result0;
+            delete Opt0;
+
+/*
+* End of pre-alignment
+*/
+
             Optimizer* Opt = new Optimizer(Rec, RefLig, Input, Grids);
             Optimizer::opt_result_t* opt_result = new Optimizer::opt_result_t;
             opt_result->energy_result = new energy_result_t;
@@ -370,13 +464,13 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
 
     vector<unsigned> index;
 
-    /*
-     * Here the user can choose if the best overlay is the one that maximizes the overlap of the docked ligand
-     * with the reference ligand (default) or the on which results in the best binding energy, evaluated after
-     * the overlap of the ligands. To choose the binding energy as the parameter, the input "sort_by_energy" must
-     * bet set to "yes" in the input file.
-     * ASN, Feb/2013.
-     */
+/*
+* Here the user can choose if the best overlay is the one that maximizes the overlap of the docked ligand
+* with the reference ligand (default) or the on which results in the best binding energy, evaluated after
+* the overlap of the ligands. To choose the binding energy as the parameter, the input "sort_by_energy" must
+* bet set to "yes" in the input file.
+* ASN, Feb/2013.
+*/
 
     if (Input->sort_by_energy){
         index = this->sort_vector(energies);
@@ -668,9 +762,9 @@ bool Docker::minimize_energy(PARSER* Input, Optimizer* Opt, Mol2* Rec, Mol2* Lig
 bool Docker::minimize_energy(PARSER* Input, Optimizer* Opt, Mol2* Rec, Mol2* Lig, Mol2* Reflig, Optimizer::opt_result_t* opt_result){
     bool ret = false;
 
-// Using the similarity index to define whether energy optimization will or will no be
-// done. In this case, si has to be greater than or equal to overlay_cutoff
-//
+    // Using the similarity index to define whether energy optimization will or will no be
+    // done. In this case, si has to be greater than or equal to overlay_cutoff
+    //
     if (Input->use_overlay_cutoff){
         Gaussian* Gauss = new Gaussian;
         double t1, t2, t3, si;
@@ -894,6 +988,29 @@ Docker::Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* I
 
         Lig->xyz = Coord->translate(Lig->xyz, Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
 
+/*
+*
+* Doing a pre-alignment of the longest axis of the ligands
+*
+*/
+
+        Lig->find_longest_axis();
+        RefLig->find_longest_axis();
+
+        Optimizer* Opt0 = new Optimizer(Rec, RefLig, Input);
+        Optimizer::opt_result_t* opt_result0 = new Optimizer::opt_result_t;
+        opt_result0->energy_result = new energy_result_t;
+
+        Opt0->pre_align(Lig, opt_result0);
+        Lig->xyz = opt_result0->optimized_xyz;
+
+        delete opt_result0;
+        delete Opt0;
+
+/*
+* End of pre-alignment
+*/
+
         Optimizer* Opt = new Optimizer(Rec, RefLig, Input);
         Optimizer::opt_result_t* opt_result = new Optimizer::opt_result_t;
         opt_result->energy_result = new energy_result_t;
@@ -969,6 +1086,29 @@ Docker::Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* I
          */
 
         Lig->xyz = Coord->translate(Lig->xyz, Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
+
+/*
+*
+* Doing a pre-alignment of the longest axis of the ligands
+*
+*/
+
+        Lig->find_longest_axis();
+        RefLig->find_longest_axis();
+
+        Optimizer* Opt0 = new Optimizer(Rec, RefLig, Input);
+        Optimizer::opt_result_t* opt_result0 = new Optimizer::opt_result_t;
+        opt_result0->energy_result = new energy_result_t;
+
+        Opt0->pre_align(Lig, opt_result0);
+        Lig->xyz = opt_result0->optimized_xyz;
+
+        delete opt_result0;
+        delete Opt0;
+
+/*
+* End of pre-alignment
+*/
 
         Optimizer* Opt = new Optimizer(Rec, RefLig, Input, Grids);
         Optimizer::opt_result_t* opt_result = new Optimizer::opt_result_t;
@@ -1060,6 +1200,29 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
         if (int(Lig->mcoords[i].size()) == Lig->N){
 
             Lig->xyz = Coord->translate(Lig->mcoords[i], Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
+
+/*
+*
+* Doing a pre-alignment of the longest axis of the ligands
+*
+*/
+
+            Lig->find_longest_axis();
+            RefLig->find_longest_axis();
+
+            Optimizer* Opt0 = new Optimizer(Rec, RefLig, Input);
+            Optimizer::opt_result_t* opt_result0 = new Optimizer::opt_result_t;
+            opt_result0->energy_result = new energy_result_t;
+
+            Opt0->pre_align(Lig, opt_result0);
+            Lig->xyz = opt_result0->optimized_xyz;
+
+            delete opt_result0;
+            delete Opt0;
+
+/*
+* End of pre-alignment
+*/
 
             Optimizer* Opt = new Optimizer(Rec, RefLig, Input);
             Optimizer::opt_result_t* opt_result = new Optimizer::opt_result_t;
@@ -1177,6 +1340,29 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
         if (int(Lig->mcoords[i].size()) == Lig->N){
 
             Lig->xyz = Coord->translate(Lig->mcoords[i], Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
+
+/*
+*
+* Doing a pre-alignment of the longest axis of the ligands
+*
+*/
+
+            Lig->find_longest_axis();
+            RefLig->find_longest_axis();
+
+            Optimizer* Opt0 = new Optimizer(Rec, RefLig, Input);
+            Optimizer::opt_result_t* opt_result0 = new Optimizer::opt_result_t;
+            opt_result0->energy_result = new energy_result_t;
+
+            Opt0->pre_align(Lig, opt_result0);
+            Lig->xyz = opt_result0->optimized_xyz;
+
+            delete opt_result0;
+            delete Opt0;
+
+/*
+* End of pre-alignment
+*/
 
             Optimizer* Opt = new Optimizer(Rec, RefLig, Input, Grids);
             Optimizer::opt_result_t* opt_result = new Optimizer::opt_result_t;

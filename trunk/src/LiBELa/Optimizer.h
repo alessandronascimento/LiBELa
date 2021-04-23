@@ -62,12 +62,15 @@ public:
 	static void Simulated_Annealing(Mol2* Lig, opt_result_t* opt_result);
 
 	static vector<vector<double> > update_coords(const std::vector<double> &x, Mol2* Lig2);
+    static double distance(vector<double> atom1, vector<double> atom2);
+    static double distance_squared(vector<double> atom1, vector<double> atom2);
 
 	static double evaluate_energy(Mol2* Lig2, vector<vector<double> > new_xyz);
     static void evaluate_energy(Mol2* Lig2, vector<vector<double> > new_xyz, energy_result_t* energy_result);
 
 	static double objective_energy_function(const vector<double> &x, vector<double> &grad, void *data);
 	static double objective_overlay_function(const vector<double> &x, vector<double> &grad, void *data);
+    static double objective_prealign_function(const vector<double> &x, vector<double> &grad, void *data);
     static double superpose_function(const vector<double> &x, vector<double> &grad, void *data);
 
 	static void minimize_energy_nlopt_cobyla(Mol2* Lig2, opt_result_t* opt_result);
@@ -95,6 +98,8 @@ public:
     static void minimize_overlay_nlopt_direct(Mol2* Lig2, opt_result_t* opt_result);
 
     static void minimize_alignment_nlopt_simplex(align_t* align_data, align_result_t* opt_result, vector<double> current_com);
+
+    static void pre_align(Mol2* Lig2, opt_result_t* opt_result);
 };
 
 #endif /* OPTIMIZER_H_ */

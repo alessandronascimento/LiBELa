@@ -872,3 +872,23 @@ vector<vector<double> > Mol2::get_next_xyz(PARSER* Input, gzFile mol2file) {
     }
     return (tcoord);
 }
+
+void Mol2::find_longest_axis(){
+    vector<int> axis(2);
+    double d, dist=0.0;
+    for (int i=0; i<this->N-1; i++){
+        for (int j=i+1; j<this->N; j++){
+            d = this->distance(this->xyz[i], this->xyz[j]);
+            if (d > dist){
+                dist = d;
+                axis[0] = i;
+                axis[1] = j;
+            }
+        }
+    }
+    this->longest_axis = axis;
+}
+
+double Mol2::distance(vector<double> atom1, vector<double> atom2) {
+    return ( sqrt(((atom2[0]-atom1[0])*(atom2[0]-atom1[0]))+((atom2[1]-atom1[1])*(atom2[1]-atom1[1]))+((atom2[2]-atom1[2])*(atom2[2]-atom1[2]))) );
+}
