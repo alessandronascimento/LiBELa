@@ -144,30 +144,30 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
 	min_timeout_lab = new QLabel(tr("Minimization timeout: "));
 
 	overlay_optimizer = new QComboBox;
-	overlay_optimizer->addItem("COBYLA");					//0
-	overlay_optimizer->addItem("AUGLAG (Gradient-free)");	//1
-    overlay_optimizer->addItem("AUGLAG");                   //2
-    overlay_optimizer->addItem("LBFGS");					//3
-    overlay_optimizer->addItem("MMA");						//4
-    overlay_optimizer->addItem("SUBPLEX");                  //5
-    overlay_optimizer->addItem("DIRECT");                   //6
+    overlay_optimizer->addItem("local COBYLA");					//0
+    overlay_optimizer->addItem("local AUGLAG (Gradient-free)");	//1
+    overlay_optimizer->addItem("local AUGLAG");                 //2
+    overlay_optimizer->addItem("local LBFGS");					//3
+    overlay_optimizer->addItem("local MMA");				    //4
+    overlay_optimizer->addItem("local SUBPLEX");                //5
+    overlay_optimizer->addItem("global DIRECT");                //6
     overlay_optimizer->setCurrentIndex(4);
 	overlay_optimizer_lab = new QLabel(tr("Overlay optimizer: "));
 
 	energy_optimizer = new QComboBox;
-    energy_optimizer->addItem("COBYLA");                    //0
-    energy_optimizer->addItem("AUGLAG (Gradient-free)");    //1
-    energy_optimizer->addItem("AUGLAG");                    //2
-    energy_optimizer->addItem("LBFGS");                     //3
-    energy_optimizer->addItem("MMA");                       //4
-    energy_optimizer->addItem("SUBPLEX");                   //5
-    energy_optimizer->addItem("SIMPLEX");                   //6
-    energy_optimizer->addItem("DIRECT");                    //7
-    energy_optimizer->addItem("CRS");                       //8
-    energy_optimizer->addItem("STOGO");                     //9
-    energy_optimizer->addItem("ISRES");                     //10
-    energy_optimizer->addItem("ESCH");                      //11
-    energy_optimizer->addItem("NONE");                      //12
+    energy_optimizer->addItem("local COBYLA");                    //0
+    energy_optimizer->addItem("local AUGLAG (Gradient-free)");    //1
+    energy_optimizer->addItem("lcal AUGLAG");                     //2
+    energy_optimizer->addItem("local LBFGS");                     //3
+    energy_optimizer->addItem("local MMA");                       //4
+    energy_optimizer->addItem("local SUBPLEX");                   //5
+    energy_optimizer->addItem("local SIMPLEX");                   //6
+    energy_optimizer->addItem("global DIRECT");                   //7
+    energy_optimizer->addItem("global CRS");                      //8
+    energy_optimizer->addItem("global STOGO");                    //9
+    energy_optimizer->addItem("global ISRES");                    //10
+    energy_optimizer->addItem("global ESCH");                     //11
+    energy_optimizer->addItem("NONE");                            //12
     energy_optimizer->setCurrentIndex(7);
 	energy_optimizer_lab = new QLabel(tr("Binding energy optimizer: "));
 
