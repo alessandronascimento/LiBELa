@@ -151,7 +151,7 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     overlay_optimizer->addItem("local MMA");				    //4
     overlay_optimizer->addItem("local SUBPLEX");                //5
     overlay_optimizer->addItem("global DIRECT");                //6
-    overlay_optimizer->setCurrentIndex(4);
+    overlay_optimizer->setCurrentIndex(5);
 	overlay_optimizer_lab = new QLabel(tr("Overlay optimizer: "));
 
 	energy_optimizer = new QComboBox;
@@ -168,7 +168,7 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     energy_optimizer->addItem("global ISRES");                    //10
     energy_optimizer->addItem("global ESCH");                     //11
     energy_optimizer->addItem("NONE");                            //12
-    energy_optimizer->setCurrentIndex(7);
+    energy_optimizer->setCurrentIndex(0);
 	energy_optimizer_lab = new QLabel(tr("Binding energy optimizer: "));
 
 	output_prefix = new QLineEdit(tr("iMcLiBELa"));
@@ -229,8 +229,9 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
 
     ligand_energy_model_lab = new QLabel(tr("Ligand Energy Model: "));
     ligand_energy_model = new QComboBox;
-    ligand_energy_model->addItem("GAFF");
-    ligand_energy_model->addItem("MMFF94");
+    ligand_energy_model->addItem("GAFF");       //0
+    ligand_energy_model->addItem("MMFF94");     //1
+    ligand_energy_model->setCurrentIndex(1);
 
     dock_min_tol_lab = new QLabel(tr("Docking tolerance: "));
     dock_min_tol = new QDoubleSpinBox;
