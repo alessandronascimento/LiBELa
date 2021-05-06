@@ -184,6 +184,7 @@ public:
     QDoubleSpinBox* scale_ele_energy;
     QDoubleSpinBox* scale_vdw_energy;
 
+    QCheckBox* sort_conformers;
 
     TEMP_SCHEME* RunEngine;
 

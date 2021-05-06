@@ -250,6 +250,7 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
         bret = false;
     }
     gzclose(mol2file);
+
     return (bret);
 }
 
@@ -887,6 +888,7 @@ void Mol2::find_longest_axis(){
         }
     }
     this->longest_axis = axis;
+    this->radius = dist/2.0;
 }
 
 double Mol2::distance(vector<double> atom1, vector<double> atom2) {

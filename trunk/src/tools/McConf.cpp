@@ -46,6 +46,9 @@ int main(int argc, char* argv[]) {
     Input->write_mol2 = true;
     Input->dock_mode = true;
 
+    Mol->find_longest_axis();
+    printf("Molecule radius: %7.4f Ang.\n", Mol->radius);
+
 
     bool file_read;
     OBMol* mol = new OBMol;
@@ -74,7 +77,7 @@ int main(int argc, char* argv[]) {
     delete conv;
     format->~OBFormat();
 
-    OBForceField* OBff = OBForceField::FindForceField("GAFF");
+    OBForceField* OBff = OBForceField::FindForceField("MMFF94");
 
     if (!OBff){
         printf("Could not find OpenBabel FF parameters!\n");

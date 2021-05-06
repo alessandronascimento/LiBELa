@@ -98,8 +98,10 @@ public:
     double energy;
     //! RMSD used when parsing a trajectory ensemble
     double rmsd;
-    //!
+    //! Longest distance among any pair of atoms in the molecule;
     vector<int> longest_axis;
+    //! Molecule radius;
+    double radius;
 
 	/*!
 	 * Initializer. This class has, as arguments, a pointer to the class PARSER.

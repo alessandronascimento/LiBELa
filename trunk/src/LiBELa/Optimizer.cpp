@@ -696,16 +696,16 @@ void Optimizer::minimize_energy_nlopt_stogo(Mol2* Lig2, opt_result_t* opt_result
 	lb[0] = -180.0;
 	lb[1] = -90.0;
 	lb[2] = -180.0;
-	lb[3] =  -(Parser->search_box_x/2.0);
-	lb[4] = -(Parser->search_box_y/2.0);
-	lb[5] = -(Parser->search_box_z/2.0);
+    lb[3] = -(Parser->search_box_x/2.0);
+    lb[4] = -(Parser->search_box_y/2.0);
+    lb[5] = -(Parser->search_box_z/2.0);
 	vector<double> ub(6);
 	ub[0] = 180.0;
 	ub[1] = 90.0;
 	ub[2] = 180.0;
-	ub[3] = Parser->search_box_x/2.0;
-	ub[4] = Parser->search_box_y/2.0;
-	ub[5] = Parser->search_box_z/2.0;
+    ub[3] = Parser->search_box_x/2.0;
+    ub[4] = Parser->search_box_y/2.0;
+    ub[5] = Parser->search_box_z/2.0;
 
 	opt->set_lower_bounds(lb);
 	opt->set_upper_bounds(ub);

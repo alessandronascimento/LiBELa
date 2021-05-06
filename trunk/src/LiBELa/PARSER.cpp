@@ -14,11 +14,11 @@ PARSER::PARSER(){
 	this->flex_lig = false;
 	this->flex_rec = false;
 	this->dynamic_rate = false;
-    this->timeout = 30;
+    this->timeout = 15;
     this->scoring_function = 1;
-    this->min_delta = 1.0e-4;
+    this->min_delta = 1.0e-3;
     this->min_tol = 1.0e-4;
-    this->min_timeout = 30;
+    this->min_timeout = 15;
 	this->elec_scale = 1.0;
 	this->vdw_scale = 1.0;
 	this->multifile = "";
@@ -49,10 +49,10 @@ PARSER::PARSER(){
     this->generate_conformers = true;
 	this->lig_conformers = 10;
 	this->conformers_to_evaluate = 1;
-    this->conf_search_trials = 1000;
+    this->conf_search_trials = 10000;
 	this->mol2_aa = false;
     this->conformer_min_steps = 1000;
-	this->dock_min_tol = 0.001;
+    this->dock_min_tol = 1.0e-4;
 	this->sa_mode = false;
 	this->dock_mode = false;
 	this->eq_mode = false;
@@ -63,16 +63,16 @@ PARSER::PARSER(){
 	this->write_mol2 = true;
     this->grid_spacing = 0.4;
 	this->use_grids = false;
-	this->search_box_x = 12.0;
-	this->search_box_y = 12.0;
-	this->search_box_z = 12.0;
+    this->search_box_x = 5.0;
+    this->search_box_y = 5.0;
+    this->search_box_z = 5.0;
 	this->load_grid_from_file = false;
 	this->write_grids = false;
 	this->show_rmsd = false;
 	this->sort_by_energy = false;
     this->dielectric_model = "r";
     this->only_score = false;
-    this->solvation_alpha = 0.15;
+    this->solvation_alpha = 0.10;
     this->solvation_beta = -0.005;
     this->seed = (rand()/(RAND_MAX + 1.0));
     this->ligsim = false;
@@ -89,7 +89,7 @@ PARSER::PARSER(){
     this->pbsa_grid = "";
     this->use_pbsa = false;
     this->use_delphi = false;
-    this->delphi_gsize = 121;
+    this->delphi_gsize = 75;
     this->mc_full_flex = false;
     this->compute_rotation_entropy = false;
     this->max_atom_displacement = 0.00005;
@@ -107,7 +107,6 @@ PARSER::PARSER(){
     this->scale_elec_energy = 1.0;
     this->overlay_cutoff = 0.7;
     this->use_overlay_cutoff = false;
-    this->conf_search_trials = 10000;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
