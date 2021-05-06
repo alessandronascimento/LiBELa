@@ -28,7 +28,6 @@
 
 #ifdef HAS_GUI
 #include "GUI/QtWriter.h"
-#include <QElapsedTimer>
 #include <QProgressBar>
 #include <QVector>
 #include <QPlainTextEdit>

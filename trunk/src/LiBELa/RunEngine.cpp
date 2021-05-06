@@ -346,10 +346,7 @@ void TEMP_SCHEME::dock_run(){
 
         if (Input->dock_parallel){
 #ifdef HAS_GUI
-            QElapsedTimer timer;
-            timer.start();
             this->dock_parallel();
-            time_elapsed = round((timer.elapsed()/1000)/60);
 #else
             this->dock_parallel();
 #endif
@@ -524,14 +521,9 @@ void TEMP_SCHEME::dock_run(){
         sprintf(info, "  Stopval reached = 2, Ftol reached = 3, Xtol reached = 4, Maxeval reached=5, Maxtime reached=6");
         this->print_info(info);
         this->print_line();
-//#ifdef HAS_GUI
-//        sprintf(info, " Docking computations took %4d minute(s)", time_elapsed);
-//        this->print_info(info);
-//#else
         tf = clock()-ti;
         sprintf(info, "Docking computations took %d minute(s)", int((tf/CLOCKS_PER_SEC)/60.));
         this->print_info(info);
-//#endif
         this->print_line();
     }
 }
