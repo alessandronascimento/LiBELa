@@ -9,15 +9,14 @@
 
 
 struct energy_result_t{
-    double vdw= 0.0;
-    double elec= 0.0;
-    double rec_solv= 0.0;
-    double lig_solv= 0.0;
-    double hb_donor = 0.0;
-    double hb_acceptor = 0.0;
-    double restraints = 0.0;
-    double total = 0.0;
-
+    double vdw;
+    double elec;
+    double rec_solv;
+    double lig_solv;
+    double hb_donor;
+    double hb_acceptor;
+    double restraints;
+    double total;
 };
 
 #endif
