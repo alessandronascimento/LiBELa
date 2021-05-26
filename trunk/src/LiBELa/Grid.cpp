@@ -14,7 +14,11 @@
 using namespace std;
 
 double Grid::distance(double x1, double x2, double y1, double y2, double z1, double z2) {
-	return ( sqrt(((x2-x1)*(x2-x1))+((y2-y1)*(y2-y1))+((z2-z1)*(z2-z1))) );
+    double d = ((x2-x1)*(x2-x1))+((y2-y1)*(y2-y1))+((z2-z1)*(z2-z1));
+    if (d != 0.0) {
+        d = sqrt(d);
+    }
+    return (d);
 }
 
 double Grid::distance_squared(double x1, double x2, double y1, double y2, double z1, double z2) {

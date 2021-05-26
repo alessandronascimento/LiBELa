@@ -157,7 +157,7 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
 	energy_optimizer = new QComboBox;
     energy_optimizer->addItem("local COBYLA");                    //0
     energy_optimizer->addItem("local AUGLAG (Gradient-free)");    //1
-    energy_optimizer->addItem("lcal AUGLAG");                     //2
+    energy_optimizer->addItem("local AUGLAG");                    //2
     energy_optimizer->addItem("local LBFGS");                     //3
     energy_optimizer->addItem("local MMA");                       //4
     energy_optimizer->addItem("local SUBPLEX");                   //5

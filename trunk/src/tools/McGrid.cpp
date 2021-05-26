@@ -53,9 +53,9 @@ int main(int argc, char* argv[]){
         COORD_MC* Coord = new COORD_MC();
         com = Coord->compute_com(Lig);
         printf("Ligand and Receptor files read!\n");
-        printf("Found %5lu HB donors and %5lu HB acceptor around the active site\n", Rec->HBdonors.size(), Rec->HBacceptors.size());
+        printf("Found %5lu HB donors and %5lu HB acceptor around the active site in a 9.0 Ang search sphere radius.\n", Rec->HBdonors.size(), Rec->HBacceptors.size());
         printf("Computing grids centered at %10.5f %10.5f %10.5f.\n", com[0], com[1], com[2]);
-        printf("This may take a while...\n");
+        printf("This may take a while...Coffee time, maybe?\n");
         delete Lig;
         delete Coord;
         delete HB;

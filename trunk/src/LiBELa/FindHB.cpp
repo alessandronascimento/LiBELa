@@ -76,10 +76,127 @@ void FindHB::find_ligandHB(string molfile, Mol2* Lig){
     }
 }
 
+bool FindHB::is_protein(string resname){
+    bool result = false;
+    map<string, int> aa =  {
+        {"ALA", 1},
+        {"ARG", 2},
+        {"ASN", 3},
+        {"ASP", 4},
+        {"CYS", 5},
+        {"GLN", 6},
+        {"GLU", 7},
+        {"GLY", 8},
+        {"HIS", 9},
+        {"ILE", 10},
+        {"LEU", 11},
+        {"LYS", 12},
+        {"MET", 13},
+        {"PHE", 14},
+        {"PRO", 15},
+        {"SER", 16},
+        {"THR", 17},
+        {"TRP", 18},
+        {"TYR", 19},
+        {"VAL", 20},
+        {"ASH", 21},
+        {"CYX", 22},
+        {"GLH", 23},
+        {"HIE", 24},
+        {"HID", 25},
+        {"HIP", 26}
+    };
+    int res = aa[resname];
+    switch(res){
+    case 0:
+        result=false;
+        break;
+    case 1:
+        result=true;
+        break;
+    case 2:
+        result=true;
+        break;
+    case 3:
+        result=true;
+        break;
+    case 4:
+        result=true;
+        break;
+    case 5:
+        result=true;
+        break;
+    case 6:
+        result=true;
+        break;
+    case 7:
+        result=true;
+        break;
+    case 8:
+        result=true;
+        break;
+    case 9:
+        result=true;
+        break;
+    case 10:
+        result=true;
+        break;
+    case 11:
+        result=true;
+        break;
+    case 12:
+        result=true;
+        break;
+    case 13:
+        result=true;
+        break;
+    case 14:
+        result=true;
+        break;
+    case 15:
+        result=true;
+        break;
+    case 16:
+        result=true;
+        break;
+    case 17:
+        result=true;
+        break;
+    case 18:
+        result=true;
+        break;
+    case 19:
+        result=true;
+        break;
+    case 20:
+        result=true;
+        break;
+    case 21:
+        result=true;
+        break;
+    case 22:
+        result=true;
+        break;
+    case 23:
+        result=true;
+        break;
+    case 24:
+        result=true;
+        break;
+    case 25:
+        result=true;
+        break;
+    case 26:
+        result=true;
+        break;
+    }
+    return (result);
+}
+
 void FindHB::parse_residue(int atom_start, int atom_end, string resname, Mol2* Rec, Mol2* Lig, double dist_cutoff){
     vector<int> vtemp(2);
     int res = this->find_atom(string("CA"), Rec, atom_start, atom_end);
-    if (res > 0){
+    if (res > 0 and this->is_protein(resname)){
         COORD_MC* Coord = new COORD_MC;
         vector<double> com = Coord->compute_com(Lig);
         double d = distance(Rec->xyz[res], com);        // distance from residue alpha-carbon and ligand center of mass
@@ -286,7 +403,6 @@ void FindHB::parse_residue(int atom_start, int atom_end, string resname, Mol2* R
             // main chain atoms
 
             Rec->HBacceptors.push_back(find_atom(string("O"), Rec, atom_start, atom_end));
-
             if (resname != "PRO"){
                 vtemp[0] = find_atom(string("N"), Rec, atom_start, atom_end);
                 vtemp[1] = find_atom(string("H"), Rec, atom_start, atom_end);

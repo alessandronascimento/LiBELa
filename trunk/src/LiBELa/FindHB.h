@@ -25,6 +25,7 @@ public:
     double angle(vector<double> xyz1, vector<double> xyz2, vector<double> xyz3);
     void find_ligandHB(string molfile, Mol2* Lig);
     void parse_residue(int atom_start, int atom_end, string resname, Mol2* Rec, Mol2* Lig, double dist_cutoff=10.);
+    bool is_protein(string resname);
 };
 
 #endif // FINDHB_H
