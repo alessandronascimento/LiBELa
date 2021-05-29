@@ -25,6 +25,7 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
         int overlay_status;
         double overlay_fmax;
         vector<double> com_lig = Coord->compute_com(Lig);
+        bool match=false;
 
         /*
 * Shifting the ligand to match its center of mass with the reference
@@ -67,13 +68,22 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
             sprintf(info, "Overlay optimizer %s is not defined. Exiting...\n", Input->overlay_optimizer.c_str());
         }
 
+        Gaussian* Gauss = new Gaussian;
+        double t1, t2, t3, si;
+        t1 = Gauss->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, opt_result->optimized_xyz);
+        t2 = Gauss->compute_shape_and_charge_density(Input, RefLig, RefLig, RefLig->xyz, RefLig->xyz);
+        t3 = Gauss->compute_shape_and_charge_density(Input, Lig, Lig, opt_result->optimized_xyz,opt_result->optimized_xyz);
+        si = (2*t1) / (t2+t3);
+        delete Gauss;
+
         //Copying new coordinates.
         Lig->xyz = opt_result->optimized_xyz;
         overlay_status = opt_result->optimization_status;
-        overlay_fmax = opt_result->f_min;
+        overlay_fmax = si;
 
         //        delete opt_result->energy_result;
         delete opt_result;
+
 
         //Optimizing Energy...
         Optimizer::opt_result_t* opt_result2 = new Optimizer::opt_result_t;
@@ -92,18 +102,35 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
         }
 
         else {
-            if (! this->minimize_energy(Input, Opt, Rec, Lig, RefLig, opt_result2)){
-                sprintf(info, "Energy optimizer %s is not defined. Exiting...\n", Input->energy_optimizer.c_str());
+            if (si >= Input->overlay_cutoff){
+                match=true;
+                if (! this->minimize_energy(Input, Opt, Rec, Lig, RefLig, opt_result2)){
+                    sprintf(info, "Energy optimizer %s is not defined. Exiting...\n", Input->energy_optimizer.c_str());
+                }
+
+                Gaussian* Gauss2 = new Gaussian;
+                t1 = Gauss2->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, opt_result2->optimized_xyz);
+                t2 = Gauss2->compute_shape_and_charge_density(Input, RefLig, RefLig, RefLig->xyz, RefLig->xyz);
+                t3 = Gauss2->compute_shape_and_charge_density(Input, Lig, Lig, opt_result2->optimized_xyz,opt_result2->optimized_xyz);
+                si = (2*t1) / (t2+t3);
+                delete Gauss2;
+
+                Lig->xyz = opt_result2->optimized_xyz;
             }
 
-            Lig->xyz = opt_result2->optimized_xyz;
+            if (match){
+                sprintf(info, "%5d %-12.12s %-4.4s %-10.3e %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %-3d %-2d %-2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlay_fmax,
+                        opt_result2->energy_result->elec, opt_result2->energy_result->vdw, opt_result2->energy_result->rec_solv+opt_result2->energy_result->lig_solv,
+                        opt_result2->energy_result->hb_donor+opt_result2->energy_result->hb_acceptor, opt_result2->energy_result->total, 0, overlay_status, opt_result2->optimization_status, si);
+            }
+            else{
+                sprintf(info, "%5d %-12.12s %-4.4s %-10.3e  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlay_fmax,
+                        0.0, 0.0, 0.0, 0.0, 0.0, -1, overlay_status, 0.0, si);
+            }
 
-            sprintf(info, "%5d %-10.10s %-10.10s %-11.3e %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %-3d %-2d %-2d", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlay_fmax,
-                    opt_result2->energy_result->elec, opt_result2->energy_result->vdw, opt_result2->energy_result->rec_solv+opt_result2->energy_result->lig_solv,
-                    opt_result2->energy_result->hb_donor+opt_result2->energy_result->hb_acceptor, opt_result2->energy_result->total, 0, overlay_status, opt_result2->optimization_status);
             this->print_info(info);
 
-            if (Input->write_mol2){
+            if (Input->write_mol2 and match){
 
 #pragma omp critical
                 {
@@ -114,7 +141,7 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
         delete Coord;
         delete opt_result2;
         delete Opt;
-        Lig->xyz = opt_result2->optimized_xyz;
+        //        Lig->xyz = opt_result2->optimized_xyz;
     }
     else {
         this->Dock_conformers(Rec, Lig, RefLig, com, Input, counter);
@@ -129,6 +156,7 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
         int overlay_status;
         double overlay_fmax;
         vector<double> com_lig = Coord->compute_com(Lig);
+        bool match=false;
 
         /*
 * Shifting the ligand to match its center of mass with the reference
@@ -170,10 +198,19 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
             sprintf(info, "Overlay optimizer %s is not defined. Exiting...\n", Input->overlay_optimizer.c_str());
         }
 
+        Gaussian* Gauss = new Gaussian;
+        double t1, t2, t3, si;
+        t1 = Gauss->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, opt_result->optimized_xyz);
+        t2 = Gauss->compute_shape_and_charge_density(Input, RefLig, RefLig, RefLig->xyz, RefLig->xyz);
+        t3 = Gauss->compute_shape_and_charge_density(Input, Lig, Lig, opt_result->optimized_xyz,opt_result->optimized_xyz);
+        si = (2*t1) / (t2+t3);
+        delete Gauss;
+
+
         //Copying new coordinates.
         Lig->xyz = opt_result->optimized_xyz;
         overlay_status = opt_result->optimization_status;
-        overlay_fmax = opt_result->f_min;
+        overlay_fmax = si;
 
         delete opt_result;
 
@@ -200,24 +237,33 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
         }
 
         else {
-            if (! this->minimize_energy(Input, Opt, Rec, Lig, RefLig, opt_result2)){
-                sprintf(info, "Energy optimizer %s is not defined. Exiting...\n", Input->energy_optimizer.c_str());
+            if (si >= Input->overlay_cutoff){
+                match=true;
+                if (! this->minimize_energy(Input, Opt, Rec, Lig, RefLig, opt_result2)){
+                    sprintf(info, "Energy optimizer %s is not defined. Exiting...\n", Input->energy_optimizer.c_str());
+                }
+
+                Gaussian* Gauss2 = new Gaussian;
+
+                t1 = Gauss2->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, opt_result2->optimized_xyz);
+                t2 = Gauss2->compute_shape_and_charge_density(Input, RefLig, RefLig, RefLig->xyz, RefLig->xyz);
+                t3 = Gauss2->compute_shape_and_charge_density(Input, Lig, Lig, opt_result2->optimized_xyz,opt_result2->optimized_xyz);
+
+                si = (2*t1) / (t2+t3);
+                delete Gauss2;
+
+                Lig->xyz = opt_result2->optimized_xyz;
             }
 
-            Gaussian* Gauss = new Gaussian;
-            double t1, t2, t3, si;
-            t1 = Gauss->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, opt_result2->optimized_xyz);
-            t2 = Gauss->compute_shape_and_charge_density(Input, RefLig, RefLig, RefLig->xyz, RefLig->xyz);
-            t3 = Gauss->compute_shape_and_charge_density(Input, Lig, Lig, opt_result2->optimized_xyz,opt_result2->optimized_xyz);
-
-            si = (2*t1) / (t2+t3);
-            delete Gauss;
-
-            Lig->xyz = opt_result2->optimized_xyz;
-
-            sprintf(info, "%5d %-12.12s %-4.4s %-10.3e  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlay_fmax,
-                    opt_result2->energy_result->elec, opt_result2->energy_result->vdw, opt_result2->energy_result->rec_solv+opt_result2->energy_result->lig_solv,
-                    opt_result2->energy_result->hb_donor+opt_result2->energy_result->hb_acceptor, opt_result2->energy_result->total, 0, overlay_status, opt_result2->optimization_status, si);
+            if (match){
+                sprintf(info, "%5d %-12.12s %-4.4s %-10.3e  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlay_fmax,
+                        opt_result2->energy_result->elec, opt_result2->energy_result->vdw, opt_result2->energy_result->rec_solv+opt_result2->energy_result->lig_solv,
+                        opt_result2->energy_result->hb_donor+opt_result2->energy_result->hb_acceptor, opt_result2->energy_result->total, 0, overlay_status, opt_result2->optimization_status, si);
+            }
+            else{
+                sprintf(info, "%5d %-12.12s %-4.4s %-10.3e  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlay_fmax,
+                        0.0, 0.0, 0.0, 0.0, 0.0, -1, overlay_status, 0.0, si);
+            }
             this->print_info(info);
 
             if (Input->write_mol2){
