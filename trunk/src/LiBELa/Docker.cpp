@@ -26,14 +26,14 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
         double overlay_fmax;
         vector<double> com_lig = Coord->compute_com(Lig);
 
-/*
+        /*
 * Shifting the ligand to match its center of mass with the reference
 * ligand center of mass.
 */
 
         Lig->xyz = Coord->translate(Lig->xyz, Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
 
-/*
+        /*
  *
  * Doing a pre-alignment of the longest axis of the ligands
  *
@@ -52,7 +52,7 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
         delete opt_result0;
         delete Opt0;
 
-/*
+        /*
  * End of pre-alignment
  */
 
@@ -130,14 +130,14 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
         double overlay_fmax;
         vector<double> com_lig = Coord->compute_com(Lig);
 
-/*
+        /*
 * Shifting the ligand to match its center of mass with the reference
 * ligand center of mass.
 */
 
         Lig->xyz = Coord->translate(Lig->xyz, Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
 
-/*
+        /*
 *
 * Doing a pre-alignment of the longest axis of the ligands
 *
@@ -156,7 +156,7 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
         delete opt_result0;
         delete Opt0;
 
-/*
+        /*
 * End of pre-alignment
 */
 
@@ -258,6 +258,10 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
     vector<double> energies;
     vector<double> overlays;
     double si;
+    bool match=false;
+    Gaussian* Gauss = new Gaussian;
+    double t1, t2, t3;
+    t2 = Gauss->compute_shape_and_charge_density(Input, RefLig, RefLig, RefLig->xyz, RefLig->xyz);
 
     for (unsigned i=0; i<Lig->mcoords.size(); i++){
         vector<double> com_lig = Coord->compute_com(Lig->mcoords[i], Lig);
@@ -265,7 +269,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 
             Lig->xyz = Coord->translate(Lig->mcoords[i], Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
 
-/*
+            /*
 *
 * Doing a pre-alignment of the longest axis of the ligands
 *
@@ -284,7 +288,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
             delete opt_result0;
             delete Opt0;
 
-/*
+            /*
 * End of pre-alignment
 */
 
@@ -298,7 +302,11 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
                 this->print_info(info);
             }
 
-            overlays.push_back(opt_result->f_min);
+            t1 = Gauss->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, opt_result->optimized_xyz);
+            t3 = Gauss->compute_shape_and_charge_density(Input, Lig, Lig, opt_result->optimized_xyz, opt_result->optimized_xyz);
+            si = (2*t1) / (t2+t3);
+
+            overlays.push_back(si);
             energies.push_back(opt_result->energy_result->total);
             new_mcoords.push_back(opt_result->optimized_xyz);
             overlay_status.push_back(opt_result->optimization_status);
@@ -306,6 +314,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
             delete opt_result;
         }
     }
+    delete Gauss;
 
     vector<unsigned> index;
 
@@ -336,41 +345,49 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 
             Lig->xyz = new_mcoords[index[i]];
 
-            Optimizer* Opt = new Optimizer(Rec, RefLig, Input);
+            if (overlays[index[i]] >= Input->overlay_cutoff){
+                match=true;
 
-            Optimizer::opt_result_t* opt_result = new Optimizer::opt_result_t;
-            opt_result->energy_result = new energy_result_t;
+                Optimizer* Opt = new Optimizer(Rec, RefLig, Input);
 
-            if (! this->minimize_energy(Input, Opt, Rec, Lig, RefLig, opt_result)){
-                sprintf(info, "Energy optimizer %s is not defined. Exiting...\n", Input->energy_optimizer.c_str());
-                this->print_info(info);
+                Optimizer::opt_result_t* opt_result = new Optimizer::opt_result_t;
+                opt_result->energy_result = new energy_result_t;
+
+                if (! this->minimize_energy(Input, Opt, Rec, Lig, RefLig, opt_result)){
+                    sprintf(info, "Energy optimizer %s is not defined. Exiting...\n", Input->energy_optimizer.c_str());
+                    this->print_info(info);
+                }
+
+                if (opt_result->energy_result->total < best_ene){
+                    best_ene = opt_result->energy_result->total;
+                    best_energy_t = opt_result->energy_result;
+                    new_xyz = opt_result->optimized_xyz;
+                    best_conf=index[i];
+                    energy_status = opt_result->optimization_status;
+                }
+                delete Opt;
+                delete opt_result;
             }
-
-            if (opt_result->energy_result->total < best_ene){
-                best_ene = opt_result->energy_result->total;
-                best_energy_t = opt_result->energy_result;
-                new_xyz = opt_result->optimized_xyz;
-                best_conf=index[i];
-                energy_status = opt_result->optimization_status;
-            }
-            delete Opt;
-            delete opt_result;
         }
     }
-    Gaussian* Gauss = new Gaussian;
-    double t1, t2, t3;
-    t1 = Gauss->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, new_xyz);
-    t2 = Gauss->compute_shape_and_charge_density(Input, RefLig, RefLig, RefLig->xyz, RefLig->xyz);
-    t3 = Gauss->compute_shape_and_charge_density(Input, Lig, Lig, new_xyz, new_xyz);
+    Gaussian* Gauss2 = new Gaussian;
+    t1 = Gauss2->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, new_xyz);
+    //    t2 = Gauss2->compute_shape_and_charge_density(Input, RefLig, RefLig, RefLig->xyz, RefLig->xyz);
+    t3 = Gauss2->compute_shape_and_charge_density(Input, Lig, Lig, new_xyz, new_xyz);
 
     si = (2*t1) / (t2+t3);
-    delete Gauss;
+    delete Gauss2;
 
     Lig->xyz = new_xyz;
 
-
-    sprintf(info, "%5d %-12.12s %-4.4s %-10.3e  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlays[best_conf],
-            best_energy_t->elec, best_energy_t->vdw, best_energy_t->rec_solv+best_energy_t->lig_solv, best_energy_t->hb_donor+best_energy_t->hb_acceptor, best_energy_t->total, best_conf, overlay_status[best_conf], energy_status, si);
+    if (match){
+        sprintf(info, "%5d %-12.12s %-4.4s %-10.3g  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlays[best_conf],
+                best_energy_t->elec, best_energy_t->vdw, best_energy_t->rec_solv+best_energy_t->lig_solv, best_energy_t->hb_donor+best_energy_t->hb_acceptor, best_energy_t->total, best_conf, overlay_status[best_conf], energy_status, si);
+    }
+    else {
+        sprintf(info, "%5d %-12.12s %-4.4s %-10.3g  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlays[best_conf],
+                0.0, 0.0, 0.0, 0.0, 0.0, -1, 0, 0, 0.00);
+    }
     this->print_info(info);
 
     if (Input->write_mol2){
@@ -411,6 +428,11 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
     vector<double> energies;
     vector<double> overlays;
     vector<int> overlay_status;
+    bool match=false;
+
+    Gaussian* Gauss = new Gaussian;
+    double t1, t2, t3;
+    t2 = Gauss->compute_shape_and_charge_density(Input, RefLig, RefLig, RefLig->xyz, RefLig->xyz);
 
     for (unsigned i=0; i<Lig->mcoords.size(); i++){
         vector<double> com_lig = Coord->compute_com(Lig->mcoords[i], Lig);
@@ -418,7 +440,7 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
 
             Lig->xyz = Coord->translate(Lig->mcoords[i], Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
 
-/*
+            /*
 *
 * Doing a pre-alignment of the longest axis of the ligands
 *
@@ -437,7 +459,7 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
             delete opt_result0;
             delete Opt0;
 
-/*
+            /*
 * End of pre-alignment
 */
 
@@ -450,7 +472,12 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
                 this->print_info(info);
             }
 
-            overlays.push_back(opt_result->f_min);
+
+            t1 = Gauss->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, opt_result->optimized_xyz);
+            t3 = Gauss->compute_shape_and_charge_density(Input, Lig, Lig, opt_result->optimized_xyz,opt_result->optimized_xyz);
+            si = (2*t1) / (t2+t3);
+
+            overlays.push_back(si);
             energies.push_back(opt_result->energy_result->total);
             new_mcoords.push_back(opt_result->optimized_xyz);
             overlay_status.push_back(opt_result->optimization_status);
@@ -460,11 +487,12 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
         }
     }
 
+    delete Gauss;
     delete Coord;
 
     vector<unsigned> index;
 
-/*
+    /*
 * Here the user can choose if the best overlay is the one that maximizes the overlap of the docked ligand
 * with the reference ligand (default) or the on which results in the best binding energy, evaluated after
 * the overlap of the ligands. To choose the binding energy as the parameter, the input "sort_by_energy" must
@@ -487,44 +515,54 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
 
     energy_result_t* best_energy_t = new energy_result_t;
 
+    Gaussian* Gauss2 = new Gaussian;
+    t2 = Gauss2->compute_shape_and_charge_density(Input, RefLig, RefLig, RefLig->xyz, RefLig->xyz);
+
     for (int i=0; i<Input->conformers_to_evaluate; i++){
         if (i < int(Lig->mcoords.size())){
 
-            Lig->xyz = new_mcoords[index[i]];
+            if (overlays[index[i]]>= Input->overlay_cutoff){
+                match=true;
 
-            Optimizer* Opt2 = new Optimizer(Rec, RefLig, Input, Grids);
-            Optimizer::opt_result_t* opt_result2 = new Optimizer::opt_result_t;
-            opt_result2->energy_result = new energy_result_t;
+                Lig->xyz = new_mcoords[index[i]];
 
-            if (! this->minimize_energy(Input, Opt2, Rec, Lig, RefLig, opt_result2)){
-                sprintf(info, "Energy optimizer %s is not defined. Exiting...\n", Input->energy_optimizer.c_str());
-                this->print_info(info);
+                Optimizer* Opt2 = new Optimizer(Rec, RefLig, Input, Grids);
+                Optimizer::opt_result_t* opt_result2 = new Optimizer::opt_result_t;
+                opt_result2->energy_result = new energy_result_t;
+
+                if (! this->minimize_energy(Input, Opt2, Rec, Lig, RefLig, opt_result2)){
+                    sprintf(info, "Energy optimizer %s is not defined. Exiting...\n", Input->energy_optimizer.c_str());
+                    this->print_info(info);
+                }
+
+                if (opt_result2->energy_result->total < best_ene){
+                    best_ene = opt_result2->energy_result->total;
+                    best_energy_t = opt_result2->energy_result;
+                    new_xyz = opt_result2->optimized_xyz;
+                    best_conf=index[i];
+                    energy_status = opt_result2->optimization_status;
+                }
+                delete opt_result2;
+                delete Opt2;
             }
-
-            if (opt_result2->energy_result->total < best_ene){
-                best_ene = opt_result2->energy_result->total;
-                best_energy_t = opt_result2->energy_result;
-                new_xyz = opt_result2->optimized_xyz;
-                best_conf=index[i];
-                energy_status = opt_result2->optimization_status;
-            }
-            delete opt_result2;
-            delete Opt2;
         }
     }
-    Gaussian* Gauss = new Gaussian;
-    double t1, t2, t3;
-    t1 = Gauss->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, new_xyz);
-    t2 = Gauss->compute_shape_and_charge_density(Input, RefLig, RefLig, RefLig->xyz, RefLig->xyz);
-    t3 = Gauss->compute_shape_and_charge_density(Input, Lig, Lig, new_xyz,new_xyz);
+    t1 = Gauss2->compute_shape_and_charge_density(Input, RefLig, Lig, RefLig->xyz, new_xyz);
+    t3 = Gauss2->compute_shape_and_charge_density(Input, Lig, Lig, new_xyz,new_xyz);
 
     si = (2*t1) / (t2+t3);
-    delete Gauss;
+    delete Gauss2;
 
     Lig->xyz = new_xyz;
 
-    sprintf(info, "%5d %-12.12s %-4.4s %-10.3e  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlays[best_conf],
-            best_energy_t->elec, best_energy_t->vdw, (best_energy_t->rec_solv + best_energy_t->lig_solv), (best_energy_t->hb_donor + best_energy_t->hb_acceptor), best_energy_t->total, best_conf, overlay_status[best_conf], energy_status, si);
+    if (match){
+        sprintf(info, "%5d %-12.12s %-4.4s %-10.3g  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlays[best_conf],
+                best_energy_t->elec, best_energy_t->vdw, (best_energy_t->rec_solv + best_energy_t->lig_solv), (best_energy_t->hb_donor + best_energy_t->hb_acceptor), best_energy_t->total, best_conf, overlay_status[best_conf], energy_status, si);
+    }
+    else {
+        sprintf(info, "%5d %-12.12s %-4.4s %-10.3g  %-8.3g %-8.3g %-8.3g %-8.3g %-8.3g %3d %2d %2d %.2f", counter, Lig->molname.c_str(), Lig->resnames[0].c_str(), overlays[best_conf],
+                0.00, 0.00, 0.00, 0.00, 0.00, -1, 0, 0, 0.00);
+    }
     this->print_info(info);
 
     if (Input->write_mol2){
@@ -875,9 +913,9 @@ bool Docker::minimize_energy(PARSER* Input, Optimizer* Opt, Mol2* Rec, Mol2* Lig
         }
     }
     else {
-//
-// Not using the overlay cutoff. Works similarly to the next function.
-//
+        //
+        // Not using the overlay cutoff. Works similarly to the next function.
+        //
         if (Input->energy_optimizer == "lbfgs" or Input->energy_optimizer == "lbfgs2"){
             Opt->minimize_energy_nlopt_lbfgs(Lig, opt_result);
             ret = true;
@@ -988,7 +1026,7 @@ Docker::Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* I
 
         Lig->xyz = Coord->translate(Lig->xyz, Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
 
-/*
+        /*
 *
 * Doing a pre-alignment of the longest axis of the ligands
 *
@@ -1007,7 +1045,7 @@ Docker::Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* I
         delete opt_result0;
         delete Opt0;
 
-/*
+        /*
 * End of pre-alignment
 */
 
@@ -1087,7 +1125,7 @@ Docker::Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* I
 
         Lig->xyz = Coord->translate(Lig->xyz, Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
 
-/*
+        /*
 *
 * Doing a pre-alignment of the longest axis of the ligands
 *
@@ -1106,7 +1144,7 @@ Docker::Docker(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER* I
         delete opt_result0;
         delete Opt0;
 
-/*
+        /*
 * End of pre-alignment
 */
 
@@ -1201,7 +1239,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 
             Lig->xyz = Coord->translate(Lig->mcoords[i], Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
 
-/*
+            /*
 *
 * Doing a pre-alignment of the longest axis of the ligands
 *
@@ -1220,7 +1258,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
             delete opt_result0;
             delete Opt0;
 
-/*
+            /*
 * End of pre-alignment
 */
 
@@ -1341,7 +1379,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 
             Lig->xyz = Coord->translate(Lig->mcoords[i], Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
 
-/*
+            /*
 *
 * Doing a pre-alignment of the longest axis of the ligands
 *
@@ -1360,7 +1398,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
             delete opt_result0;
             delete Opt0;
 
-/*
+            /*
 * End of pre-alignment
 */
 

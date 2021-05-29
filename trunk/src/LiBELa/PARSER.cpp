@@ -105,7 +105,7 @@ PARSER::PARSER(){
     this->translation_step = 0.2;
     this->scale_vdw_energy = 1.0;
     this->scale_elec_energy = 1.0;
-    this->overlay_cutoff = 0.7;
+    this->overlay_cutoff = 0.0;
     this->use_overlay_cutoff = false;
 }
 
