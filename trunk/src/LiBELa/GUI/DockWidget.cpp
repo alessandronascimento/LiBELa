@@ -252,10 +252,10 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     parallel_jobs->setValue(1);
     parallel_jobs->setMinimum(1);
 
-    use_cutoff_score = new QCheckBox(tr("Use cutoff Score?"));
-    use_cutoff_score_lab = new QLabel(tr("Use cutoff for similarity?"));
+//    use_cutoff_score = new QCheckBox(tr("Use cutoff Score?"));
+    use_cutoff_score_lab = new QLabel(tr("Cutoff for Similarity:"));
     cutoff_score = new QDoubleSpinBox;
-    cutoff_score->setValue(Inp->writeMol2_score_cutoff);
+    cutoff_score->setValue(Inp->overlay_cutoff);
     cutoff_score->setMaximum(1.0);
     cutoff_score->setMinimum(0.0);
     cutoff_score->setSingleStep(0.05);
@@ -319,8 +319,8 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     i++;
 
     editLayout->addWidget(use_cutoff_score_lab, i, 0);
-    editLayout->addWidget(use_cutoff_score, i, 1);
-    editLayout->addWidget(cutoff_score, i, 2);
+//    editLayout->addWidget(use_cutoff_score, i, 1);
+    editLayout->addWidget(cutoff_score, i, 1);
     i++;
 
     editLayout->addWidget(use_cutoff_energy_lab, i, 0);
