@@ -245,6 +245,8 @@ public:
     double scale_vdw_energy;
     //!
     double scale_elec_energy;
+    //!
+    bool use_score_optimization;
 
 
     /*!

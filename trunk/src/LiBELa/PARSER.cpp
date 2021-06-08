@@ -107,6 +107,7 @@ PARSER::PARSER(){
     this->scale_elec_energy = 1.0;
     this->overlay_cutoff = 0.0;
     this->use_overlay_cutoff = false;
+    this->use_score_optimization = false;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -532,6 +533,12 @@ void PARSER::comparing (string param, ifstream &input) {
     }
     else if (param == "overlay_cutoff"){
         input >> this->overlay_cutoff;
+    }
+    else if (param == "use_score_optimization"){
+        input >> tmp;
+        if (tmp == "yes" or tmp == "YES" or tmp == "Yes"){
+            this->use_score_optimization = true;
+        }
     }
 	else {
 		cout << "Unknown parameter: " << param << endl;
