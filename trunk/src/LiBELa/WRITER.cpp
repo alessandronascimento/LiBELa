@@ -144,6 +144,7 @@ void WRITER::print_params(){
     }
     printf("*                                                                                                  *\n");
     printf("* %-30s %-66d*\n", "only_score", Input->only_score);
+    printf("* %-30s %-66d*\n", "use_score_optimization", Input->use_score_optimization);
     printf("* %-30s %-22.2f%-22.2f%-22.2f*\n", "search_box", Input->search_box_x, Input->search_box_y, Input->search_box_z);
     printf("* %-30s %-66.10f*\n", "minimization_tolerance", Input->min_tol);
     printf("* %-30s %-66.10f*\n", "minimization_delta", Input->min_delta);
@@ -158,6 +159,7 @@ void WRITER::print_params(){
     printf("* %-30s %-66d*\n", "deal", Input->deal);
     printf("* %-30s %-66.2f*\n", "scale_elec_energy", Input->scale_elec_energy);
     printf("* %-30s %-66.2f*\n", "scale_vdw_energy", Input->scale_vdw_energy);
+    printf("* %-30s %-66.2f*\n", "Overlay Cutoff", Input->overlay_cutoff);
 
     printf("*                                                                                                  *\n");
     printf("* %-30s %-66d*\n", "generate_conformers", Input->generate_conformers);
@@ -266,6 +268,7 @@ void WRITER::print_params(){
     }
     fprintf(output, "*                                                                                                  *\n");
     fprintf(output, "* %-30s %-66d*\n", "only_score", Input->only_score);
+    fprintf(output, "* %-30s %-66d*\n", "use_score_optimization", Input->use_score_optimization);
     fprintf(output, "* %-30s %-22.2f%-22.2f%-22.2f*\n", "search_box", Input->search_box_x, Input->search_box_y, Input->search_box_z);
     fprintf(output, "* %-30s %-66.10f*\n", "minimization_tolerance", Input->min_tol);
     fprintf(output, "* %-30s %-66.10f*\n", "minimization_delta", Input->min_delta);
@@ -276,6 +279,7 @@ void WRITER::print_params(){
     fprintf(output, "* %-30s %-66.2f*\n", "vdw_scale", Input->vdw_scale);
     fprintf(output, "* %-30s %-66.66s*\n", "overlay_optimizer", Input->overlay_optimizer.c_str());
     fprintf(output, "* %-30s %-66.66s*\n", "energy_optimizer", Input->energy_optimizer.c_str());
+    fprintf(output, "* %-30s %-66.10f*\n", "Overlay Cuttoff", Input->overlay_cutoff);
     fprintf(output, "* %-30s %-66d*\n", "ignore_h", Input->dock_no_h);
     fprintf(output, "* %-30s %-66d*\n", "deal", Input->deal);
     fprintf(output, "*                                                                                                  *\n");
