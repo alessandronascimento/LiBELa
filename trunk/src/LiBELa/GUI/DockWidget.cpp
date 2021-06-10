@@ -252,7 +252,6 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     parallel_jobs->setValue(1);
     parallel_jobs->setMinimum(1);
 
-//    use_cutoff_score = new QCheckBox(tr("Use cutoff Score?"));
     use_cutoff_score_lab = new QLabel(tr("Cutoff for Similarity:"));
     cutoff_score = new QDoubleSpinBox;
     cutoff_score->setValue(Inp->overlay_cutoff);
@@ -260,13 +259,18 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     cutoff_score->setMinimum(0.0);
     cutoff_score->setSingleStep(0.05);
 
-    use_cutoff_energy = new QCheckBox(tr("Use cutoff energy"));
-    use_cutoff_energy_lab = new QLabel(tr("Use cutoff for binding energy?"));
+    use_write_cutoff_score = new QCheckBox(tr("Use writting cutoff for overlay?"));
+    write_cutoff_score = new QDoubleSpinBox;
+    write_cutoff_score->setValue(Inp->writeMol2_score_cutoff);
+    write_cutoff_score->setMinimum(0.00);
+    write_cutoff_score->setMaximum(1.00);
+    write_cutoff_score->setSingleStep(0.01);
+
+    use_cutoff_energy = new QCheckBox(tr("Use writting cutoff for energy?"));
     cutoff_energy = new QDoubleSpinBox;
     cutoff_energy->setValue(Inp->writeMol2_energy_cutoff);
     cutoff_energy->setSingleStep(0.01);
 
-//    use_docking_restraint_lab = new QLabel(tr("Use harmonic restraints in docking ?"));
     use_docking_restraint = new QCheckBox(tr("Use harmonic restraints in docking ?"));
     docking_restraint_lab = new QLabel(tr("Docking restraint weight"));
     docking_restraint_weight = new QDoubleSpinBox;
@@ -319,13 +323,15 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     i++;
 
     editLayout->addWidget(use_cutoff_score_lab, i, 0);
-//    editLayout->addWidget(use_cutoff_score, i, 1);
     editLayout->addWidget(cutoff_score, i, 1);
     i++;
 
-    editLayout->addWidget(use_cutoff_energy_lab, i, 0);
-    editLayout->addWidget(use_cutoff_energy, i, 1);
-    editLayout->addWidget(cutoff_energy, i, 2);
+    editLayout->addWidget(use_write_cutoff_score, i, 0);
+    editLayout->addWidget(write_cutoff_score, i, 1);
+    i++;
+
+    editLayout->addWidget(use_cutoff_energy, i, 0);
+    editLayout->addWidget(cutoff_energy, i, 1);
     i++;
 
     sf_input = new QLabel(tr("<h2>Scoring options</h2>"));
@@ -511,7 +517,7 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
 
     connect(write_mol2, SIGNAL(stateChanged(int)), this, SLOT(slot_write_mol2(int)));
     connect(dock_no_h, SIGNAL(stateChanged(int)), this, SLOT(slot_ignore_h(int)));
-    connect(use_cutoff_score, SIGNAL(stateChanged(int)), this, SLOT(slot_use_cutoff_score(int)));
+    connect(use_write_cutoff_score, SIGNAL(stateChanged(int)), this, SLOT(slot_use_cutoff_score(int)));
     connect(use_cutoff_energy, SIGNAL(stateChanged(int)), this, SLOT(slot_use_cutoff_energy(int)));
     connect(generate_conformers, SIGNAL(stateChanged(int)), this, SLOT(slot_generate_conformers(int)));
     connect(parallel, SIGNAL(stateChanged(int)), this, SLOT(slot_parallel(int)));
@@ -605,6 +611,7 @@ void DockWidget::slot_write_mol2(int state){
     }
 }
 
+
 void DockWidget::slot_use_cutoff_score(int state){
     switch(state){
     case Qt::Checked:
@@ -615,6 +622,7 @@ void DockWidget::slot_use_cutoff_score(int state){
         break;
     }
 }
+
 
 void DockWidget::slot_use_cutoff_energy(int state){
     switch(state){
@@ -877,7 +885,7 @@ void DockWidget::set_parameters(){
         break;
     }
 
-    if (this->use_cutoff_score->isChecked()){
+    if (this->use_write_cutoff_score->isChecked()){
         Inp->use_writeMol2_score_cutoff = true;
     }
 
@@ -885,7 +893,7 @@ void DockWidget::set_parameters(){
         Inp->use_writeMol2_energy_cutoff = true;
     }
 
-    Inp->writeMol2_score_cutoff = this->cutoff_score->value();
+    Inp->writeMol2_score_cutoff = this->write_cutoff_score->value();
     Inp->writeMol2_energy_cutoff = this->cutoff_energy->value();
 
     Inp->scale_elec_energy = this->scale_ele_energy->value();
@@ -1159,6 +1167,11 @@ void DockWidget::hide_advanced_options(){
     scale_ele_energy->hide();
     scale_vdw_energy->hide();
 
+    use_cutoff_energy->hide();
+    cutoff_energy->hide();
+    use_write_cutoff_score->hide();
+    write_cutoff_score->hide();
+
 }
 
 void DockWidget::show_advanced_options(){
@@ -1226,6 +1239,11 @@ void DockWidget::show_advanced_options(){
     scale_vdw_energy_lab->show();
     scale_ele_energy->show();
     scale_vdw_energy->show();
+
+    use_cutoff_energy->show();
+    cutoff_energy->show();
+    use_write_cutoff_score->show();
+    write_cutoff_score->show();
 }
 
 void DockWidget::set_initial_parameters(){

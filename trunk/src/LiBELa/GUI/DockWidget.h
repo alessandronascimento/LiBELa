@@ -1,6 +1,7 @@
 #ifndef DOCKWIDGET_H
 #define DOCKWIDGET_H
 
+#include<cstdio>
 #include<QWidget>
 #include<QVBoxLayout>
 #include<QHBoxLayout>
@@ -167,12 +168,15 @@ public:
     QLabel* search_box_lab;
     QDoubleSpinBox* search_box;
 
-    QCheckBox* use_cutoff_score;
+    QCheckBox* use_write_cutoff_score;
     QCheckBox* use_cutoff_energy;
-    QDoubleSpinBox* cutoff_score;
+    QDoubleSpinBox* write_cutoff_score;
     QDoubleSpinBox* cutoff_energy;
+//    QLabel* use_write_cutoff_score_lab;
+//    QLabel* use_cutoff_energy_lab;
+
     QLabel* use_cutoff_score_lab;
-    QLabel* use_cutoff_energy_lab;
+    QDoubleSpinBox* cutoff_score;
 
     QLabel* docking_restraint_lab;
     QDoubleSpinBox* docking_restraint_weight;
