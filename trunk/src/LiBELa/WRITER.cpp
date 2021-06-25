@@ -181,6 +181,7 @@ void WRITER::print_params(){
     printf("* %-30s %-66.66s*\n", "Atomic FF model", Input->atomic_model_ff.c_str());
     printf("*                                                                                                  *\n");
     if (Input->eq_mode){
+        printf("* %-30s %-66.10f*\n", "MC Temperature", Input->temp);
         printf("* %-30s %-66d*\n", "MC Sampling of Torsions", Input->sample_torsions);
         printf("* %-30s %-66.10f*\n", "MC Maximal COM Translation", Input->cushion);
         printf("* %-30s %-66.10f*\n", "MC Maximal COM Rotation", Input->rotation_step);
