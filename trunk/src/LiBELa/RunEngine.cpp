@@ -910,6 +910,18 @@ void TEMP_SCHEME::eq_run(){
             EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, Input->temp);
         }
 
+        EqMC->average_deltaE = EqMC->average_bound_energy - EqMC->average_freeligand_energy;
+        double dE= EqMC->average_deltaE - (EqMC->boundTS-EqMC->freeTS);
+        Writer->print_line();
+        Writer->print_line();
+        sprintf(info, " Binding Energies:");
+        Writer->print_info(info);
+        sprintf(info, "     DeltaU = <Ebound> - <Efree> = %7.3f kcal/mol", EqMC->average_deltaE);
+        Writer->print_info(info);
+        sprintf(info, "     Binding Energy = <dU> - TdS = %7.3f kcal/mol", dE);
+        Writer->print_info(info);
+        Writer->print_line();
+        Writer->print_line();
         delete EqMC;
     }
 }

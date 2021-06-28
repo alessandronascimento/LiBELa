@@ -33,6 +33,11 @@ public:
     long double Boltzmann_weighted_average_energy;
     long double MCR_Boltzmann_weighted_average;
     long double MCR_Boltzmann_weighted_stdev;
+    double average_bound_energy;
+    double average_freeligand_energy;
+    double average_deltaE;
+    double boundTS;
+    double freeTS;
 
     struct step_t{
         vector<vector<double> > xyz;

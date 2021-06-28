@@ -382,6 +382,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     this->MCR_Boltzmann_weighted_average = sum_Boltzmann2_ene/(Input->number_steps+nReject);
     this->MCR_Boltzmann_weighted_stdev = sqrt((avg_Boltzmann2_ene_squared - (this->MCR_Boltzmann_weighted_average*this->MCR_Boltzmann_weighted_average)) / (Input->number_steps+nReject-1.0));
 
+    this->average_bound_energy = this->average_energy;
 
     sprintf(info, "Average Monte Carlo energy: %10.3f +/- %10.3f @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
     Writer->print_info(info);
@@ -411,6 +412,8 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     Writer->print_info(info);
     sprintf(info, "First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K", -McEnt->S*300., 300.);
     Writer->print_info(info);
+
+    this->boundTS=McEnt->TS;
 
     Writer->print_line();
 
@@ -675,6 +678,8 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         this->MCR_Boltzmann_weighted_average = sum_Boltzmann2_ene/(Input->number_steps+nReject);
         this->MCR_Boltzmann_weighted_stdev = sqrt((avg_Boltzmann2_ene_squared - (this->MCR_Boltzmann_weighted_average*this->MCR_Boltzmann_weighted_average))/(Input->number_steps+nReject-1.0));
 
+        this->average_freeligand_energy=this->average_energy;
+
         sprintf(info, "Average Monte Carlo ligand energy: %10.3f +- %10.3f @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
         Writer->print_info(info);
         sprintf(info, "Boltzmann-weighted average ligand energy: %10.3Lg @ %7.2f K", this->Boltzmann_weighted_average_energy, T);
@@ -703,6 +708,8 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         Writer->print_info(info);
         sprintf(info, "First-Order Approximation Ligand -TS @ 300K:               %10.4g kcal/mol @ %7.2f K", -McEnt->S*300., 300.);
         Writer->print_info(info);
+
+        this->freeTS=McEnt->TS;
 
         Writer->print_line();
 
