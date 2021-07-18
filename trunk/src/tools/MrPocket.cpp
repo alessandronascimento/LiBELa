@@ -35,6 +35,7 @@ void usage(){
     printf("\t -n <resnumber> to define residue <resnumber> as an anchor on the pocket\n");
     printf("\t -b <box_size> to define the box size. Default is 30.0 Angstrom\n");
     printf("\t -s <space> to define the spacing betweent grid points. Default is 1.5 Angstrom\n");
+    printf("\t -p <padding> to define an extra distance beyond the ligand radius.\n");
 }
 
 int main (int argc, char* argv[]){
@@ -48,6 +49,8 @@ int main (int argc, char* argv[]){
     char *ligfile;
     char *recfile;
     char *inputfile;
+    bool use_padding=false;
+    double padding=3.0;
     int c;
 
     if (argc < 2){
@@ -58,7 +61,7 @@ int main (int argc, char* argv[]){
     PARSER* Input = new PARSER;
     Input->write_mol2 = true;
 
-    while ((c = getopt (argc, argv, "i:r:l:n:b:s:")) != -1)
+    while ((c = getopt (argc, argv, "i:r:l:n:b:s:p:")) != -1)
         switch (c)
         {
         case 'i':
@@ -84,6 +87,10 @@ int main (int argc, char* argv[]){
             break;
         case 's':
             space = atof(optarg);
+            break;
+        case 'p':
+            use_padding = true;
+            padding = atof(optarg);
             break;
         case '?':
             if (optopt == 'c')
@@ -137,8 +144,26 @@ int main (int argc, char* argv[]){
     else {
         Mol2* Lig = new Mol2(Input, Input->reflig_mol2);
         rec_com = Coord->compute_com(Lig);
+        double max_dist=0.0;
+        double dist;
+
+        for (int i=0; i<Lig->N-1; i++){
+            for (int j=i+1; j<Lig->N; j++){
+                dist = distance_squared(Lig->xyz[i][0], Lig->xyz[j][0], Lig->xyz[i][1], Lig->xyz[j][1], Lig->xyz[i][2], Lig->xyz[j][2]);
+                if (dist > max_dist){
+                    max_dist = dist;
+                }
+            }
+        }
+
+        max_dist = sqrt(max_dist);
+
         delete Lig;
         printf("Ligand center of mass: %.3f %.3f %.3f\n", rec_com[0], rec_com[1], rec_com[2]);
+        printf("Ligand radius: %7.3f\n", max_dist);
+        if (use_padding){
+            box_size = max_dist + padding;
+        }
     }
 
     printf("Defining a search box with %.1f x %.1f x %.1f Angstroms for cavity searching....\n", box_size, box_size, box_size);
