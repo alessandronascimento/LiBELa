@@ -79,34 +79,35 @@ void FindHB::find_ligandHB(string molfile, Mol2* Lig){
 bool FindHB::is_protein(string resname){
     bool result = false;
     map<string, int> aa =  {
-        {"ALA", 1},
-        {"ARG", 2},
-        {"ASN", 3},
-        {"ASP", 4},
-        {"CYS", 5},
-        {"GLN", 6},
-        {"GLU", 7},
-        {"GLY", 8},
-        {"HIS", 9},
-        {"ILE", 10},
-        {"LEU", 11},
-        {"LYS", 12},
-        {"MET", 13},
-        {"PHE", 14},
-        {"PRO", 15},
-        {"SER", 16},
-        {"THR", 17},
-        {"TRP", 18},
-        {"TYR", 19},
-        {"VAL", 20},
-        {"ASH", 21},
-        {"CYX", 22},
-        {"GLH", 23},
-        {"HIE", 24},
-        {"HID", 25},
-        {"HIP", 26}
+        {"ALA", 1}, {"Ala", 1}, {"ala", 1},
+        {"ARG", 2}, {"Arg", 2}, {"arg", 2},
+        {"ASN", 3}, {"Asn", 3}, {"asn", 3},
+        {"ASP", 4}, {"Asp", 4}, {"asp", 4},
+        {"CYS", 5}, {"Cys", 5}, {"cys", 5},
+        {"GLN", 6}, {"Gln", 6}, {"gln", 6},
+        {"GLU", 7}, {"Glu", 7}, {"glu", 7},
+        {"GLY", 8}, {"Gly", 8}, {"gly", 8},
+        {"HIS", 9}, {"His", 9}, {"his", 9},
+        {"ILE", 10}, {"Ile", 10}, {"ile", 10},
+        {"LEU", 11}, {"Leu", 11}, {"leu", 11},
+        {"LYS", 12}, {"Lys", 12}, {"lys", 12},
+        {"MET", 13}, {"Met", 13}, {"met", 13},
+        {"PHE", 14}, {"Phe", 14}, {"phe", 14},
+        {"PRO", 15}, {"Pro", 15}, {"pro", 15},
+        {"SER", 16}, {"Ser", 16}, {"ser", 16},
+        {"THR", 17}, {"Thr", 17}, {"thr", 17},
+        {"TRP", 18}, {"Trp", 18}, {"trp", 18},
+        {"TYR", 19}, {"Tyr", 19}, {"tyr", 19},
+        {"VAL", 20}, {"Val", 20}, {"val", 20},
+        {"ASH", 21}, {"Asn", 21}, {"ash", 21},
+        {"CYX", 22}, {"Cyx", 22}, {"cyx", 22},
+        {"GLH", 23}, {"Glh", 23}, {"glh", 23},
+        {"HIE", 24}, {"Hie", 24}, {"hie", 24},
+        {"HID", 25}, {"Hid", 25}, {"hid", 25},
+        {"HIP", 26}, {"Hip", 26}, {"hip", 26}
     };
-    int res = aa[resname];
+    string three_letter_resname=resname.substr(0,3);
+    int res = aa[three_letter_resname];
     switch(res){
     case 0:
         result=false;
@@ -205,34 +206,35 @@ void FindHB::parse_residue(int atom_start, int atom_end, string resname, Mol2* R
         if (d < dist_cutoff){
 
             map<string, int> aa =  {
-                {"ALA", 0},
-                {"ARG", 1},
-                {"ASN", 2},
-                {"ASP", 3},
-                {"CYS", 4},
-                {"GLN", 5},
-                {"GLU", 6},
-                {"GLY", 7},
-                {"HIS", 8},
-                {"ILE", 9},
-                {"LEU", 10},
-                {"LYS", 11},
-                {"MET", 12},
-                {"PHE", 13},
-                {"PRO", 14},
-                {"SER", 15},
-                {"THR", 16},
-                {"TRP", 17},
-                {"TYR", 18},
-                {"VAL", 19},
-                {"ASH", 20},
-                {"CYX", 21},
-                {"GLH", 22},
-                {"HIE", 23},
-                {"HID", 24},
-                {"HIP", 25}
+                {"ALA", 0}, {"Ala", 0}, {"ala", 0},
+                {"ARG", 1}, {"Arg", 1}, {"arg", 1},
+                {"ASN", 2}, {"Asn", 2}, {"asn", 2},
+                {"ASP", 3}, {"Asp", 3}, {"asp", 3},
+                {"CYS", 4}, {"Cys", 4}, {"cys", 4},
+                {"GLN", 5}, {"Gln", 5}, {"gln", 5},
+                {"GLU", 6}, {"Glu", 6}, {"glu", 6},
+                {"GLY", 7}, {"Gly", 7}, {"gly", 7},
+                {"HIS", 8}, {"His", 8}, {"his", 8},
+                {"ILE", 9}, {"Ile", 9}, {"ile", 9},
+                {"LEU", 10}, {"Leu", 10}, {"leu", 10},
+                {"LYS", 11}, {"Lys", 11}, {"lys", 11},
+                {"MET", 12}, {"Met", 12}, {"met", 12},
+                {"PHE", 13}, {"Phe", 13}, {"phe", 13},
+                {"PRO", 14}, {"Pro", 14}, {"pro", 14},
+                {"SER", 15}, {"Ser", 15}, {"ser", 15},
+                {"THR", 16}, {"Thr", 16}, {"thr", 16},
+                {"TRP", 17}, {"Trp", 17}, {"trp", 17},
+                {"TYR", 18}, {"Tyr", 18}, {"tyr", 18},
+                {"VAL", 19}, {"Val", 19}, {"val", 19},
+                {"ASH", 20}, {"Ash", 20}, {"ash", 20},
+                {"CYX", 21}, {"Cyx", 21}, {"cyx", 21},
+                {"GLH", 22}, {"Glh", 22}, {"glh", 22},
+                {"HIE", 23}, {"Hie", 23}, {"hie", 23},
+                {"HID", 24}, {"Hid", 24}, {"his", 24},
+                {"HIP", 25}, {"Hip", 25}, {"hip", 25}
             };
-            res = aa[resname];
+            string three_letter = resname.substr(0,3);
+            res = aa[three_letter];
             bool hasHD1 = false;
             bool hasHE2 = false;
 
