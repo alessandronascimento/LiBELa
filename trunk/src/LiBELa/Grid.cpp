@@ -1055,9 +1055,18 @@ void Grid::load_Delphi_Grid_from_file(){
 }
 
 void Grid::load_phimap_from_file(int gsize){
+/*
+ * This version of the function was adapted to work with
+ * DelPhi version 8.4.5. Other DelPhi versions use
+ * different phimap file formatting.
+ * -- ASN, Aug,17th, 2021.
+ *
+ */
+
     FILE *phimap;
     char *uplbl, *nxtlbl, *toplbl, *botlbl;
-    double scale, oldmid_x, oldmid_y, oldmid_z;
+    float scale, oldmid_x, oldmid_y, oldmid_z;
+    int tmpi;
 
     phimap = fopen(Input->delphi_grid.c_str(), "rb");
 
@@ -1066,12 +1075,17 @@ void Grid::load_phimap_from_file(int gsize){
         exit(1);
     }
 
-    uplbl = (char *) malloc(sizeof(char) * 23);
-    for (int i=0; i<21; i++) {
+    fread(&tmpi, sizeof(int), 1, phimap);
+
+    uplbl = (char *) malloc(sizeof(char) * 22);
+    for (int i=0; i<20; i++) {
         uplbl[i] = fgetc(phimap);
     }
-    uplbl[21] = '\n';
-    uplbl[22] = (char) 0;
+    uplbl[20] = '\n';
+    uplbl[21] = (char) 0;
+
+    fread(&tmpi, sizeof(int), 1, phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
 
     nxtlbl = (char *) malloc(sizeof(char) * 12);
     for (int i=0; i<10; i++) {
@@ -1080,13 +1094,15 @@ void Grid::load_phimap_from_file(int gsize){
     nxtlbl[10] = '\n';
     nxtlbl[11] = (char) 0;
 
-    toplbl = (char *) malloc(sizeof(char) * 56);
-    for (int i=0; i<54; i++) {
+    toplbl = (char *) malloc(sizeof(char) * 62);
+    for (int i=0; i<60; i++) {
         toplbl[i] = fgetc(phimap);
     }
-    toplbl[54] = '\n';
-    toplbl[55] = (char) 0;
+    toplbl[60] = '\n';
+    toplbl[61] = (char) 0;
 
+    fread(&tmpi, sizeof(int), 1, phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
 
 #ifdef DEBUG
     printf("%s\n", uplbl);
@@ -1104,15 +1120,18 @@ void Grid::load_phimap_from_file(int gsize){
         this->delphi_grid.push_back(vtmp);
     }
 
-    double kt_phi;
+    float kt_phi;
     for (int nz=0; nz < gsize; nz++){
         for (int ny=0; ny < gsize; ny++){
             for (int nx=0; nx < gsize; nx++){
-                fread(&kt_phi, sizeof(double), 1, phimap);
+                fread(&kt_phi, sizeof(float), 1, phimap);
                 this->delphi_grid[nx][ny][nz] = 0.593f*kt_phi;  //converting kt units to kcal/mol
             }
         }
     }
+
+    fread(&tmpi, sizeof(int), 1, phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
 
     botlbl = (char *) malloc(sizeof(char) * 18);
     for (int i=0; i<16; i++) {
@@ -1121,15 +1140,18 @@ void Grid::load_phimap_from_file(int gsize){
     botlbl[16] = '\n';
     botlbl[17] = (char) 0;
 
+    fread(&tmpi, sizeof(int), 1, phimap);
+    fread(&tmpi, sizeof(int), 1, phimap);
+
 #ifdef DEBUG
     printf("%s\n", botlbl);
 #endif
 
     int igrid;
-    fread(&scale, sizeof(double), 1, phimap);
-    fread(&oldmid_x, sizeof(double), 1, phimap);
-    fread(&oldmid_y, sizeof(double), 1, phimap);
-    fread(&oldmid_z, sizeof(double), 1, phimap);
+    fread(&scale, sizeof(float), 1, phimap);
+    fread(&oldmid_x, sizeof(float), 1, phimap);
+    fread(&oldmid_y, sizeof(float), 1, phimap);
+    fread(&oldmid_z, sizeof(float), 1, phimap);
     fread(&igrid, sizeof(int), 1, phimap);
 
     if (igrid =! gsize){
