@@ -904,7 +904,13 @@ void Optimizer::minimize_overlay_nlopt_cobyla(Mol2* Lig2, opt_result_t* opt_resu
     double fo;
     nlopt::result nres = opt->optimize(x,fo);
     vector<vector<double> > xyz = update_coords(x, Lig2);
-    double f_minimum = evaluate_energy(Lig2, xyz);
+    double f_minimum;
+    if (Parser->energy_optimizer != "none"){
+        f_minimum = evaluate_energy(Lig2, xyz);
+    }
+    else {
+        f_minimum = 0.00;
+    }
     delete opt;
 
     opt_result->energy_result->total = f_minimum;
@@ -949,7 +955,13 @@ void Optimizer::minimize_overlay_nlopt_lbfgs(Mol2* Lig2, opt_result_t* opt_resul
     double fo;
     nlopt::result nres = opt->optimize(x,fo);
     vector<vector<double> > xyz = update_coords(x, Lig2);
-    double f_minimum = evaluate_energy(Lig2, xyz);
+    double f_minimum;
+    if (Parser->energy_optimizer != "none"){
+        f_minimum = evaluate_energy(Lig2, xyz);
+    }
+    else {
+        f_minimum = 0.00;
+    }
     delete opt;
 
     opt_result->energy_result->total = f_minimum;
@@ -994,7 +1006,13 @@ void Optimizer::minimize_overlay_nlopt_ln_auglag(Mol2* Lig2, opt_result_t* opt_r
     double fo;
     nlopt::result nres = opt->optimize(x,fo);
     vector<vector<double> > xyz = update_coords(x, Lig2);
-    double f_minimum = evaluate_energy(Lig2, xyz);
+    double f_minimum;
+    if (Parser->energy_optimizer != "none"){
+        f_minimum = evaluate_energy(Lig2, xyz);
+    }
+    else {
+        f_minimum = 0.00;
+    }
     delete opt;
 
     opt_result->energy_result->total = f_minimum;
@@ -1039,7 +1057,13 @@ void Optimizer::minimize_overlay_nlopt_ld_auglag(Mol2* Lig2, opt_result_t* opt_r
     double fo;
     nlopt::result nres = opt->optimize(x,fo);
     vector<vector<double> > xyz = update_coords(x, Lig2);
-    double f_minimum = evaluate_energy(Lig2, xyz);
+    double f_minimum;
+    if (Parser->energy_optimizer != "none"){
+        f_minimum = evaluate_energy(Lig2, xyz);
+    }
+    else {
+        f_minimum = 0.00;
+    }
     delete opt;
 
     opt_result->energy_result->total = f_minimum;
@@ -1084,7 +1108,14 @@ void Optimizer::minimize_overlay_nlopt_mma(Mol2* Lig2, opt_result_t* opt_result)
     double fo;
     nlopt::result nres = opt->optimize(x,fo);
     vector<vector<double> > xyz = update_coords(x, Lig2);
-    double f_minimum = evaluate_energy(Lig2, xyz);
+    double f_minimum;
+    if (Parser->energy_optimizer != "none"){
+        f_minimum = evaluate_energy(Lig2, xyz);
+    }
+    else {
+        f_minimum = 0.00;
+    }
+
     delete opt;
 
     opt_result->energy_result->total = f_minimum;
@@ -1129,7 +1160,13 @@ void Optimizer::minimize_overlay_nlopt_subplex(Mol2* Lig2, opt_result_t* opt_res
     double fo;
     nlopt::result nres = opt->optimize(x,fo);
     vector<vector<double> > xyz = update_coords(x, Lig2);
-    double f_minimum = evaluate_energy(Lig2, xyz);
+    double f_minimum;
+    if (Parser->energy_optimizer != "none"){
+        f_minimum = evaluate_energy(Lig2, xyz);
+    }
+    else {
+        f_minimum = 0.00;
+    }
     delete opt;
 
     opt_result->energy_result->total = f_minimum;
@@ -1174,7 +1211,13 @@ void Optimizer::minimize_overlay_nlopt_crs(Mol2* Lig2, opt_result_t* opt_result)
     double fo;
     nlopt::result nres = opt->optimize(x,fo);
     vector<vector<double> > xyz = update_coords(x, Lig2);
-    double f_minimum = evaluate_energy(Lig2, xyz);
+    double f_minimum;
+    if (Parser->energy_optimizer != "none"){
+        f_minimum = evaluate_energy(Lig2, xyz);
+    }
+    else {
+        f_minimum = 0.00;
+    }
     delete opt;
 
     opt_result->energy_result->total = f_minimum;
@@ -1219,7 +1262,13 @@ void Optimizer::minimize_overlay_nlopt_direct(Mol2* Lig2, opt_result_t* opt_resu
     double fo;
     nlopt::result nres = opt->optimize(x,fo);
     vector<vector<double> > xyz = update_coords(x, Lig2);
-    double f_minimum = evaluate_energy(Lig2, xyz);
+    double f_minimum;
+    if (Parser->energy_optimizer != "none"){
+        f_minimum = evaluate_energy(Lig2, xyz);
+    }
+    else {
+        f_minimum = 0.00;
+    }
     delete opt;
 
     opt_result->energy_result->total = f_minimum;
@@ -1446,7 +1495,7 @@ void Optimizer::pre_align(Mol2* Lig2, opt_result_t* opt_result){
     double fo;
     nlopt::result nres = opt->optimize(x,fo);
     vector<vector<double> > xyz = update_coords(x, Lig2);
-    double f_minimum = 0.0; //evaluate_energy(Lig2, xyz);
+    double f_minimum = 0.0;
     delete opt;
 
     opt_result->energy_result->total = f_minimum;

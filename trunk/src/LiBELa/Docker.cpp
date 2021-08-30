@@ -27,14 +27,14 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
         vector<double> com_lig = Coord->compute_com(Lig);
         bool match=false;
 
-        /*
+/*
 * Shifting the ligand to match its center of mass with the reference
 * ligand center of mass.
 */
 
         Lig->xyz = Coord->translate(Lig->xyz, Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
 
-        /*
+/*
  *
  * Doing a pre-alignment of the longest axis of the ligands
  *
@@ -53,7 +53,7 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
         delete opt_result0;
         delete Opt0;
 
-        /*
+/*
  * End of pre-alignment
  */
 
@@ -158,14 +158,14 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
         vector<double> com_lig = Coord->compute_com(Lig);
         bool match=false;
 
-        /*
+/*
 * Shifting the ligand to match its center of mass with the reference
 * ligand center of mass.
 */
 
         Lig->xyz = Coord->translate(Lig->xyz, Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
 
-        /*
+/*
 *
 * Doing a pre-alignment of the longest axis of the ligands
 *
@@ -184,7 +184,7 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
         delete opt_result0;
         delete Opt0;
 
-        /*
+/*
 * End of pre-alignment
 */
 
@@ -315,7 +315,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
 
             Lig->xyz = Coord->translate(Lig->mcoords[i], Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
 
-            /*
+/*
 *
 * Doing a pre-alignment of the longest axis of the ligands
 *
@@ -334,7 +334,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
             delete opt_result0;
             delete Opt0;
 
-            /*
+/*
 * End of pre-alignment
 */
 
@@ -820,6 +820,8 @@ bool Docker::minimize_energy(PARSER* Input, Optimizer* Opt, Mol2* Rec, Mol2* Lig
             opt_result->energy_result->elec = 0.00;
             opt_result->energy_result->rec_solv = 0.00;
             opt_result->energy_result->lig_solv = 0.00;
+            opt_result->energy_result->hb_donor = 0.00;
+            opt_result->energy_result->hb_acceptor = 0.00;
             opt_result->optimization_status = 0;
             opt_result->optimized_xyz = Lig->xyz;
         }
@@ -864,6 +866,8 @@ bool Docker::minimize_energy(PARSER* Input, Optimizer* Opt, Mol2* Rec, Mol2* Lig
             opt_result->energy_result->elec = 0.00;
             opt_result->energy_result->rec_solv = 0.00;
             opt_result->energy_result->lig_solv = 0.00;
+            opt_result->energy_result->hb_donor = 0.00;
+            opt_result->energy_result->hb_acceptor = 0.00;
             opt_result->optimization_status = 0;
             opt_result->optimized_xyz = Lig->xyz;
             ret = true;
@@ -936,6 +940,8 @@ bool Docker::minimize_energy(PARSER* Input, Optimizer* Opt, Mol2* Rec, Mol2* Lig
                     opt_result->energy_result->elec = 0.00;
                     opt_result->energy_result->rec_solv = 0.00;
                     opt_result->energy_result->lig_solv = 0.00;
+                    opt_result->energy_result->hb_donor = 0.00;
+                    opt_result->energy_result->hb_acceptor = 0.00;
                     opt_result->optimization_status = 0;
                     opt_result->optimized_xyz = Lig->xyz;
                 }
@@ -1029,6 +1035,8 @@ bool Docker::minimize_energy(PARSER* Input, Optimizer* Opt, Mol2* Rec, Mol2* Lig
                 opt_result->energy_result->elec = 0.00;
                 opt_result->energy_result->rec_solv = 0.00;
                 opt_result->energy_result->lig_solv = 0.00;
+                opt_result->energy_result->hb_donor = 0.00;
+                opt_result->energy_result->hb_acceptor = 0.00;
                 opt_result->optimization_status = 0;
                 opt_result->optimized_xyz = Lig->xyz;
             }
