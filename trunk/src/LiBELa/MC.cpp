@@ -60,7 +60,9 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
     OBff->GetCoordinates(mol);
     OBff->SteepestDescent(Input->conformer_min_steps, 1.0e-10);
     OBff->GetCoordinates(mol);
-//    Lig->xyz = this->copy_from_obmol(mol);
+    if (! Input->dock_mode){                        // unless we're taking a molecule from a docking pose, we will use the
+        Lig->xyz = this->copy_from_obmol(mol);      // coordinates at the energy minimum.
+    }
     RotorList.Setup(mol);
     Rotor = RotorList.BeginRotor(RotorIterator);
     mol.ToInertialFrame();
