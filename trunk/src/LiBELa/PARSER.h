@@ -247,6 +247,8 @@ public:
     double scale_elec_energy;
     //!
     bool use_score_optimization;
+    //! If true, will not take into account the ligand internal energy during MC simulations.
+    bool use_only_binding_energy;
 
 
     /*!

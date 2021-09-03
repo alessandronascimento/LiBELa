@@ -108,6 +108,7 @@ PARSER::PARSER(){
     this->overlay_cutoff = 0.0;
     this->use_overlay_cutoff = false;
     this->use_score_optimization = false;
+    this->use_only_binding_energy = false;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -538,6 +539,12 @@ void PARSER::comparing (string param, ifstream &input) {
         input >> tmp;
         if (tmp == "yes" or tmp == "YES" or tmp == "Yes"){
             this->use_score_optimization = true;
+        }
+    }
+    else if (param == "use_only_binding_energy"){
+        input >> tmp;
+        if (tmp == "yes" or tmp == "YES" or tmp == "Yes"){
+            this->use_only_binding_energy = true;
         }
     }
 	else {

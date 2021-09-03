@@ -910,7 +910,12 @@ void TEMP_SCHEME::eq_run(){
             EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, Input->temp);
         }
 
-        EqMC->average_deltaE = EqMC->average_bound_energy - EqMC->average_freeligand_energy;
+        if (Input->use_only_binding_energy){
+            EqMC->average_deltaE = EqMC->average_bound_energy;
+        }
+        else {
+            EqMC->average_deltaE = EqMC->average_bound_energy - EqMC->average_freeligand_energy;
+        }
         double dE= EqMC->average_deltaE - (EqMC->boundTS-EqMC->freeTS);
         Writer->print_line();
         Writer->print_line();

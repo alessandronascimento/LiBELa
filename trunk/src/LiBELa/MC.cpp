@@ -160,7 +160,9 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     ligand_is_in = false;
 
     Energy->compute_ene(Grids, Lig, step->xyz, energy_t);
-    energy = energy_t->total+step->internal_energy;
+    if (! Input->use_only_binding_energy){
+        energy = energy_t->total+step->internal_energy;
+    }
 
     sprintf(info, "#%10s %10s %10s", "Step", "Energy", "RMSD");
     gzprintf(mc_output,"###################################################################################################################################################################\n");
@@ -203,7 +205,12 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
         ligand_is_in = false;
 
         Energy->compute_ene(Grids, Lig, step->xyz, energy_t);
-        new_energy = energy_t->total+step->internal_energy;
+        if (! Input->use_only_binding_energy){
+            new_energy = energy_t->total+step->internal_energy;
+        }
+        else {
+            new_energy = energy_t->total;
+        }
 
         if (new_energy <= energy){
             Lig->mcoords = Lig->new_mcoords;
@@ -255,7 +262,12 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
         ligand_is_in = false;
 
         Energy->compute_ene(Grids, Lig, step->xyz, energy_t);
-        new_energy = energy_t->total+step->internal_energy;
+        if (Input->use_only_binding_energy){
+            new_energy = energy_t->total;
+        }
+        else {
+            new_energy = energy_t->total+step->internal_energy;
+        }
 
         if (new_energy <= energy){
             Lig->mcoords = Lig->new_mcoords;
