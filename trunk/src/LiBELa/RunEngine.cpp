@@ -919,9 +919,11 @@ void TEMP_SCHEME::eq_run(){
         double dE= EqMC->average_deltaE - (EqMC->boundTS-EqMC->freeTS);
         Writer->print_line();
         Writer->print_line();
-        sprintf(info, " Binding Energies:");
+        sprintf(info, " Final Binding Energies:");
         Writer->print_info(info);
         sprintf(info, "     DeltaU = <Ebound> - <Efree> = %7.3f kcal/mol", EqMC->average_deltaE);
+        Writer->print_info(info);
+        sprintf(info, "     TdS = - (<TSbound> - <TSfree>) = %7.3f kcal/mol", (EqMC->boundTS-EqMC->freeTS));
         Writer->print_info(info);
         sprintf(info, "     Binding Energy = <dU> - TdS = %7.3f kcal/mol", dE);
         Writer->print_info(info);
