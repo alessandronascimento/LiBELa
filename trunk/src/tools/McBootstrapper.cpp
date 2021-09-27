@@ -74,7 +74,7 @@ int main (int argc, char *argv[]){
 
     fclose(datafile);
 
-    printf("The dataset has %d data points.\n", int(datax.size()));
+    printf("The dataset has %d data points.\n", int(datax.size()-1));
     printf("Read dataset:\n");
     printf("*****************************************************************************\n");
     printf("%7.7s %7.7s\n", "[X]", "[Y]");
@@ -87,7 +87,7 @@ int main (int argc, char *argv[]){
         printf("Data inconsistency. Different number of values for sets. Please check!\n");
         exit(1);
     }
-    int N = int(datax.size());
+    int N = int(datax.size()-1);
 
     double dataX[datax.size()];
     double dataY[datay.size()];
