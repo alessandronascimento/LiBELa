@@ -36,6 +36,7 @@ void usage(){
     printf("\t -b <box_size> to define the box size. Default is 30.0 Angstrom\n");
     printf("\t -s <space> to define the spacing betweent grid points. Default is 1.5 Angstrom\n");
     printf("\t -p <padding> to define an extra distance beyond the ligand radius.\n");
+    printf("\t -e to expand the active site beyond the placed ligand.\n");
 }
 
 int main (int argc, char* argv[]){
@@ -50,6 +51,7 @@ int main (int argc, char* argv[]){
     char *recfile;
     char *inputfile;
     bool use_padding=false;
+    bool site_expansion=false;
     double padding=3.0;
     int c;
 
@@ -61,7 +63,7 @@ int main (int argc, char* argv[]){
     PARSER* Input = new PARSER;
     Input->write_mol2 = true;
 
-    while ((c = getopt (argc, argv, "i:r:l:n:b:s:p:")) != -1)
+    while ((c = getopt (argc, argv, "i:r:l:n:b:s:p:e")) != -1)
         switch (c)
         {
         case 'i':
@@ -91,6 +93,9 @@ int main (int argc, char* argv[]){
         case 'p':
             use_padding = true;
             padding = atof(optarg);
+            break;
+        case 'e':
+            site_expansion = true;
             break;
         case '?':
             if (optopt == 'c')
@@ -212,7 +217,7 @@ int main (int argc, char* argv[]){
  * The object Pocket2 is defined as a subset of dummy atoms found in Pocket.
  * In this subset, a dummy atom is kept if it has at least 3 neighbors.
  *
- * Both, Pocket and Pocket2, are written in the endi of execution.
+ * Both, Pocket and Pocket2, are written in the end of execution.
  *
  */
 
@@ -240,6 +245,23 @@ int main (int argc, char* argv[]){
 
     Writer->writeMol2(Pocket, Pocket->xyz, 0.00, 0.00, "pocket1");
     Writer->writeMol2(Pocket2, Pocket2->xyz, 0.00, 0.00, "pocket2");
+
+    if (site_expansion and res_site < 0){
+        printf ("Expanding the placed ligand in found volumes....\n");
+        Mol2* Lig = new Mol2(Input, Input->reflig_mol2);
+        double d=0.0;
+        for (int i=0; i<Pocket2->N; i++){
+            for (int j=0; j< Lig->N; j++){
+                d=distance_squared(Lig->xyz[j][0], Pocket2->xyz[i][0],Lig->xyz[j][1], Pocket2->xyz[i][1],Lig->xyz[j][2], Pocket2->xyz[i][2]);
+                if (d < 2.25 and d > 1.0){
+                    append_atom(Lig, Pocket2->xyz[i][0], Pocket2->xyz[i][1], Pocket2->xyz[i][2], Pocket2->charges[i]);
+                }
+            }
+        }
+        Writer->writeMol2(Lig, Lig->xyz, 0.00, 0.00, "McGrown");
+        delete Lig;
+    }
+
     delete Writer;
     delete Coord;
     delete Pocket;
