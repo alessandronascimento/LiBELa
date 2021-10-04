@@ -37,6 +37,7 @@ void usage(){
     printf("\t -s <space> to define the spacing betweent grid points. Default is 1.5 Angstrom\n");
     printf("\t -p <padding> to define an extra distance beyond the ligand radius.\n");
     printf("\t -e to expand the active site beyond the placed ligand.\n");
+    printf("\t -m <max_dist> expand the site max_dist beyond the placed ligand. Default is 5.0 Ang.\n");
 }
 
 int main (int argc, char* argv[]){
@@ -52,6 +53,7 @@ int main (int argc, char* argv[]){
     char *inputfile;
     bool use_padding=false;
     bool site_expansion=false;
+    double max_dist = 5.0;
     double padding=3.0;
     int c;
 
@@ -63,7 +65,7 @@ int main (int argc, char* argv[]){
     PARSER* Input = new PARSER;
     Input->write_mol2 = true;
 
-    while ((c = getopt (argc, argv, "i:r:l:n:b:s:p:e")) != -1)
+    while ((c = getopt (argc, argv, "i:r:l:n:b:s:p:m:e")) != -1)
         switch (c)
         {
         case 'i':
@@ -96,6 +98,10 @@ int main (int argc, char* argv[]){
             break;
         case 'e':
             site_expansion = true;
+            break;
+        case 'm':
+            site_expansion = true;
+            max_dist = atof(optarg);
             break;
         case '?':
             if (optopt == 'c')
@@ -165,7 +171,7 @@ int main (int argc, char* argv[]){
 
         delete Lig;
         printf("Ligand center of mass: %.3f %.3f %.3f\n", rec_com[0], rec_com[1], rec_com[2]);
-        printf("Ligand radius: %7.3f\n", max_dist);
+        printf("Ligand radius: %7.3f Ang.\n", sqrt(max_dist));
         if (use_padding){
             box_size = max_dist + padding;
         }
@@ -246,16 +252,32 @@ int main (int argc, char* argv[]){
     Writer->writeMol2(Pocket, Pocket->xyz, 0.00, 0.00, "pocket1");
     Writer->writeMol2(Pocket2, Pocket2->xyz, 0.00, 0.00, "pocket2");
 
+
+/*
+ * Here we will expand the active site by searching pocket spheres
+ * within a given distance of the reference ligand atoms.
+ *
+ */
+
+    max_dist = max_dist*max_dist;
+
     if (site_expansion and res_site < 0){
         printf ("Expanding the placed ligand in found volumes....\n");
         Mol2* Lig = new Mol2(Input, Input->reflig_mol2);
         double d=0.0;
+        bool is_near;
+        int closest;
         for (int i=0; i<Pocket2->N; i++){
+            is_near = false;
             for (int j=0; j< Lig->N; j++){
                 d=distance_squared(Lig->xyz[j][0], Pocket2->xyz[i][0],Lig->xyz[j][1], Pocket2->xyz[i][1],Lig->xyz[j][2], Pocket2->xyz[i][2]);
-                if (d < 2.25 and d > 1.0){
-                    append_atom(Lig, Pocket2->xyz[i][0], Pocket2->xyz[i][1], Pocket2->xyz[i][2], Pocket2->charges[i]);
+                if ((d < max_dist) and (d > 1.0)) {
+                    is_near = true;
+                    closest = i;
                 }
+            }
+            if (is_near){
+                append_atom(Lig, Pocket2->xyz[closest][0], Pocket2->xyz[closest][1], Pocket2->xyz[closest][2], Pocket2->charges[closest]);
             }
         }
         Writer->writeMol2(Lig, Lig->xyz, 0.00, 0.00, "McGrown");
