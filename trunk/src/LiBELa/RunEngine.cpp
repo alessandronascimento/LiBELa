@@ -38,7 +38,7 @@ TEMP_SCHEME::TEMP_SCHEME(char* inputfile){
 
     delete HB;
 
-/* For debuggind purposes
+    /* For debuggind purposes
  * Here we write the HB bond donors
  *
     for (unsigned i=0; i< REC->HBdonors.size(); i++){
@@ -71,7 +71,7 @@ TEMP_SCHEME::TEMP_SCHEME(PARSER* _Input, QPlainTextEdit* Editor, QProgressBar* _
     FindHB* HB = new FindHB;
 
     for (int i=0; i< REC->residue_pointer.size()-1; i++){
-        HB->parse_residue(REC->residue_pointer[i]-1, REC->residue_pointer[i+1]-2, REC->resnames[i], REC, RefLig, 10.0);
+        HB->parse_residue(REC->residue_pointer[i]-1, REC->residue_pointer[i+1]-2, REC->resnames[i], REC, RefLig, 9.0);
     }
 
     // Finding HB donors/acceptors for RefLig;
@@ -487,7 +487,7 @@ void TEMP_SCHEME::dock_run(){
                             EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, Input->temp);
                         }
                         delete EqMC;
-                    delete Conf;
+                        delete Conf;
                     }
                 }
                 else {
@@ -649,7 +649,7 @@ void TEMP_SCHEME::dock_parallel(){
     vector<string> ligand_list;
 
 
-/* Here, we read the multifile file and parse the files of the molecules
+    /* Here, we read the multifile file and parse the files of the molecules
  * to be docked into a std::vector named ligand_list.
  */
 
@@ -670,7 +670,7 @@ void TEMP_SCHEME::dock_parallel(){
 
         multifile.close();
 
-/*
+        /*
  * Here the parallel processing begins. Firstly, a parallel section is created with a pragma
  * indicating the number of parallel threads as defined in the input file.
  * After, the molecule objects are created and conformers are calculated using OpenBabel.
@@ -718,37 +718,37 @@ void TEMP_SCHEME::dock_parallel(){
                     }
 
 #ifdef HAS_GUI
-                        Docker* Dock = new Docker(QWriter);
+                    Docker* Dock = new Docker(QWriter);
 #else
-                        Docker* Dock = new Docker(Writer);
+                    Docker* Dock = new Docker(Writer);
 #endif
+                    if (Input->use_grids){
+                        Dock->run(REC, Lig2, RefLig, center, Input, Grids, i+1);
+                    }
+                    else {
+                        Dock->run(REC, Lig2, RefLig, center, Input, i+1);
+                    }
+                    delete Dock;
+                    if (Input->eq_mode){
+                        if (Input->generate_conformers){
+                            Writer->writeMol2(Lig2, Lig2->xyz, 0.0, 0.0, string(Input->output + "_" + Lig2->molname));
+                            Conformer* Conf = new Conformer;
+                            Conf->generate_conformers_confab(Input, Lig2, string(Input->output + "_" + Lig2->molname+".mol2.gz"));
+                            delete Conf;
+                        }
+                        MC* EqMC = new MC(Lig2, Input, Writer);
                         if (Input->use_grids){
-                            Dock->run(REC, Lig2, RefLig, center, Input, Grids, i+1);
+                            EqMC->run(Grids, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
                         }
                         else {
-                            Dock->run(REC, Lig2, RefLig, center, Input, i+1);
+                            EqMC->run(REC, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
                         }
-                        delete Dock;
-                        if (Input->eq_mode){
-                            if (Input->generate_conformers){
-                                Writer->writeMol2(Lig2, Lig2->xyz, 0.0, 0.0, string(Input->output + "_" + Lig2->molname));
-                                Conformer* Conf = new Conformer;
-                                Conf->generate_conformers_confab(Input, Lig2, string(Input->output + "_" + Lig2->molname+".mol2.gz"));
-                                delete Conf;
-                            }
-                            MC* EqMC = new MC(Lig2, Input, Writer);
-                            if (Input->use_grids){
-                                EqMC->run(Grids, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
-                            }
-                            else {
-                                EqMC->run(REC, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
-                            }
-                            if (Input->ligsim){
-                                EqMC->ligand_run(RefLig, Lig2, Lig2->xyz, Input, Input->temp);
-                            }
-                            delete EqMC;
+                        if (Input->ligsim){
+                            EqMC->ligand_run(RefLig, Lig2, Lig2->xyz, Input, Input->temp);
                         }
+                        delete EqMC;
                     }
+                }
                 delete Lig2;
 
 #ifdef HAS_GUI
@@ -779,7 +779,7 @@ void TEMP_SCHEME::dock_concurrent(){
     this->print_info(info);
     QVector<string> ligand_list;
 
-/* Here we read the multifile file and parse the files of the molecules
+    /* Here we read the multifile file and parse the files of the molecules
  * to be docked into a std::vector named ligand_list.
  */
 
