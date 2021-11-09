@@ -3,39 +3,39 @@
 DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
 {
 
-	this->Inp = Input;
-	this->Editor = Ed;
+    this->Inp = Input;
+    this->Editor = Ed;
 
     mainLayout = new QVBoxLayout(this);
-	editLayout = new QGridLayout;
-	buttonLayout = new QHBoxLayout;
-	messageLayout = new QHBoxLayout;
-	progress_layout = new QVBoxLayout;
+    editLayout = new QGridLayout;
+    buttonLayout = new QHBoxLayout;
+    messageLayout = new QHBoxLayout;
+    progress_layout = new QVBoxLayout;
 
-	mainLayout->addLayout(editLayout);
-	mainLayout->addStretch();
-	mainLayout->addLayout(buttonLayout);
+    mainLayout->addLayout(editLayout);
+    mainLayout->addStretch();
+    mainLayout->addLayout(buttonLayout);
     mainLayout->setSizeConstraint(QLayout::SetFixedSize);
 
-	rec_mol2 = new QPushButton(tr("Receptor MOL2 file:"));
-	choose_rec_mol2 = new QLineEdit(tr("Choose file..."));
+    rec_mol2 = new QPushButton(tr("Receptor MOL2 file:"));
+    choose_rec_mol2 = new QLineEdit(tr("Choose file..."));
 
-	lig_mol2 = new QPushButton(tr("Ligand MOL2 file:"));
-	choose_lig_mol2 = new QLineEdit(tr("Choose file..."));
+    lig_mol2 = new QPushButton(tr("Ligand MOL2 file:"));
+    choose_lig_mol2 = new QLineEdit(tr("Choose file..."));
 
-	reflig_mol2 = new QPushButton(tr("Reference MOl2 file:"));
-	choose_reflig_mol2 = new QLineEdit(tr("Choose file..."));
+    reflig_mol2 = new QPushButton(tr("Reference MOl2 file:"));
+    choose_reflig_mol2 = new QLineEdit(tr("Choose file..."));
 
-	docking_mol2 = new QPushButton(tr("Docking Molecules (MOL2 File): "));
-	choose_docking_mol2 = new QLineEdit(tr("Choose files..."));
+    docking_mol2 = new QPushButton(tr("Docking Molecules (MOL2 File): "));
+    choose_docking_mol2 = new QLineEdit(tr("Choose files..."));
 
-	mol2_aa = new QComboBox;
-	mol2_aa->addItem("False"); // 0
-	mol2_aa->addItem("True");  // 1
-	mol2_aa->setCurrentIndex(0);
-	mol2_aa_lab = new QLabel(tr("MOL2 File has Amber Atom Types? "));
+    mol2_aa = new QComboBox;
+    mol2_aa->addItem("False"); // 0
+    mol2_aa->addItem("True");  // 1
+    mol2_aa->setCurrentIndex(0);
+    mol2_aa_lab = new QLabel(tr("MOL2 File has Amber Atom Types? "));
 
-	scoring_function = new QComboBox;
+    scoring_function = new QComboBox;
     scoring_function->addItem("Amber Softcore + Desolvation");        //0
     scoring_function->addItem("Amber Softcore");                      //1
     scoring_function->addItem("Amber FF + Desolvation");              //2
@@ -43,15 +43,15 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     scoring_function->addItem("GaussSmooth Amber FF + Desolvation");  //4
     scoring_function->addItem("GaussSmooth Amber FF");                //5
     scoring_function->setCurrentIndex(2);
-	scoring_function_lab = new QLabel(tr("Scoring function: "));
+    scoring_function_lab = new QLabel(tr("Scoring function: "));
 
-	diel = new QDoubleSpinBox;
-	diel->setMaximum(80.0);
-	diel->setMinimum(1.0);
-	diel->setDecimals(1);
-	diel->setSingleStep(1.0);
+    diel = new QDoubleSpinBox;
+    diel->setMaximum(80.0);
+    diel->setMinimum(1.0);
+    diel->setDecimals(1);
+    diel->setSingleStep(1.0);
     diel->setValue(Inp->diel);
-	diel_lab = new QLabel(tr("Dieletric constant: "));
+    diel_lab = new QLabel(tr("Dieletric constant: "));
 
     dielectric_model = new QComboBox;
     dielectric_model->addItem("constant");          //0
@@ -59,11 +59,11 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     dielectric_model->setCurrentIndex(1);
     dielectric_model_lab = new QLabel(tr("Dielectric Model: "));
 
-	sigma = new QDoubleSpinBox;
-	sigma->setDecimals(1);
-	sigma->setSingleStep(0.1);
+    sigma = new QDoubleSpinBox;
+    sigma->setDecimals(1);
+    sigma->setSingleStep(0.1);
     sigma->setValue(Inp->sigma);
-	sigma->setMinimum(1.0);
+    sigma->setMinimum(1.0);
     sigma_lab = new QLabel(tr("Solvation sigma: "));
 
     alpha = new QDoubleSpinBox;
@@ -80,70 +80,70 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     beta->setValue(Inp->solvation_beta);
     beta_lab = new QLabel(tr("Beta Solvation Parameter: "));
 
-	deltaij_vdw = new QDoubleSpinBox;
-	deltaij_vdw->setMaximum(10.0);
-	deltaij_vdw->setMinimum(0.0);
+    deltaij_vdw = new QDoubleSpinBox;
+    deltaij_vdw->setMaximum(10.0);
+    deltaij_vdw->setMinimum(0.0);
     deltaij_vdw->setValue(1.75);
     deltaij_vdw->setSingleStep(0.05);
-	deltaij_vdw->setDecimals(2);
-	deltaij_vdw_lab = new QLabel(tr("Softcore delta for VDW term: "));
+    deltaij_vdw->setDecimals(2);
+    deltaij_vdw_lab = new QLabel(tr("Softcore delta for VDW term: "));
 
-	deltaij_elec = new QDoubleSpinBox;
-	deltaij_elec->setMaximum(10.0);
-	deltaij_elec->setMinimum(0.0);
+    deltaij_elec = new QDoubleSpinBox;
+    deltaij_elec->setMaximum(10.0);
+    deltaij_elec->setMinimum(0.0);
     deltaij_elec->setValue(1.50);
     deltaij_elec->setSingleStep(0.05);
-	deltaij_elec->setDecimals(2);
-	deltaij_elec_lab = new QLabel(tr("Softcore delta for electrostatic term: "));
+    deltaij_elec->setDecimals(2);
+    deltaij_elec_lab = new QLabel(tr("Softcore delta for electrostatic term: "));
 
-	vdw_scale = new QDoubleSpinBox;
-	vdw_scale->setMaximum(100.0);
-	vdw_scale->setMinimum(0.0);
-	vdw_scale->setDecimals(1);
-	vdw_scale->setSingleStep(1.0);
+    vdw_scale = new QDoubleSpinBox;
+    vdw_scale->setMaximum(100.0);
+    vdw_scale->setMinimum(0.0);
+    vdw_scale->setDecimals(1);
+    vdw_scale->setSingleStep(1.0);
     vdw_scale->setValue(Inp->vdw_scale);
-	vdw_scale_lab = new QLabel(tr("Scale for VDW term in overlay optimization: "));
+    vdw_scale_lab = new QLabel(tr("Scale for VDW term in overlay optimization: "));
 
-	elec_scale = new QDoubleSpinBox;
-	elec_scale->setMaximum(100.0);
-	elec_scale->setMinimum(0.0);
-	elec_scale->setDecimals(1);
-	elec_scale->setSingleStep(1.0);
+    elec_scale = new QDoubleSpinBox;
+    elec_scale->setMaximum(100.0);
+    elec_scale->setMinimum(0.0);
+    elec_scale->setDecimals(1);
+    elec_scale->setSingleStep(1.0);
     elec_scale->setValue(Inp->elec_scale);
-	elec_scale_lab = new QLabel(tr("Scale for electrostatic term in overlay optimization: "));
+    elec_scale_lab = new QLabel(tr("Scale for electrostatic term in overlay optimization: "));
 
-	box_size = new QDoubleSpinBox;
+    box_size = new QDoubleSpinBox;
     box_size->setMinimum(0.1);
-	box_size->setMaximum(50.0);
+    box_size->setMaximum(50.0);
     box_size->setSingleStep(0.1);
-	box_size->setDecimals(1);
+    box_size->setDecimals(1);
     box_size->setValue(Inp->search_box_x);
     box_size_lab = new QLabel(tr("Search Box : "));
 
-	min_delta = new QDoubleSpinBox;
-	min_delta->setMinimum(1E-10);
-	min_delta->setMaximum(1.0);
-	min_delta->setDecimals(10);
-	min_delta->setSingleStep(0.0000000001);
+    min_delta = new QDoubleSpinBox;
+    min_delta->setMinimum(1E-10);
+    min_delta->setMaximum(1.0);
+    min_delta->setDecimals(10);
+    min_delta->setSingleStep(0.0000000001);
     min_delta->setValue(Inp->min_delta);
-	min_delta_lab = new QLabel(tr("Minimization step: "));
+    min_delta_lab = new QLabel(tr("Minimization step: "));
 
-	min_tol = new QDoubleSpinBox;
+    min_tol = new QDoubleSpinBox;
     min_tol->setMinimum(1e-10);
-	min_tol->setMaximum(1.0);
+    min_tol->setMaximum(1.0);
     min_tol->setDecimals(10);
     min_tol->setSingleStep(0.0000000001);
     min_tol->setValue(Inp->min_tol);
-	min_tol_lab = new QLabel(tr("Minimization tolerance: "));
+    min_tol_lab = new QLabel(tr("Minimization tolerance: "));
 
-	min_timeout = new QSpinBox;
-	min_timeout->setMinimum(1);
-	min_timeout->setMaximum(120);
-	min_timeout->setSingleStep(1);
+    min_timeout = new QSpinBox;
+    min_timeout->setMinimum(1);
+    min_timeout->setMaximum(120);
+    min_timeout->setSingleStep(1);
     min_timeout->setValue(Inp->min_timeout);
-	min_timeout_lab = new QLabel(tr("Minimization timeout: "));
+    min_timeout_lab = new QLabel(tr("Minimization timeout: "));
 
-	overlay_optimizer = new QComboBox;
+    overlay_optimizer = new QComboBox;
     overlay_optimizer->addItem("local COBYLA");					//0
     overlay_optimizer->addItem("local AUGLAG (Gradient-free)");	//1
     overlay_optimizer->addItem("local AUGLAG");                 //2
@@ -152,9 +152,9 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     overlay_optimizer->addItem("local SUBPLEX");                //5
     overlay_optimizer->addItem("global DIRECT");                //6
     overlay_optimizer->setCurrentIndex(5);
-	overlay_optimizer_lab = new QLabel(tr("Overlay optimizer: "));
+    overlay_optimizer_lab = new QLabel(tr("Overlay optimizer: "));
 
-	energy_optimizer = new QComboBox;
+    energy_optimizer = new QComboBox;
     energy_optimizer->addItem("local COBYLA");                    //0
     energy_optimizer->addItem("local AUGLAG (Gradient-free)");    //1
     energy_optimizer->addItem("local AUGLAG");                    //2
@@ -169,10 +169,10 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     energy_optimizer->addItem("global ESCH");                     //11
     energy_optimizer->addItem("NONE");                            //12
     energy_optimizer->setCurrentIndex(0);
-	energy_optimizer_lab = new QLabel(tr("Binding energy optimizer: "));
+    energy_optimizer_lab = new QLabel(tr("Binding energy optimizer: "));
 
-	output_prefix = new QLineEdit(tr("iMcLiBELa"));
-	output_prefix_lab = new QLabel(tr("Output prefix: "));
+    output_prefix = new QLineEdit(tr("iMcLiBELa"));
+    output_prefix_lab = new QLabel(tr("Output prefix: "));
 
     write_mol2 = new QCheckBox (tr("Write Mol2 file? "), this);
     write_mol2->setChecked(Inp->write_mol2);
@@ -202,16 +202,16 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     grid_box->setSingleStep(1.0);
     grid_box_lab = new QLabel(tr("Grid box: "));
 
-	progressbar = new QProgressBar;
-	progressbar->setRange(0, 100);
-	progressbar->setValue(0);
-	progress_label = new QLabel(tr("<h2>Progress</h2>"));
-	progress_label->setAlignment(Qt::AlignHCenter);
+    progressbar = new QProgressBar;
+    progressbar->setRange(0, 100);
+    progressbar->setValue(0);
+    progress_label = new QLabel(tr("<h2>Progress</h2>"));
+    progress_label->setAlignment(Qt::AlignHCenter);
 
     advanced_settings = new QCheckBox(tr("&Advanced settings"), this);
 
     dock_no_h = new QCheckBox(tr("Ignore hydrogens"), this);
-	dock_no_h->setChecked(false);
+    dock_no_h->setChecked(false);
 
     generate_conformers = new QCheckBox (tr("Generate conformers? "), this);
     generate_conformers->setChecked(Inp->generate_conformers);
@@ -286,6 +286,18 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     scale_vdw_energy->setValue(1.0);
     scale_vdw_energy->setSingleStep(0.1);
 
+    use_delphi_phimap = new QCheckBox(tr("Use DelPhi Phimap?"), this);
+    delphi_gsize_label = new QLabel(tr("DelPhi gsize:"));
+    delphi_gsize_label->setDisabled(true);
+    delphi_gsize = new QSpinBox;
+    delphi_gsize->setSingleStep(1);
+    delphi_gsize->setMaximum(10000);
+    delphi_gsize->setValue(121);
+    delphi_gsize->setDisabled(true);
+    phimap_file_label = new QLabel(tr("DelPhi phimap file:"));
+    phimap_file_label->setDisabled(true);
+    phimap_file = new QLineEdit(tr("phimap.phi"));
+    phimap_file->setDisabled(true);
 
 
     files_label = new QLabel(tr("<h2>Input Files</h2>"));
@@ -489,30 +501,41 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     editLayout->addWidget(grid_box, i, 1);
     i++;
 
-	progress_layout->addWidget(advanced_settings);
-	progress_layout->addWidget(progress_label, Qt::AlignCenter);
-	progress_layout->addWidget(progressbar);
+    editLayout->addWidget(use_delphi_phimap, i, 0);
+    i++;
 
-	mainLayout->addStretch();
-	mainLayout->addLayout(progress_layout);
-	mainLayout->addStretch();
+    editLayout->addWidget(delphi_gsize_label, i, 0);
+    editLayout->addWidget(delphi_gsize, i, 1);
+    i++;
 
-	Run = new QPushButton(tr("Run!"));
-	WriteButton = new QPushButton(tr("Write parameter file"));
+    editLayout->addWidget(phimap_file_label, i, 0);
+    editLayout->addWidget(phimap_file, i, 1);
+    i++;
 
-	buttonLayout->addStretch();
-	buttonLayout->addWidget(WriteButton, Qt::AlignHCenter);
-	buttonLayout->addWidget(Run, Qt::AlignHCenter);
+    progress_layout->addWidget(advanced_settings);
+    progress_layout->addWidget(progress_label, Qt::AlignCenter);
+    progress_layout->addWidget(progressbar);
 
-	Run->setDefault(true);
-	setWindowTitle(tr("iMcLiBEla by Alessandro Nascimento"));
+    mainLayout->addStretch();
+    mainLayout->addLayout(progress_layout);
+    mainLayout->addStretch();
 
-	connect(rec_mol2, SIGNAL(clicked()), this, SLOT(choose_rec_file()));
-	connect(reflig_mol2, SIGNAL(clicked()), this, SLOT(choose_reflig_file()));
-	connect(docking_mol2, SIGNAL(clicked()), this, SLOT(choose_docking_mol2_files()));
-	connect(advanced_settings, SIGNAL(toggled(bool)), this, SLOT(show_advanced_setttings(bool)));
-	connect(Run, SIGNAL(clicked()), this, SLOT(Start()));
-	connect(WriteButton, SIGNAL(clicked()), this, SLOT(write_parameters()));
+    Run = new QPushButton(tr("Run!"));
+    WriteButton = new QPushButton(tr("Write parameter file"));
+
+    buttonLayout->addStretch();
+    buttonLayout->addWidget(WriteButton, Qt::AlignHCenter);
+    buttonLayout->addWidget(Run, Qt::AlignHCenter);
+
+    Run->setDefault(true);
+    setWindowTitle(tr("iMcLiBEla by Alessandro Nascimento"));
+
+    connect(rec_mol2, SIGNAL(clicked()), this, SLOT(choose_rec_file()));
+    connect(reflig_mol2, SIGNAL(clicked()), this, SLOT(choose_reflig_file()));
+    connect(docking_mol2, SIGNAL(clicked()), this, SLOT(choose_docking_mol2_files()));
+    connect(advanced_settings, SIGNAL(toggled(bool)), this, SLOT(show_advanced_setttings(bool)));
+    connect(Run, SIGNAL(clicked()), this, SLOT(Start()));
+    connect(WriteButton, SIGNAL(clicked()), this, SLOT(write_parameters()));
     connect(scoring_function, SIGNAL(currentIndexChanged(int)), this, SLOT(show_scoring_function_options(int)));
 
     connect(write_mol2, SIGNAL(stateChanged(int)), this, SLOT(slot_write_mol2(int)));
@@ -531,28 +554,30 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     connect(load_write_file, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_grid_file(int)));
     connect(use_grids, SIGNAL(stateChanged(int)), this, SLOT(slot_use_grids(int)));
 
+    connect(use_delphi_phimap, SIGNAL(stateChanged(int)), this, SLOT(slot_use_delphi_phimap(int)));
+
     this->set_initial_parameters();
     this->hide_advanced_options();
 }
 
 void DockWidget::choose_rec_file(){
     QString filename = QFileDialog::getOpenFileName(this, tr("Choose a File"), "", tr("MOL2 Files (*.mol2 *.mol2.gz)"));
-	choose_rec_mol2->setText(filename.toUtf8());
+    choose_rec_mol2->setText(filename.toUtf8());
     Inp->rec_mol2 = string(filename.toStdString());
 }
 
 void DockWidget::choose_reflig_file(){
     QString filename = QFileDialog::getOpenFileName(this, tr("Choose a File"), "", tr("MOL2 Files (*.mol2 *.mol2.gz)"));
-	choose_reflig_mol2->setText(filename.toUtf8());
+    choose_reflig_mol2->setText(filename.toUtf8());
     Inp->reflig_mol2 = string(filename.toUtf8().toStdString());
     Inp->lig_mol2 = Inp->reflig_mol2;
 }
 
 void DockWidget::choose_docking_mol2_files(){
     QStringList ql = QFileDialog::getOpenFileNames(this, tr("Choose MOL2 Files"), "", tr("MOL2 Files (*.mol2 *.mol2.gz)"));
-	Inp->docking_molecules = ql;
-	QString tmp = QString("%1 Molecules read!").arg(Inp->docking_molecules.size());
-	choose_docking_mol2->setText(tmp);
+    Inp->docking_molecules = ql;
+    QString tmp = QString("%1 Molecules read!").arg(Inp->docking_molecules.size());
+    choose_docking_mol2->setText(tmp);
 }
 
 void DockWidget::choose_grid_file(){
@@ -593,12 +618,12 @@ void DockWidget::show_scoring_function_options(int sf){
 }
 
 void DockWidget::show_advanced_setttings(bool state){
-	if (state){
+    if (state){
         this->show_advanced_options();
-	}
-	else {
+    }
+    else {
         this->hide_advanced_options();
-	}
+    }
 }
 
 void DockWidget::slot_write_mol2(int state){
@@ -714,6 +739,35 @@ void DockWidget::slot_use_grids(int state){
     }
 }
 
+void DockWidget::slot_use_delphi_phimap(int state){
+    switch(state){
+    case Qt::Unchecked:
+        Inp->use_delphi = false;
+        this->delphi_gsize->hide();
+        this->delphi_gsize->setDisabled(true);
+        this->delphi_gsize_label->hide();
+        this->delphi_gsize_label->setDisabled(true);
+        this->phimap_file_label->hide();
+        this->phimap_file->hide();
+        this->phimap_file_label->setDisabled(true);
+        this->phimap_file->setDisabled(true);
+        break;
+
+    case Qt::Checked:
+        Inp->use_delphi = true;
+        this->delphi_gsize->show();
+        this->delphi_gsize->setEnabled(true);
+        this->phimap_file_label->show();
+        this->phimap_file->show();
+        this->phimap_file->setEnabled(true);
+        this->phimap_file_label->setEnabled(true);
+        this->delphi_phimap_filename = QFileDialog::getOpenFileName(this, tr("Choose a File"), "", tr("Phimap Files (*.phi)"));
+        phimap_file->setText(delphi_phimap_filename.toUtf8());
+        Inp->delphi_grid = string(delphi_phimap_filename.toUtf8().toStdString());
+        break;
+    }
+}
+
 void DockWidget::slot_scale_ele(double value){
     Inp->scale_elec_energy = value;
 }
@@ -723,28 +777,28 @@ void DockWidget::slot_scale_vdw(double value){
 }
 
 void DockWidget::Start(){
-	this->set_parameters();
+    this->set_parameters();
     RunEngine = new TEMP_SCHEME(Inp, Editor, this->progressbar);
     RunEngine->evaluation();
     delete RunEngine;
 }
 
 void DockWidget::set_parameters(){
-	Inp->mode = "dock";
+    Inp->mode = "dock";
     Inp->dock_mode = true;
     Editor->appendPlainText("mode dock\n");
 
-	if (mol2_aa->currentIndex() == 0){
-		Inp->mol2_aa = false;
-	}
-	else if(mol2_aa->currentIndex() == 1){
-		(Inp->mol2_aa = true);
-	}
+    if (mol2_aa->currentIndex() == 0){
+        Inp->mol2_aa = false;
+    }
+    else if(mol2_aa->currentIndex() == 1){
+        (Inp->mol2_aa = true);
+    }
 
-	Inp->scoring_function = scoring_function->currentIndex();
+    Inp->scoring_function = scoring_function->currentIndex();
 
-	Inp->diel = diel->value();
-	Inp->sigma = sigma->value();
+    Inp->diel = diel->value();
+    Inp->sigma = sigma->value();
     Inp->solvation_alpha = this->alpha->value();
     Inp->solvation_beta = this->beta->value();
 
@@ -773,73 +827,73 @@ void DockWidget::set_parameters(){
         }
     }
 
-	Inp->deltaij6 = pow(deltaij_vdw->value(),6);
+    Inp->deltaij6 = pow(deltaij_vdw->value(),6);
     Inp->deltaij_es3 = pow(deltaij_elec->value(), 3);
-	Inp->deltaij_es6 = pow(deltaij_elec->value(), 6);
+    Inp->deltaij_es6 = pow(deltaij_elec->value(), 6);
 
-	Inp->elec_scale = elec_scale->value();
-	Inp->vdw_scale = vdw_scale->value();
+    Inp->elec_scale = elec_scale->value();
+    Inp->vdw_scale = vdw_scale->value();
 
     Inp->search_box_x = box_size->value();
     Inp->search_box_y = box_size->value();
     Inp->search_box_z = box_size->value();
 
-	Inp->min_delta = min_delta->value();
-	Inp->min_tol = min_tol->value();
+    Inp->min_delta = min_delta->value();
+    Inp->min_tol = min_tol->value();
 
     Inp->min_timeout = 30;                              // WARNING
     Inp->dock_min_tol = this->dock_min_tol->value();
     Inp->min_timeout = this->dock_timeout->value();
 
-	switch(overlay_optimizer->currentIndex()){
-		case 0:
-			Inp->overlay_optimizer = "cobyla";
-			break;
-		case 1:
-            Inp->overlay_optimizer = "ln_auglag";
-			break;
-		case 2:
-            Inp->overlay_optimizer = "ld_auglag";
-			break;
-		case 3:
-            Inp->overlay_optimizer = "lbfgs";
-			break;
-		case 4:
-            Inp->overlay_optimizer = "mma";
-			break;
-        case 5:
-            Inp->overlay_optimizer = "subplex";
-			break;
-        case 6:
-            Inp->overlay_optimizer = "direct";
-            break;
-	}
+    switch(overlay_optimizer->currentIndex()){
+    case 0:
+        Inp->overlay_optimizer = "cobyla";
+        break;
+    case 1:
+        Inp->overlay_optimizer = "ln_auglag";
+        break;
+    case 2:
+        Inp->overlay_optimizer = "ld_auglag";
+        break;
+    case 3:
+        Inp->overlay_optimizer = "lbfgs";
+        break;
+    case 4:
+        Inp->overlay_optimizer = "mma";
+        break;
+    case 5:
+        Inp->overlay_optimizer = "subplex";
+        break;
+    case 6:
+        Inp->overlay_optimizer = "direct";
+        break;
+    }
 
-	switch(energy_optimizer->currentIndex()){
-	case 0:
-		Inp->energy_optimizer = "cobyla";
-		break;
-	case 1:
+    switch(energy_optimizer->currentIndex()){
+    case 0:
+        Inp->energy_optimizer = "cobyla";
+        break;
+    case 1:
         Inp->energy_optimizer = "ln_auglag";
-		break;
-	case 2:
+        break;
+    case 2:
         Inp->energy_optimizer = "ld_auglag";
-		break;
-	case 3:
+        break;
+    case 3:
         Inp->energy_optimizer = "lbfgs";
-		break;
-	case 4:
+        break;
+    case 4:
         Inp->energy_optimizer = "mma";
-		break;
-	case 5:
+        break;
+    case 5:
         Inp->energy_optimizer = "subplex";
-		break;
-	case 6:
+        break;
+    case 6:
         Inp->energy_optimizer = "simplex";
-		break;
+        break;
     case 7:
         Inp->energy_optimizer = "direct";
-		break;
+        break;
     case 8:
         Inp->energy_optimizer = "crs";
         break;
@@ -855,16 +909,16 @@ void DockWidget::set_parameters(){
     case 12:
         Inp->energy_optimizer = "none";
         break;
-	}
+    }
 
-	Inp->output = output_prefix->text().toStdString();
+    Inp->output = output_prefix->text().toStdString();
 
-	if (dock_no_h->isChecked()){
-		Inp->dock_no_h = true;
-	}
-	else {
-		Inp->dock_no_h = false;
-	}
+    if (dock_no_h->isChecked()){
+        Inp->dock_no_h = true;
+    }
+    else {
+        Inp->dock_no_h = false;
+    }
     if (Inp->generate_conformers){
         Inp->lig_conformers = this->conformers->value();
         Inp->conformers_to_evaluate = this->conformers_to_evaluate->value();
@@ -899,6 +953,12 @@ void DockWidget::set_parameters(){
     Inp->scale_elec_energy = this->scale_ele_energy->value();
     Inp->scale_vdw_energy = this->scale_vdw_energy->value();
 
+    if (use_delphi_phimap->isChecked()){
+        Inp->use_delphi = true;
+        Inp->delphi_gsize = int(this->delphi_gsize->value());
+        Inp->delphi_grid = string(delphi_phimap_filename.toUtf8().toStdString());
+    }
+
     // writing the list of molecules do dock
 
     FILE* multifile = fopen("multimol.dat", "w");
@@ -911,29 +971,29 @@ void DockWidget::set_parameters(){
 }
 
 void DockWidget::write_parameters(){
-	this->set_parameters();
-	QString line;
-	QFile input_params("iMcLiBELa.inp");
+    this->set_parameters();
+    QString line;
+    QFile input_params("iMcLiBELa.inp");
 
-	if (!input_params.open(QIODevice::WriteOnly | QIODevice::Text)){
-		printf("Failed to open iMcLiBELa.inp for writing.\n");
-	}
+    if (!input_params.open(QIODevice::WriteOnly | QIODevice::Text)){
+        printf("Failed to open iMcLiBELa.inp for writing.\n");
+    }
 
-	line = ("mode dock\n");
-	input_params.write(line.toUtf8());
+    line = ("mode dock\n");
+    input_params.write(line.toUtf8());
 
     /*
      * INPUT & OUTPUT FILES
     */
 
-	line = ("rec_mol2 " + choose_rec_mol2->text() + "\n");
-	input_params.write(line.toUtf8());
+    line = ("rec_mol2 " + choose_rec_mol2->text() + "\n");
+    input_params.write(line.toUtf8());
 
-	line = ("lig_mol2 " + choose_reflig_mol2->text() + "\n");
-	input_params.write(line.toUtf8());
+    line = ("lig_mol2 " + choose_reflig_mol2->text() + "\n");
+    input_params.write(line.toUtf8());
 
-	line = ("reflig_mol2 " + choose_reflig_mol2->text() + "\n");
-	input_params.write(line.toUtf8());
+    line = ("reflig_mol2 " + choose_reflig_mol2->text() + "\n");
+    input_params.write(line.toUtf8());
 
     if (Inp->write_mol2){
         line = ("write_mol2 yes \n");
@@ -975,39 +1035,39 @@ void DockWidget::write_parameters(){
     line = ("solvation_beta " + QString::number(this->beta->value()) + "\n");
     input_params.write(line.toUtf8());
 
-	if (mol2_aa->currentIndex() == 0){
-		line = ("mol2_aa no\n");
-		input_params.write(line.toUtf8());
-	}
-	else if(mol2_aa->currentIndex() == 1){
-		line = ("mol2_aa yes\n");
-		input_params.write(line.toUtf8());
-	}
+    if (mol2_aa->currentIndex() == 0){
+        line = ("mol2_aa no\n");
+        input_params.write(line.toUtf8());
+    }
+    else if(mol2_aa->currentIndex() == 1){
+        line = ("mol2_aa yes\n");
+        input_params.write(line.toUtf8());
+    }
 
-	line = ("deltaij6 " + QString::number(pow(deltaij_vdw->value(), 6)) + "\n");
-	input_params.write(line.toUtf8());
+    line = ("deltaij6 " + QString::number(pow(deltaij_vdw->value(), 6)) + "\n");
+    input_params.write(line.toUtf8());
 
-	line = ("deltaij_es6 " + QString::number(pow(deltaij_elec->value(), 6)) + "\n");
-	input_params.write(line.toUtf8());
+    line = ("deltaij_es6 " + QString::number(pow(deltaij_elec->value(), 6)) + "\n");
+    input_params.write(line.toUtf8());
 
-	line = ("elec_scale " + QString::number(elec_scale->value()) + "\n");
-	input_params.write(line.toUtf8());
+    line = ("elec_scale " + QString::number(elec_scale->value()) + "\n");
+    input_params.write(line.toUtf8());
 
-	line = ("vdw_scale " + QString::number(vdw_scale->value()) + "\n");
-	input_params.write(line.toUtf8());
+    line = ("vdw_scale " + QString::number(vdw_scale->value()) + "\n");
+    input_params.write(line.toUtf8());
 
-//	line = ("box " + QString::number(box_size->value()) + " " + QString::number(box_size->value()) + " " + QString::number(box_size->value()) + "\n");
-//	input_params.write(line.toUtf8());
+    //	line = ("box " + QString::number(box_size->value()) + " " + QString::number(box_size->value()) + " " + QString::number(box_size->value()) + "\n");
+    //	input_params.write(line.toUtf8());
 
     /*
      * OPTIMIZATION
      */
 
-	line = ("minimization_delta " + QString::number(min_delta->value()) + "\n");
-	input_params.write(line.toUtf8());
+    line = ("minimization_delta " + QString::number(min_delta->value()) + "\n");
+    input_params.write(line.toUtf8());
 
-	line = ("minimization_tolerance " + QString::number(min_tol->value()) + "\n");
-	input_params.write(line.toUtf8());
+    line = ("minimization_tolerance " + QString::number(min_tol->value()) + "\n");
+    input_params.write(line.toUtf8());
 
     line = ("dock_min_tol " + QString::number(this->dock_min_tol->value()) + "\n");
     input_params.write(line.toUtf8());
@@ -1015,20 +1075,20 @@ void DockWidget::write_parameters(){
     line = ("minimization_timeout " + QString::number(this->min_timeout->value()) + "\n");
     input_params.write(line.toUtf8());
 
-	line = ("overlay_optimizer " + QString::fromStdString(Inp->overlay_optimizer) + "\n");
-	input_params.write(line.toUtf8());
+    line = ("overlay_optimizer " + QString::fromStdString(Inp->overlay_optimizer) + "\n");
+    input_params.write(line.toUtf8());
 
-	line = ("energy_optimizer " + QString::fromStdString(Inp->energy_optimizer) + "\n");
-	input_params.write(line.toUtf8());
+    line = ("energy_optimizer " + QString::fromStdString(Inp->energy_optimizer) + "\n");
+    input_params.write(line.toUtf8());
 
-	if(dock_no_h->isChecked()){
-		line=("ignore_h yes\n");
-		input_params.write(line.toUtf8());
-	}
-	else{
-		line=("ignore_h no\n");
-		input_params.write(line.toUtf8());
-	}
+    if(dock_no_h->isChecked()){
+        line=("ignore_h yes\n");
+        input_params.write(line.toUtf8());
+    }
+    else{
+        line=("ignore_h no\n");
+        input_params.write(line.toUtf8());
+    }
 
     /*
      * CONFORMERS
@@ -1074,6 +1134,17 @@ void DockWidget::write_parameters(){
         break;
     }
 
+    if (use_delphi_phimap->isChecked()){
+        line=("use_delphi yes\n");
+        input_params.write(line.toUtf8());
+
+        line=(QString("delphi_gsize %1\n").arg(this->delphi_gsize->value()));
+        input_params.write(line.toUtf8());
+
+        line=(QString("delphi_grid %1\n").arg(this->delphi_phimap_filename));
+        input_params.write(line.toUtf8());
+    }
+
     if (Inp->dock_parallel){
         line=(QString("dock_parallel %1\n").arg("yes"));
         input_params.write(line.toUtf8());
@@ -1086,10 +1157,10 @@ void DockWidget::write_parameters(){
     }
 
 
-	QLabel* write_label = new QLabel(tr("Parameter file iMcLiBELa.inp written!"));
-	editLayout->addWidget(write_label);
+    QLabel* write_label = new QLabel(tr("Parameter file iMcLiBELa.inp written!"));
+    editLayout->addWidget(write_label);
 
-	input_params.close();
+    input_params.close();
 }
 
 DockWidget::~DockWidget()
@@ -1149,9 +1220,9 @@ void DockWidget::hide_advanced_options(){
     dock_timeout->hide();
     dock_timeout_lab->hide();
 
-//    parallel->hide();
-//    parallel_jobs->hide();
-//    parallel_jobs_lab->hide();
+    //    parallel->hide();
+    //    parallel_jobs->hide();
+    //    parallel_jobs_lab->hide();
 
     grid_box_lab->hide();
     grid_box->hide();
@@ -1172,13 +1243,19 @@ void DockWidget::hide_advanced_options(){
     use_write_cutoff_score->hide();
     write_cutoff_score->hide();
 
+    use_delphi_phimap->hide();
+    delphi_gsize_label->hide();
+    delphi_gsize->hide();
+    phimap_file_label->hide();
+    phimap_file->hide();
+
 }
 
 void DockWidget::show_advanced_options(){
-//    deltaij_vdw_lab->show();
-//    deltaij_vdw->show();
-//    deltaij_elec_lab->show();
-//    deltaij_elec->show();
+    //    deltaij_vdw_lab->show();
+    //    deltaij_vdw->show();
+    //    deltaij_elec_lab->show();
+    //    deltaij_elec->show();
     diel_lab->show();
     diel->show();
     sigma_lab->show();
@@ -1244,6 +1321,12 @@ void DockWidget::show_advanced_options(){
     cutoff_energy->show();
     use_write_cutoff_score->show();
     write_cutoff_score->show();
+
+    use_delphi_phimap->show();
+    delphi_gsize_label->show();
+    delphi_gsize->show();
+    phimap_file_label->show();
+    phimap_file->show();
 }
 
 void DockWidget::set_initial_parameters(){

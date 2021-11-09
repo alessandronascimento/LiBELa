@@ -137,7 +137,11 @@ void TEMP_SCHEME::evaluation(){
             sprintf(info,"Generating energy grids. It can take a couple of minutes. Coffee time maybe ?");
             this->print_info(info);
             start = clock();
+#ifdef HAS_GUI
+            Grids = new Grid(Input, QWriter, REC, center);
+#else
             Grids = new Grid(Input, Writer, REC, center);
+#endif
             end = clock();
             sprintf(info, "Computed energy grids with %d x %d x %d points spaced by %5.3f Angstroms in each directon.", Grids->npointsx, Grids->npointsy, Grids->npointsz, Grids->grid_spacing);
             this->print_info(info);

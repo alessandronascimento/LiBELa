@@ -96,6 +96,59 @@ Grid::Grid(PARSER* _Input, WRITER* _Writer, Mol2* Rec, vector<double> com){
     }
 }
 
+#ifdef HAS_GUI
+Grid::Grid(PARSER* _Input, QtWriter* _QWriter, Mol2* Rec, vector<double> com){
+    this->Input = _Input;
+    this->QWriter = _QWriter;
+    this->pbsa_loaded = false;
+    this->delphi_loaded = false;
+    if (Input->pbsa_grid != "" and Input->use_pbsa){
+        this->load_Ambergrids_from_file();
+    }
+    else if (Input->delphi_grid != "" and Input->use_delphi){
+        this->load_phimap_from_file(Input->delphi_gsize);
+    }
+    else if (Input->delphi_cube_grid != "" and Input->use_delphi){
+        if (Input->delphi_cube_grid.substr(Input->delphi_cube_grid.size()-3, 3) == ".gz"){
+            this->load_delphi_gzcube();
+        }
+        else{
+            this->load_delphi_cube();
+        }
+    }
+    else {
+        this->grid_spacing = Input->grid_spacing;
+        this->generate_points(com);
+    }
+
+    switch (Input->scoring_function) {
+    case 0:
+        this->compute_grid_softcore_HB_omp(Rec);
+        break;
+    case 1:
+        this->compute_grid_softcore_HB_omp(Rec);
+        break;
+    case 2:
+        this->compute_grid_hardcore_HB_omp(Rec);
+        break;
+    case 3:
+        this->compute_grid_hardcore_HB_omp(Rec);
+        break;
+    case 4:
+        this->compute_grid_hardcore_omp_HB_Gaussian(Rec);
+        break;
+    case 5:
+        this->compute_grid_hardcore_omp_HB_Gaussian(Rec);
+        break;
+    }
+
+    if (Input->write_grids){
+        this->write_grids_to_file();
+    }
+}
+
+#endif
+
 void Grid::generate_points(vector<double> ref_com){
     this->npointsx = round(Input->x_dim/this->grid_spacing);
     this->npointsy = round(Input->y_dim/this->grid_spacing);
@@ -287,6 +340,10 @@ void Grid::compute_grid_softcore_HB_omp(Mol2* Rec){
         vector<double> elec_t1(npointsz), vdwA_t1(npointsz), vdwB_t1(npointsz), solv_t1(npointsz),rec_solv_t1(npointsz), hb_donor_t1(npointsz), hb_acceptor_t1(npointsz);
         vector<vector<double> > elec_t2, vdwA_t2, vdwB_t2, solv_t2, rec_solv_t2, hb_donor_t2, hb_acceptor_t2;
 
+        // Constants for HB calculation using a 10-12 potential.
+        // Values taken from AutoDock paper. They were computed to result in -5 kcal/mol
+        // in energy for a good HB
+
         double HB_C12=55332.873;
         double HB_C10=18393.199;
 
@@ -332,12 +389,10 @@ void Grid::compute_grid_softcore_HB_omp(Mol2* Rec){
                         double hb_acceptor = 0.0;
 
                         for (int i=0; i< Rec->N; i++){
-                            double d = this->distance(x, Rec->xyz[i][0], y,Rec->xyz[i][1], z, Rec->xyz[i][2]);
-                            double d2 = d*d;
-                            double d3 = d*d*d;
+                            double d2 = this->distance_squared(x, Rec->xyz[i][0], y,Rec->xyz[i][1], z, Rec->xyz[i][2]);
                             double d6 = d2*d2*d2;
 
-                            double denom = pow((d3 + Input->deltaij_es3), (1.0/3.0));
+                            double denom; //= pow((d3 + Input->deltaij_es3), (1.0/3.0));
 
                             if (Input->dielectric_model == "constant"){
                                 elec += (332.0*Rec->charges[i])/(Input->diel*denom);
@@ -359,19 +414,19 @@ void Grid::compute_grid_softcore_HB_omp(Mol2* Rec){
                         }
 
                         for (unsigned i=0; i<Rec->HBdonors.size(); i++){
-                            double d = distance(Rec->xyz[Rec->HBdonors[i][1]][0], x, Rec->xyz[Rec->HBdonors[i][1]][1], y, Rec->xyz[Rec->HBdonors[i][1]][2], z);
-                            double d10 = d*d*d*d*d*d*d*d*d*d;
+                            double d2 = distance_squared(Rec->xyz[Rec->HBdonors[i][1]][0], x, Rec->xyz[Rec->HBdonors[i][1]][1], y, Rec->xyz[Rec->HBdonors[i][1]][2], z);
+                            double d10 = d2*d2*d2*d2*d2;
                             double ang = angle(Rec->xyz[Rec->HBdonors[i][0]][0], Rec->xyz[Rec->HBdonors[i][0]][1], Rec->xyz[Rec->HBdonors[i][0]][2], Rec->xyz[Rec->HBdonors[i][1]][0],
                                     Rec->xyz[Rec->HBdonors[i][1]][1], Rec->xyz[Rec->HBdonors[i][1]][2], x, y, z);
                             double angle_term = cos(ang * PI / 180.0) * cos(ang * PI / 180.0) * cos(ang * PI / 180.0) * cos(ang * PI / 180.0);
-                            hb_donor += ((HB_C12/(d10*d*d)) - (HB_C10/d10)) * angle_term;
+                            hb_donor += ((HB_C12/(d10*d2)) - (HB_C10/d10)) * angle_term;
 
                         }
 
                         for (unsigned i=0; i<Rec->HBacceptors.size(); i++){
-                            double d = distance(Rec->xyz[Rec->HBacceptors[i]][0], x, Rec->xyz[Rec->HBacceptors[i]][1], y, Rec->xyz[Rec->HBacceptors[i]][2], z);
-                            double d10 = d*d*d*d*d*d*d*d*d*d;
-                            hb_acceptor += ((HB_C12/(d10*d*d)) - (HB_C10/d10));
+                            double d2 = distance_squared(Rec->xyz[Rec->HBacceptors[i]][0], x, Rec->xyz[Rec->HBacceptors[i]][1], y, Rec->xyz[Rec->HBacceptors[i]][2], z);
+                            double d10 = d2*d2*d2*d2*d2;
+                            hb_acceptor += ((HB_C12/(d10*d2)) - (HB_C10/d10));
                         }
 
                         this->elec_grid[a][b][c] = elec;
@@ -691,7 +746,7 @@ void Grid::load_Ambergrids_from_file(){
         fclose(pbsa_map);
 
         sprintf(info, "PBSA Grid file %s read!", Input->pbsa_grid.c_str());
-        Writer->print_info(info);
+        this->print_info(info);
 
         this->pbsa_loaded = true;
     }
@@ -758,7 +813,7 @@ void Grid::load_gzAmbergrids_from_file(){
     gzclose(pbsa_map);
 
     sprintf(info, "PBSA Grid file %s read!", Input->pbsa_grid.c_str());
-    Writer->print_info(info);
+    this->print_info(info);
 
     this->pbsa_loaded = true;
 }
@@ -921,19 +976,19 @@ void Grid::compute_grid_hardcore_HB_omp(Mol2* Rec){
                 }
 
                 for (unsigned i=0; i<Rec->HBdonors.size(); i++){
-                    double d = distance(Rec->xyz[Rec->HBdonors[i][1]][0], x, Rec->xyz[Rec->HBdonors[i][1]][1], y, Rec->xyz[Rec->HBdonors[i][1]][2], z);
-                    double d10 = d*d*d*d*d*d*d*d*d*d;
+                    double d2 = distance_squared(Rec->xyz[Rec->HBdonors[i][1]][0], x, Rec->xyz[Rec->HBdonors[i][1]][1], y, Rec->xyz[Rec->HBdonors[i][1]][2], z);
+                    double d10 = d2*d2*d2*d2*d2;
                     double ang = angle(Rec->xyz[Rec->HBdonors[i][0]][0], Rec->xyz[Rec->HBdonors[i][0]][1], Rec->xyz[Rec->HBdonors[i][0]][2], Rec->xyz[Rec->HBdonors[i][1]][0],
                             Rec->xyz[Rec->HBdonors[i][1]][1], Rec->xyz[Rec->HBdonors[i][1]][2], x, y, z);
                     double angle_term = cos(ang * PI / 180.0) * cos(ang * PI / 180.0) * cos(ang * PI / 180.0) * cos(ang * PI / 180.0);
-                    hb_donor += ((HB_C12/(d10*d*d)) - (HB_C10/d10)) * angle_term;
+                    hb_donor += ((HB_C12/(d10*d2)) - (HB_C10/d10)) * angle_term;
 
                 }
 
                 for (unsigned i=0; i<Rec->HBacceptors.size(); i++){
-                    double d = distance(Rec->xyz[Rec->HBacceptors[i]][0], x, Rec->xyz[Rec->HBacceptors[i]][1], y, Rec->xyz[Rec->HBacceptors[i]][2], z);
-                    double d10 = d*d*d*d*d*d*d*d*d*d;
-                    hb_acceptor += ((HB_C12/(d10*d*d)) - (HB_C10/d10));
+                    double d2 = distance_squared(Rec->xyz[Rec->HBacceptors[i]][0], x, Rec->xyz[Rec->HBacceptors[i]][1], y, Rec->xyz[Rec->HBacceptors[i]][2], z);
+                    double d10 = d2*d2*d2*d2*d2;
+                    hb_acceptor += ((HB_C12/(d10*d2)) - (HB_C10/d10));
                 }
 
 
@@ -1049,7 +1104,7 @@ void Grid::load_Delphi_Grid_from_file(){
     fclose(phimap);
 
     sprintf(info, "DelPhi Grid file %s read!", Input->delphi_grid.c_str());
-    Writer->print_info(info);
+    this->print_info(info);
 
     this->delphi_loaded = true;
 }
@@ -1154,12 +1209,12 @@ void Grid::load_phimap_from_file(int gsize){
     fread(&oldmid_z, sizeof(float), 1, phimap);
     fread(&igrid, sizeof(int), 1, phimap);
 
-    if (igrid =! gsize){
+    if (igrid != gsize){
         printf("Mismatch between GSIZE given and found in phimap file. Please check.\n");
         exit(1);
     }
 
-    this->grid_spacing = 1/scale;
+    this->grid_spacing = 1.0/scale;
 
     this->npointsx = gsize;
     this->npointsy = gsize;
@@ -1176,14 +1231,14 @@ void Grid::load_phimap_from_file(int gsize){
 
     fclose(phimap);
     sprintf(info, "DelPhi Grid file %s read!", Input->delphi_grid.c_str());
-    Writer->print_info(info);
+    this->print_info(info);
     sprintf(info, "DelPhi Grid Scale / Spacing: %7.4f %7.4f", scale, this->grid_spacing);
-    Writer->print_info(info);
+    this->print_info(info);
     sprintf(info, "DelPhi Grid GSIZE: %5d. Mid XYZ: %7.4f %7.4f %7.4f", gsize, oldmid_x, oldmid_y, oldmid_z);
-    Writer->print_info(info);
+    this->print_info(info);
     sprintf(info, "Grid Dimensions XYZ: [%7.4f <-> %7.4f] [%7.4f <-> %7.4f] [%7.4f <-> %7.4f]", this->xbegin, this->xend, this->ybegin, this->yend,
             this->zbegin, this->zend);
-    Writer->print_info(info);
+    this->print_info(info);
 
     this->delphi_loaded = true;
 }
@@ -1242,14 +1297,14 @@ void Grid::load_delphi_cube(){
     fclose(phimap);
 
     sprintf(info, "DelPhi CUBE Grid file %s read!", Input->delphi_cube_grid.c_str());
-    Writer->print_info(info);
+    this->print_info(info);
     sprintf(info, "DelPhi CUBE Grid Spacing: %7.4f", this->grid_spacing);
-    Writer->print_info(info);
+    this->print_info(info);
     sprintf(info, "DelPhi CUBE Grid GSIZE: %5d. Center: %7.4f %7.4f %7.4f", igrid, centerx, centery, centerz);
-    Writer->print_info(info);
+    this->print_info(info);
     sprintf(info, "Grid Dimensions XYZ: [%7.4f <-> %7.4f] [%7.4f <-> %7.4f] [%7.4f <-> %7.4f]", this->xbegin, this->xend, this->ybegin, this->yend,
             this->zbegin, this->zend);
-    Writer->print_info(info);
+    this->print_info(info);
     this->delphi_loaded = true;
 }
 
@@ -1320,14 +1375,14 @@ void Grid::load_delphi_gzcube(){
     gzclose(phimap);
 
     sprintf(info, "DelPhi CUBE Grid file %s read!", Input->delphi_cube_grid.c_str());
-    Writer->print_info(info);
+    this->print_info(info);
     sprintf(info, "DelPhi CUBE Grid Spacing: %7.4f", this->grid_spacing);
-    Writer->print_info(info);
+    this->print_info(info);
     sprintf(info, "DelPhi CUBE Grid GSIZE: %5d. Center: %7.4f %7.4f %7.4f", igrid, centerx, centery, centerz);
-    Writer->print_info(info);
+    this->print_info(info);
     sprintf(info, "Grid Dimensions XYZ: [%7.4f <-> %7.4f] [%7.4f <-> %7.4f] [%7.4f <-> %7.4f]", this->xbegin, this->xend, this->ybegin, this->yend,
             this->zbegin, this->zend);
-    Writer->print_info(info);
+    this->print_info(info);
     this->delphi_loaded = true;
 
 }
@@ -1586,4 +1641,20 @@ void Grid::compute_grid_hardcore_omp_HB_Gaussian(Mol2* Rec){
     for(int i=0; i<Rec->N; i++){
         this->rec_si += (Input->solvation_alpha*Rec->charges[i]*Rec->charges[i]) + Input->solvation_beta;
     }
+}
+
+void Grid::print_info(char info[98]){
+#ifdef HAS_GUI
+    QWriter->print_info(info);
+#else
+    Writer->print_info(info);
+#endif
+}
+
+void Grid::print_line(){
+#ifdef HAS_GUI
+    QWriter->print_line();
+#else
+    Writer->print_line();
+#endif
 }

@@ -14,6 +14,7 @@
 #include "Mol2.h"
 #include "PARSER.h"
 #include "WRITER.h"
+#include "GUI/QtWriter.h"
 #include <zlib.h>
 
 class Grid {
@@ -40,6 +41,9 @@ public:
 	PARSER* Input;
     //! Pointer to the WRITER class
     WRITER* Writer;
+#ifdef HAS_GUI
+    QtWriter* QWriter;
+#endif
     //! Defines whether or not PBSA electrostatic grid was loaded
     bool pbsa_loaded; // = false;
     //! Defines whether or not DELPHI electrostatic grid was loaded
@@ -65,6 +69,13 @@ public:
      * \param com C++ vector with the coordinates of the center of mass of the reference
      * ligand. It is used to define the center of the computation box.
      */
+
+#ifdef HAS_GUI
+
+    Grid(PARSER* _Input, QtWriter* _QWriter, Mol2* Rec, vector<double> com);
+
+#endif
+
     Grid(PARSER* _Input, WRITER* _Writer, Mol2* Rec, vector<double> com);
 
 	double distance(double x1, double x2, double y1, double y2, double z1, double z2) ;
@@ -128,6 +139,10 @@ public:
      */
     void load_delphi_cube(void);
     void load_delphi_gzcube(void);
+
+    void print_line();
+    void print_info(char info[98]);
+
 	virtual ~Grid();
 
 };

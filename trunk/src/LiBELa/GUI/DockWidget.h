@@ -190,6 +190,14 @@ public:
 
     QCheckBox* sort_conformers;
 
+    QLabel* delphi_gsize_label;
+    QCheckBox* use_delphi_phimap;
+    QSpinBox* delphi_gsize;
+    QLabel* phimap_file_label;
+    QLineEdit* phimap_file;
+    QString delphi_phimap_filename;
+
+
     TEMP_SCHEME* RunEngine;
 
 public slots:
@@ -213,6 +221,7 @@ public slots:
     void slot_use_restraints(int state);
     void slot_scale_ele(double value);
     void slot_scale_vdw(double value);
+    void slot_use_delphi_phimap(int state);
 };
 
 #endif // DOCKWIDGET_H
