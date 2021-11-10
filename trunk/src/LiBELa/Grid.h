@@ -14,7 +14,9 @@
 #include "Mol2.h"
 #include "PARSER.h"
 #include "WRITER.h"
+#ifdef HAS_GUI
 #include "GUI/QtWriter.h"
+#endif
 #include <zlib.h>
 
 class Grid {
