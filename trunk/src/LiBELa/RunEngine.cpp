@@ -1014,16 +1014,17 @@ void TEMP_SCHEME::mcr_run(){
 
             volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
 
-            cum_Ln_W += -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average));
+            cum_Ln_W += -k*Input->temp*log(double(EqMC->average_energy));
+//            cum_Ln_W += -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average));
 
             this->print_line();
             sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g %7.3f %7.4g", i+1, Input->bi, bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
-                    -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W, volume);
+                    -k*Input->temp*log(double(EqMC->average_energy)), cum_Ln_W, volume);
             this->print_info(info);
             this->print_line();
 
-            cum_W += (log(double(EqMC->MCR_Boltzmann_weighted_average)));
-            cum_W_err += double((1.0/double(EqMC->MCR_Boltzmann_weighted_average))*EqMC->MCR_Boltzmann_weighted_stdev);
+            cum_W += (log(double(EqMC->average_energy)));
+            cum_W_err += double((1.0/double(EqMC->average_energy))*EqMC->energy_standard_deviation);
             if (volume > max_vol){
                 max_vol=volume;
             }
@@ -1078,15 +1079,17 @@ void TEMP_SCHEME::mcr_run(){
                 EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, bt);
 
                 lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
-                cum_Ln_W_lig += -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average));
+
+                cum_Ln_W_lig += -k*Input->temp*log(double(EqMC->average_energy));
+//                cum_Ln_W_lig += -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average));
 
                 sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g %7.7f %7.4g", i+1, Input->bi, bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
-                        -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average)), cum_Ln_W_lig, lig_volume);
+                        -k*Input->temp*log(double(EqMC->average_energy)), cum_Ln_W_lig, lig_volume);
                 this->print_info(info);
                 this->print_line();
 
-                cum_W_lig += (log(double(EqMC->MCR_Boltzmann_weighted_average)));
-                cum_W_lig_err += double((1.0/double(EqMC->MCR_Boltzmann_weighted_average))*EqMC->MCR_Boltzmann_weighted_stdev);
+                cum_W_lig += (log(double(EqMC->average_energy)));
+                cum_W_lig_err += double((1.0/double(EqMC->average_energy))*EqMC->energy_standard_deviation);
                 if (volume > max_vol){
                     lig_max_vol=lig_volume;
                 }
