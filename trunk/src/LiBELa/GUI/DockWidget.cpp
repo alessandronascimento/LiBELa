@@ -42,7 +42,7 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     scoring_function->addItem("Amber FF");                            //3
     scoring_function->addItem("GaussSmooth Amber FF + Desolvation");  //4
     scoring_function->addItem("GaussSmooth Amber FF");                //5
-    scoring_function->setCurrentIndex(2);
+    scoring_function->setCurrentIndex(1);
     scoring_function_lab = new QLabel(tr("Scoring function: "));
 
     diel = new QDoubleSpinBox;
@@ -83,7 +83,7 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     deltaij_vdw = new QDoubleSpinBox;
     deltaij_vdw->setMaximum(10.0);
     deltaij_vdw->setMinimum(0.0);
-    deltaij_vdw->setValue(1.75);
+    deltaij_vdw->setValue(2.50);
     deltaij_vdw->setSingleStep(0.05);
     deltaij_vdw->setDecimals(2);
     deltaij_vdw_lab = new QLabel(tr("Softcore delta for VDW term: "));
@@ -91,7 +91,7 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     deltaij_elec = new QDoubleSpinBox;
     deltaij_elec->setMaximum(10.0);
     deltaij_elec->setMinimum(0.0);
-    deltaij_elec->setValue(1.50);
+    deltaij_elec->setValue(2.50);
     deltaij_elec->setSingleStep(0.05);
     deltaij_elec->setDecimals(2);
     deltaij_elec_lab = new QLabel(tr("Softcore delta for electrostatic term: "));
@@ -168,7 +168,7 @@ DockWidget::DockWidget(PARSER *Input, QPlainTextEdit* Ed)
     energy_optimizer->addItem("global ISRES");                    //10
     energy_optimizer->addItem("global ESCH");                     //11
     energy_optimizer->addItem("NONE");                            //12
-    energy_optimizer->setCurrentIndex(0);
+    energy_optimizer->setCurrentIndex(10);
     energy_optimizer_lab = new QLabel(tr("Binding energy optimizer: "));
 
     output_prefix = new QLineEdit(tr("iMcLiBELa"));

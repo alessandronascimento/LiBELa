@@ -11,6 +11,8 @@ MC::MC(WRITER* _Writer)
 
 MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 
+    srand(rand());
+    r = gsl_rng_alloc (gsl_rng_ranlxs2);
     Writer = _Writer;
 
     if (Input->write_mol2){
@@ -80,8 +82,6 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 
 // Preparing Writer pointer and GLS for random number sorting...
 
-    srand(rand());
-    r = gsl_rng_alloc (gsl_rng_ranlxs2);
     myxyz = new double[mol.NumAtoms()*3];
 }
 

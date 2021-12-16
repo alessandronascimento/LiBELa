@@ -63,9 +63,9 @@ PARSER::PARSER(){
 	this->write_mol2 = true;
     this->grid_spacing = 0.4;
 	this->use_grids = false;
-    this->search_box_x = 5.0;
-    this->search_box_y = 5.0;
-    this->search_box_z = 5.0;
+    this->search_box_x = 6.0;
+    this->search_box_y = 6.0;
+    this->search_box_z = 6.0;
 	this->load_grid_from_file = false;
 	this->write_grids = false;
 	this->show_rmsd = false;
