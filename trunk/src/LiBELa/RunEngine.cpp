@@ -961,11 +961,11 @@ void TEMP_SCHEME::mcr_run(){
         double bt;                          // MC Recursion "effective" temperature (bt) fot ith evaluation;
         double k = 0.0019858775203792202;   // Boltzmann constant in kcal/(mol.K)
 
-        double cum_W = 0.0;
-        double cum_W_err = 0.0;
+        long double cum_W = 0.0l;
+        long double cum_W_err = 0.0l;
         double max_vol=0.0;
         double volume;
-        double cum_Ln_W = 0.0;
+        long double cum_Ln_W = 0.0l;
 
         // Doing a equilibrium simulation at the default temperature
         // before starting the recursion.
@@ -1043,11 +1043,11 @@ void TEMP_SCHEME::mcr_run(){
         this->print_line();
 
 
-        double cum_W_lig = 0.0;
-        double cum_W_lig_err = 0.0;
+        long double cum_W_lig = 0.0l;
+        long double cum_W_lig_err = 0.0l;
         double lig_max_vol = 0.0;
         double lig_volume = 0.0;
-        double cum_Ln_W_lig = 0.0;
+        long double cum_Ln_W_lig = 0.0l;
 
         // Equilibration before recursion
 
