@@ -220,6 +220,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
             this->increment_angles(&rot_angles, step);
             this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
+            eqcount++;
         }
         else{
             p = this->Boltzmman(energy, new_energy, T, Input->bi);
@@ -231,9 +232,9 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
                 rmsd = Coord->compute_rmsd(Lig->xyz, step->xyz, Lig->N);
                 this->increment_angles(&rot_angles, step);
                 this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
+                eqcount++;
             }
         }
-        eqcount++;
     }
 
     Writer->print_line();
@@ -452,6 +453,8 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     Writer->print_info(info);
 
     Writer->print_line();
+
+    Lig->xyz = this->xyz;
 
     delete McEnt;
     delete Max_Ent;
@@ -854,6 +857,7 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
                 com[2] += step->dz;
                 this->increment_angles(&rot_angles, step);
                 this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
+                eqcount++;
             }
             else{
                 p = this->Boltzmman(energy, new_energy, T, Input->bi);
@@ -868,9 +872,9 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
                     com[2] += step->dz;
                     this->increment_angles(&rot_angles, step);
                     this->MaxMinCM(com[0],com[1],com[2],this->MaxMin);
+                    eqcount++;
                 }
             }
-            eqcount++;
         }
 
         Writer->print_line();
