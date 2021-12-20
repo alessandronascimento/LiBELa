@@ -454,7 +454,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
     Writer->print_line();
 
-    Lig->xyz = this->xyz;
+    //Lig->xyz = this->xyz;
 
     delete McEnt;
     delete Max_Ent;

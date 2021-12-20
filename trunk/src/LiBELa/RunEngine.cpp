@@ -983,7 +983,7 @@ void TEMP_SCHEME::mcr_run(){
         this->print_line();
         sprintf(info, "%s", "Starting equilibrium simulation before recursion");
         this->print_info(info);
-        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g %7.3Lf %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->average_energy,
+        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4g %10.4g %7.3Lf %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->average_energy,
                 -k*Input->temp*log(double(EqMC->average_energy)), cum_W, volume);
         this->print_info(info);
         this->print_line();
@@ -1021,7 +1021,7 @@ void TEMP_SCHEME::mcr_run(){
             cum_W_err += double((1.0/double(EqMC->average_energy))*EqMC->energy_standard_deviation);
 
             this->print_line();
-            sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g %7.3Lf %7.4g", i+1, Input->bi, bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->average_energy,
+            sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4g %10.4g %7.3Lf %7.4g", i+1, Input->bi, bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->average_energy,
                     -k*bt*log(double(EqMC->average_energy)), cum_W, volume);
             this->print_info(info);
             this->print_line();
@@ -1061,7 +1061,7 @@ void TEMP_SCHEME::mcr_run(){
         EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, Input->temp);
 
         lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
-        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g %7.7Lf %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->average_energy,
+        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4g %10.4g %7.7Lf %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->average_energy,
                 -k*Input->temp*log(double(EqMC->average_energy)), cum_W_lig, lig_volume);
         this->print_info(info);
         this->print_line();
