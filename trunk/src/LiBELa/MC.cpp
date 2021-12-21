@@ -108,6 +108,12 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
     bool ligand_is_in = false;
     long double independent_average = 0.0L;
 
+    this->average_energy = 0.0;
+    this->energy_standard_deviation = 0.0;
+    this->Boltzmann_weighted_average_energy = 0.0L;
+    this->MCR_Boltzmann_weighted_average = 0.0L;
+    this->MCR_Boltzmann_weighted_stdev = 0.0L;
+
     double k=0.0019858775203792202;
 
     this->MaxMin.push_back(99999.0);         // min x
@@ -473,6 +479,12 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         long double sum_Boltzmann2_ene_squared = 0.0L;
         bool ligand_is_in = false;
         long double independent_average = 0.0L;
+
+        this->average_energy = 0.0;
+        this->energy_standard_deviation = 0.0;
+        this->Boltzmann_weighted_average_energy = 0.0L;
+        this->MCR_Boltzmann_weighted_average = 0.0L;
+        this->MCR_Boltzmann_weighted_stdev = 0.0L;
 
         double k=0.0019858775203792202;
 

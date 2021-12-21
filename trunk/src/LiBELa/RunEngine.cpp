@@ -954,7 +954,7 @@ void TEMP_SCHEME::mcr_run(){
             delete Conf;
         }
 
-        sprintf(info, "MCR %7.7s %7.7s %10.10s %10.10s %10.10s %10.10s %10.10s %7.7s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "W(b,bt)" , "-kTln(W)", "A_ex" , "Vol(A3)");
+        sprintf(info, "MCR %7.7s %7.7s %10.10s %10.10s %10.10s %10.10s %10.10s %7.7s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "W(b,bt)" , "ln(W)", "A_ex" , "Vol(A3)");
         this->print_info(info);
         this->print_line();
 
@@ -965,7 +965,6 @@ void TEMP_SCHEME::mcr_run(){
         long double cum_W_err = 0.0L;
         double max_vol=0.0;
         double volume;
-        long double cum_Ln_W = 0.0L;
 
         // Doing a equilibrium simulation at the default temperature
         // before starting the recursion.
@@ -983,8 +982,8 @@ void TEMP_SCHEME::mcr_run(){
         this->print_line();
         sprintf(info, "%s", "Starting equilibrium simulation before recursion");
         this->print_info(info);
-        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4g %10.4g %7.3Lf %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->average_energy,
-                -k*Input->temp*log(double(EqMC->average_energy)), cum_W, volume);
+        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g %7.3Lf %7.4g", 0, 0.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                0.00, cum_W, volume);
         this->print_info(info);
         this->print_line();
 
@@ -1014,15 +1013,12 @@ void TEMP_SCHEME::mcr_run(){
 
             volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
 
-            cum_Ln_W += -k*bt*log(double(EqMC->average_energy));
-//            cum_Ln_W += -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average));
-
-            cum_W += (log(double(EqMC->average_energy)));
-            cum_W_err += double((1.0/double(EqMC->average_energy))*EqMC->energy_standard_deviation);
+            cum_W += -k*Input->temp*(log(EqMC->MCR_Boltzmann_weighted_average));
+            cum_W_err += double((1.0/double(EqMC->MCR_Boltzmann_weighted_average))*EqMC->MCR_Boltzmann_weighted_stdev);
 
             this->print_line();
-            sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4g %10.4g %7.3Lf %7.4g", i+1, Input->bi, bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->average_energy,
-                    -k*bt*log(double(EqMC->average_energy)), cum_W, volume);
+            sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %7.3Lf %7.4g", i+1, Input->bi, bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                    log(EqMC->MCR_Boltzmann_weighted_average), cum_W, volume);
             this->print_info(info);
             this->print_line();
 
@@ -1033,13 +1029,13 @@ void TEMP_SCHEME::mcr_run(){
         }
 
         this->print_line();
-        sprintf(info, "MCR: A_excess = %10.4Lg +/- %10.4Lg",  -k*Input->temp*cum_W, k*Input->temp*cum_W_err);
+        sprintf(info, "MCR: A_excess = %10.4Lg +/- %10.4Lg",  cum_W, k*Input->temp*cum_W_err);
         this->print_info(info);
 
         sprintf(info, "MCR: Volume: %10.4g.  ln(volume) = %10.4g",  volume, log(volume));
         this->print_info(info);
 
-        sprintf(info, "MCR: A_complex = %10.4Lg",  (-k*Input->temp*log(volume))+(-k*Input->temp*cum_W));
+        sprintf(info, "MCR: A_complex = %10.4Lg",  (-k*Input->temp*log(volume))+(cum_W));
         this->print_info(info);
 
         this->print_line();
@@ -1049,11 +1045,10 @@ void TEMP_SCHEME::mcr_run(){
         long double cum_W_lig_err = 0.0L;
         double lig_max_vol = 0.0;
         double lig_volume = 0.0;
-        long double cum_Ln_W_lig = 0.0L;
 
         // Equilibration before recursion
 
-        Input->bi = 1.0;
+        Input->bi = 2.0;
         this->print_line();
         sprintf(info, "%s", "Starting equilibrium simulation before recursion");
         this->print_info(info);
@@ -1061,8 +1056,8 @@ void TEMP_SCHEME::mcr_run(){
         EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, Input->temp);
 
         lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
-        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4g %10.4g %7.7Lf %7.4g", 0, 1.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->average_energy,
-                -k*Input->temp*log(double(EqMC->average_energy)), cum_W_lig, lig_volume);
+        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g %7.7Lf %7.4g", 0, 0.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                0.00, cum_W_lig, lig_volume);
         this->print_info(info);
         this->print_line();
 
@@ -1082,14 +1077,11 @@ void TEMP_SCHEME::mcr_run(){
 
                 lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
 
-                cum_Ln_W_lig += -k*bt*log(double(EqMC->average_energy));
-//                cum_Ln_W_lig += -k*Input->temp*log(double(EqMC->MCR_Boltzmann_weighted_average));
+                cum_W_lig += -k*Input->temp*(log(EqMC->MCR_Boltzmann_weighted_average));
+                cum_W_lig_err += double((1.0/double(EqMC->MCR_Boltzmann_weighted_average))*EqMC->MCR_Boltzmann_weighted_stdev);
 
-                cum_W_lig += (log(double(EqMC->average_energy)));
-                cum_W_lig_err += double((1.0/double(EqMC->average_energy))*EqMC->energy_standard_deviation);
-
-                sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4g %7.7Lf %7.4g", i+1, Input->bi, bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
-                        -k*bt*log(double(EqMC->average_energy)), cum_W_lig, lig_volume);
+                sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %7.7Lf %7.4g", i+1, Input->bi, bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                        log(EqMC->MCR_Boltzmann_weighted_average), cum_W_lig, lig_volume);
                 this->print_info(info);
                 this->print_line();
 
@@ -1100,19 +1092,19 @@ void TEMP_SCHEME::mcr_run(){
             }
 
             this->print_line();
-            sprintf(info, "MCR: A_excess for the ligand = %10.4Lg +/- %10.4Lg",  -k*Input->temp*cum_W_lig, k*Input->temp*cum_W_lig_err);
+            sprintf(info, "MCR: A_excess for the ligand = %10.4Lg +/- %10.4Lg",  cum_W_lig, k*Input->temp*cum_W_lig_err);
             this->print_info(info);
 
             sprintf(info, "MCR: Ligand Volume: %10.4g.  ln(volume) = %10.4g",  lig_volume, log(lig_volume));
             this->print_info(info);
 
-            sprintf(info, "MCR: A_lig = %10.4Lg",  (-k*Input->temp*log(lig_volume))+(-k*Input->temp*cum_W_lig));
+            sprintf(info, "MCR: A_lig = %10.4Lg",  (-k*Input->temp*log(lig_volume))+(cum_W_lig));
             this->print_info(info);
 
             this->print_line();
 
-            long double complex_A = (-k*Input->temp)*(log(volume)+(cum_W));
-            long double ligand_A = (-k*Input->temp)*(log(lig_volume)+(cum_W_lig));
+            long double complex_A = (-k*Input->temp*log(volume))+(cum_W);
+            long double ligand_A = (-k*Input->temp*log(lig_volume))+(cum_W_lig);
             long double Delta_A = complex_A - ligand_A;
 
             sprintf(info, "MCR: Complex Free Energy = %10.4Lg +/- %10.4Lg", complex_A, (k*Input->temp*cum_W_err));
