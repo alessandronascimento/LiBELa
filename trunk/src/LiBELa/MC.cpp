@@ -405,11 +405,11 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
     this->average_bound_energy = this->average_energy;
 
-    sprintf(info, "Average Monte Carlo energy: %10.3f +/- %10.3f @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
+    sprintf(info, "Average Monte Carlo energy: %10.3f +/- %10.3f @ %7.2g K", this->average_energy, this->energy_standard_deviation, T);
     Writer->print_info(info);
-    sprintf(info, "Boltzmann-weighted average energy: %10.4Lg @ %7.2f K", this->Boltzmann_weighted_average_energy, T);
+    sprintf(info, "Boltzmann-weighted average energy: %10.4Lg @ %7.2g K", this->Boltzmann_weighted_average_energy, T);
     Writer->print_info(info);
-    sprintf(info, "Average Monte Carlo energy over independent steps: %10.3Lf @ %7.2f K", independent_average, T);
+    sprintf(info, "Average Monte Carlo energy over independent steps: %10.3Lg @ %7.2g K", independent_average, T);
     Writer->print_info(info);
 
     Writer->print_line();
@@ -421,17 +421,17 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
     Entropy->get_results(McEnt, Max_Ent, Input->number_steps);
 
-    sprintf(info, "First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K", McEnt->Strans*T, T);
+    sprintf(info, "First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2g K", McEnt->Strans*T, T);
     Writer->print_info(info);
-    sprintf(info, "First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K", McEnt->Srot*T, T);
+    sprintf(info, "First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2g K", McEnt->Srot*T, T);
     Writer->print_info(info);
-    sprintf(info, "First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K", McEnt->Storsion*T, T);
+    sprintf(info, "First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2g K", McEnt->Storsion*T, T);
     Writer->print_info(info);
-    sprintf(info, "First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K", McEnt->S, T);
+    sprintf(info, "First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2g K", McEnt->S, T);
     Writer->print_info(info);
-    sprintf(info, "First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K", -McEnt->TS, T);
+    sprintf(info, "First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2g K", -McEnt->TS, T);
     Writer->print_info(info);
-    sprintf(info, "First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K", -McEnt->S*300., 300.);
+    sprintf(info, "First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2g K", -McEnt->S*300., 300.);
     Writer->print_info(info);
 
     this->boundTS=McEnt->TS;
@@ -440,22 +440,22 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
 
     sprintf(info, "Maximal Entropies Computed for this System:");
     Writer->print_info(info);
-    sprintf(info, "First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K", Max_Ent->Strans*T, T);
+    sprintf(info, "First-Order Approximation Translation Entropy (TS): %10.4g kcal/mol @ %7.2g K", Max_Ent->Strans*T, T);
     Writer->print_info(info);
-    sprintf(info, "First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K", Max_Ent->Srot*T, T);
+    sprintf(info, "First-Order Approximation Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2g K", Max_Ent->Srot*T, T);
     Writer->print_info(info);
-    sprintf(info, "First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K", Max_Ent->Storsion*T, T);
+    sprintf(info, "First-Order Approximation Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2g K", Max_Ent->Storsion*T, T);
     Writer->print_info(info);
-    sprintf(info, "First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K", Max_Ent->S, T);
+    sprintf(info, "First-Order Approximation Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2g K", Max_Ent->S, T);
     Writer->print_info(info);
-    sprintf(info, "First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2f K", -Max_Ent->TS, T);
+    sprintf(info, "First-Order Approximation -TS (-TS):                %10.4g kcal/mol @ %7.2g K", -Max_Ent->TS, T);
     Writer->print_info(info);
-    sprintf(info, "First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2f K", -Max_Ent->S*300., 300.);
+    sprintf(info, "First-Order Approximation -TS @ 300K:               %10.4g kcal/mol @ %7.2g K", -Max_Ent->S*300., 300.);
     Writer->print_info(info);
 
     Writer->print_line();
 
-    sprintf(info, "Entropy loss (-TdS): %10.4g kcal/mol (%10.4f %s) @ %7.2f K", (-McEnt->TS - (-Max_Ent->TS)), ((-McEnt->TS/-Max_Ent->TS)*100), "%", T);
+    sprintf(info, "Entropy loss (-TdS): %10.4g kcal/mol (%10.4f %s) @ %7.2g K", (-McEnt->TS - (-Max_Ent->TS)), ((-McEnt->TS/-Max_Ent->TS)*100), "%", T);
     Writer->print_info(info);
 
     Writer->print_line();
@@ -709,11 +709,11 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
 
         this->average_freeligand_energy=this->average_energy;
 
-        sprintf(info, "Average Monte Carlo ligand energy: %10.3f +- %10.3f @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
+        sprintf(info, "Average Monte Carlo ligand energy: %10.3f +- %10.3g @ %7.2g K", this->average_energy, this->energy_standard_deviation, T);
         Writer->print_info(info);
-        sprintf(info, "Boltzmann-weighted average ligand energy: %10.3Lg @ %7.2f K", this->Boltzmann_weighted_average_energy, T);
+        sprintf(info, "Boltzmann-weighted average ligand energy: %10.3Lg @ %7.2g K", this->Boltzmann_weighted_average_energy, T);
         Writer->print_info(info);
-        sprintf(info, "Average Monte Carlo ligand energy over independent steps: %10.3Lf @ %7.2f K", independent_average, T);
+        sprintf(info, "Average Monte Carlo ligand energy over independent steps: %10.3Lg @ %7.2g K", independent_average, T);
         Writer->print_info(info);
 
         Writer->print_line();
@@ -725,17 +725,17 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
         McEnt->Srot = 0.0; McEnt->Storsion = 0.0; McEnt->Strans = 0.0;
         Entropy->get_results(McEnt, Max_Ent, Input->number_steps);
 
-        sprintf(info, "First-Order Approximation Ligand Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K", McEnt->Strans*T, T);
+        sprintf(info, "First-Order Approximation Ligand Translation Entropy (TS): %10.4g kcal/mol @ %7.2g K", McEnt->Strans*T, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Ligand Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K", McEnt->Srot*T, T);
+        sprintf(info, "First-Order Approximation Ligand Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2g K", McEnt->Srot*T, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Ligand Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K", McEnt->Storsion*T, T);
+        sprintf(info, "First-Order Approximation Ligand Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2g K", McEnt->Storsion*T, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Ligand Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K", McEnt->S, T);
+        sprintf(info, "First-Order Approximation Ligand Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2g K", McEnt->S, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Ligand -TS (-TS):                %10.4g kcal/mol @ %7.2f K", -McEnt->TS, T);
+        sprintf(info, "First-Order Approximation Ligand -TS (-TS):                %10.4g kcal/mol @ %7.2g K", -McEnt->TS, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Ligand -TS @ 300K:               %10.4g kcal/mol @ %7.2f K", -McEnt->S*300., 300.);
+        sprintf(info, "First-Order Approximation Ligand -TS @ 300K:               %10.4g kcal/mol @ %7.2g K", -McEnt->S*300., 300.);
         Writer->print_info(info);
 
         this->freeTS=McEnt->TS;
@@ -744,22 +744,22 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
 
         sprintf(info, "Maximal Entropies Computed for this System:");
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Ligand Translation Entropy (TS): %10.4g kcal/mol @ %7.2f K", Max_Ent->Strans*T, T);
+        sprintf(info, "First-Order Approximation Ligand Translation Entropy (TS): %10.4g kcal/mol @ %7.2g K", Max_Ent->Strans*T, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Ligand Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2f K", Max_Ent->Srot*T, T);
+        sprintf(info, "First-Order Approximation Ligand Rotation Entropy (TS):    %10.4g kcal/mol @ %7.2g K", Max_Ent->Srot*T, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Ligand Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2f K", Max_Ent->Storsion*T, T);
+        sprintf(info, "First-Order Approximation Ligand Torsion Entropy (TS):     %10.4g kcal/mol @ %7.2g K", Max_Ent->Storsion*T, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Ligand Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2f K", Max_Ent->S, T);
+        sprintf(info, "First-Order Approximation Ligand Total Entropy (S):        %10.4g kcal/(mol.K)@ %7.2g K", Max_Ent->S, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Ligand -TS (-TS):                %10.4g kcal/mol @ %7.2f K", -Max_Ent->TS, T);
+        sprintf(info, "First-Order Approximation Ligand -TS (-TS):                %10.4g kcal/mol @ %7.2g K", -Max_Ent->TS, T);
         Writer->print_info(info);
-        sprintf(info, "First-Order Approximation Ligand -TS @ 300K:               %10.4g kcal/mol @ %7.2f K", -Max_Ent->S*300., 300.);
+        sprintf(info, "First-Order Approximation Ligand -TS @ 300K:               %10.4g kcal/mol @ %7.2g K", -Max_Ent->S*300., 300.);
         Writer->print_info(info);
 
         Writer->print_line();
 
-        sprintf(info, "Entropy loss (-TdS): %10.4g kcal/mol (%10.4f %s) @ %7.2f K", (-McEnt->TS - (-Max_Ent->TS)), ((-McEnt->TS/-Max_Ent->TS)*100.), "%", T);
+        sprintf(info, "Entropy loss (-TdS): %10.4g kcal/mol (%10.4f %s) @ %7.2g K", (-McEnt->TS - (-Max_Ent->TS)), ((-McEnt->TS/-Max_Ent->TS)*100.), "%", T);
         Writer->print_info(info);
 
         Writer->print_line();
