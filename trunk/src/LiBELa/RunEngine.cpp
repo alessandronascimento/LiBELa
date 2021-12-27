@@ -979,15 +979,12 @@ void TEMP_SCHEME::mcr_run(){
 
         volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
 
-        cum_W += -k*Input->temp*(log(EqMC->MCR_Boltzmann_weighted_average));
-        cum_W_err += double((1.0/double(EqMC->MCR_Boltzmann_weighted_average))*EqMC->MCR_Boltzmann_weighted_stdev);
-
         this->print_line();
-//        sprintf(info, "%s", "Starting equilibrium simulation before recursion");
-//        this->print_info(info);
+
         sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %7.3Lf %7.4g", 0, 2.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
                 log(EqMC->MCR_Boltzmann_weighted_average), cum_W, volume);
         this->print_info(info);
+
         this->print_line();
 
         //
@@ -1059,9 +1056,6 @@ void TEMP_SCHEME::mcr_run(){
         EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, Input->temp);
 
         lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
-
-        cum_W_lig += -k*Input->temp*(log(EqMC->MCR_Boltzmann_weighted_average));
-        cum_W_lig_err += double((1.0/double(EqMC->MCR_Boltzmann_weighted_average))*EqMC->MCR_Boltzmann_weighted_stdev);
 
         sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %7.7Lf %7.4g", 0, 2.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
                 log(EqMC->MCR_Boltzmann_weighted_average), cum_W_lig, lig_volume);
