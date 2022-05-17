@@ -1,0 +1,75 @@
+#	h	    <Atom smirks="[#1:1]" epsilon="0.0157" id="n1" rmin_half="0.6000"/>
+#	hc 	    <Atom smirks="[#1:1]-[#6X4]" epsilon="0.0157" id="n2" rmin_half="1.4870"/>
+#	hc-x    <Atom smirks="[#1:1]-[#6X4]-[#7,#8,#9,#16,#17,#35]" epsilon="0.0157" id="n3" rmin_half="1.3870"/>
+#    	hc-x-x	<Atom smirks="[#1:1]-[#6X4](-[#7,#8,#9,#16,#17,#35])-[#7,#8,#9,#16,#17,#35]" epsilon="0.0157" id="n4" rmin_half="1.2870"/>
+#   		 <Atom smirks="[#1:1]-[#6X4](-[#7,#8,#9,#16,#17,#35])(-[#7,#8,#9,#16,#17,#35])-[#7,#8,#9,#16,#17,#35]" epsilon="0.0157" id="n5" rmin_half="1.1870"/>
+#    		<Atom smirks="[#1:1]-[#6X4]~[*+1,*+2]" epsilon="0.0157" id="n6" rmin_half="1.1000"/>
+#	h3	 <Atom smirks="[#1:1]-[#6X3]" epsilon="0.0150" id="n7" rmin_half="1.4590"/>
+#    		<Atom smirks="[#1:1]-[#6X3]~[#7,#8,#9,#16,#17,#35]" epsilon="0.0150" id="n8" rmin_half="1.4090"/>
+#    		<Atom smirks="[#1:1]-[#6X3](~[#7,#8,#9,#16,#17,#35])~[#7,#8,#9,#16,#17,#35]" epsilon="0.0150" id="n9" rmin_half="1.3590"/>
+#    		<Atom smirks="[#1:1]-[#6X2]" epsilon="0.0150" id="n10" rmin_half="1.4590"/>
+#    	hn	<Atom smirks="[#1:1]-[#7]" epsilon="0.0157" id="n11" rmin_half="0.6000"/>
+#    	ho	<Atom smirks="[#1:1]-[#8]" epsilon="0.3000" id="n12" rmin_half="5.27e-05"/>
+#    	hs	<Atom smirks="[#1:1]-[#16]" epsilon="0.0157" id="n13" rmin_half="0.6000"/>
+#    	c	<Atom smirks="[#6:1]" epsilon="0.0860" id="n14" rmin_half="1.9080"/>
+#    	c2	<Atom smirks="[#6X2:1]" epsilon="0.2100" id="n15" rmin_half="1.9080"/>
+#    	c3	<Atom smirks="[#6X4:1]" epsilon="0.1094" id="n16" rmin_half="1.9080"/>
+#    	o	<Atom smirks="[#8:1]" epsilon="0.2100" id="n17" rmin_half="1.6612"/>
+#    	o2	<Atom smirks="[#8X2H0+0:1]" epsilon="0.1700" id="n18" rmin_half="1.6837"/>
+#    	ow	<Atom smirks="[#8X2H1+0:1]" epsilon="0.2104" id="n19" rmin_half="1.7210"/>
+#    	n	<Atom smirks="[#7:1]" epsilon="0.1700" id="n20" rmin_half="1.8240"/>
+#    	s	<Atom smirks="[#16:1]" epsilon="0.2500" id="n21" rmin_half="2.0000"/>
+#    	p	<Atom smirks="[#15:1]" epsilon="0.2000" id="n22" rmin_half="2.1000"/>
+#    	f	<Atom smirks="[#9:1]" epsilon="0.061" id="n23" rmin_half="1.75"/>
+#    	cl	<Atom smirks="[#17:1]" epsilon="0.265" id="n24" rmin_half="1.948"/>
+#    	br	<Atom smirks="[#35:1]" epsilon="0.320" id="n25" rmin_half="2.22"/>
+#    	i	<Atom smirks="[#53:1]" epsilon="0.40" id="n26" rmin_half="2.35"/>
+#    		<Atom smirks="[#3+1:1]" epsilon="0.0279896" id="n27" rmin_half="1.025"/>
+#    		<Atom smirks="[#11+1:1]" epsilon="0.0874393" id="n28" rmin_half="1.369"/>
+#    		<Atom smirks="[#19+1:1]" epsilon="0.1936829" id="n29" rmin_half="1.705"/>
+#    		<Atom smirks="[#37+1:1]" epsilon="0.3278219" id="n30" rmin_half="1.813"/>
+#    		<Atom smirks="[#55+1:1]" epsilon="0.4065394" id="n31" rmin_half="1.976"/>
+#    		<Atom smirks="[#9X0-1:1]" epsilon="0.0033640" id="n32" rmin_half="2.303"/>
+#    		<Atom smirks="[#17X0-1:1]" epsilon="0.0355910" id="n33" rmin_half="2.513"/>
+#    		<Atom smirks="[#35X0-1:1]" epsilon="0.0586554" id="n34" rmin_half="2.608"/>
+#    		<Atom smirks="[#53X0-1:1]" epsilon="0.0536816" id="n35" rmin_half="2.860"/>
+
+
+
+# atom type   radius epsilon  mass
+  hc           0.6000  0.0157  1.008
+# hc          1.4870  0.0157  1.008
+  hw          0.0000  0.0000  1.008
+  o           1.6612  0.2100  16.00
+  oh          1.6612  0.2100  16.00
+  ow          1.7219  0.2104  16.00 
+  c3          1.9080  0.1094  12.01
+  c2          1.9080  0.2100  12.01
+  c1          1.9080  0.0860  12.01
+  c           1.9080  0.0860  12.01
+  ca          1.9080  0.0860  12.01
+  n           1.8240  0.1700  14.01
+  n1          1.8240  0.1700  14.01
+  n2          1.8240  0.1700  14.01
+  n3          1.8240  0.1700  14.01
+  na          1.8240  0.1700  14.01
+  nh          1.8240  0.1700  14.01
+  n4          1.8240  0.1700  14.01
+  s2          2.0000  0.2500  32.06
+  s4          2.0000  0.2500  32.06
+  s6          2.0000  0.2500  32.06
+  sh          2.0000  0.2500  32.06
+  p3          2.1000  0.2000  30.97
+  f           1.7500  0.0610  19.00
+  cl          1.9480  0.2650  35.45
+  br          2.2200  0.3200  79.90
+  i           2.3500  0.4000  126.9
+#
+# Added from somewhere else (same as gaff)
+#
+  Fe          1.200  0.0500  55.00 
+  Cu          2.200  0.2000  63.55
+  Ca          1.790  0.0140  40.00
+  Si          2.220  0.3200  28.00 
+  K           2.658  0.00033 39.098
+  Zn          1.10    0.0125  65.4 
