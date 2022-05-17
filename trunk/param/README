@@ -1,0 +1,2 @@
+Lennard-Jones parameters for atom types. The files must contain:
+atom_type radius epsilon mass
