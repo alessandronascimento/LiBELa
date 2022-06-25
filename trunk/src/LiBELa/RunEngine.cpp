@@ -1074,6 +1074,10 @@ void TEMP_SCHEME::mcr_run(){
                     bt = bt*Input->mcr_coefficients[j];
                 }
 
+                char buffer_output [mcr_output_prefix.size()+10];
+                sprintf(buffer_output, "%s_MCR_%d", mcr_output_prefix.c_str(), i);
+                Input->output = string(buffer_output);
+
                 EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, bt);
 
                 lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);

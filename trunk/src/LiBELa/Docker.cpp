@@ -278,7 +278,7 @@ void Docker::run(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> com, PARSER*
                         will_write = false;
                     }
                 }
-                if (will_write){
+                if (will_write and match){
                     this->write_mol2(Lig, opt_result2->optimized_xyz, opt_result2->energy_result, overlay_fmax);
                 }
             }
@@ -448,7 +448,7 @@ void  Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double>
                 will_write = false;
             }
         }
-        if (will_write){
+        if (will_write and match){
 #pragma omp critical
             {
                 this->write_mol2(Lig, new_xyz, best_energy_t, si);
@@ -623,7 +623,7 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
                 will_write = false;
             }
         }
-        if (will_write){
+        if (will_write and match){
 #pragma omp critical
             {
                 this->write_mol2(Lig, new_xyz, best_energy_t, si);
