@@ -1001,7 +1001,7 @@ void TEMP_SCHEME::mcr_run(){
             }
 
             char buffer_output [mcr_output_prefix.size()+10];
-            sprintf(buffer_output, "%s_MCR_%d", mcr_output_prefix.c_str(), i);
+            sprintf(buffer_output, "%s_MCR_%d", mcr_output_prefix.c_str(), i+1);
             Input->output = string(buffer_output);
 
             if (Input->use_grids){
@@ -1075,7 +1075,7 @@ void TEMP_SCHEME::mcr_run(){
                 }
 
                 char buffer_output [mcr_output_prefix.size()+10];
-                sprintf(buffer_output, "%s_MCR_%d", mcr_output_prefix.c_str(), i);
+                sprintf(buffer_output, "%s_MCR_%d", mcr_output_prefix.c_str(), i+1);
                 Input->output = string(buffer_output);
 
                 EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, bt);
