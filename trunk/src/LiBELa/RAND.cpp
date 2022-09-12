@@ -23,18 +23,18 @@ RAND::RAND(){
 
 void RAND::random(double cushion, double rotation_step){
 
-	rnumber = gsl_rng_uniform(r);
+    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
 	transx = -cushion + (1.0 * (rnumber*(2*cushion)));
-	rnumber = gsl_rng_uniform(r);
+    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
 	transy = -cushion + (1.0 * (rnumber*(2*cushion)));
-	rnumber = gsl_rng_uniform(r);
+    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
 	transz = -cushion + (1.0 * (rnumber*(2*cushion)));
 
-	rnumber = gsl_rng_uniform(r);
+    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
 	a = -rotation_step + (rnumber*(2*rotation_step));
-	rnumber = gsl_rng_uniform(r);
+    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
 	b = -rotation_step + (rnumber*(2*rotation_step));
-	rnumber = gsl_rng_uniform(r);
+    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
 	g = -rotation_step + (rnumber*(2*rotation_step));
 	lign=0;
 
@@ -46,18 +46,18 @@ void RAND::random(double cushion, double rotation_step){
 void RAND::random(double cushion, double rotation_step, Mol2 *CRec, Mol2 *CLig){
 
 
-	rnumber = gsl_rng_uniform(r);
+    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
 	transx = -cushion + (1.0 * (rnumber*(2*cushion)));
-	rnumber = gsl_rng_uniform(r);
+    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
 	transy = -cushion + (1.0 * (rnumber*(2*cushion)));
-	rnumber = gsl_rng_uniform(r);
+    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
 	transz = -cushion + (1.0 * (rnumber*(2*cushion)));
 
-	rnumber = gsl_rng_uniform(r);
+    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
 	a = -rotation_step + (rnumber*(2*rotation_step));
-	rnumber = gsl_rng_uniform(r);
+    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
 	b = -rotation_step + (rnumber*(2*rotation_step));
-	rnumber = gsl_rng_uniform(r);
+    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
 	g = -rotation_step + (rnumber*(2*rotation_step));
 
 	if (CRec->mcoords.size() > 1){
