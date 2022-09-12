@@ -230,7 +230,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
         }
         else{
             p = this->Boltzmman(energy, new_energy, T, Input->bi);
-            rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+            rnumber = gsl_rng_uniform(r);
             if (p > rnumber){
                 Lig->mcoords = Lig->new_mcoords;
                 this->xyz = step->xyz;
@@ -317,7 +317,7 @@ void MC::run(Grid* Grids, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, 
         }
         else{
             p = this->Boltzmman(energy, new_energy, T, Input->bi);
-            rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+            rnumber = gsl_rng_uniform(r);
             if (p > rnumber){
                 Lig->mcoords = Lig->new_mcoords;
                 this->xyz = step->xyz;
@@ -628,7 +628,7 @@ void MC::ligand_run(Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PARSER
             }
             else{
                 p = this->Boltzmman(energy, new_energy, T, Input->bi);
-                rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+                rnumber = gsl_rng_uniform(r);
                 if (p > rnumber){
                     Lig->mcoords = Lig->new_mcoords;
                     this->xyz = step->xyz;
@@ -873,7 +873,7 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
             }
             else{
                 p = this->Boltzmman(energy, new_energy, T, Input->bi);
-                rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+                rnumber = gsl_rng_uniform(r);
                 if (p > rnumber){
                     Lig->mcoords = Lig->new_mcoords;
                     this->xyz = step->xyz;
@@ -932,7 +932,7 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
             }
             else{
                 p = this->Boltzmman(energy, new_energy, T, Input->bi);
-                rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+                rnumber = gsl_rng_uniform(r);
                 if (p > rnumber){
                     Lig->mcoords = Lig->new_mcoords;
                     this->xyz = step->xyz;
@@ -1046,18 +1046,18 @@ void MC::take_step(PARSER* Input, Mol2* Lig, step_t* step){
     COORD_MC* Coord = new COORD_MC;
     double rnumber; //transx, transy, transz, a, b, g, rnumber;
 
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dx = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dy = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dz = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
 
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dalpha = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dbeta = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dgamma = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
 
     step->nconf = 0;
@@ -1073,18 +1073,18 @@ void MC::take_step_flex(PARSER* Input, Mol2* Lig, step_t* step){
     double rnumber; //transx, transy, transz, a, b, g, rnumber;
     int ln=0;
 
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dx = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dy = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dz = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
 
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dalpha = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dbeta = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dgamma = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
 
     Coord->rototranslate_all(Lig, step->dalpha, step->dbeta, step->dgamma, step->dx, step->dy, step->dz);
@@ -1105,18 +1105,18 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
 
 // Do rotation and translation
 
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dx = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dy = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dz = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
 
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dalpha = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dbeta = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dgamma = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
 
     step->xyz = Coord->rototranslate(this->xyz, Lig, step->dalpha, step->dbeta,step->dgamma, step->dx, step->dy, step->dz);
@@ -1132,7 +1132,7 @@ void MC::take_step_torsion(PARSER* Input, Mol2* Lig, step_t* step){
 
     double current_angle, new_angle;
     for (unsigned i=0; i< RotorList.Size(); i++){
-        rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+        rnumber = gsl_rng_uniform(r);
         current_angle = mol.GetTorsion(mol.GetAtom(atoms_in_dihedrals[i][0]), mol.GetAtom(atoms_in_dihedrals[i][1]), mol.GetAtom(atoms_in_dihedrals[i][2]), mol.GetAtom(atoms_in_dihedrals[i][3]));
         new_angle = (current_angle + (-Input->torsion_step + (rnumber*(2*Input->torsion_step))));
         new_angle = this->check_angle(new_angle);
@@ -1275,18 +1275,18 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
 
     // Do rigid body rotation and translation
 
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dx = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dy = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dz = -Input->cushion + (1.0 * (rnumber*(2*Input->cushion)));
 
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dalpha = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dbeta = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
-    rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+    rnumber = gsl_rng_uniform(r);
     step->dgamma = -Input->rotation_step + (rnumber*(2*Input->rotation_step));
 
     step->xyz = Coord->rototranslate(this->xyz, Lig, step->dalpha, step->dbeta,step->dgamma, step->dx, step->dy, step->dz);
@@ -1295,11 +1295,11 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
 
     double dx, dy, dz;
     for (int i=0; i< Lig->N; i++){
-        rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+        rnumber = gsl_rng_uniform(r);
         dx = -(Input->max_atom_displacement) + (1.0 * (rnumber*(2*Input->max_atom_displacement)));
-        rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+        rnumber = gsl_rng_uniform(r);
         dy = -(Input->max_atom_displacement) + (1.0 * (rnumber*(2*Input->max_atom_displacement)));
-        rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+        rnumber = gsl_rng_uniform(r);
         dz = -(Input->max_atom_displacement) + (1.0 * (rnumber*(2*Input->max_atom_displacement)));
 
         step->xyz[i][0] = step->xyz[i][0] + dx;
