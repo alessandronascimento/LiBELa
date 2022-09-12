@@ -104,7 +104,7 @@ vector<vector<double> > SA::optimize(Mol2* Lig, PARSER* Input, Grid* Grids, gsl_
 			}
 			else{
 				p = this->Boltzmman(ene, new_ene, t);
-				rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+                rnumber = gsl_rng_uniform(r);
 				if (p > rnumber){
 					ene = new_ene;
 					xyz = new_xyz;
@@ -145,7 +145,7 @@ vector<vector<double> > SA::optimize(Mol2* Lig, PARSER* Input, Mol2* Rec, gsl_rn
             }
             else{
                 p = this->Boltzmman(ene, new_ene, t);
-                rnumber = gsl_rng_uniform(r) / (gsl_rng_max(r) + 1.0);
+                rnumber = gsl_rng_uniform(r);
                 if (p > rnumber){
                     ene = new_ene;
                     xyz = new_xyz;
