@@ -461,6 +461,7 @@ double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig
     double elec =0.0, vdwA=0.0, vdwB = 0.00, rec_solv=0.00, lig_solv=0.00, hb_donor=0.0, hb_acceptor=0.0, lig_affinity, angle_term;
     int a1=0, b1=0, c1=0, a2=0, b2=0, c2=0, donor_index;
     double af, bf, cf;
+    double sqrt2=sqrt(2.0);
     for (int i=0; i< Lig->N; i++){
         af = (xyz[i][0] - Grids->xbegin)/Grids->grid_spacing;
         bf = (xyz[i][1] - Grids->ybegin)/Grids->grid_spacing;
@@ -496,8 +497,9 @@ double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig
             else {
                 elec += Lig->charges[i]* GI->elec;
             }
-            vdwA += sqrt(Lig->epsilons[i]*pow((2*Lig->radii[i]), 12))* GI->vdwA;
-            vdwB += sqrt(2.0 * Lig->epsilons[i]*pow((2*Lig->radii[i]), 6)) * GI->vdwB;
+
+            vdwA += Lig->epsilons_sqrt[i]*64.0*pow(Lig->radii[i],6) * GI->vdwA;
+            vdwB += sqrt2*Lig->epsilons_sqrt[i]*8.0*pow(Lig->radii[i], 3) * GI->vdwB;
 
             lig_affinity = (Input->solvation_alpha*Lig->charges[i]*Lig->charges[i]) + Input->solvation_beta;
             rec_solv +=  GI->solv_gauss * (4.0/3.0) * PI * pow(Lig->radii[i], 3);
@@ -574,10 +576,8 @@ double Energy2::compute_ene_from_grids_hardcore(Grid* Grids, Mol2* Lig, vector<v
             }
 
 
-            vdwA += Lig->epsilons_sqrt[i]*64.0*pow(Lig->radii[i],6);
-            vdwB += sqrt2*Lig->epsilons_sqrt[i]*8.0*pow(Lig->radii[i], 3);
-//            vdwA += sqrt(Lig->epsilons[i]*pow((2*Lig->radii[i]), 12))* GI->vdwA;
-//            vdwB += sqrt(2 * Lig->epsilons[i]*pow((2*Lig->radii[i]), 6)) * GI->vdwB;
+            vdwA += Lig->epsilons_sqrt[i]*64.0*pow(Lig->radii[i],6) * GI->vdwA;
+            vdwB += sqrt2*Lig->epsilons_sqrt[i]*8.0*pow(Lig->radii[i], 3) * GI->vdwB;
 
             if (this->atom_is_acceptor(i, Lig)){
                 hb_donor += GI->hb_donor;
@@ -650,10 +650,8 @@ double Energy2::compute_ene_from_grids_hardcore_solvation(Grid* Grids, Mol2* Lig
                 elec += Lig->charges[i]* GI->elec;
             }
 
-            vdwA += Lig->epsilons_sqrt[i]*64.0*pow(Lig->radii[i],6);
-            vdwB += sqrt2*Lig->epsilons_sqrt[i]*8.0*pow(Lig->radii[i], 3);
-//            vdwA += sqrt(Lig->epsilons[i]*pow((2*Lig->radii[i]), 12))* GI->vdwA;
-//            vdwB += sqrt(2.0 * Lig->epsilons[i]*pow((2*Lig->radii[i]), 6)) * GI->vdwB;
+            vdwA += Lig->epsilons_sqrt[i]*64.0*pow(Lig->radii[i],6) * GI->vdwA;
+            vdwB += sqrt2*Lig->epsilons_sqrt[i]*8.0*pow(Lig->radii[i], 3) * GI->vdwB;
 
             lig_affinity = (Input->solvation_alpha*Lig->charges[i]*Lig->charges[i]) + Input->solvation_beta;
             rec_solv += GI->solv_gauss * (4.0/3.0) * PI * pow(Lig->radii[i], 3);
