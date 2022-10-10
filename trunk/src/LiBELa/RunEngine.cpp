@@ -525,8 +525,8 @@ void TEMP_SCHEME::dock_run(){
                         EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, Input->temp);
                     }
                     delete EqMC;
-                }
 */
+                }
             }
             delete Dock;
         }
