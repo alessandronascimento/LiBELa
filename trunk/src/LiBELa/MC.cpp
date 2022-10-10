@@ -35,7 +35,7 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 
     if (Input->dock_mode){
 //        Writer->writeMol2(Lig, Lig->xyz, 0.0, 0.0, Lig->molname.c_str());
-        mol = this->GetMol(string(Input->output + "_" + Lig->molname + ".mol2.gz"));
+        mol = this->GetMol(string(Input->output + "_dock.mol2.gz"));
     }
     else {
         mol = this->GetMol(Input->lig_mol2);
