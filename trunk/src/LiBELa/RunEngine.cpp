@@ -162,6 +162,8 @@ void TEMP_SCHEME::evaluation(){
 
     this->print_line();
 
+    start = clock();
+
     if (Input->dock_mode){
         this->dock_run();
     }
@@ -177,6 +179,15 @@ void TEMP_SCHEME::evaluation(){
     else if (Input->sa_mode){
         this->sa_run();
     }
+
+    end = clock();
+
+    this->print_line();
+
+    sprintf(info, "LiBELa calculations took %d seconds.", int((end-start)/CLOCKS_PER_SEC));
+    this->print_info(info);
+
+    this->print_line();
 
     sprintf(info, "Finishing McLibela...");
     this->print_info(info);
