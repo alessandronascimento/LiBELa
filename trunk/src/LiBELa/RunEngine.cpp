@@ -167,16 +167,16 @@ void TEMP_SCHEME::evaluation(){
     if (Input->dock_mode){
         this->dock_run();
     }
-    else if (Input->eq_mode){
+    if (Input->eq_mode){
         this->eq_run();
     }
-    else if (Input->mcr_mode){
+    if (Input->mcr_mode){
         this->mcr_run();
     }
-    else if (Input->full_search_mode){
+    if (Input->full_search_mode){
         this->full_search_run();
     }
-    else if (Input->sa_mode){
+    if (Input->sa_mode){
         this->sa_run();
     }
 
