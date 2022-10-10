@@ -487,24 +487,6 @@ void TEMP_SCHEME::dock_run(){
                     else {
                         Dock->run(REC, LIG, RefLig, center, Input, counter);
                     }
-/*                    if (Input->eq_mode){
-                        Writer->writeMol2(LIG, LIG->xyz, 0.0, 0.0, string(Input->output + "_" + LIG->molname));
-                        Conformer* Conf = new Conformer;
-                        Conf->generate_conformers_confab(Input, LIG, string(Input->output + "_" + LIG->molname+".mol2.gz"));
-                        MC* EqMC = new MC(LIG, Input, Writer);
-                        if (Input->use_grids){
-                            EqMC->run(Grids, RefLig , LIG, LIG->xyz, Input, Input->temp);
-                        }
-                        else {
-                            EqMC->run(REC, RefLig , LIG, LIG->xyz, Input, Input->temp);
-                        }
-                        if (Input->ligsim){
-                            EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, Input->temp);
-                        }
-                        delete EqMC;
-                        delete Conf;
-                    }
-*/
                 }
                 else {
                     if (Input->use_grids){
@@ -513,19 +495,6 @@ void TEMP_SCHEME::dock_run(){
                     else {
                         Dock->run(REC, LIG, RefLig, center, Input, counter);
                     }
-/*
-                    MC* EqMC = new MC(LIG, Input, Writer);
-                    if (Input->use_grids){
-                        EqMC->run(Grids, RefLig , LIG, LIG->xyz, Input, Input->temp);
-                    }
-                    else {
-                        EqMC->run(REC, RefLig , LIG, LIG->xyz, Input, Input->temp);
-                    }
-                    if (Input->ligsim){
-                        EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, Input->temp);
-                    }
-                    delete EqMC;
-*/
                 }
             }
             delete Dock;

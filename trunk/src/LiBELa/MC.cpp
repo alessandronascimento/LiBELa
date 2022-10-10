@@ -33,13 +33,9 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
  * rotatable bonds.
 */
 
-    if (Input->dock_mode){
-//        Writer->writeMol2(Lig, Lig->xyz, 0.0, 0.0, Lig->molname.c_str());
-        mol = this->GetMol(string(Input->output + "_dock.mol2.gz"));
-    }
-    else {
-        mol = this->GetMol(Input->lig_mol2);
-    }
+
+    mol = this->GetMol(Input->lig_mol2);
+
 
     if (Input->ligand_energy_model == "GAFF" or Input->ligand_energy_model == "gaff"){
         OBff = OBForceField::FindForceField("GAFF");
@@ -58,13 +54,12 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
         exit(1);
     }
 
+    this->copy_to_obmol(Lig->xyz);
+
     OBff->Setup(mol);
     OBff->GetCoordinates(mol);
     OBff->SteepestDescent(Input->conformer_min_steps, 1.0e-10);
     OBff->GetCoordinates(mol);
-    if (! Input->dock_mode){                        // unless we're taking a molecule from a docking pose, we will use the
-        Lig->xyz = this->copy_from_obmol(mol);      // coordinates at the energy minimum.
-    }
     RotorList.Setup(mol);
     Rotor = RotorList.BeginRotor(RotorIterator);
     mol.ToInertialFrame();
@@ -1189,7 +1184,6 @@ void MC::copy_to_obmol(vector<vector<double> > vec_xyz){
 
 OBMol MC::GetMol(const std::string &molfile){
     OBMol mol;
-
     OBConversion conv;
     OBFormat *format = conv.FormatFromExt(molfile.c_str());
     if (!format || !conv.SetInFormat(format)) {
