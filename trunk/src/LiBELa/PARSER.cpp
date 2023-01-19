@@ -137,7 +137,7 @@ void PARSER::comparing (string param, ifstream &input) {
 			else if (mode == "sa" or mode == "SA" or mode == "Sa"){
 				this->sa_mode = true;
 			}
-			else if (mode == "equilibrium" or mode == "eq" or mode == "EQ"){
+            else if (mode == "equilibrium" or mode == "eq" or mode == "EQ" or mode == "mc" or mode == "MC"){
 				this->eq_mode = true;
 			}
             else if (mode == "mcr" or mode == "MCR"){
