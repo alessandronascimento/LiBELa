@@ -167,10 +167,10 @@ void TEMP_SCHEME::evaluation(){
     if (Input->dock_mode){
         this->dock_run();
     }
-    if (Input->eq_mode){
+    else if (Input->eq_mode){
         this->eq_run();
     }
-    if (Input->mcr_mode){
+    else if (Input->mcr_mode){
         this->mcr_run();
     }
     if (Input->full_search_mode){
@@ -418,6 +418,10 @@ void TEMP_SCHEME::dock_run(){
                                 }
                                 delete EqMC;
                             }
+
+                            if (Input->mcr_mode){
+                                this->mcr_run(Lig2, ligand);
+                            }
                         }
                         else{ 																//test: in case generate_conformers does not succeed.
                             Lig2->mcoords.push_back(Lig2->xyz);
@@ -439,6 +443,10 @@ void TEMP_SCHEME::dock_run(){
                                     EqMC->ligand_run(RefLig, Lig2, Lig2->xyz, Input, Input->temp);
                                 }
                                 delete EqMC;
+                            }
+
+                            if (Input->mcr_mode){
+                                this->mcr_run(Lig2, ligand);
                             }
                         }
                         Conf->~Conformer();
@@ -463,6 +471,10 @@ void TEMP_SCHEME::dock_run(){
                                 EqMC->ligand_run(RefLig, Lig2, Lig2->xyz, Input, Input->temp);
                             }
                             delete EqMC;
+                        }
+
+                        if (Input->mcr_mode){
+                            this->mcr_run(Lig2, ligand);
                         }
                     }
                     delete Lig2;
@@ -588,6 +600,10 @@ int TEMP_SCHEME::dock_serial(vector<string> ligand_list, int count, int chunck_s
                     EqMC->ligand_run(RefLig, Lig2, Lig2->xyz, Input, Input->temp);
                 }
                 delete EqMC;
+            }
+
+            if (Input->mcr_mode){
+                this->mcr_run(Lig2, ligand_list[i]);
             }
         }
         delete Lig2;
@@ -734,6 +750,10 @@ void TEMP_SCHEME::dock_parallel(){
                             EqMC->ligand_run(RefLig, Lig2, Lig2->xyz, Input, Input->temp);
                         }
                         delete EqMC;
+                    }
+
+                    if (Input->mcr_mode){
+                        this->mcr_run(Lig2, ligand_list[i]);
                     }
                 }
                 delete Lig2;
@@ -931,7 +951,7 @@ void TEMP_SCHEME::mcr_run(){
         }
 
         MC* EqMC = new MC(LIG, Input, Writer);
-        if (Input->generate_conformers){
+        if ((! Input->sample_torsions) or (!Input->mc_full_flex)){
             Conformer* Conf = new Conformer;
             if (Input->dock_mode){
                 Writer->writeMol2(LIG, LIG->xyz, 0.0, 0.0, "Lig_docked");
@@ -1068,6 +1088,193 @@ void TEMP_SCHEME::mcr_run(){
                 Input->output = string(buffer_output);
 
                 EqMC->ligand_run(RefLig, LIG, LIG->xyz, Input, bt);
+
+                lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
+
+                cum_W_lig += -k*Input->temp*(log(EqMC->MCR_Boltzmann_weighted_average));
+                cum_W_lig_err += double((1.0/double(EqMC->MCR_Boltzmann_weighted_average))*EqMC->MCR_Boltzmann_weighted_stdev);
+
+                sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %7.7Lf %7.4g", i+1, Input->bi, bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                        log(EqMC->MCR_Boltzmann_weighted_average), cum_W_lig, lig_volume);
+                this->print_info(info);
+                this->print_line();
+
+
+                if (volume > max_vol){
+                    lig_max_vol=lig_volume;
+                }
+            }
+
+            this->print_line();
+            sprintf(info, "MCR: A_excess for the ligand = %10.4Lg +/- %10.4Lg",  cum_W_lig, k*Input->temp*cum_W_lig_err);
+            this->print_info(info);
+
+            sprintf(info, "MCR: Ligand Volume: %10.4g.  ln(volume) = %10.4g",  lig_volume, log(lig_volume));
+            this->print_info(info);
+
+            sprintf(info, "MCR: A_lig = %10.4Lg",  (-k*Input->temp*log(lig_volume))+(cum_W_lig));
+            this->print_info(info);
+
+            this->print_line();
+
+            long double complex_A = (-k*Input->temp*log(volume))+(cum_W);
+            long double ligand_A = (-k*Input->temp*log(lig_volume))+(cum_W_lig);
+            long double Delta_A = complex_A - ligand_A;
+
+            sprintf(info, "MCR: Complex Free Energy = %10.4Lg +/- %10.4Lg", complex_A, (k*Input->temp*cum_W_err));
+            this->print_info(info);
+            sprintf(info, "MCR: Ligand Free Energy = %10.4Lg +/- %10.4Lg", ligand_A, (k*Input->temp*cum_W_lig_err));
+            this->print_info(info);
+            sprintf(info, "MCR: Binding Free Energy = %10.4Lg +/- %10.4Lg", Delta_A, (k*Input->temp*(cum_W_err+cum_W_lig_err)));
+            this->print_info(info);
+            this->print_line();
+        }
+        delete EqMC;
+    }
+}
+
+void TEMP_SCHEME::mcr_run(Mol2* Lig, string ligname){
+    if (Input->mcr_mode){
+
+        // checking consistency
+        if (int(Input->mcr_coefficients.size()) != Input->mcr_size){
+            sprintf(info, "Inconsistency found in MCR coefficients. Please check!\n");
+            this->print_info(info);
+            exit(1);
+        }
+
+        MC* EqMC = new MC(Lig, Input, Writer);
+        if ((! Input->sample_torsions) or (! Input->mc_full_flex)){
+            Conformer* Conf = new Conformer;
+            Conf->generate_conformers_confab(Input, Lig, ligname);
+            delete Conf;
+        }
+
+        sprintf(info, "MCR %7.7s %7.7s %10.10s %10.10s %10.10s %10.10s %10.10s %7.7s %7.7s",  "#i", "bi", "bT", "<ene>" , "SD(ene)", "W(b,bt)" , "ln(W)", "A_ex" , "Vol(A3)");
+        this->print_info(info);
+        this->print_line();
+
+        double bt;                          // MC Recursion "effective" temperature (bt) fot ith evaluation;
+        double k = 0.0019858775203792202;   // Boltzmann constant in kcal/(mol.K)
+
+        long double cum_W = 0.0L;
+        long double cum_W_err = 0.0L;
+        double max_vol=0.0;
+        double volume;
+
+        // Doing a equilibrium simulation at the default temperature
+        // before starting the recursion.
+
+        Input->bi = 2.0;
+        if (Input->use_grids){
+            EqMC->run(Grids, RefLig , Lig, Lig->xyz, Input, Input->temp);
+        }
+        else {
+            EqMC->run(REC, RefLig , Lig, Lig->xyz, Input, Input->temp);
+        }
+
+        volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
+
+        this->print_line();
+
+        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %7.3Lf %7.4g", 0, 2.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                log(EqMC->MCR_Boltzmann_weighted_average), cum_W, volume);
+        this->print_info(info);
+
+        this->print_line();
+
+        //
+        // Now starting the MC recursion...
+        //
+
+        string mcr_output_prefix = Input->output;
+
+        for (int i=0; i<Input->mcr_size; i++){
+            Input->bi = Input->mcr_coefficients[i];
+            bt = Input->temp;
+            for (int j=0; j <= i; j++){
+                bt = bt*Input->mcr_coefficients[j];
+            }
+
+            char buffer_output [mcr_output_prefix.size()+10];
+            sprintf(buffer_output, "%s_MCR_%d", mcr_output_prefix.c_str(), i+1);
+            Input->output = string(buffer_output);
+
+            if (Input->use_grids){
+                EqMC->run(Grids, RefLig , Lig, Lig->xyz, Input, bt);
+            }
+            else {
+                EqMC->run(REC, RefLig , Lig, Lig->xyz, Input, bt);
+            }
+
+            volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
+
+            cum_W += -k*Input->temp*(log(EqMC->MCR_Boltzmann_weighted_average));
+            cum_W_err += double((1.0/double(EqMC->MCR_Boltzmann_weighted_average))*EqMC->MCR_Boltzmann_weighted_stdev);
+
+            this->print_line();
+            sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %7.3Lf %7.4g", i+1, Input->bi, bt, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                    log(EqMC->MCR_Boltzmann_weighted_average), cum_W, volume);
+            this->print_info(info);
+            this->print_line();
+
+
+            if (volume > max_vol){
+                max_vol=volume;
+            }
+        }
+
+        this->print_line();
+        sprintf(info, "MCR: A_excess = %10.4Lg +/- %10.4Lg",  cum_W, k*Input->temp*cum_W_err);
+        this->print_info(info);
+
+        sprintf(info, "MCR: Volume: %10.4g.  ln(volume) = %10.4g",  volume, log(volume));
+        this->print_info(info);
+
+        sprintf(info, "MCR: A_complex = %10.4Lg",  (-k*Input->temp*log(volume))+(cum_W));
+        this->print_info(info);
+
+        this->print_line();
+
+
+        long double cum_W_lig = 0.0L;
+        long double cum_W_lig_err = 0.0L;
+        double lig_max_vol = 0.0;
+        double lig_volume = 0.0;
+
+        // Equilibration before recursion
+
+        Input->bi = 2.0;
+        this->print_line();
+        sprintf(info, "%s", "Starting equilibrium simulation before recursion");
+        this->print_info(info);
+
+        EqMC->ligand_run(RefLig, Lig, Lig->xyz, Input, Input->temp);
+
+        lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
+
+        sprintf(info, "MCR %7d %7.4f %10.4g %10.4g %10.4g %10.4Lg %10.4Lg %7.7Lf %7.4g", 0, 2.0, Input->temp, EqMC->average_energy, EqMC->energy_standard_deviation, EqMC->MCR_Boltzmann_weighted_average,
+                log(EqMC->MCR_Boltzmann_weighted_average), cum_W_lig, lig_volume);
+        this->print_info(info);
+        this->print_line();
+
+        //
+        // Now, starting the MC recursion
+        //
+
+        if (Input->ligsim){
+            for (int i=0; i<Input->mcr_size; i++){
+                Input->bi = Input->mcr_coefficients[i];
+                bt = Input->temp;
+                for (int j=0; j <= i; j++){
+                    bt = bt*Input->mcr_coefficients[j];
+                }
+
+                char buffer_output [mcr_output_prefix.size()+10];
+                sprintf(buffer_output, "%s_MCR_%d", mcr_output_prefix.c_str(), i+1);
+                Input->output = string(buffer_output);
+
+                EqMC->ligand_run(RefLig, Lig, Lig->xyz, Input, bt);
 
                 lig_volume = (EqMC->XSize*EqMC->YSize*EqMC->ZSize);
 

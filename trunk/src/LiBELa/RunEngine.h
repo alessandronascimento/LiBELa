@@ -258,6 +258,7 @@ public:
  * \brief mcr_run Recursive Monte Carlo method as, described by Scheraga.
  */
     void mcr_run();
+    void mcr_run(Mol2* Lig, string ligname);
 
 
 #ifdef HAS_GUI

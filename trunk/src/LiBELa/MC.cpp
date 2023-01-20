@@ -66,6 +66,7 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 
 
     vector<int> tmp(4);
+    Writer->print_line();
     sprintf(info, "Found %d rotatable bonds in ligand %s.", RotorList.Size(), Lig->molname.c_str());
     Writer->print_info(info);
     Writer->print_line();
