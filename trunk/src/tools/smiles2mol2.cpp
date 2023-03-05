@@ -7,6 +7,7 @@
 #include <openbabel/builder.h>
 #include <openbabel/obiter.h>
 #include <openbabel/elements.h>
+#include "../LiBELa/Mol2.cpp"
 
 using namespace std;
 using namespace OpenBabel;
@@ -29,28 +30,27 @@ int main(int argc,char **argv){
     OBForceField* OBff = OBForceField::FindForceField("MMFF94");
     OBff->Setup(mol);
     OBff->SteepestDescent(100);
-//    OBff->SteepestDescent(100, 1.0e-4);
-//    OBff->WeightedRotorSearch(250, 50);
-//    OBff->SteepestDescent(100, 1.0e-4);
-
     OBff->UpdateCoordinates(mol);
 
     int tf = clock()-ti;
     char aname[4];
 
+    Mol2* lig = new Mol2;
+
 
     FOR_ATOMS_OF_MOL(atom, mol){
         sprintf(aname, "%s%d", OBElements::GetSymbol(atom->GetAtomicNum()), atom->GetIdx());
+        lig->atomnames.push_back(string(aname));
         printf("Atom name: %s\n", aname);
         printf("Atom type: %s\n", atom->GetType());
         printf("Atom charge: %f\n\n", atom->GetPartialCharge());
+        lig->charges.push_back(atom->GetPartialCharge());
     }
-/*
-    vector<double> charges;
-    vector<string> atomnames;
-*/
+
     conv.SetOutFormat("mol2");
     conv.Write(&mol, &cout);
+
+    delete lig;
 
     printf("3D generation computations took %f second(s)", float((tf*1.0)/CLOCKS_PER_SEC));
 
