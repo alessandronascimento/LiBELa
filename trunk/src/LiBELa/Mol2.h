@@ -18,8 +18,16 @@
 #include<cmath>
 #include"PARSER.h"
 #include <zlib.h>
+#include <openbabel/obconversion.h>
+#include <openbabel/mol.h>
+#include <openbabel/forcefield.h>
+#include <openbabel/builder.h>
+#include <openbabel/obiter.h>
+#include <openbabel/elements.h>
+
 
 using namespace std;
+using namespace OpenBabel;
 
 class Mol2 {
 public:
@@ -111,6 +119,7 @@ public:
 	 */
 	Mol2();
 	Mol2(PARSER *Input, string molfile);
+    bool parse_smiles(PARSER *Input, string smiles_input);
     bool parse_gzipped_file(PARSER* Input, string molfile);
     bool parse_mol2file(PARSER* Input, string molfile);
     bool parse_gzipped_ensemble(PARSER *Input, string molfile, int skipper);
@@ -122,6 +131,7 @@ public:
 	~Mol2();
 
     void initialize_gaff();
+    void initialize_gaff2();
     vector<double> ensemble_energies;
     vector<double> ensemble_rmsd;
     vector<atom_param> gaff_force_field;
@@ -132,6 +142,7 @@ public:
     //!
     void find_longest_axis();
     double distance(vector<double> atom1, vector<double> atom2);
+    vector<vector<double> > copy_from_obmol(OBMol mymol);
 };
 
 #endif /* MOL2_H_ */
