@@ -352,6 +352,7 @@ void TEMP_SCHEME::sa_run(){
 void TEMP_SCHEME::dock_run(){
     clock_t ti, tf;
     int time_elapsed;
+    bool lig_is_opened=false;
     if(Input->dock_mode == true){
         ti = clock();
         sprintf(info, "%5s %-12.12s %-4.4s %-10.10s %-8.8s %-8.8s %-8.8s %-8.8s %-8.8s %3.3s %-5.5s %2.2s", "#", "Ligand", "Resi", "Overlay", "Elec", "VDW", "Solv", "HBond", "Energy", "Conf", "MS", "SI");
@@ -376,7 +377,51 @@ void TEMP_SCHEME::dock_run(){
             center = COORD.compute_com(RefLig);
 
             unsigned counter=0;
-            if (Input->multifile != ""){
+            if (Input->use_smiles){
+                string ligand;
+                string code;
+                ifstream multifile(Input->smiles_multifile.c_str());
+                if (! multifile.is_open()){
+                    sprintf(info, "Could not open file %s. Exiting...\n", Input->smiles_multifile.c_str());
+                    this->print_info(info);
+                    exit(1);
+                }
+                multifile >> ligand >> code;
+                while ((!multifile.eof()) and (ligand != "EOF")){
+                    Mol2* Lig2 = new Mol2;
+                    lig_is_opened = Lig2->parse_smiles(Input, ligand, code);
+                    if (lig_is_opened){
+                        if (Input->use_grids){
+                            Dock->run(REC, Lig2, RefLig, center, Input, Grids, counter);
+                        }
+                        else {
+                            Dock->run(REC, Lig2, RefLig, center, Input, counter);
+                        }
+                        if (Input->eq_mode){
+                            Writer->writeMol2(Lig2, Lig2->xyz, 0.0, 0.0, string(Input->output + "_" + Lig2->molname));
+                            Conformer* Conf = new Conformer;
+                            Lig2->mcoords.clear();
+                            Conf->generate_conformers_confab(Input, Lig2, string(Input->output + "_" + Lig2->molname+".mol2.gz"));
+                            MC* EqMC = new MC(Lig2, Input, Writer);
+                            if (Input->use_grids){
+                                EqMC->run(Grids, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
+                            }
+                            else {
+                                EqMC->run(REC, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
+                            }
+                            if (Input->ligsim){
+                                EqMC->ligand_run(RefLig, Lig2, Lig2->xyz, Input, Input->temp);
+                            }
+                            delete EqMC;
+                        }
+
+                        if (Input->mcr_mode){
+                            this->mcr_run(Lig2, ligand);
+                        }
+                    }
+                }
+            }
+            else if (Input->multifile != ""){
                 string ligand = "";
                 ifstream multifile(Input->multifile.c_str());
                 if (! multifile.is_open()){
@@ -559,51 +604,89 @@ int TEMP_SCHEME::dock_serial(vector<string> ligand_list, int count, int chunck_s
 
         bool lig_is_opened = false;
 
-        if (ligand_list[i].substr(ligand_list[i].size()-3, 3) == ".gz"){
-            lig_is_opened = Lig2->parse_gzipped_file(Input, ligand_list[i]);
-        }
-        else {
-            lig_is_opened = Lig2->parse_mol2file(Input, ligand_list[i]);
-        }
+        if (!Input->use_smiles){
 
-        if (lig_is_opened){
-            FindHB* HB = new FindHB;
-            HB->find_ligandHB(ligand_list[i], Lig2);
-            delete HB;
-            if (Input->generate_conformers){
-                Conformer* Conf = new Conformer;
-                Conf->generate_conformers_confab(Input, Lig2, ligand_list[i]);
-                delete Conf;
-            }
-            if (Input->use_grids){
-                Dock->run(REC, Lig2, RefLig, center, Input, Grids, ((count*chunck_size))+i+1);
+            if (ligand_list[i].substr(ligand_list[i].size()-3, 3) == ".gz"){
+                lig_is_opened = Lig2->parse_gzipped_file(Input, ligand_list[i]);
             }
             else {
-                Dock->run(REC, Lig2, RefLig, center, Input, ((count*chunck_size))+i+1);
-            }
-            if (Input->eq_mode){
-                if (Input->generate_conformers){
-                    Conformer* Conf = new Conformer;
-                    Write_lig->writeMol2(Lig2, Lig2->xyz, 0.0, 0.0, string(Input->output + "_" + Lig2->molname));
-                    Lig2->mcoords.clear();
-                    Conf->generate_conformers_confab(Input, Lig2, string(Input->output +"_" + Lig2->molname+".mol2.gz"));
-                    delete Conf;
-                }
-                MC* EqMC = new MC(Lig2, Input, Write_lig);
-                if (Input->use_grids){
-                    EqMC->run(Grids, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
-                }
-                else {
-                    EqMC->run(REC, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
-                }
-                if (Input->ligsim){
-                    EqMC->ligand_run(RefLig, Lig2, Lig2->xyz, Input, Input->temp);
-                }
-                delete EqMC;
+                lig_is_opened = Lig2->parse_mol2file(Input, ligand_list[i]);
             }
 
-            if (Input->mcr_mode){
-                this->mcr_run(Lig2, ligand_list[i]);
+            if (lig_is_opened){
+                FindHB* HB = new FindHB;
+                HB->find_ligandHB(ligand_list[i], Lig2);
+                delete HB;
+                if (Input->generate_conformers){
+                    Conformer* Conf = new Conformer;
+                    Conf->generate_conformers_confab(Input, Lig2, ligand_list[i]);
+                    delete Conf;
+                }
+                if (Input->use_grids){
+                    Dock->run(REC, Lig2, RefLig, center, Input, Grids, ((count*chunck_size))+i+1);
+                }
+                else {
+                    Dock->run(REC, Lig2, RefLig, center, Input, ((count*chunck_size))+i+1);
+                }
+                if (Input->eq_mode){
+                    if (Input->generate_conformers){
+                        Conformer* Conf = new Conformer;
+                        Write_lig->writeMol2(Lig2, Lig2->xyz, 0.0, 0.0, string(Input->output + "_" + Lig2->molname));
+                        Lig2->mcoords.clear();
+                        Conf->generate_conformers_confab(Input, Lig2, string(Input->output +"_" + Lig2->molname+".mol2.gz"));
+                        delete Conf;
+                    }
+                    MC* EqMC = new MC(Lig2, Input, Write_lig);
+                    if (Input->use_grids){
+                        EqMC->run(Grids, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
+                    }
+                    else {
+                        EqMC->run(REC, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
+                    }
+                    if (Input->ligsim){
+                        EqMC->ligand_run(RefLig, Lig2, Lig2->xyz, Input, Input->temp);
+                    }
+                    delete EqMC;
+                }
+
+                if (Input->mcr_mode){
+                    this->mcr_run(Lig2, ligand_list[i]);
+                }
+            }
+        }
+        else {
+            lig_is_opened = Lig2->parse_smiles(Input, ligand_list[i], "MOL");
+            if (lig_is_opened){
+                if (Input->use_grids){
+                    Dock->run(REC, Lig2, RefLig, center, Input, Grids, ((count*chunck_size))+i+1);
+                }
+                else {
+                    Dock->run(REC, Lig2, RefLig, center, Input, ((count*chunck_size))+i+1);
+                }
+                if (Input->eq_mode){
+                    if (Input->generate_conformers){
+                        Conformer* Conf = new Conformer;
+                        Write_lig->writeMol2(Lig2, Lig2->xyz, 0.0, 0.0, string(Input->output + "_" + Lig2->molname));
+                        Lig2->mcoords.clear();
+                        Conf->generate_conformers_confab(Input, Lig2, string(Input->output +"_" + Lig2->molname+".mol2.gz"));
+                        delete Conf;
+                    }
+                    MC* EqMC = new MC(Lig2, Input, Write_lig);
+                    if (Input->use_grids){
+                        EqMC->run(Grids, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
+                    }
+                    else {
+                        EqMC->run(REC, RefLig , Lig2, Lig2->xyz, Input, Input->temp);
+                    }
+                    if (Input->ligsim){
+                        EqMC->ligand_run(RefLig, Lig2, Lig2->xyz, Input, Input->temp);
+                    }
+                    delete EqMC;
+                }
+
+                if (Input->mcr_mode){
+                    this->mcr_run(Lig2, ligand_list[i]);
+                }
             }
         }
         delete Lig2;
@@ -650,30 +733,50 @@ void TEMP_SCHEME::dock_parallel(){
     sprintf(info, "Running Dock mode in parallel with up to %d threads...", int(Input->parallel_jobs));
     this->print_info(info);
     vector<string> ligand_list;
+    vector<string> ligand_codes;
 
 
     /* Here, we read the multifile file and parse the files of the molecules
  * to be docked into a std::vector named ligand_list.
  */
 
-    if (Input->multifile != ""){
-        ifstream multifile(Input->multifile.c_str());
-        if (! multifile.is_open()){
-            sprintf(info, "Could not open file %s. Exiting...\n", Input->multifile.c_str());
+    if (Input->use_smiles){
+        ifstream multifile(Input->smiles_multifile.c_str());
+        if (!multifile.is_open()){
+            sprintf(info, "Could not open file %s. Exiting...\n", Input->smiles_multifile.c_str());
             this->print_info(info);
             exit(1);
         }
-        string ligand;
-        multifile >> ligand;
-
-        while ((!multifile.eof()) and (ligand != "EOF")){
+        string ligand, code;
+        multifile >> ligand >> code;
+        while((!multifile.eof()) and (ligand != "EOF")){
             ligand_list.push_back(ligand);
-            multifile >> ligand;
+            ligand_codes.push_back(code);
+            multifile >> ligand >> code;
         }
-
         multifile.close();
+    }
+    else {
+        if (Input->multifile != ""){
+            ifstream multifile(Input->multifile.c_str());
+            if (! multifile.is_open()){
+                sprintf(info, "Could not open file %s. Exiting...\n", Input->multifile.c_str());
+                this->print_info(info);
+                exit(1);
+            }
+            string ligand;
+            multifile >> ligand;
 
-        /*
+            while ((!multifile.eof()) and (ligand != "EOF")){
+                ligand_list.push_back(ligand);
+                multifile >> ligand;
+            }
+
+            multifile.close();
+        }
+    }
+
+/*
  * Here the parallel processing begins. Firstly, a parallel section is created with a pragma
  * indicating the number of parallel threads as defined in the input file.
  * After, the molecule objects are created and conformers are calculated using OpenBabel.
@@ -691,40 +794,35 @@ void TEMP_SCHEME::dock_parallel(){
                 bool lig_is_opened = false;
 #pragma omp critical
                 {
-                    if (ligand_list[i].substr(ligand_list[i].size()-3, 3) == ".gz"){
-                        lig_is_opened = Lig2->parse_gzipped_file(Input, ligand_list[i]);
+                    if (Input->use_smiles){
+                        lig_is_opened = Lig2->parse_smiles(Input, ligand_list[i], ligand_codes[i]);
                     }
-                    else {
-                        lig_is_opened = Lig2->parse_mol2file(Input, ligand_list[i]);
-                    }
-                }
-                if (lig_is_opened){
-
-
-#pragma omp critical
-                    {
-                        FindHB* HB = new FindHB;
-                        HB->find_ligandHB(ligand_list[i], Lig2);
-                        delete HB;
-                    }
-
-
-                    if (Input->generate_conformers){
-
-#pragma omp critical
-                        {
+                    else{
+                        if (ligand_list[i].substr(ligand_list[i].size()-3, 3) == ".gz"){
+                            lig_is_opened = Lig2->parse_gzipped_file(Input, ligand_list[i]);
+                        }
+                        else {
+                            lig_is_opened = Lig2->parse_mol2file(Input, ligand_list[i]);
+                        }
+                        if (lig_is_opened){
+                            FindHB* HB = new FindHB;
+                            HB->find_ligandHB(ligand_list[i], Lig2);
+                            delete HB;
+                        }
+                        if (Input->generate_conformers){
                             Conformer* Conf = new Conformer;
                             Conf->generate_conformers_confab(Input, Lig2, ligand_list[i]);
                             delete Conf;
                         }
-
                     }
+                }
 
 #ifdef HAS_GUI
-                    Docker* Dock = new Docker(QWriter);
+                Docker* Dock = new Docker(QWriter);
 #else
-                    Docker* Dock = new Docker(Writer);
+                Docker* Dock = new Docker(Writer);
 #endif
+                if (lig_is_opened){
                     if (Input->use_grids){
                         Dock->run(REC, Lig2, RefLig, center, Input, Grids, i+1);
                     }
@@ -759,25 +857,22 @@ void TEMP_SCHEME::dock_parallel(){
                 delete Lig2;
 
 #ifdef HAS_GUI
-                if (omp_get_thread_num() ==0) {
-                    progressbar->setValue(round((i+1)*100/int(ligand_list.size())));
-                    QApplication::processEvents();
-                }
-#endif
+            if (omp_get_thread_num() ==0) {
+                progressbar->setValue(round((i+1)*100/int(ligand_list.size())));
+                QApplication::processEvents();
             }
+#endif
         }
-        ligand_list.clear();
+    }
+    ligand_list.clear();
 
 #ifdef HAS_GUI
 
-        progressbar->setValue(100);
+    progressbar->setValue(100);
 
 #endif
 
-    }
-
 #endif
-
 }
 
 #ifdef HAS_GUI
@@ -813,6 +908,8 @@ void TEMP_SCHEME::dock_mpi(){
 
     int chunck_size;
     vector<string> ligand_list;
+    vector<string> ligand_codes;
+    string ligand, code;
 
     mpi::environment env(this->argc, this->argv);
     mpi::communicator world;
@@ -820,30 +917,47 @@ void TEMP_SCHEME::dock_mpi(){
 
 
     vector<string> tmp;
+    vector<string> tmp_code;
 
     if (world.rank() == 0 ){                       // Running only on the *master* job;
         sprintf(info, "Running Dock mode over MPI with up to %d parallel jobs...", world.size());
         this->print_info(info);
 
-        if (Input->multifile == ""){
-            sprintf(info, "Cannot run single molecule docking in parallel");
-            this->print_info(info);
-            exit(1);
-        }
+        if (! Input->use_smiles){
+            if (Input->multifile == ""){
+                sprintf(info, "Cannot run single molecule docking in parallel");
+                this->print_info(info);
+                exit(1);
+            }
 
-        ifstream multifile(Input->multifile.c_str());
-        if (! multifile.is_open()){
-            sprintf(info, "Could not open file %s. Exiting...\n", Input->multifile.c_str());
-            this->print_info(info);
-            exit(1);
-        }
-        string ligand;
-        multifile >> ligand;
-        while ((!multifile.eof()) and (ligand != "EOF")){
-            ligand_list.push_back(ligand);
+            ifstream multifile(Input->multifile.c_str());
+            if (! multifile.is_open()){
+                sprintf(info, "Could not open file %s. Exiting...\n", Input->multifile.c_str());
+                this->print_info(info);
+                exit(1);
+            }
             multifile >> ligand;
+            while ((!multifile.eof()) and (ligand != "EOF")){
+                ligand_list.push_back(ligand);
+                multifile >> ligand;
+            }
+            multifile.close();
         }
-        multifile.close();
+        else {
+            ifstream multifile(Input->smiles_multifile.c_str());
+            if (! multifile.is_open()){
+                sprintf(info, "Could not open file %s. Exiting...\n", Input->smiles_multifile.c_str());
+                this->print_info(info);
+                exit(1);
+            }
+            multifile >> ligand >> code;
+            while ((!multifile.eof()) and (ligand != "EOF")){
+                ligand_list.push_back(ligand);
+                ligand_codes.push_back(code);
+                multifile >> ligand >> code;
+            }
+            multifile.close();
+        }
 
         // Multifile read!
 

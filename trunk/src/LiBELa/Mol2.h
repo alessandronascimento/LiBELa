@@ -24,7 +24,8 @@
 #include <openbabel/builder.h>
 #include <openbabel/obiter.h>
 #include <openbabel/elements.h>
-
+#include <openbabel/math/align.h>
+#include <openbabel/bond.h>
 
 using namespace std;
 using namespace OpenBabel;
@@ -119,7 +120,7 @@ public:
 	 */
 	Mol2();
 	Mol2(PARSER *Input, string molfile);
-    bool parse_smiles(PARSER *Input, string smiles_input);
+    bool parse_smiles(PARSER *Input, string smiles_input, string molname);
     bool parse_gzipped_file(PARSER* Input, string molfile);
     bool parse_mol2file(PARSER* Input, string molfile);
     bool parse_gzipped_ensemble(PARSER *Input, string molfile, int skipper);
@@ -138,6 +139,7 @@ public:
     void get_gaff_atomic_parameters(string gaff_atom, atom_param* ap);
     string sybyl_2_gaff(string atom);
     string sybyl_2_amber(string atom);
+    string gaff_2_sybyl(string atom);
 
     //!
     void find_longest_axis();

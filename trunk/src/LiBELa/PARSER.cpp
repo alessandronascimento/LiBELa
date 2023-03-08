@@ -109,6 +109,8 @@ PARSER::PARSER(){
     this->use_overlay_cutoff = false;
     this->use_score_optimization = false;
     this->use_only_binding_energy = false;
+    this->smiles_multifile = "";
+    this->use_smiles = false;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -546,6 +548,10 @@ void PARSER::comparing (string param, ifstream &input) {
         if (tmp == "yes" or tmp == "YES" or tmp == "Yes"){
             this->use_only_binding_energy = true;
         }
+    }
+    else if (param == "smiles_multifile"){
+        input >> this->smiles_multifile;
+        this->use_smiles = true;
     }
 	else {
 		cout << "Unknown parameter: " << param << endl;

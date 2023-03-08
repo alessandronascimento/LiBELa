@@ -30,7 +30,7 @@ Mol2::Mol2(PARSER *Input, string molfile) {
     }
 }
 
-bool Mol2::parse_smiles(PARSER *Input, string smiles_input){
+bool Mol2::parse_smiles(PARSER *Input, string smiles_input, string molname){
     bool bret = true;
 
 /*
@@ -40,7 +40,7 @@ bool Mol2::parse_smiles(PARSER *Input, string smiles_input){
     OBMol mol;
     OBConversion conv;
     if (!(conv.SetInFormat("smi") && conv.ReadString(&mol, smiles_input))){
-        printf("Skipping smile %s...\n", smiles_input.c_str());
+        printf("Skipping smiles %s...\n", smiles_input.c_str());
         bret=false;
     }
 
@@ -63,76 +63,171 @@ bool Mol2::parse_smiles(PARSER *Input, string smiles_input){
 
 /*
  * Get data for Mol2 class
+ *
  */
 
-    char aname[4];
+    char aname[7];
+    OBAtom *atom;
+    vector<int> vtemp(2);
+    string sybyl_atom;
+
+    this->N = mol.NumAtoms();
+    this->molname = molname;
+    this->Nres = 0;
+    this->residue_pointer.push_back(1);
+
+    this->initialize_gaff2();
 
     FOR_ATOMS_OF_MOL(atom, mol){
         sprintf(aname, "%s%d", OBElements::GetSymbol(atom->GetAtomicNum()), atom->GetIdx());
         this->atomnames.push_back(string(aname));
-        this->charges.push_back(atom->GetPartialCharge());
+        this->charges.push_back(double(atom->GetPartialCharge()));
+        if (atom->IsHbondAcceptor()){
+            this->HBacceptors.push_back(int(atom->GetIdx()-1));
+        }
+        else if (atom->IsHbondDonorH()){
+            FOR_NBORS_OF_ATOM(nbr, &*atom){
+                vtemp[0] = int(nbr->GetIdx()-1);
+                vtemp[1] = int(atom->GetIdx()-1);
+                this->HBdonors.push_back(vtemp);
+            }
+        }
 
-        this->amberatoms.push_back(string(atom->GetType()));
-        atom_param* at = new atom_param;
-        this->get_gaff_atomic_parameters(string(atom->GetType()), at);
-        this->radii.push_back(at->radius);
-        this->epsilons.push_back(at->epsilon);
-        this->epsilons_sqrt.push_back(sqrt(at->epsilon));
-        this->masses.push_back(at->mass);
-        delete at;
+        sybyl_atom = this->sybyl_2_gaff(string(atom->GetType()));
+        this->amberatoms.push_back(sybyl_atom);
+        if (sybyl_atom == ""){
+            bret=false;
+            printf("bret set to false because of atom %s\n", atom->GetType());
+        }
+        else{
+            this->sybyl_atoms.push_back(this->gaff_2_sybyl(sybyl_atom));
+            atom_param* at = new atom_param;
+            this->get_gaff_atomic_parameters(sybyl_atom, at);
+            this->radii.push_back(at->radius);
+            this->epsilons.push_back(at->epsilon);
+            this->epsilons_sqrt.push_back(sqrt(at->epsilon));
+            this->masses.push_back(at->mass);
+            delete at;
+        }
     }
+    int b1, b2, b3;
+    vector<string> bond;
+    FOR_BONDS_OF_MOL(b, mol){
+        b1 = b->GetBeginAtomIdx();
+        bond.push_back(to_string(b1+1));
+        b2 = b->GetEndAtomIdx();
+        bond.push_back(to_string(b2));
+        b3 = b->GetBondOrder();
+        bond.push_back(to_string(b3));
+        this->bonds.push_back(bond);
+        bond.clear();
+    }
+
     this->xyz = this->copy_from_obmol(mol);
+    this->resnames.push_back("LIG");
+
+    if (bret and Input->generate_conformers){
+        OBMol RefMol = mol;
+        OBff->DiverseConfGen(0.5, Input->conf_search_trials, 50.0, false);
+        OBff->GetConformers(mol);
+
+        int generated_conformers=0;
+        if (mol.NumConformers() > Input->lig_conformers){
+            generated_conformers = Input->lig_conformers;
+        }
+        else {
+            generated_conformers = mol.NumConformers();
+        }
+
+        if (mol.NumConformers() > 0){
+            for (int i=0; i<generated_conformers; i++){
+                double x[mol.NumAtoms()*3];
+                double* xyz;
+                xyz = x;
+                vector<double> v3;
+                vector<vector<double> > xyz_tmp;
+                mol.SetConformer(i);
+                OBff->Setup(mol);
+                OBff->GetCoordinates(mol);
+                energy = OBff->Energy();
+                if (OBff->GetUnit() == "kJ/mol"){       // Converting to kcal/mol, if needed.
+                    energy = energy/4.18;
+                }
+                this->conformer_energies.push_back(energy);
+
+                OBAlign* align = new OBAlign;
+                align->SetRefMol(RefMol);
+                align->SetTargetMol(mol);
+                align->Align();
+                align->UpdateCoords(&mol);
+                delete align;
+
+                xyz = mol.GetCoordinates();
+                for (unsigned j=0; j<mol.NumAtoms(); j++){
+                    v3.push_back(xyz[3*j]);
+                    v3.push_back(xyz[(3*j)+1]);
+                    v3.push_back(xyz[(3*j)+2]);
+                    xyz_tmp.push_back(v3);
+                    v3.clear();
+                }
+                this->mcoords.push_back(xyz_tmp);
+                xyz_tmp.clear();
+            }
+        }
+    }
     return bret;
 }
 
 bool Mol2::parse_mol2file(PARSER *Input, string molfile) {
-	FILE *mol2file;
-	int tint;
-	float tx, ty, tz;
-	vector<double> txyz;
-	int tres;
-	float tcharge;
-	int count=0;
-	char tatomtype[10];
+    FILE *mol2file;
+    int tint;
+    float tx, ty, tz;
+    vector<double> txyz;
+    int tres;
+    float tcharge;
+    int count=0;
+    char tatomtype[10];
     char resname[20];
-	string cpstr;
-	bool bret = false;
+    string cpstr;
+    bool bret = false;
+    string atom_type;
+    bool missing_atom=false;
 
     this->initialize_gaff2();
 
 
-	mol2file = fopen(molfile.c_str(), "r");
+    mol2file = fopen(molfile.c_str(), "r");
 
-	if (mol2file !=NULL){
-		str[0]='#';
-		while(str[0] !='@'){
-			fgets(str, 80, mol2file);
+    if (mol2file !=NULL){
+        str[0]='#';
+        while(str[0] !='@'){
+            fgets(str, 80, mol2file);
 
-		}
-		fgets(str, 80, mol2file);
-		this->molname = str;
+        }
+        fgets(str, 80, mol2file);
+        this->molname = str;
         this->molname = this->molname.substr(0,this->molname.size()-1);
-		fscanf(mol2file, "%d %d %d %d %d", &this->N, &this->Nbonds, &this->Nres, &tint, &tint);
+        fscanf(mol2file, "%d %d %d %d %d", &this->N, &this->Nbonds, &this->Nres, &tint, &tint);
 
-		cpstr = string(str);
-		while (cpstr.substr(0,13) != "@<TRIPOS>ATOM"){
-			fgets(str, 80, mol2file);
-			cpstr = string(str);
-		}
+        cpstr = string(str);
+        while (cpstr.substr(0,13) != "@<TRIPOS>ATOM"){
+            fgets(str, 80, mol2file);
+            cpstr = string(str);
+        }
 
-		for (int i=0; i<this->N; i++){
+        for (int i=0; i<this->N; i++){
             fscanf(mol2file, "%d %s %f %f %f %s %d %s %f\n", &tint, str, &tx, &ty, &tz, tatomtype, &tres, resname, &tcharge);
-			txyz.push_back(tx);
-			txyz.push_back(ty);
-			txyz.push_back(tz);
-			this->xyz.push_back(txyz);
-			txyz.clear();
+            txyz.push_back(tx);
+            txyz.push_back(ty);
+            txyz.push_back(tz);
+            this->xyz.push_back(txyz);
+            txyz.clear();
 
-			this->charges.push_back(tcharge);
-			this->atomnames.push_back(str);
+            this->charges.push_back(tcharge);
+            this->atomnames.push_back(str);
 
-			if (Input->mol2_aa){
-				this->amberatoms.push_back(tatomtype);
+            if (Input->mol2_aa){
+                this->amberatoms.push_back(tatomtype);
                 atom_param* at = new atom_param;
                 this->get_gaff_atomic_parameters(string(tatomtype), at);
                 this->radii.push_back(at->radius);
@@ -140,56 +235,64 @@ bool Mol2::parse_mol2file(PARSER *Input, string molfile) {
                 this->epsilons_sqrt.push_back(sqrt(at->epsilon));
                 this->masses.push_back(at->mass);
                 delete at;
-			}
+            }
             else{
                 if (Input->atomic_model_ff == "AMBER" or Input->atomic_model_ff == "amber"){
-                    this->amberatoms.push_back(this->sybyl_2_amber(string(tatomtype)));
+                    atom_type=this->sybyl_2_amber(string(tatomtype));
+//                    this->amberatoms.push_back();
                 }
                 else {
-                    this->amberatoms.push_back(this->sybyl_2_gaff(string(tatomtype)));
+                    atom_type = this->sybyl_2_gaff(string(tatomtype));
                 }
-                atom_param* at = new atom_param;
-                this->get_gaff_atomic_parameters(this->amberatoms[i], at);
-                this->radii.push_back(at->radius);
-                this->epsilons.push_back(at->epsilon);
-                this->epsilons_sqrt.push_back(sqrt(at->epsilon));
-                this->masses.push_back(at->mass);
-                delete at;
-                this->sybyl_atoms.push_back(string(tatomtype));
+                if (atom_type == ""){
+                    missing_atom = true;
+                    printf("Skipping molecule due to missing atom type: %s.\n", tatomtype);
+                }
+                else{
+                    this->amberatoms.push_back(atom_type);
+                    atom_param* at = new atom_param;
+                    this->get_gaff_atomic_parameters(this->amberatoms[i], at);
+                    this->radii.push_back(at->radius);
+                    this->epsilons.push_back(at->epsilon);
+                    this->epsilons_sqrt.push_back(sqrt(at->epsilon));
+                    this->masses.push_back(at->mass);
+                    delete at;
+                    this->sybyl_atoms.push_back(string(tatomtype));
+                }
             }
 
-			if (tres > count){
-				this->residue_pointer.push_back(i+1);
-				count = tres;
-				this->resnames.push_back(string(resname));
-			}
-		}
+            if (tres > count){
+                this->residue_pointer.push_back(i+1);
+                count = tres;
+                this->resnames.push_back(string(resname));
+            }
+        }
 
-//		fscanf(mol2file, "%s\n", str);
+        //		fscanf(mol2file, "%s\n", str);
         cpstr = string(str);
         while (cpstr.substr(0,13) != "@<TRIPOS>BOND"){
             fgets(str, 80, mol2file);
             cpstr = string(str);
         }
 
-		vector<string> bond;
-		char s1[6], s2[6], s3[5];
-		for (int i=0; i<this->Nbonds; i++){
-			fscanf(mol2file, "%d%s%s%s\n", &tint, s1, s2, s3);
-			bond.push_back(string(s1));
-			bond.push_back(string(s2));
-			bond.push_back(string(s3));
-			this->bonds.push_back(bond);
-			bond.clear();
-		}
-		bret = true;
-	}
-	else {
-		bret = false;
-		printf("Skipping file %s\n", molfile.c_str());
-	}
-	fclose(mol2file);
-	return (bret);
+        vector<string> bond;
+        char s1[6], s2[6], s3[5];
+        for (int i=0; i<this->Nbonds; i++){
+            fscanf(mol2file, "%d%s%s%s\n", &tint, s1, s2, s3);
+            bond.push_back(string(s1));
+            bond.push_back(string(s2));
+            bond.push_back(string(s3));
+            this->bonds.push_back(bond);
+            bond.clear();
+        }
+        bret = true;
+    }
+    else {
+        bret = false;
+        printf("Skipping file %s\n", molfile.c_str());
+    }
+    fclose(mol2file);
+    return ((bret and (!missing_atom)));
 }
 
 bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
@@ -203,8 +306,10 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
     char tatomtype[10];
     char resname[20];
     string cpstr;
+    bool missing_atom=false;
+    string atom_type;
 
-/*
+    /*
  * Here we read the GAFF/AMBER parameters fro LJ potentials
  */
 
@@ -253,19 +358,26 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
             }
             else{
                 if (Input->atomic_model_ff == "AMBER" or Input->atomic_model_ff == "amber"){
-                    this->amberatoms.push_back(this->sybyl_2_amber(string(tatomtype)));
+                    atom_type = this->sybyl_2_amber(string(tatomtype));
                 }
                 else {
-                    this->amberatoms.push_back(this->sybyl_2_gaff(string(tatomtype)));
+                    atom_type = this->sybyl_2_gaff(string(tatomtype));
                 }
-                atom_param* at = new atom_param;
-                this->get_gaff_atomic_parameters(this->amberatoms[i], at);
-                this->radii.push_back(at->radius);
-                this->epsilons.push_back(at->epsilon);
-                this->epsilons_sqrt.push_back(sqrt(at->epsilon));
-                this->masses.push_back(at->mass);
-                delete at;
-                this->sybyl_atoms.push_back(string(tatomtype));
+                if (atom_type == ""){
+                    missing_atom = true;
+                    printf("Skipping molecule due to missing atom type: %s.\n", tatomtype);
+                }
+                else {
+                    this->amberatoms.push_back(atom_type);
+                    atom_param* at = new atom_param;
+                    this->get_gaff_atomic_parameters(this->amberatoms[i], at);
+                    this->radii.push_back(at->radius);
+                    this->epsilons.push_back(at->epsilon);
+                    this->epsilons_sqrt.push_back(sqrt(at->epsilon));
+                    this->masses.push_back(at->mass);
+                    delete at;
+                    this->sybyl_atoms.push_back(string(tatomtype));
+                }
             }
 
             if (tres > count){
@@ -275,7 +387,7 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
             }
         }
 
-//        gzgets(mol2file, str, 100);
+        //        gzgets(mol2file, str, 100);
         cpstr = string(str);
         while (cpstr.substr(0,13) != "@<TRIPOS>BOND"){
             gzgets(mol2file, str, 100);
@@ -294,7 +406,7 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
             bond.clear();
         }
 
-// Checking for internal consistency ....
+        // Checking for internal consistency ....
 
         if ((int(this->radii.size()) == this->N) and (int(this->epsilons.size()) == this->N)){
             bret = true;
@@ -306,25 +418,25 @@ bool Mol2::parse_gzipped_file(PARSER* Input, string molfile){
     }
     gzclose(mol2file);
 
-    return (bret);
+    return (bret and !missing_atom);
 }
 
 
 Mol2::~Mol2(){
-	this->xyz.clear();
-	this->charges.clear();
-	this->radii.clear();
-	this->epsilons.clear();
-	this->epsilons_sqrt.clear();
-	this->resnames.clear();
-	this->bonds.clear();
-	this->sybyl_atoms.clear();
-//	this->mcoords.clear();
-//	this->new_mcoords.clear();
-	this->new_xyz.clear();
-	this->atomnames.clear();
-	this->masses.clear();
-	this->amberatoms.clear();
+    this->xyz.clear();
+    this->charges.clear();
+    this->radii.clear();
+    this->epsilons.clear();
+    this->epsilons_sqrt.clear();
+    this->resnames.clear();
+    this->bonds.clear();
+    this->sybyl_atoms.clear();
+    //	this->mcoords.clear();
+    //	this->new_mcoords.clear();
+    this->new_xyz.clear();
+    this->atomnames.clear();
+    this->masses.clear();
+    this->amberatoms.clear();
 }
 
 void Mol2::initialize_gaff(){
@@ -336,7 +448,7 @@ void Mol2::initialize_gaff(){
 
     char* dir_path = getenv("LIBELA");
     if (dir_path== NULL){
-/*
+        /*
         printf("Environment variable LIBELA is not set.\n");
         printf("Trying to use local folder as LIBELA folder...\n");
 */
@@ -1309,12 +1421,21 @@ void Mol2::get_gaff_atomic_parameters(string gaff_atom, atom_param* ap){
 }
 
 string Mol2::sybyl_2_gaff(string atom){
-    string gaff_atom;
+    string gaff_atom="";
     if (atom == "C.3"){
+        gaff_atom = "c3";
+    }
+    else if (atom == "C3"){
         gaff_atom = "c3";
     }
     else if (atom =="C.2"){
         gaff_atom = "c2";
+    }
+    else if (atom =="C2"){
+        gaff_atom = "c2";
+    }
+    else if (atom =="C1"){
+        gaff_atom = "c1";
     }
     else if (atom =="C.1"){
         gaff_atom = "c1";
@@ -1323,52 +1444,105 @@ string Mol2::sybyl_2_gaff(string atom){
     else if (atom =="C.ar"){
         gaff_atom = "ca";
     }
+    else if (atom =="Car"){
+        gaff_atom = "ca";
+    }
 
     else if (atom =="C.cat"){
+        gaff_atom = "c";
+    }
+    else if (atom =="Ccat"){
+        gaff_atom = "c";
+    }
+    else if (atom =="C+"){
         gaff_atom = "c";
     }
 
     else if (atom =="N.3"){
         gaff_atom = "n3";
     }
+    else if (atom =="N3"){
+        gaff_atom = "n3";
+    }
+
 
     else if (atom =="N.2"){
+        gaff_atom = "n2";
+    }
+    else if (atom =="N2"){
         gaff_atom = "n2";
     }
 
     else if (atom =="N.1"){
         gaff_atom = "n1";
     }
+    else if (atom =="N1"){
+        gaff_atom = "n1";
+    }
 
     else if (atom =="N.ar"){
+        gaff_atom = "nh";
+    }
+    else if (atom =="Nar"){
         gaff_atom = "nh";
     }
 
     else if (atom =="N.am"){
         gaff_atom = "n";
     }
+    else if (atom =="Nam"){
+        gaff_atom = "n";
+    }
 
     else if (atom =="N.4"){
+        gaff_atom = "n4";
+    }
+    else if (atom =="N4"){
+        gaff_atom = "n4";
+    }
+    else if (atom =="Ng+"){
         gaff_atom = "n4";
     }
 
     else if (atom =="N.pl3"){
         gaff_atom = "na";
     }
+    else if (atom =="Npl3"){
+        gaff_atom = "na";
+    }
+    else if (atom =="Npl"){
+        gaff_atom = "na";
+    }
 
     else if (atom =="N.p"){
+        gaff_atom = "na";
+    }
+    else if (atom =="Np"){
         gaff_atom = "na";
     }
 
     else if (atom =="O.3"){
         gaff_atom = "oh";
     }
+    else if (atom =="O3"){
+        gaff_atom = "oh";
+    }
 
     else if (atom =="O.2"){
         gaff_atom = "o";
     }
+    else if (atom =="O2"){
+        gaff_atom = "o";
+    }
 
     else if (atom =="O.co2"){
+        gaff_atom = "o";
+    }
+    else if (atom =="Oco2"){
+        gaff_atom = "o";
+    }
+
+    else if (atom =="O-"){
         gaff_atom = "o";
     }
 
@@ -1379,26 +1553,42 @@ string Mol2::sybyl_2_gaff(string atom){
     else if (atom =="S.3"){
         gaff_atom = "sh"; //not sure... sh or ss
     }
+    else if (atom =="S3"){
+        gaff_atom = "sh"; //not sure... sh or ss
+    }
 
     else if (atom =="S.2"){
+        gaff_atom = "s2";
+    }
+    else if (atom =="S2"){
         gaff_atom = "s2";
     }
 
     else if (atom =="S.O" or atom == "S.o"){
         gaff_atom = "s4";
     }
+    else if (atom =="SO" or atom == "So"){
+        gaff_atom = "s4";
+    }
 
     else if (atom =="S.O2" or atom == "S.o2"){
+        gaff_atom = "s6";
+    }
+    else if (atom =="SO2" or atom == "So2"){
         gaff_atom = "s6";
     }
 
     else if (atom =="P.3"){
         gaff_atom = "p3";
     }
+    else if (atom =="P3"){
+        gaff_atom = "p3";
+    }
 
     else if (atom =="F"){
         gaff_atom = "f";
     }
+
 
     else if (atom =="H"){
         gaff_atom = "hc";
@@ -1451,18 +1641,123 @@ string Mol2::sybyl_2_gaff(string atom){
                 found = true;
             }
         }
+ /*
         if (! found){
             printf("Atom type %s not found among GAFF parameters.\nPlease check Mol2.h source file.\n", atom.c_str());
             exit(1);
         }
+*/
     }
-
-
     return(gaff_atom);
 }
 
+string Mol2::gaff_2_sybyl(string atom){
+    string sybyl_atom="";
+    if (atom == "c3"){
+        sybyl_atom = "C.3";
+    }
+    else if (atom == "c2"){
+        sybyl_atom = "C.2";
+    }
+    else if (atom == "c1"){
+        sybyl_atom = "C.1";
+    }
+    else if (atom == "ca"){
+        sybyl_atom = "C.ar";
+    }
+    else if (atom == "c"){
+        sybyl_atom = "C.cat";
+    }
+    else if (atom == "n3"){
+        sybyl_atom = "N.3";
+    }
+    else if (atom =="n2"){
+        sybyl_atom = "N.2";
+    }
+    else if (atom =="n1"){
+        sybyl_atom = "N.1";
+    }
+    else if (atom =="nh"){
+        sybyl_atom = "N.ar";
+    }
+    else if (atom =="n"){
+        sybyl_atom = "N.am";
+    }
+    else if (atom =="n4"){
+        sybyl_atom = "N.4";
+    }
+    else if (atom =="na"){
+        sybyl_atom = "N.pl";
+    }
+    else if (atom =="oh"){
+        sybyl_atom = "O.3";
+    }
+    else if (atom =="o"){
+        sybyl_atom = "O.2";
+    }
+    else if (atom =="ow"){
+        sybyl_atom = "O.t3p";
+    }
+    else if (atom =="sh"){
+        sybyl_atom = "S.3"; //not sure... sh or ss
+    }
+    else if (atom =="s2"){
+        sybyl_atom = "S.2";
+    }
+    else if (atom =="s4"){
+        sybyl_atom = "S.O";
+    }
+    else if (atom =="s6"){
+        sybyl_atom = "S.O2";
+    }
+    else if (atom =="p3"){
+        sybyl_atom = "P.3";
+    }
+    else if (atom =="f"){
+        sybyl_atom = "F";
+    }
+    else if (atom =="hc"){
+        sybyl_atom = "H";
+    }
+    else if (atom =="hw"){
+        sybyl_atom = "H.t3p";
+    }
+    else if (atom =="cl"){
+        sybyl_atom = "Cl";
+    }
+    else if (atom =="br"){
+        sybyl_atom = "Br";
+    }
+    else if (atom =="i"){
+        sybyl_atom = "I";
+    }
+    else if (atom =="MG"){
+        sybyl_atom = "Mg";
+    }
+    else if (atom =="EP"){
+        sybyl_atom = "LP";
+    }
+    else if (atom == "Fe"){
+        sybyl_atom = "Fe";
+    }
+    else if (atom == "Zn"){
+        sybyl_atom = "Zn";
+    }
+    else if (atom == "Cu"){
+        sybyl_atom = "Cu";
+    }
+    else if (atom == "Ca"){
+        sybyl_atom = "Ca";
+    }
+    else if (atom == "Si"){
+        sybyl_atom = "Si";
+    }
+    return(sybyl_atom);
+}
+
+
 string Mol2::sybyl_2_amber(string atom){
-    string amber_atom;
+    string amber_atom="";
     if (atom == "C.3"){
         amber_atom = "CT";
     }
@@ -1596,6 +1891,7 @@ string Mol2::sybyl_2_amber(string atom){
     else if (atom == "Si"){
         amber_atom = "Si";
     }
+
     else{
         bool found = false;
         for (unsigned i=0; i< this->gaff_force_field.size(); i++){
@@ -1604,10 +1900,12 @@ string Mol2::sybyl_2_amber(string atom){
                 found = true;
             }
         }
+/*
         if (! found){
             printf("Atom type %s not found among GAFF parameters.\nPlease check Mol2.h source file.\n", atom.c_str());
             exit(1);
         }
+*/
     }
     return(amber_atom);
 }

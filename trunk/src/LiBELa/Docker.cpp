@@ -486,11 +486,12 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
 
             Lig->xyz = Coord->translate(Lig->mcoords[i], Lig->N, com[0]-com_lig[0], com[1]-com_lig[1], com[2]-com_lig[2]);
 
-            /*
+/*
 *
 * Doing a pre-alignment of the longest axis of the ligands
 *
 */
+
 
             Lig->find_longest_axis();
             RefLig->find_longest_axis();
@@ -505,7 +506,8 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
             delete opt_result0;
             delete Opt0;
 
-            /*
+
+/*
 * End of pre-alignment
 */
 
@@ -538,7 +540,7 @@ void Docker::Dock_conformers(Mol2* Rec, Mol2* Lig, Mol2* RefLig, vector<double> 
 
     vector<unsigned> index;
 
-    /*
+/*
 * Here the user can choose if the best overlay is the one that maximizes the overlap of the docked ligand
 * with the reference ligand (default) or the on which results in the best binding energy, evaluated after
 * the overlap of the ligands. To choose the binding energy as the parameter, the input "sort_by_energy" must
