@@ -111,14 +111,18 @@ bool Mol2::parse_smiles(PARSER *Input, string smiles_input, string molname){
         }
     }
     int b1, b2, b3;
+    char tmp[10];
     vector<string> bond;
     FOR_BONDS_OF_MOL(b, mol){
         b1 = b->GetBeginAtomIdx();
-        bond.push_back(to_string(b1));
+        sprintf(tmp, "%d", b1);
+        bond.push_back(string(tmp));
         b2 = b->GetEndAtomIdx();
-        bond.push_back(to_string(b2));
+        sprintf(tmp, "%d", b2);
+        bond.push_back(string(tmp));
         b3 = b->GetBondOrder();
-        bond.push_back(to_string(b3));
+        sprintf(tmp, "%d", b3);
+        bond.push_back(string(tmp));
         this->bonds.push_back(bond);
         bond.clear();
     }
