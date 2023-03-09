@@ -114,7 +114,7 @@ bool Mol2::parse_smiles(PARSER *Input, string smiles_input, string molname){
     vector<string> bond;
     FOR_BONDS_OF_MOL(b, mol){
         b1 = b->GetBeginAtomIdx();
-        bond.push_back(to_string(b1+1));
+        bond.push_back(to_string(b1));
         b2 = b->GetEndAtomIdx();
         bond.push_back(to_string(b2));
         b3 = b->GetBondOrder();
