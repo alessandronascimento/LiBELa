@@ -38,7 +38,7 @@ TEMP_SCHEME::TEMP_SCHEME(char* inputfile){
 
     delete HB;
 
-    /* For debuggind purposes
+/* For debuggind purposes
  * Here we write the HB bond donors
  *
     for (unsigned i=0; i< REC->HBdonors.size(); i++){

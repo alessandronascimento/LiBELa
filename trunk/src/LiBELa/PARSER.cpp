@@ -111,6 +111,7 @@ PARSER::PARSER(){
     this->use_only_binding_energy = false;
     this->smiles_multifile = "";
     this->use_smiles = false;
+    this->atom_limit = 1E6;
 }
 
 void PARSER::comparing (string param, ifstream &input) {
@@ -552,6 +553,9 @@ void PARSER::comparing (string param, ifstream &input) {
     else if (param == "smiles_multifile"){
         input >> this->smiles_multifile;
         this->use_smiles = true;
+    }
+    else if (param == "atom_limit"){
+        input >> this->atom_limit;
     }
 	else {
 		cout << "Unknown parameter: " << param << endl;

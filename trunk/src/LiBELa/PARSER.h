@@ -334,6 +334,8 @@ public:
     bool use_overlay_cutoff;
     //! Cutoff value in similatiy index for energy optimization
     double overlay_cutoff;
+    //! Maximal number of atoms allowed for smiles molecules
+    int atom_limit;
 
 #ifdef HAS_GUI
 	QStringList docking_molecules;
