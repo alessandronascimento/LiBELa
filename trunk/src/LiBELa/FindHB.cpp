@@ -431,3 +431,31 @@ void FindHB::parse_residue(int atom_start, int atom_end, string resname, Mol2* R
         }
     }
 }
+
+
+#ifdef PYLIBELA
+
+#include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+using namespace boost::python;
+
+
+BOOST_PYTHON_MODULE(pyFindHB)
+{
+
+    class_<FindHB>("FindHB", init< >())
+
+        .def("find_atom", & FindHB::find_atom)
+        .def("distance", & FindHB::distance)
+        .def("distance_squared", & FindHB::distance_squared)
+        .def("angle", & FindHB::angle)
+        .def("find_ligandHB", & FindHB::find_ligandHB)
+        .def("parse_residue", & FindHB::parse_residue)
+        .def("is_protein", & FindHB::is_protein)
+
+
+    ;
+
+}
+
+#endif

@@ -4,6 +4,8 @@ using namespace OpenBabel;
 
 MC::MC(WRITER* _Writer)
 {
+    info= new char[98];
+
     srand(rand());
     r = gsl_rng_alloc (gsl_rng_ranlxs2);
     Writer = _Writer;
@@ -11,6 +13,7 @@ MC::MC(WRITER* _Writer)
 
 MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 
+    info= new char[98];
     srand(rand());
     r = gsl_rng_alloc (gsl_rng_ranlxs2);
     Writer = _Writer;
@@ -67,7 +70,7 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 
     vector<int> tmp(4);
     Writer->print_line();
-    sprintf(info, "Found %d rotatable bonds in ligand %s.", RotorList.Size(), Lig->molname.c_str());
+    sprintf(info, "Found %lu rotatable bonds in ligand %s.", RotorList.Size(), Lig->molname.c_str());
     Writer->print_info(info);
     Writer->print_line();
     for (unsigned i = 0; i < RotorList.Size(); ++i, Rotor = RotorList.NextRotor(RotorIterator)) {
@@ -84,6 +87,7 @@ MC::MC(Mol2* Lig, PARSER* Input, WRITER* _Writer){
 
 MC::~MC(){
     gsl_rng_free (r);
+    delete info;
 }
 
 void MC::write_conformers(Mol2* Lig){
@@ -1008,7 +1012,7 @@ void MC::run(Mol2* Rec, Mol2* RefLig, Mol2* Lig, vector<vector<double> > xyz, PA
 
         sprintf(info, "Average Monte Carlo energy: %10.3f kcal/mol +- (%10.3f kcal/mol) @ %7.2f K", this->average_energy, this->energy_standard_deviation, T);
         Writer->print_info(info);
-        sprintf(info, "Boltzmann-weighted average energy: %10.3f kcal/mol @ %7.2f K", this->Boltzmann_weighted_average_energy, T);
+        sprintf(info, "Boltzmann-weighted average energy: %10.3Lf kcal/mol @ %7.2f K", this->Boltzmann_weighted_average_energy, T);
         Writer->print_info(info);
         Writer->print_line();
     }
@@ -1324,3 +1328,94 @@ void MC::take_step_full_flex(PARSER* Input, Mol2* Lig, step_t* step){
     }
     step->nconf = 0;
 }
+
+#ifdef PYLIBELA
+
+#include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+using namespace boost::python;
+
+
+BOOST_PYTHON_MODULE(pyMC)
+{
+
+    void (MC::*r1)(Mol2*, Mol2*, Mol2*, vector<vector<double> >, PARSER*, double) =&MC::run;
+    void (MC::*r2)(Grid*, Mol2*, Mol2*, vector<vector<double> >, PARSER*, double) =&MC::run;
+
+    class_<MC>("MC", init<WRITER*>())
+        .def(init<Mol2*, PARSER*, WRITER*>())
+        .def_readwrite("XSize", & MC::XSize)
+        .def_readwrite("YSize", & MC::YSize)
+        .def_readwrite("ZSize", & MC::ZSize)
+        .def_readwrite("MaxMin", & MC::ZSize)
+        .def_readwrite("xyz", & MC::xyz)
+        .def_readwrite("average_energy", & MC::average_energy)
+        .def_readwrite("energy_standard_deviation", & MC::energy_standard_deviation)
+        .def_readwrite("Boltzmann_weighted_average_energy", & MC::Boltzmann_weighted_average_energy)
+        .def_readwrite("MCR_Boltzmann_weighted_average", & MC::MCR_Boltzmann_weighted_average)
+        .def_readwrite("MCR_Boltzmann_weighted_stdev", & MC::MCR_Boltzmann_weighted_stdev)
+        .def_readwrite("average_bound_energy", & MC::average_bound_energy)
+        .def_readwrite("average_freeligand_energy", & MC::average_freeligand_energy)
+        .def_readwrite("average_deltaE", & MC::average_deltaE)
+        .def_readwrite("boundTS", & MC::boundTS)
+        .def_readwrite("freeTS", & MC::freeTS)
+
+        .def_readwrite("r", & MC::r)
+        .def_readwrite("Writer", & MC::Writer)
+        .def_readwrite("info", & MC::info)
+        .def_readwrite("myxyz", & MC::myxyz)
+
+        .def_readwrite("mol", & MC::mol)
+        .def_readwrite("OBff", & MC::OBff)
+        .def_readwrite("RotorList", & MC::RotorList)
+        .def_readwrite("RotorIterator", & MC::RotorIterator)
+        .def_readwrite("Rotor", & MC::Rotor)
+
+        .def("run", r1)
+        .def("run", r2)
+
+
+        .def("Boltzmman", & MC::Boltzmman)
+        .def("take_step", & MC::take_step)
+        .def("take_step_flex", & MC::take_step_flex)
+        .def("take_step_torsion", & MC::take_step_torsion)
+        .def("take_step_full_flex", & MC::take_step_full_flex)
+        .def("write_conformers", & MC::write_conformers)
+        .def("MaxMinCM", & MC::MaxMinCM)
+        .def("ligand_run", & MC::ligand_run)
+
+        .def("copy_to_obmol", & MC::copy_to_obmol)
+        .def("copy_from_obmol", & MC::copy_from_obmol)
+
+        .def("GetMol", & MC::GetMol)
+        .def("check_angle", & MC::check_angle)
+        .def("increment_angles", & MC::increment_angles)
+        .def("ligand_is_inside_box", & MC::ligand_is_inside_box)
+    ;
+
+    class_<MC::step_t>("step_t")
+        .def_readwrite("xyz", & MC::step_t::xyz)
+        .def_readwrite("dx", & MC::step_t::dx)
+        .def_readwrite("dy ", & MC::step_t::dy)
+        .def_readwrite("dz", & MC::step_t::dz)
+        .def_readwrite("dalpha", & MC::step_t::dalpha)
+        .def_readwrite("dbeta", & MC::step_t::dbeta)
+        .def_readwrite("dgamma", & MC::step_t::dgamma)
+        .def_readwrite("nconf", & MC::step_t::nconf)
+        .def_readwrite("torsion_angles", & MC::step_t::torsion_angles)
+        .def_readwrite("internal_energy", & MC::step_t::internal_energy)
+    ;
+    
+    class_<energy_result_t>("energy_result_t")
+        .def_readwrite("vdw", & energy_result_t::vdw)
+        .def_readwrite("elec", & energy_result_t::elec)
+        .def_readwrite("rec_solv", & energy_result_t::rec_solv)
+        .def_readwrite("lig_solv", & energy_result_t::lig_solv)
+        .def_readwrite("hb_donor", & energy_result_t::hb_donor)
+        .def_readwrite("hb_acceptor", & energy_result_t::hb_acceptor)
+        .def_readwrite("restraints", & energy_result_t::restraints)
+        .def_readwrite("total", & energy_result_t::total)
+    ;   
+}
+
+#endif

@@ -50,7 +50,7 @@ public:
 
     gsl_rng * r;
     WRITER* Writer;
-    char info[98];
+    char* info;//[98];
     double* myxyz;
 
 

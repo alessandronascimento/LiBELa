@@ -11,7 +11,7 @@
 #include"nlopt.h"
 #include"nlopt.hpp"
 #include"Mol2.h"
-#include"ENERGY.h"
+#include "iMcLiBELa.h"
 #include "Energy2.h"
 #include"PARSER.h"
 #include"COORD_MC.h"
@@ -65,8 +65,8 @@ public:
     static double distance(vector<double> atom1, vector<double> atom2);
     static double distance_squared(vector<double> atom1, vector<double> atom2);
 
-	static double evaluate_energy(Mol2* Lig2, vector<vector<double> > new_xyz);
-    static void evaluate_energy(Mol2* Lig2, vector<vector<double> > new_xyz, energy_result_t* energy_result);
+    static double evaluate_energy(Mol2* Lig2, vector<vector<double> > new_xyz);
+    static void evaluate_energy2(Mol2* Lig2, vector<vector<double> > new_xyz, energy_result_t* energy_result);
 
 	static double objective_energy_function(const vector<double> &x, vector<double> &grad, void *data);
 	static double objective_overlay_function(const vector<double> &x, vector<double> &grad, void *data);
@@ -100,6 +100,6 @@ public:
     static void minimize_alignment_nlopt_simplex(align_t* align_data, align_result_t* opt_result, vector<double> current_com);
 
     static void pre_align(Mol2* Lig2, opt_result_t* opt_result);
-};
 
+};
 #endif /* OPTIMIZER_H_ */

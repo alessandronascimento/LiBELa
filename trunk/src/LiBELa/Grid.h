@@ -51,7 +51,7 @@ public:
     //! Defines whether or not DELPHI electrostatic grid was loaded
     bool delphi_loaded; // = false;
     //! Char array to use with Writer class
-    char info[98];
+    char* info;//[98];
 
     /*!
      * \brief Grid This function initializes the class. It passes a copy of the PARSER

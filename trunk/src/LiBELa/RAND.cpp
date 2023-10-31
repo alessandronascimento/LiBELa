@@ -77,3 +77,42 @@ void RAND::print(){
 	sprintf(info,"Changing parameters: %.2f %.2f %.2f %.2f %.2f %.2f", transx, transy, transz, a, b, g);
 	printf("*%-98s*\n", info);
 };
+
+
+#ifdef PYLIBELA
+
+
+#include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+using namespace boost::python;
+
+
+BOOST_PYTHON_MODULE(pyRAND)
+{
+
+    void (RAND::*r1)(double, double, Mol2*, Mol2*) = &RAND::random;
+    void (RAND::*r2)(double, double)= &RAND::random;
+
+
+    class_<RAND>("RAND", init<>())
+        .def_readwrite("a", &RAND::a)
+        .def_readwrite("b", &RAND::b)
+        .def_readwrite("g", &RAND::g)
+        .def_readwrite("transx", &RAND::transx)
+        .def_readwrite("transy", &RAND::transy)
+        .def_readwrite("transz", &RAND::transz)
+        .def_readwrite("recn", &RAND::recn)
+        .def_readwrite("lign", &RAND::lign)
+        .def_readwrite("rnumber", &RAND::rnumber)
+        .def_readwrite("r", &RAND::r)
+        .def_readwrite("CRec", &RAND::CRec)
+        .def_readwrite("CLig", &RAND::CLig)
+        .def("random", r1)
+        .def("random", r2)
+        .def("print", &RAND::print)
+
+
+    ;
+}
+
+#endif

@@ -7,6 +7,7 @@
 
 #include "SA.h"
 
+
 SA::SA() {
 }
 
@@ -163,3 +164,40 @@ vector<vector<double> > SA::optimize(Mol2* Lig, PARSER* Input, Mol2* Rec, gsl_rn
     }
     return(xyz);
 }
+
+#ifdef PYLIBELA
+
+#include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+using namespace boost::python;
+
+
+BOOST_PYTHON_MODULE(pySA)
+{
+    vector<vector<double> > (SA::*ts1)(Mol2*, PARSER*, gsl_rng*)= &SA::take_step;
+    vector<vector<double> > (SA::*ts2)(Mol2*, PARSER*, gsl_rng*, vector<vector<double> >)= &SA::take_step;
+
+    double (SA::*ee1)(Mol2*, vector<vector<double> >, PARSER*, Grid*)= &SA::evaluate_energy;
+    double (SA::*ee2)(Mol2*, vector<vector<double> >, PARSER*, Mol2*)= &SA::evaluate_energy;
+
+    vector<vector<double> > (SA::*o1)(Mol2*, PARSER*, Grid*, gsl_rng*)= &SA::optimize;
+    vector<vector<double> > (SA::*o2)(Mol2*, PARSER*, Mol2*, gsl_rng*)= &SA::optimize;
+
+    class_<SA>("SA", init< >())
+        .def("take_step", ts1)
+        .def("take_step", ts2)
+
+        .def("evaluate_energy", ee1)
+        .def("evaluate_energy", ee2)
+
+        .def("Boltzmman", &SA::Boltzmman)
+
+        .def("optimize", o1)
+        .def("optimize", o2)
+
+
+    ;
+
+}
+
+#endif

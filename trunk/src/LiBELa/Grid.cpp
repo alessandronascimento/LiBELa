@@ -6,7 +6,6 @@
  */
 
 #include "Grid.h"
-#include "iMcLiBELa.h"
 
 #define MAX_ALJ 100.0
 #define MAX_BLJ 50.0
@@ -39,14 +38,17 @@ double Grid::angle(double x1, double y1, double z1, double x2, double y2, double
 
 
 Grid::Grid(PARSER* _Input, WRITER* _Writer) {
+    info=new char[98];
     this->Input = _Input;
     this->Writer = _Writer;
     grid_spacing = Input->grid_spacing;
     this->pbsa_loaded = false;
     this->delphi_loaded = false;
+
 }
 
 Grid::Grid(PARSER* _Input, WRITER* _Writer, Mol2* Rec, vector<double> com){
+    info=new char[98];
     this->Input = _Input;
     this->Writer = _Writer;
     this->pbsa_loaded = false;
@@ -197,8 +199,8 @@ void Grid::compute_grid_softcore(Mol2* Rec){
                         denom = pow((d3 + Input->deltaij_es3), (1.0/3.0));
 
                         if (Input->dielectric_model == "constant"){
-                            elec += (332.0*Rec->charges[i])/(Input->diel*denom);
                             denom = pow((d6 + Input->deltaij_es6), (1.0/3.0));
+                            elec += (332.0*Rec->charges[i])/(Input->diel*denom);
                             solv += ((Input->solvation_alpha * Rec->charges[i] * Rec->charges[i])+ Input->solvation_beta) *  exp((-denom/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
                             rec_solv += (4.0/3.0) * PI * pow(Rec->radii[i], 3) * exp((-denom/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
                         }
@@ -298,8 +300,8 @@ void Grid::compute_grid_softcore_omp(Mol2* Rec){
                             double denom = pow((d3 + Input->deltaij_es3), (1.0/3.0));
 
                             if (Input->dielectric_model == "constant"){
-                                elec += (332.0*Rec->charges[i])/(Input->diel*denom);
                                 denom = pow((d6 + Input->deltaij_es6), (1.0/3.0));
+                                elec += (332.0*Rec->charges[i])/(Input->diel*denom);
                                 solv += ((Input->solvation_alpha * Rec->charges[i] * Rec->charges[i])+ Input->solvation_beta) *  exp((-denom/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
                                 rec_solv += (4.0/3.0) * PI * pow(Rec->radii[i], 3) * exp((-denom/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
                             }
@@ -395,8 +397,8 @@ void Grid::compute_grid_softcore_HB_omp(Mol2* Rec){
                             double denom; //= pow((d3 + Input->deltaij_es3), (1.0/3.0));
 
                             if (Input->dielectric_model == "constant"){
-                                elec += (332.0*Rec->charges[i])/(Input->diel*denom);
                                 denom = pow((d6 + Input->deltaij_es6), (1.0/3.0));
+                                elec += (332.0*Rec->charges[i])/(Input->diel*denom);
                                 solv += ((Input->solvation_alpha * Rec->charges[i] * Rec->charges[i])+ Input->solvation_beta) *  exp((-denom/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
                                 rec_solv += (4.0/3.0) * PI * pow(Rec->radii[i], 3) * exp((-denom/(2*Input->sigma*Input->sigma))) / (Input->sigma*Input->sigma*Input->sigma);
                             }
@@ -612,6 +614,7 @@ Grid::~Grid() {
     this->solv_gauss.clear();
     this->hb_donor_grid.clear();
     this->hb_acceptor_grid.clear();
+    delete info;
 }
 
 void Grid::compute_grid_hardcore(Mol2* Rec){
@@ -1658,3 +1661,76 @@ void Grid::print_line(){
     Writer->print_line();
 #endif
 }
+
+#ifdef PYLIBELA
+
+#include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+using namespace boost::python;
+
+
+BOOST_PYTHON_MODULE(pyGrid)
+{
+
+    class_< vector<vector<vector<double> > > >("vectorvectorvectorDouble")
+        .def(vector_indexing_suite<vector<vector<vector<double> > > >())
+    ;
+
+    class_<Grid>("Grid", init< PARSER*,WRITER*,Mol2*, vector <double> >())
+        .def(init<PARSER*, WRITER*>())
+
+        .def_readwrite("grid_spacing", &Grid::grid_spacing)
+        .def_readwrite("npointsx", &Grid::npointsx)
+        .def_readwrite("npointsy", &Grid::npointsy)
+        .def_readwrite("npointsz", &Grid::npointsz)
+        .def_readwrite("xbegin", &Grid::xbegin)
+        .def_readwrite("ybegin", &Grid::ybegin)
+        .def_readwrite("zbegin", &Grid::zbegin)
+        .def_readwrite("xend", &Grid::xend)
+        .def_readwrite("yend", &Grid::yend)
+        .def_readwrite("zend", &Grid::zend)
+        .def_readwrite("elec_grid", &Grid::elec_grid)
+        .def_readwrite("pbsa_grid", &Grid::pbsa_grid)
+        .def_readwrite("vdwA_grid", &Grid::vdwA_grid)
+        .def_readwrite("vdwB_grid", &Grid::vdwB_grid)
+        .def_readwrite("solv_gauss", &Grid::solv_gauss)
+        .def_readwrite("rec_solv_gauss", &Grid::rec_solv_gauss)
+        .def_readwrite("delphi_grid", &Grid::delphi_grid)
+        .def_readwrite("hb_donor_grid", &Grid::hb_donor_grid)
+        .def_readwrite("hb_acceptor_grid", &Grid::hb_acceptor_grid)
+        .def_readwrite("rec_si", &Grid::rec_si)
+        .def_readwrite("Input", &Grid::Input)
+        .def_readwrite("Writer", &Grid::Writer)
+
+        .def_readwrite("pbsa_loaded", &Grid::pbsa_loaded)
+        .def_readwrite("delphi_loaded", &Grid::delphi_loaded)
+        .def_readwrite("info", &Grid::info)
+
+
+        .def("distance", &Grid::distance)
+        .def("distance_squared", &Grid::distance_squared)
+        .def("angle", &Grid::angle)
+        .def("generate_points", &Grid::generate_points)
+        .def("compute_grid_softcore", &Grid::compute_grid_softcore)
+        .def("compute_grid_softcore_omp", &Grid::compute_grid_softcore_omp)
+        .def("compute_grid_softcore_HB_omp", &Grid::compute_grid_softcore_HB_omp)
+        .def("compute_grid_hardcore", &Grid::compute_grid_hardcore)
+        .def("compute_grid_hardcore_Gaussian", &Grid::compute_grid_hardcore_Gaussian)
+        .def("write_grids_to_file", &Grid::write_grids_to_file)
+        .def("load_grids_from_file", &Grid::load_grids_from_file)
+        .def("load_Ambergrids_from_file", &Grid::load_Ambergrids_from_file)
+        .def("load_gzAmbergrids_from_file", &Grid::load_gzAmbergrids_from_file)
+        .def("load_Delphi_Grid_from_file", &Grid::load_Delphi_Grid_from_file)
+        .def("load_phimap_from_file", &Grid::load_phimap_from_file)
+        .def("compute_grid_hardcore_omp", &Grid::compute_grid_hardcore_omp)
+        .def("compute_grid_hardcore_HB_omp", &Grid::compute_grid_hardcore_HB_omp)
+        .def("compute_grid_hardcore_omp_HB_Gaussian", &Grid::compute_grid_hardcore_omp_HB_Gaussian)
+        .def("load_delphi_cube", &Grid::load_delphi_cube)
+        .def("load_delphi_gzcube", &Grid::load_delphi_gzcube)
+        .def("print_line", &Grid::print_line)
+        .def("print_info", &Grid::print_info)
+
+    ;
+}
+
+#endif

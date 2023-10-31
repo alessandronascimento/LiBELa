@@ -54,3 +54,5 @@ public:
 };
 
 #endif // MCENTROPY_H
+
+

@@ -1290,3 +1290,101 @@ double Energy2::evaluate_forces_hardcore_solvation(Grid* Grids, Mol2* Lig, vecto
     }
     return (elec+vdwA-vdwB);
 }
+
+#ifdef PYLIBELA
+
+#include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+using namespace boost::python;
+
+BOOST_PYTHON_MODULE(pyEnergy2)
+{
+
+    double (Energy2::*cess1)(Mol2*, Mol2*, vector<vector<double> >) = &Energy2::compute_energy_softcore_solvation;
+    double (Energy2::*cess2)(Mol2*, Mol2*, vector<vector<double> >, energy_result_t*) = &Energy2::compute_energy_softcore_solvation;
+
+    double (Energy2::*ces1)(Mol2*, Mol2*, vector<vector<double> >) = &Energy2::compute_energy_softcore;
+    double (Energy2::*ces2)(Mol2*, Mol2*, vector<vector<double> >, energy_result_t*) = &Energy2::compute_energy_softcore;
+
+    double (Energy2::*cehs1)(Mol2*, Mol2*, vector<vector<double> >) = &Energy2::compute_energy_hardcore_solvation;
+    double (Energy2::*cehs2)(Mol2*, Mol2*, vector<vector<double> >, energy_result_t*) = &Energy2::compute_energy_hardcore_solvation;
+
+    double (Energy2::*ceh1)(Mol2*, Mol2*, vector<vector<double> >) = &Energy2::compute_energy_hardcore;
+    double (Energy2::*ceh2)(Mol2*, Mol2*, vector<vector<double> >, energy_result_t*) = &Energy2::compute_energy_hardcore;
+
+    double (Energy2::*cefghs1)(Grid*, Mol2*, vector<vector<double> >) = &Energy2::compute_ene_from_grids_hardcore_solvation;
+    double (Energy2::*cefghs2)(Grid*, Mol2*, vector<vector<double> >, energy_result_t*) = &Energy2::compute_ene_from_grids_hardcore_solvation;
+
+    double (Energy2::*cefgh1)(Grid*, Mol2*, vector<vector<double> >) = &Energy2::compute_ene_from_grids_hardcore;
+    double (Energy2::*cefgh2)(Grid*, Mol2*, vector<vector<double> >, energy_result_t*) = &Energy2::compute_ene_from_grids_hardcore;
+
+    double (Energy2::*cefgss1)(Grid*, Mol2*, vector<vector<double> >) = &Energy2::compute_ene_from_grids_softcore_solvation;
+    double (Energy2::*cefgss2)(Grid*, Mol2*, vector<vector<double> >, energy_result_t*) = &Energy2::compute_ene_from_grids_softcore_solvation;
+
+    double (Energy2::*cefgs1)(Grid*, Mol2*, vector<vector<double> >) = &Energy2::compute_ene_from_grids_softcore;
+    double (Energy2::*cefgs2)(Grid*, Mol2*, vector<vector<double> >, energy_result_t*) = &Energy2::compute_ene_from_grids_softcore;
+
+    double (Energy2::*ce1)(Mol2*, Mol2*, vector<vector<double> >) = &Energy2::compute_ene;
+    double (Energy2::*ce2)(Grid*, Mol2*, vector<vector<double> >) = &Energy2::compute_ene;
+    double (Energy2::*ce3)(Grid*, Mol2*, vector<vector<double> >, energy_result_t*) = &Energy2::compute_ene;
+    double (Energy2::*ce4)(Mol2*, Mol2*, vector<vector<double> >, energy_result_t*) = &Energy2::compute_ene;
+
+
+    double (Energy2::*ti1)(vector<vector<vector<double> > >, double, double, double, int, int, int, int, int, int) = &Energy2::trilinear_interpolation;
+    void (Energy2::*ti2)(Grid*, double, double, double, int, int, int, int, int, int, Energy2::GridInterpol*) = &Energy2::trilinear_interpolation;
+
+
+
+    class_<Energy2>("Energy2", init<PARSER*>())
+        .def("atom_is_acceptor",  & Energy2::atom_is_acceptor)
+        .def("H_is_donor",  & Energy2::H_is_donor)
+        .def("angle",  & Energy2::angle)
+        .def("distance",  & Energy2::distance)
+        .def("distance_squared",  & Energy2::distance_squared)
+
+        .def("compute_energy_softcore_solvation", cess1)
+        .def("compute_energy_softcore", ces1)
+        .def("compute_energy_hardcore_solvation", cehs1)
+        .def("compute_energy_hardcore", ceh1)
+        .def("compute_ene_from_grids_softcore_solvation", cefgss1)
+        .def("compute_ene_from_grids_softcore", cefgs1)
+        .def("compute_ene_from_grids_hardcore_solvation", cefghs1)
+        .def("compute_ene_from_grids_hardcore", cefgh1)
+
+
+        .def("compute_energy_softcore_solvation", cess2)
+        .def("compute_energy_softcore", ces2)
+        .def("compute_energy_hardcore_solvation", cehs2)
+        .def("compute_energy_hardcore", ceh2)
+
+        .def("compute_ene", ce1)
+        .def("compute_ene", ce2)
+        .def("compute_ene", ce3)
+        .def("compute_ene", ce4)
+
+        .def("compute_ene_from_grids_hardcore_solvation", cefghs2)
+        .def("compute_ene_from_grids_hardcore", cefgh2)
+        .def("compute_ene_from_grids_softcore_solvation", cefgss2)
+        .def("compute_ene_from_grids_softcore", cefgs2)
+
+        .def("trilinear_interpolation", ti1)
+        .def("trilinear_interpolation", ti2)
+
+        .def("evaluate_forces_hardcore_solvation",  & Energy2::evaluate_forces_hardcore_solvation)
+    ;
+
+    class_<Energy2::GridInterpol>("GridInterpol")
+            .def_readwrite("vdwA", & Energy2::GridInterpol::vdwA)
+            .def_readwrite("vdwB", & Energy2::GridInterpol::vdwB)
+            .def_readwrite("elec", & Energy2::GridInterpol::elec)
+            .def_readwrite("pbsa", & Energy2::GridInterpol::pbsa)
+            .def_readwrite("delphi", & Energy2::GridInterpol::delphi)
+            .def_readwrite("solv_gauss", & Energy2::GridInterpol::solv_gauss)
+            .def_readwrite("rec_solv_gauss", & Energy2::GridInterpol::rec_solv_gauss)
+            .def_readwrite("hb_donor", & Energy2::GridInterpol::hb_donor)
+            .def_readwrite("hb_acceptor", & Energy2::GridInterpol::hb_acceptor)
+    ;
+
+}
+
+#endif

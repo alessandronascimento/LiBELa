@@ -234,3 +234,44 @@ double Gaussian::compute_shape_and_charge_density(PARSER *Input, Mol2* RefMol, M
     }
     return((Input->vdw_scale*Vshape)+(Input->elec_scale*Vpos)+(Input->elec_scale*Vneg));
 }
+
+#ifdef PYLIBELA
+
+#include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+using namespace boost::python;
+
+
+BOOST_PYTHON_MODULE(pyGaussian)
+{
+    double (Gaussian::*cs1)(Mol2*, Mol2*) = &Gaussian::compute_si;
+    double (Gaussian::*cs2)(Mol2*, Mol2*, vector<vector<double> >)= &Gaussian::compute_si;
+
+    double (Gaussian::*csd1)(Mol2*, Mol2*) = &Gaussian::compute_shape_density;
+    double (Gaussian::*csd2)(Mol2*, Mol2*, vector<vector<double> >) = &Gaussian::compute_shape_density;
+    double (Gaussian::*csd3)(Mol2*, vector<vector<double> >) = &Gaussian::compute_shape_density;
+
+    double (Gaussian::*csacd1)(PARSER*, Mol2*, Mol2*, vector<vector<double> >) = &Gaussian::compute_shape_and_charge_density;
+    double (Gaussian::*csacd2)(PARSER*, Mol2*, Mol2*, vector<vector<double> >, vector<vector<double> >) = &Gaussian::compute_shape_and_charge_density;
+
+    class_<Gaussian>("Gaussian", init<>())
+        .def(init<Mol2*, Mol2*, double*>())
+        .def(init<Mol2*, Mol2*, vector<vector<double> >, double*>())
+        .def_readwrite("time0", & Gaussian::time0)
+        .def_readwrite("time1", & Gaussian::time1)
+
+        .def("compute_si",cs1)
+        .def("compute_si",cs2)
+
+        .def("compute_shape_density",csd1)
+        .def("compute_shape_density",csd2)
+        .def("compute_shape_density",csd3)
+
+        .def("compute_shape_and_charge_density",cs1)
+        .def("compute_shape_and_charge_density",cs2)
+
+        .def("dist_squared", & Gaussian::dist_squared)
+    ;
+}
+
+#endif

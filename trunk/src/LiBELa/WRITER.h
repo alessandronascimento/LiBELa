@@ -14,7 +14,7 @@
 #include<vector>
 #include<iostream>
 #include<zlib.h>
-#include"Mol2.h"
+#include "Mol2.h"
 #include "PARSER.h"
 #include "iMcLiBELa.h"
 
@@ -35,6 +35,11 @@ public:
     gzFile outmol2;
     //! Input parameters from class PARSER
     PARSER* Input;
+
+
+
+
+
 
 /*!
  * The constructor is used only to parse the output_prefix as defined in

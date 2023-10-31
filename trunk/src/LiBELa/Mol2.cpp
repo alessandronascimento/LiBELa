@@ -10,22 +10,24 @@
 using namespace std;
 
 Mol2::Mol2(){
+    str = new char[100];
 }
 
 Mol2::Mol2(PARSER *Input, string molfile) {
     bool ok;
+    str = new char[100];
     if ((molfile.substr(molfile.size()-3, 3) == ".gz") or (molfile.substr(molfile.size()-2, 2) == ".z")){
         ok = this->parse_gzipped_file(Input, molfile);
         if (! ok){
             printf("Could not correctly parse mol2 file %s. Please check.\n", molfile.c_str());
-            exit(1);
+            //exit(1);
         }
     }
     else {
         ok = this->parse_mol2file(Input, molfile);
         if (! ok){
             printf("Could not correctly parse mol2 file %s. Please check.\n", molfile.c_str());
-            exit(1);
+            //exit(1);
         }
     }
 }
@@ -70,8 +72,10 @@ bool Mol2::parse_smiles(PARSER *Input, string smiles_input, string molname){
         OBAtom *atom;
         vector<int> vtemp(2);
         string sybyl_atom;
+        string sybyl_gaff;
 
         this->N = mol.NumAtoms();
+	this->Nbonds = mol.NumBonds();
         this->molname = molname;
         this->Nres = 0;
         this->residue_pointer.push_back(1);
@@ -101,6 +105,11 @@ bool Mol2::parse_smiles(PARSER *Input, string smiles_input, string molname){
             }
             else{
                 this->sybyl_atoms.push_back(this->gaff_2_sybyl(sybyl_atom));
+                sybyl_gaff = this->gaff_2_sybyl(sybyl_atom);
+                if (sybyl_gaff == ""){
+                    bret=false;
+                    printf("bret set to false because of atom %s\n", sybyl_atom.c_str());
+                }
                 atom_param* at = new atom_param;
                 this->get_gaff_atomic_parameters(sybyl_atom, at);
                 this->radii.push_back(at->radius);
@@ -182,6 +191,7 @@ bool Mol2::parse_smiles(PARSER *Input, string smiles_input, string molname){
     }
     else{
         bret = false;
+	printf("bret set to false because ligand size %d is greater than Input.atom_limit %d\n",mol.NumAtoms(),Input->atom_limit);
     }
     return bret;
 }
@@ -1155,6 +1165,12 @@ void Mol2::initialize_gaff2(){
     ap.mass = 14.01;
     gaff_parameters.push_back(ap);
 
+    ap.type = "N3+";
+    ap.radius = 1.8240;
+    ap.epsilon = 0.1700;
+    ap.mass = 14.01;
+    gaff_parameters.push_back(ap);
+    
     ap.type = "S";
     ap.radius = 2.0000;
     ap.epsilon = 0.2500;
@@ -1203,6 +1219,12 @@ void Mol2::initialize_gaff2(){
     ap.mass = 35.45;
     gaff_parameters.push_back(ap);
 
+    ap.type = "Cac";
+    ap.radius = 1.8606;
+    ap.epsilon = 0.0988;
+    ap.mass = 12.01;
+    gaff_parameters.push_back(ap);
+    
     ap.type = "Br";
     ap.radius = 2.22;
     ap.epsilon = 0.320;
@@ -1407,6 +1429,37 @@ void Mol2::initialize_gaff2(){
     ap.mass = 39.098;
     gaff_parameters.push_back(ap);
 
+    ap.type = "Nox";
+    ap.radius = 1.8240;
+    ap.epsilon = 0.1700;
+    ap.mass = 14.01;
+    gaff_parameters.push_back(ap);
+
+    ap.type = "Ntr";
+    ap.radius = 1.8240;
+    ap.epsilon = 0.1700;
+    ap.mass = 14.01;
+    gaff_parameters.push_back(ap);
+
+    ap.type = "Pac";
+    ap.radius = 2.0732;
+    ap.epsilon = 0.2295;
+    ap.mass = 30.97;
+    gaff_parameters.push_back(ap);
+
+    ap.type = "Sac";
+    ap.radius = 1.9825;
+    ap.epsilon = 0.2824;
+    ap.mass = 32.06;
+    gaff_parameters.push_back(ap);
+
+    
+    ap.type = "Sox";
+    ap.radius = 1.9825;
+    ap.epsilon = 0.2824;
+    ap.mass = 32.06;
+    gaff_parameters.push_back(ap);
+
     this->gaff_force_field = gaff_parameters;
 }
 
@@ -1424,7 +1477,7 @@ void Mol2::get_gaff_atomic_parameters(string gaff_atom, atom_param* ap){
     }
     if (!found){
         printf("Could not find atomic parameters for atom %s. Please, check.\n", gaff_atom.c_str());
-        exit(1);
+        //exit(1);
     }
 }
 
@@ -1442,6 +1495,10 @@ string Mol2::sybyl_2_gaff(string atom){
     else if (atom =="C2"){
         gaff_atom = "c2";
     }
+    else if (atom =="Cac"){
+        gaff_atom = "c2";
+    }
+
     else if (atom =="C1"){
         gaff_atom = "c1";
     }
@@ -1472,7 +1529,10 @@ string Mol2::sybyl_2_gaff(string atom){
     else if (atom =="N3"){
         gaff_atom = "n3";
     }
-
+        
+    else if (atom =="N3+"){
+        gaff_atom = "n3";
+    }
 
     else if (atom =="N.2"){
         gaff_atom = "n2";
@@ -1641,6 +1701,31 @@ string Mol2::sybyl_2_gaff(string atom){
     else if (atom == "Si"){
         gaff_atom = "Si";
     }
+
+   else if (atom =="Nox"){
+        gaff_atom = "n3";
+    }
+
+   else if (atom =="Ntr"){
+        gaff_atom = "n2";
+    }
+
+    else if (atom =="Pac"){
+        gaff_atom = "p3";
+    }
+
+    else if (atom =="Sac"){
+        gaff_atom = "sh";
+    }
+
+    else if (atom =="Sox"){
+        gaff_atom = "sh";
+    }
+
+    else if (atom =="Cl"){
+        gaff_atom = "cl";
+    }
+
     else{
         bool found = false;
         for (unsigned i=0; i< this->gaff_force_field.size(); i++){
@@ -1695,7 +1780,7 @@ string Mol2::gaff_2_sybyl(string atom){
         sybyl_atom = "N.4";
     }
     else if (atom =="na"){
-        sybyl_atom = "N.pl";
+        sybyl_atom = "N.3";
     }
     else if (atom =="oh"){
         sybyl_atom = "O.3";
@@ -1760,6 +1845,14 @@ string Mol2::gaff_2_sybyl(string atom){
     else if (atom == "Si"){
         sybyl_atom = "Si";
     }
+    else if (atom =="HO"){
+        sybyl_atom = "H";
+    }
+
+    else if (atom =="P"){
+        sybyl_atom = "P.3";
+    }
+
     return(sybyl_atom);
 }
 
@@ -2190,3 +2283,94 @@ vector<vector<double> > Mol2::copy_from_obmol(OBMol mymol){
     tmp.clear();
     return vec_xyz;
 }
+
+
+#ifdef PYLIBELA
+
+
+#include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+using namespace boost::python;
+
+
+BOOST_PYTHON_MODULE(pyMol2)
+{
+
+    class_< vector<double> >("vectorDouble")
+        .def(vector_indexing_suite<vector<double> >())
+    ;
+    
+    class_< vector<vector<double> > >("vectorvectorDouble")
+        .def(vector_indexing_suite<vector<vector<double> > >())
+    ;
+        class_< vector<int> >("vectorInt")
+        .def(vector_indexing_suite<vector<int> >())
+    ;
+        class_< vector<string> >("vectorString")
+        .def(vector_indexing_suite<vector<string> >())
+    ;
+    
+        class_< vector<vector<int> > >("vectorvectorInt")
+        .def(vector_indexing_suite<vector<vector<int> > >())
+    ;
+    
+    class_<Mol2>("Mol2", init< >())
+        .def(init<PARSER*, string>())
+        .def_readwrite("N", & Mol2::N)
+        .def_readwrite("Nres", & Mol2::Nres)
+        .def_readwrite("Natomtypes", & Mol2::Natomtypes)
+        .def_readwrite("Nbonds", & Mol2::Nbonds)
+        .def_readwrite("molname", & Mol2::molname)
+        .def_readwrite("charges", & Mol2::charges)
+        .def_readwrite("masses", & Mol2::masses)
+        .def_readwrite("amberatoms", & Mol2::amberatoms)
+        .def_readwrite("atomtypes_prm", & Mol2::atomtypes_prm)
+        .def_readwrite("atomnames", & Mol2::atomnames)
+        .def_readwrite("xyz", & Mol2::xyz)
+        .def_readwrite("new_xyz", & Mol2::new_xyz)
+        .def_readwrite("opt_overlay_xyz", & Mol2::opt_overlay_xyz)
+        .def_readwrite("opt_energy_xyz", & Mol2::opt_energy_xyz)
+        .def_readwrite("epsilons", & Mol2::epsilons)
+        .def_readwrite("epsilons_sqrt", & Mol2::epsilons_sqrt)
+        .def_readwrite("radii", & Mol2::radii)
+        .def_readwrite("str", & Mol2::str)
+        .def_readwrite("resnames", & Mol2::resnames)
+        .def_readwrite("residue_pointer", & Mol2::residue_pointer)
+        .def_readwrite("HBacceptors", & Mol2::HBacceptors)
+        .def_readwrite("HBdonors", & Mol2::HBdonors)
+        .def_readwrite("line", & Mol2::line)
+        .def_readwrite("self_obj_function", & Mol2::self_obj_function)
+        .def_readwrite("bonds", & Mol2::bonds)
+        .def_readwrite("sybyl_atoms", & Mol2::sybyl_atoms)
+        .def_readwrite("atm", & Mol2::atm)
+        .def_readwrite("conformer_energies", & Mol2::conformer_energies)
+        .def_readwrite("energy", & Mol2::energy)
+        .def_readwrite("rmsd", & Mol2::rmsd)
+        .def_readwrite("longest_axis", & Mol2::longest_axis)
+        .def_readwrite("radius", & Mol2::radius)
+        .def_readwrite("gaff_force_field", & Mol2::gaff_force_field)
+        .def("parse_smiles", & Mol2::parse_smiles)
+        .def("parse_gzipped_file", & Mol2::parse_gzipped_file)
+        .def("parse_mol2file", & Mol2::parse_mol2file)
+        .def("get_next_xyz", & Mol2::get_next_xyz)
+        .def("initialize_gaff", & Mol2::initialize_gaff)
+        .def("initialize_gaff2", & Mol2::initialize_gaff2)
+        .def("get_gaff_atomic_parameters", & Mol2::get_gaff_atomic_parameters)
+        .def("sybyl_2_gaff", & Mol2::sybyl_2_gaff)
+        .def("sybyl_2_amber", & Mol2::sybyl_2_amber)
+        .def("gaff_2_sybyl", & Mol2::gaff_2_sybyl)
+        .def("find_longest_axis", & Mol2::find_longest_axis)
+        .def("distance", & Mol2::distance)
+        .def("copy_from_obmol", & Mol2::copy_from_obmol)
+    ;
+
+    class_<Mol2::atom_param>("atom_param")
+        .def_readwrite("type", & Mol2::atom_param::type)
+        .def_readwrite("radius", & Mol2::atom_param::radius)
+        .def_readwrite("epsilon", & Mol2::atom_param::epsilon)
+        .def_readwrite("mass", & Mol2::atom_param::mass)
+    ;
+}
+
+
+#endif

@@ -141,3 +141,26 @@ bool Conformer::generate_conformers_confab(PARSER* Input, Mol2* Lig, string molf
     }
     return file_read;
 }
+
+
+#ifdef PYLIBELA
+
+
+#include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+using namespace boost::python;
+
+
+BOOST_PYTHON_MODULE(pyConformer)
+{
+
+    class_<Conformer>("Conformer", init< >())
+	.def("GetMol", & Conformer::GetMol)
+	.def("generate_conformers_confab", & Conformer::generate_conformers_confab)
+
+    ;
+
+
+}
+
+#endif

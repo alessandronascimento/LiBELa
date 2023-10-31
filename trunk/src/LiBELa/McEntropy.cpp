@@ -234,3 +234,59 @@ McEntropy::~McEntropy(){
     this->hist_torsions.clear();
 
 }
+
+
+#ifdef PYLIBELA
+
+
+#include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+using namespace boost::python;
+
+
+BOOST_PYTHON_MODULE(pyMcEntropy)
+{
+
+    void (McEntropy::*gr1)(McEntropy::entropy_t*, McEntropy::entropy_t*, int) =&McEntropy::get_results;
+    void (McEntropy::*gr2)(McEntropy::entropy_t*, int) =&McEntropy::get_results;
+
+
+    class_<McEntropy>("McEntropy", init<PARSER*, COORD_MC*, vector<double>, int >())
+        .def_readwrite("rot_bins", & McEntropy::rot_bins)
+        .def_readwrite("trans_bins", & McEntropy::trans_bins)
+        .def_readwrite("translation_window", & McEntropy::translation_window)
+        .def_readwrite("n_rot", & McEntropy::n_rot)
+        .def_readwrite("translation_step", & McEntropy::translation_step)
+        .def_readwrite("rotation_step", & McEntropy::rotation_step)
+        .def_readwrite("hist_x", & McEntropy::hist_x)
+        .def_readwrite("hist_y", & McEntropy::hist_y)
+        .def_readwrite("hist_z", & McEntropy::hist_z)
+        .def_readwrite("hist_alpha", & McEntropy::hist_alpha)
+        .def_readwrite("hist_beta", & McEntropy::hist_beta)
+        .def_readwrite("hist_gamma", & McEntropy::hist_gamma)
+        .def_readwrite("com", & McEntropy::com)
+        .def_readwrite("hist_torsions", & McEntropy::hist_torsions)
+
+        .def_readwrite("Input", & McEntropy::Input)
+        .def_readwrite("Coord", & McEntropy::Coord)
+        .def_readwrite("k", & McEntropy::k)
+
+        .def("update", & McEntropy::update)
+        .def("update_trajectory", & McEntropy::update_trajectory)
+
+        .def("get_results", gr1)
+        .def("get_results", gr2)
+
+
+    ;
+
+    class_<McEntropy::entropy_t>("entropy_t")
+        .def_readwrite("Strans", & McEntropy::entropy_t::Strans)
+        .def_readwrite("Srot", & McEntropy::entropy_t::Srot)
+        .def_readwrite("Storsion", & McEntropy::entropy_t::Storsion)
+        .def_readwrite("S", & McEntropy::entropy_t::S)
+        .def_readwrite("TS", & McEntropy::entropy_t::TS)
+    ;
+}
+
+#endif

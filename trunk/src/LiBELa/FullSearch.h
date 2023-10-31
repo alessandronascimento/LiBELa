@@ -34,7 +34,7 @@ public:
     OBRotorList RotorList;
     OBRotorIterator RotorIterator;
     OBRotor *Rotor;
-    char info[98];
+    char* info;//[98];
     Grid* Grids;
     vector<vector<int> > atoms_in_dihedrals;
     double* myxyz;
@@ -44,7 +44,7 @@ public:
     OBMol GetMol(const std::string &molfile);
     void copy_to_obmol(vector<vector<double> > vec_xyz);
     vector<vector<double> > copy_from_obmol(OBMol mymol);
-    double do_search(void);
+    void do_search(void);
 };
 
 #endif // FULLSEARCH_H

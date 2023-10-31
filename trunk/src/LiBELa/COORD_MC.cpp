@@ -227,3 +227,78 @@ double COORD_MC::compute_prob(double old_energy, double new_energy, double temp)
 	delta_energy = new_energy - old_energy;
 	return(exp((-delta_energy)/(0.00198587752*temp)));
 }
+
+
+
+
+#ifdef PYLIBELA
+
+#include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+using namespace boost::python;
+
+
+BOOST_PYTHON_MODULE(pyCOORD_MC)
+{
+
+    vector<double> (COORD_MC::*cc1)(Mol2*)                            = &COORD_MC::compute_com;
+    vector<double> (COORD_MC::*cc2)(vector<vector<double> >, Mol2*)   = &COORD_MC::compute_com;
+
+    vector<vector<double> > (COORD_MC::*rt1)(vector<vector<double> >, int, double, double, double, double, double, double) = &COORD_MC::rototranslate;
+    vector<vector<double> >(COORD_MC::*rt2)(vector<vector<double> >, Mol2*, double, double, double, double, double, double ) = &COORD_MC::rototranslate;
+    vector<vector<double> >(COORD_MC::*rt3)(vector<vector<double> >, Mol2*, RAND*) = &COORD_MC::rototranslate;
+    vector<vector<double> >(COORD_MC::*rt4)(vector<vector<double> >, int, RAND*) = &COORD_MC::rototranslate;
+
+
+
+    void (COORD_MC::*rta1)(Mol2*, RAND*) = &COORD_MC::rototranslate_all;
+    void (COORD_MC::*rta2)(Mol2*, double, double, double, double, double, double) = &COORD_MC::rototranslate_all;
+
+
+
+    class_<COORD_MC>("COORD_MC", init< >())
+        .def_readwrite("x", & COORD_MC::x)
+        .def_readwrite("y", & COORD_MC::y)
+        .def_readwrite("z", & COORD_MC::z)
+        .def_readwrite("centerx", & COORD_MC::centerx)
+        .def_readwrite("centery", & COORD_MC::centery)
+        .def_readwrite("centerz", & COORD_MC::centerz)
+        .def_readwrite("totalmass", & COORD_MC::totalmass)
+        .def_readwrite("coordinates", & COORD_MC::coordinates)
+        .def_readwrite("com", & COORD_MC::com)
+        .def_readwrite("rmsd", & COORD_MC::rmsd)
+        .def_readwrite("delta_energy", & COORD_MC::delta_energy)
+        .def_readwrite("alpha", & COORD_MC::alpha)
+        .def_readwrite("beta", & COORD_MC::beta)
+        .def_readwrite("gamma", & COORD_MC::gamma)
+        .def_readwrite("transx", & COORD_MC::transx)
+        .def_readwrite("transy", & COORD_MC::transy)
+        .def_readwrite("transz", & COORD_MC::transz)
+        .def_readwrite("Cmol", & COORD_MC::Cmol)
+
+
+        .def("compute_com", cc1)
+        .def("compute_com", cc2)
+
+        .def("translate", & COORD_MC::translate)
+        .def("rotate", & COORD_MC::rotate)
+
+        .def("rototranslate", rt1)
+        .def("rototranslate", rt2)
+        .def("rototranslate", rt3)
+        .def("rototranslate", rt4)
+
+
+        .def("rototranslate_all", rta1)
+        .def("rototranslate_all", rta2)
+
+        .def("compute_rmsd", & COORD_MC::compute_rmsd)
+        .def("compute_prob", & COORD_MC::compute_prob)
+
+    ;
+
+
+}
+
+
+#endif
